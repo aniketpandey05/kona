@@ -17,4 +17,6 @@ export type RuntimeMessage =
   | { type: 'sites-changed'; startOnTabId?: number }
   /** Sent by the popup: which sites has the user switched on? */
   | { type: 'list-sites' }
+  /** Sent when the right-click menu item is used, so the selection becomes a highlight. */
+  | { type: 'highlight-selection' }
   | { type: 'open-library' };

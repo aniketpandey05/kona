@@ -3,17 +3,32 @@ import type { PendingJump, RuntimeMessage } from '../core/messages';
 import type { Mark } from '../core/types';
 
 const LIBRARY_PAGE = '/library.html';
+const WELCOME_PAGE = '/welcome.html';
 const WEB_SCRIPT_ID = 'web-pages';
+const MENU_ID = 'highlight-selection';
 // The chat sites come with the extension; every other site is switched on by the user.
 const BUILT_IN = ['https://chatgpt.com/*', 'https://claude.ai/*', 'https://gemini.google.com/*'];
 const pendingKey = (tabId: number) => `pending-jump:${tabId}`;
 
 export default defineBackground(() => {
   // Keep the list of user-enabled sites and the script registered for them in step.
-  browser.runtime.onInstalled.addListener(() => void syncWebSites());
+  browser.runtime.onInstalled.addListener((details) => {
+    void syncWebSites();
+    // A fresh install lands on a page explaining what just appeared in the toolbar.
+    if (details.reason === 'install') {
+      void browser.tabs.create({ url: browser.runtime.getURL(WELCOME_PAGE) });
+    }
+  });
   browser.runtime.onStartup.addListener(() => void syncWebSites());
   browser.permissions.onAdded.addListener(() => void syncWebSites(true));
   browser.permissions.onRemoved.addListener(() => void syncWebSites());
+
+  browser.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId !== MENU_ID || tab?.id === undefined) return;
+    void browser.tabs
+      .sendMessage(tab.id, { type: 'highlight-selection' } satisfies RuntimeMessage)
+      .catch(() => undefined);
+  });
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     void handle(message as RuntimeMessage, sender.tab?.id).then(sendResponse);
@@ -53,6 +68,7 @@ async function syncWebSites(startOnActiveTab = false): Promise<null> {
 
   if (matches.length === 0) {
     if (registered.length) await browser.scripting.unregisterContentScripts({ ids: [WEB_SCRIPT_ID] });
+    await buildMenu(matches);
     return null;
   }
   if (registered.length) {
@@ -71,6 +87,8 @@ async function syncWebSites(startOnActiveTab = false): Promise<null> {
     ]);
   }
 
+  await buildMenu(matches);
+
   // Start highlighting straight away on the page the user just allowed, without a reload.
   if (startOnActiveTab) {
     const [active] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -81,6 +99,20 @@ async function syncWebSites(startOnActiveTab = false): Promise<null> {
     }
   }
   return null;
+}
+
+/**
+ * The right-click item only appears where highlighting actually works, so it is
+ * rebuilt whenever the allowed sites change rather than offered everywhere.
+ */
+async function buildMenu(userSites: string[]): Promise<void> {
+  await browser.contextMenus.removeAll();
+  browser.contextMenus.create({
+    id: MENU_ID,
+    title: 'Highlight with Kona',
+    contexts: ['selection'],
+    documentUrlPatterns: [...BUILT_IN, ...userSites],
+  });
 }
 
 function matchesAny(url: string, patterns: string[]): boolean {

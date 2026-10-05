@@ -12,6 +12,7 @@ Highlight anything you read — AI chats or ordinary web pages — add a note, a
 
 **While you read**
 - Select text in any message on **ChatGPT**, **Claude** or **Gemini** and pick a color.
+- Or right-click the selection and choose **Highlight with Kona** — handy on sites whose own selection popup covers ours.
 - Switch it on for **any other site** from the toolbar button: blogs, docs, Stack Overflow, GitHub.
 - Switch any site **off** from the same button, the chat sites included. Everything disappears on that site and selections are ignored, while your highlights stay saved and return when you switch it back on. "Forget" an added site to hand its permission back to Chrome as well.
 - Add a note to any highlight with the ✎ button, or by clicking highlighted text later. Highlights with notes get a dotted underline.
@@ -74,6 +75,8 @@ Open a chat on chatgpt.com, claude.ai or gemini.google.com and select some text.
 | `Esc` | Close the note without saving |
 | `↑` / `↓` on the ⋮⋮ grip | Move a highlight up or down the list |
 
+The first two are also listed along the bottom of the panel, and a welcome page walks through all of it the first time you install.
+
 ## Privacy
 
 Everything is stored in your browser, and the extension makes no network requests of any kind. It asks for access to the three chat sites, plus whichever sites you switch on yourself — nothing else. Your backup file is the only copy that leaves the browser, and only when you export one.
@@ -97,7 +100,7 @@ npm run build     # production build in .output/chrome-mv3
 | Panel order, search, backups | `src/core/order.ts`, `search.ts`, `backup.ts` |
 | Page logic: selection, navigation, jumping, storage | `src/content/controller.ts` |
 | Panel, toolbar and note card (Preact, in a shadow root) | `src/ui/` |
-| Library page, toolbar popup, background script | `src/entrypoints/` |
+| Library page, welcome page, toolbar popup, background script | `src/entrypoints/` |
 
 ## Fixing a site that broke
 

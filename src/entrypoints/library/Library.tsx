@@ -11,6 +11,7 @@ import { siteLabel } from '../../core/sites';
 import { importMarks, loadAllMarks, removeMark, upsertMark, watchAllMarks } from '../../core/store';
 import { countTags, sameTag } from '../../core/tags';
 import { applyTheme, loadTheme, saveTheme, watchTheme, type Theme } from '../../core/theme';
+import { KonaMark } from '../../ui/KonaMark';
 import type { Mark } from '../../core/types';
 
 const THEMES: Array<{ value: Theme; label: string; icon: () => JSX.Element }> = [
@@ -134,6 +135,7 @@ export function Library() {
     <main class="lib">
       <header class="lib-header">
         <div class="lib-top">
+          <KonaMark size={22} />
           <h1>Your highlights</h1>
           <div class="lib-theme" role="group" aria-label="Appearance">
             {THEMES.map(({ value, label, icon: Icon }) => (
@@ -248,7 +250,7 @@ export function Library() {
           </h2>
           <ul>
             {group.marks.map((mark, index) => (
-              <li key={mark.id}>
+              <li key={mark.id} style={{ borderLeft: `3px solid ${HIGHLIGHT_COLORS[mark.color]}` }}>
                 <button class="lib-item" onClick={() => open(mark)} title="Open this page at the highlight">
                   <span class="lib-number" style={{ background: HIGHLIGHT_COLORS[mark.color] }}>
                     {index + 1}

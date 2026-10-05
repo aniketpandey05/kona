@@ -16,7 +16,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --lib-bg: #191a1c;
-    --lib-card: #232427;
+    --lib-card: #26272b;
     --lib-fg: #ececf1;
     --lib-muted: #a1a1aa;
     --lib-border: rgba(255, 255, 255, 0.1);
@@ -32,7 +32,7 @@
 /* Dark because the user chose it. */
 :root[data-theme='dark'] {
   --lib-bg: #191a1c;
-  --lib-card: #232427;
+  --lib-card: #26272b;
   --lib-fg: #ececf1;
   --lib-muted: #a1a1aa;
   --lib-border: rgba(255, 255, 255, 0.1);
@@ -53,7 +53,7 @@ body {
 }
 
 .lib {
-  max-width: 720px;
+  max-width: 780px;
   margin: 0 auto;
   padding: 36px 20px 80px;
 }
@@ -63,6 +63,10 @@ body {
   align-items: center;
   gap: 16px;
   margin-bottom: 18px;
+}
+
+.lib-top svg {
+  flex: none;
 }
 
 .lib-top h1 {
@@ -175,20 +179,20 @@ body {
 }
 
 .lib-tool {
-  padding: 5px 11px;
+  padding: 5px 10px;
   font: inherit;
   font-size: 13px;
   color: var(--lib-muted);
   background: none;
-  border: 1px solid var(--lib-border);
-  border-radius: 9px;
+  border: 0;
+  border-radius: 8px;
   cursor: pointer;
-  transition: color 0.12s ease, border-color 0.12s ease;
+  transition: color 0.12s ease, background 0.12s ease;
 }
 
 .lib-tool:hover:not(:disabled) {
   color: var(--lib-fg);
-  border-color: var(--lib-fg);
+  background: var(--lib-hover);
 }
 
 .lib-tool:disabled {
@@ -272,6 +276,8 @@ body {
 .lib-group li {
   display: flex;
   align-items: flex-start;
+  /* The left border is set per row to that highlight's colour. */
+  border-left: 3px solid transparent;
   transition: background 0.12s ease;
 }
 

@@ -667,3 +667,40 @@
   transform: translateX(-50%);
   animation: k-appear 0.12s ease-out;
 }
+
+/* Panel footer: a quiet reminder that the keyboard works. */
+
+.k-panel-footer {
+  flex: none;
+  display: flex;
+  gap: 14px;
+  padding: 7px 12px;
+  font-size: 11px;
+  color: var(--k-muted);
+  border-top: 1px solid var(--k-border);
+}
+
+.k-panel-footer span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.k-panel-footer kbd {
+  padding: 1px 4px;
+  font: inherit;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--k-fg);
+  background: var(--k-raised);
+  border: 1px solid var(--k-border);
+  border-radius: 4px;
+}
+
+.k-panel-footer kbd + kbd {
+  margin-left: -1px;
+}
+
+.k-panel-footer kbd:last-of-type {
+  margin-right: 3px;
+}

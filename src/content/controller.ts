@@ -162,6 +162,7 @@ export class KonaController {
     browser.runtime.onMessage.addListener((message) => {
       const request = message as RuntimeMessage;
       if (request.type === 'jump-to-mark') void this.jumpWhenReady(request.markId, request.conversationId);
+      if (request.type === 'highlight-selection') void this.highlightSelection();
     });
 
     this.theme = await loadTheme();
@@ -180,6 +181,17 @@ export class KonaController {
 
     await this.openConversation(new URL(location.href));
     void this.followRequestedJump();
+  }
+
+  /**
+   * Right-click → Highlight. The selection is still live when the menu fires, so
+   * this is the same path as the toolbar, minus the toolbar. It is the way in on
+   * sites whose own selection popup sits on top of ours.
+   */
+  async highlightSelection(): Promise<void> {
+    this.captureSelection();
+    if (!this.pending) return;
+    await this.highlight('yellow');
   }
 
   async highlight(color: HighlightColor, { withNote = false } = {}): Promise<void> {

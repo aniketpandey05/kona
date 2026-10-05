@@ -3,6 +3,7 @@ import type { KonaController, NoteCardState, SearchState, ViewState } from '../c
 import { HIGHLIGHT_COLORS } from '../core/painter';
 import { siteLabel } from '../core/sites';
 import { addTags, removeTag } from '../core/tags';
+import { KonaMark } from './KonaMark';
 import type { HighlightColor, Mark } from '../core/types';
 
 const COLORS = Object.keys(HIGHLIGHT_COLORS) as HighlightColor[];
@@ -249,7 +250,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
         aria-label={`Show highlights (${state.items.length})`}
         title="Kona"
       >
-        <BookmarkIcon />
+        <KonaMark size={15} />
         <span>{state.items.length}</span>
         {state.health === 'no-messages' && <span class="k-alert">!</span>}
       </button>
@@ -316,6 +317,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
   return (
     <section class="k-panel" aria-label="Highlights in this chat">
       <header class="k-panel-header">
+        <KonaMark size={15} />
         <span class="k-panel-title">Highlights</span>
         <span class="k-panel-count">{state.items.length}</span>
         <button
@@ -407,6 +409,19 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
           Can't find any messages on this page. The site may have changed its layout.
         </p>
       )}
+      {/* The shortcuts are worth nothing if nobody knows they exist. */}
+      <footer class="k-panel-footer">
+        <span>
+          <kbd>Alt</kbd>
+          <kbd>⇧</kbd>
+          <kbd>H</kbd> highlight
+        </span>
+        <span>
+          <kbd>Alt</kbd>
+          <kbd>⇧</kbd>
+          <kbd>↓</kbd> next
+        </span>
+      </footer>
     </section>
   );
 }
@@ -511,14 +526,6 @@ function dragOffset(drag: DragState, index: number): number {
   if (index > drag.from && index <= drag.over) return -drag.height;
   if (index < drag.from && index >= drag.over) return drag.height;
   return 0;
-}
-
-function BookmarkIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-    </svg>
-  );
 }
 
 function PencilIcon() {
