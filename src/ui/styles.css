@@ -704,3 +704,70 @@
 .k-panel-footer kbd:last-of-type {
   margin-right: 3px;
 }
+
+/* Narrow viewports: a floating card pinned to the right edge has nowhere to go
+   on a phone, so the panel becomes a sheet across the bottom instead. */
+@media (max-width: 560px) {
+  .k-panel {
+    right: 0;
+    left: 0;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    max-height: 62vh;
+    border-radius: var(--k-radius) var(--k-radius) 0 0;
+    border-bottom: 0;
+  }
+
+  .k-tab {
+    top: auto;
+    bottom: 76px;
+  }
+
+  .k-card-docked {
+    top: auto;
+    right: 8px;
+    left: 8px;
+    bottom: 8px;
+    width: auto;
+  }
+
+  .k-palette {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    transform: none;
+  }
+
+  .k-minimap {
+    display: none;
+  }
+}
+
+/* Touch: the colour dots are the main control and were sized for a cursor. */
+@media (pointer: coarse) {
+  .k-dot {
+    width: 28px;
+    height: 28px;
+  }
+
+  .k-toolbar {
+    gap: 10px;
+    padding: 9px 12px;
+  }
+
+  .k-icon-button,
+  .k-row-action {
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .k-grip {
+    opacity: 1;
+  }
+
+  /* No physical keyboard, no reason to advertise the shortcuts. */
+  .k-panel-footer {
+    display: none;
+  }
+}

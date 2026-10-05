@@ -72,9 +72,9 @@ body {
 .lib-top h1 {
   flex: 1;
   margin: 0;
-  font-size: 21px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  font-size: 24px;
+  font-weight: 660;
+  letter-spacing: -0.025em;
 }
 
 .lib-theme {
@@ -112,12 +112,14 @@ body {
 .lib-search {
   box-sizing: border-box;
   width: 100%;
-  padding: 10px 14px;
+  padding: 12px 14px 12px 40px;
   font: inherit;
   color: inherit;
-  background: var(--lib-card);
+  background: var(--lib-card)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b8b93' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E")
+    no-repeat 13px 50% / 16px 16px;
   border: 1px solid var(--lib-border);
-  border-radius: 11px;
+  border-radius: 12px;
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
@@ -161,9 +163,9 @@ body {
 }
 
 .lib-chip-on {
-  color: var(--lib-card);
-  background: var(--lib-fg);
-  border-color: var(--lib-fg);
+  color: #fff;
+  background: var(--lib-accent);
+  border-color: var(--lib-accent);
 }
 
 .lib-tools {
@@ -269,8 +271,20 @@ body {
   padding: 0;
   background: var(--lib-card);
   border: 1px solid var(--lib-border);
-  border-radius: 12px;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 6px 16px -8px rgba(16, 24, 40, 0.1);
   overflow: hidden;
+}
+
+/* On a dark page a soft grey shadow just looks like fog; deepen it. */
+:root[data-theme='dark'] .lib-group ul {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .lib-group ul {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
 }
 
 .lib-group li {
@@ -391,4 +405,80 @@ button:focus-visible,
 input:focus-visible {
   outline: 2px solid var(--lib-accent);
   outline-offset: 2px;
+}
+
+/* Narrow screens: the library is just a list, so let it use the full width and
+   stop the header competing with it. */
+@media (max-width: 640px) {
+  .lib {
+    padding: 20px 14px 64px;
+  }
+
+  .lib-top {
+    margin-bottom: 14px;
+  }
+
+  .lib-top h1 {
+    font-size: 20px;
+  }
+
+  .lib-tools {
+    flex-wrap: wrap;
+  }
+
+  .lib-count {
+    width: 100%;
+    margin: 0 0 4px;
+  }
+
+  .lib-group h2 {
+    flex-wrap: wrap;
+  }
+
+  .lib-when {
+    margin-left: 0;
+  }
+
+  /* Three full-width labels do not fit a phone; shrink them rather than wrap. */
+  .lib-tool {
+    font-size: 12px;
+    padding-inline: 8px;
+  }
+
+  /* Touch keeps the row actions on screen permanently, and side by side with
+     the quote they strangle it into a two-word column. Give them their own row. */
+  .lib-group li {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .lib-item {
+    flex: 1 1 100%;
+    padding-right: 13px;
+  }
+
+  .lib-action {
+    padding-block: 6px;
+  }
+}
+
+/* A finger is not a mouse: give every control a target it can actually hit,
+   and stop hiding the row actions behind hover, which never fires on touch. */
+@media (pointer: coarse) {
+  .lib-chip,
+  .lib-tool,
+  .lib-theme-button {
+    min-height: 40px;
+    padding-inline: 14px;
+  }
+
+  .lib-item {
+    padding-block: 14px;
+  }
+
+  .lib-action {
+    min-width: 44px;
+    min-height: 44px;
+    opacity: 1;
+  }
 }
