@@ -2,6 +2,7 @@ import { browser } from '#imports';
 import { useEffect, useState } from 'preact/hooks';
 import { loadDisabledSites, setSiteEnabled, watchDisabledSites } from '../../core/enabledSites';
 import type { RuntimeMessage } from '../../core/messages';
+import { KonaMark } from '../../ui/KonaMark';
 
 const BUILT_IN = [
   { host: 'chatgpt.com', label: 'ChatGPT' },
@@ -69,7 +70,10 @@ export function Popup() {
 
   return (
     <main class="pop">
-      <h1>Kona</h1>
+      <h1>
+        <KonaMark size={24} />
+        Kona
+      </h1>
 
       {!ready ? (
         <p class="pop-note">Loading…</p>

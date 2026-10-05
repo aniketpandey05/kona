@@ -55,22 +55,6 @@ body {
   font-size: 14px;
 }
 
-/* The mark from the toolbar icon: a page with its bottom-right corner turned up. */
-.pop h1::before {
-  content: '';
-  width: 16px;
-  height: 16px;
-  border-radius: 5px 5px 0 5px;
-  background:
-    linear-gradient(
-      315deg,
-      #fffbf0 0 38%,
-      rgba(124, 45, 10, 0.28) 38% 42%,
-      transparent 42%
-    ),
-    linear-gradient(135deg, #fbbf24, #ea580c);
-}
-
 .pop h2 {
   margin: 0 0 7px;
   font-size: 11px;
