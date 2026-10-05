@@ -4,6 +4,9 @@ import { defineConfig } from 'wxt';
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   srcDir: 'src',
+  // publicDir is resolved against the project root, not srcDir, so without this
+  // the icons sitting next to the source are silently left out of the build.
+  publicDir: 'src/public',
   manifest: {
     name: 'Kona',
     description: 'Highlight, note and bookmark anything you read, then jump back to it.',
