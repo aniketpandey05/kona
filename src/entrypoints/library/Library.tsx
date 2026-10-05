@@ -135,7 +135,7 @@ export function Library() {
     <main class="lib">
       <header class="lib-header">
         <div class="lib-top">
-          <KonaMark size={22} />
+          <KonaMark size={26} />
           <h1>Your highlights</h1>
           <div class="lib-theme" role="group" aria-label="Appearance">
             {THEMES.map(({ value, label, icon: Icon }) => (
