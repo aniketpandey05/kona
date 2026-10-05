@@ -14,7 +14,7 @@ import { buildTextIndex, spanFromRange, type TextIndex, type TextSpan } from '..
 import type { HighlightColor, Mark } from '../core/types';
 
 /** Tag name of the shadow-root host that holds all of our UI. */
-export const UI_TAG = 'chatmarks-ui';
+export const UI_TAG = 'kona-ui';
 
 // A chat page that still shows no messages after this long probably has a changed layout.
 const BROKEN_AFTER_MS = 5000;
@@ -30,7 +30,7 @@ const LOAD_OLDER_WAIT_MS = 400;
 const SEARCH_RESULTS = 8;
 const UNDO_MS = 7000;
 const MARK_HASH = '#bookmark=';
-// Approximate note card size, used to keep it on screen. Matches .cm-card in styles.css.
+// Approximate note card size, used to keep it on screen. Matches .k-card in styles.css.
 const CARD_WIDTH = 300;
 const CARD_HEIGHT = 200;
 const CARD_GAP = 8;
@@ -92,7 +92,7 @@ interface PendingSelection {
   span: TextSpan;
 }
 
-export class ChatmarksController {
+export class KonaController {
   private state: ViewState = {
     enabled: true,
     conversationId: null,

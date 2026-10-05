@@ -99,7 +99,7 @@ export function Library() {
   const download = (contents: string, type: string, extension: string) => {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(new Blob([contents], { type }));
-    link.download = `ai-bookmark-${new Date().toISOString().slice(0, 10)}.${extension}`;
+    link.download = `kona-${new Date().toISOString().slice(0, 10)}.${extension}`;
     link.click();
     URL.revokeObjectURL(link.href);
   };

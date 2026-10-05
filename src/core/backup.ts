@@ -1,14 +1,14 @@
 import type { Mark } from './types';
 
 export interface Backup {
-  app: 'ai-bookmark';
+  app: 'kona';
   version: 1;
   exportedAt: number;
   marks: Mark[];
 }
 
 export function createBackup(marks: readonly Mark[]): string {
-  const backup: Backup = { app: 'ai-bookmark', version: 1, exportedAt: Date.now(), marks: [...marks] };
+  const backup: Backup = { app: 'kona', version: 1, exportedAt: Date.now(), marks: [...marks] };
   return JSON.stringify(backup, null, 2);
 }
 

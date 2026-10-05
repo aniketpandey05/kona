@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import type { ChatmarksController, NoteCardState, SearchState, ViewState } from '../content/controller';
+import type { KonaController, NoteCardState, SearchState, ViewState } from '../content/controller';
 import { HIGHLIGHT_COLORS } from '../core/painter';
 import { siteLabel } from '../core/sites';
 import { addTags, removeTag } from '../core/tags';
@@ -15,7 +15,7 @@ const DRAG_SCROLL_EDGE = 28;
 const DRAG_SCROLL_STEP = 10;
 
 interface Props {
-  controller: ChatmarksController;
+  controller: KonaController;
 }
 
 export function App({ controller }: Props) {
@@ -23,7 +23,7 @@ export function App({ controller }: Props) {
   if (!state.enabled || !state.conversationId) return null;
   const cardMark = state.card && state.items.find((item) => item.mark.id === state.card?.markId)?.mark;
   return (
-    <div class={state.dark ? 'cm-root cm-dark' : 'cm-root'}>
+    <div class={state.dark ? 'k-root k-dark' : 'k-root'}>
       {state.selection && <SelectionToolbar selection={state.selection} controller={controller} />}
       <Panel state={state} controller={controller} />
       {state.card && cardMark && (
@@ -32,15 +32,15 @@ export function App({ controller }: Props) {
       <Minimap state={state} controller={controller} />
       {state.search && <SearchPalette search={state.search} controller={controller} />}
       {state.undo && (
-        <div class="cm-undo" role="status">
-          <span class="cm-undo-text">Deleted “{state.undo.label}”</span>
-          <button class="cm-undo-button" onClick={() => controller.undoDelete()}>
+        <div class="k-undo" role="status">
+          <span class="k-undo-text">Deleted “{state.undo.label}”</span>
+          <button class="k-undo-button" onClick={() => controller.undoDelete()}>
             Undo
           </button>
         </div>
       )}
       {state.notice && (
-        <div class="cm-notice" role="status">
+        <div class="k-notice" role="status">
           {state.notice}
         </div>
       )}
@@ -48,7 +48,7 @@ export function App({ controller }: Props) {
   );
 }
 
-function useViewState(controller: ChatmarksController): ViewState {
+function useViewState(controller: KonaController): ViewState {
   const [state, setState] = useState(controller.getState());
   useEffect(() => {
     setState(controller.getState());
@@ -67,28 +67,28 @@ function SelectionToolbar({
     : Math.max(TOOLBAR_GAP, selection.top - TOOLBAR_HEIGHT - TOOLBAR_GAP);
   return (
     <div
-      class="cm-toolbar"
+      class="k-toolbar"
       style={{ top: `${top}px`, left: `${selection.left}px` }}
       // Keep the page's text selection alive while the toolbar is clicked.
       onMouseDown={(event) => event.preventDefault()}
     >
       {selection.streaming ? (
-        <span class="cm-toolbar-note">Wait for the reply to finish</span>
+        <span class="k-toolbar-note">Wait for the reply to finish</span>
       ) : (
         <>
           {COLORS.map((color) => (
             <button
               key={color}
-              class="cm-dot"
+              class="k-dot"
               style={{ background: HIGHLIGHT_COLORS[color] }}
               aria-label={`Highlight in ${color}`}
               title={color === 'yellow' ? 'Highlight (Alt+Shift+H)' : 'Highlight'}
               onClick={() => void controller.highlight(color)}
             />
           ))}
-          <span class="cm-divider" />
+          <span class="k-divider" />
           <button
-            class="cm-icon-button"
+            class="k-icon-button"
             aria-label="Highlight and add a note"
             title="Highlight and add a note (Alt+Shift+N)"
             onClick={() => void controller.highlight('yellow', { withNote: true })}
@@ -145,18 +145,18 @@ function NoteCard({ card, mark, controller }: Props & { card: NoteCardState; mar
   return (
     <div
       ref={cardRef}
-      class={card.position ? 'cm-card' : 'cm-card cm-card-docked'}
+      class={card.position ? 'k-card' : 'k-card k-card-docked'}
       style={card.position ? { top: `${card.position.top}px`, left: `${card.position.left}px` } : undefined}
       role="dialog"
       aria-label="Highlight note"
       onKeyDown={onKeyDown}
     >
-      <div class="cm-card-header">
-        <div class="cm-card-colors">
+      <div class="k-card-header">
+        <div class="k-card-colors">
           {COLORS.map((color) => (
             <button
               key={color}
-              class={color === mark.color ? 'cm-dot cm-dot-active' : 'cm-dot'}
+              class={color === mark.color ? 'k-dot k-dot-active' : 'k-dot'}
               style={{ background: HIGHLIGHT_COLORS[color] }}
               aria-label={`Change color to ${color}`}
               aria-pressed={color === mark.color}
@@ -164,15 +164,15 @@ function NoteCard({ card, mark, controller }: Props & { card: NoteCardState; mar
             />
           ))}
         </div>
-        <button class="cm-text-button cm-danger" onClick={() => void controller.remove(mark.id)}>
+        <button class="k-text-button k-danger" onClick={() => void controller.remove(mark.id)}>
           Delete
         </button>
       </div>
       {/* Without a highlight on screen to sit next to, show what the note is about. */}
-      {!card.position && <p class="cm-card-quote">{mark.snapshot}</p>}
+      {!card.position && <p class="k-card-quote">{mark.snapshot}</p>}
       <textarea
         ref={textareaRef}
-        class="cm-textarea"
+        class="k-textarea"
         value={note}
         maxLength={MAX_NOTE_LENGTH}
         rows={3}
@@ -180,11 +180,11 @@ function NoteCard({ card, mark, controller }: Props & { card: NoteCardState; mar
         aria-label="Note"
         onInput={(event) => setNote(event.currentTarget.value)}
       />
-      <div class="cm-tags">
+      <div class="k-tags">
         {tags.map((tag) => (
           <button
             key={tag}
-            class="cm-tag"
+            class="k-tag"
             title={`Remove "${tag}"`}
             onClick={() => void controller.updateMark(mark.id, { tags: removeTag(tags, tag) })}
           >
@@ -193,7 +193,7 @@ function NoteCard({ card, mark, controller }: Props & { card: NoteCardState; mar
         ))}
         <input
           ref={tagInputRef}
-          class="cm-tag-input"
+          class="k-tag-input"
           type="text"
           placeholder={tags.length ? 'Add another tag…' : 'Add a tag…'}
           aria-label="Add a tag"
@@ -205,9 +205,9 @@ function NoteCard({ card, mark, controller }: Props & { card: NoteCardState; mar
           }}
         />
       </div>
-      <div class="cm-card-footer">
-        <span class="cm-hint">Ctrl+Enter to save · Esc to cancel</span>
-        <button class="cm-primary-button" onClick={save}>
+      <div class="k-card-footer">
+        <span class="k-hint">Ctrl+Enter to save · Esc to cancel</span>
+        <button class="k-primary-button" onClick={save}>
           Save
         </button>
       </div>
@@ -244,14 +244,14 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
   if (!open) {
     return (
       <button
-        class="cm-tab"
+        class="k-tab"
         onClick={() => setOpen(true)}
         aria-label={`Show highlights (${state.items.length})`}
-        title="AI Bookmark"
+        title="Kona"
       >
         <BookmarkIcon />
         <span>{state.items.length}</span>
-        {state.health === 'no-messages' && <span class="cm-alert">!</span>}
+        {state.health === 'no-messages' && <span class="k-alert">!</span>}
       </button>
     );
   }
@@ -314,12 +314,12 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
   };
 
   return (
-    <section class="cm-panel" aria-label="Highlights in this chat">
-      <header class="cm-panel-header">
-        <span class="cm-panel-title">Highlights</span>
-        <span class="cm-panel-count">{state.items.length}</span>
+    <section class="k-panel" aria-label="Highlights in this chat">
+      <header class="k-panel-header">
+        <span class="k-panel-title">Highlights</span>
+        <span class="k-panel-count">{state.items.length}</span>
         <button
-          class="cm-icon-button"
+          class="k-icon-button"
           onClick={() => void controller.openSearch()}
           aria-label="Search all my highlights"
           title="Search everything (Alt+Shift+F)"
@@ -327,21 +327,21 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
           <SearchIcon />
         </button>
         <button
-          class="cm-icon-button"
+          class="k-icon-button"
           onClick={() => controller.openLibrary()}
           aria-label="Open all my highlights"
           title="All my highlights"
         >
           <LibraryIcon />
         </button>
-        <button class="cm-icon-button" onClick={close} aria-label="Close panel" title="Close">
+        <button class="k-icon-button" onClick={close} aria-label="Close panel" title="Close">
           ✕
         </button>
       </header>
       {state.items.length === 0 ? (
-        <p class="cm-empty">Select text in any message to highlight it.</p>
+        <p class="k-empty">Select text in any message to highlight it.</p>
       ) : (
-        <ul ref={listRef} class={drag ? 'cm-list cm-list-dragging' : 'cm-list'}>
+        <ul ref={listRef} class={drag ? 'k-list k-list-dragging' : 'k-list'}>
           {state.items.map(({ mark, found }, index) => (
             <li
               key={mark.id}
@@ -351,7 +351,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
               onPointerLeave={() => !drag && controller.preview(null)}
             >
               <button
-                class="cm-grip"
+                class="k-grip"
                 data-grip={mark.id}
                 aria-label={`Move highlight ${index + 1} with the up and down arrow keys`}
                 title="Drag to reorder"
@@ -363,27 +363,27 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
               >
                 <GripIcon />
               </button>
-              <button class="cm-item" onClick={() => controller.jump(mark.id)}>
-                <span class="cm-number" style={{ background: HIGHLIGHT_COLORS[mark.color] }}>
+              <button class="k-item" onClick={() => controller.jump(mark.id)}>
+                <span class="k-number" style={{ background: HIGHLIGHT_COLORS[mark.color] }}>
                   {index + 1}
                 </span>
-                <span class="cm-item-body">
-                  <span class="cm-text">{mark.label || mark.snapshot}</span>
-                  {mark.note && <span class="cm-note">{mark.note}</span>}
+                <span class="k-item-body">
+                  <span class="k-text">{mark.label || mark.snapshot}</span>
+                  {mark.note && <span class="k-note">{mark.note}</span>}
                   {!!mark.tags?.length && (
-                    <span class="cm-row-tags">
+                    <span class="k-row-tags">
                       {mark.tags.map((tag) => (
-                        <span class="cm-tag-chip" key={tag}>
+                        <span class="k-tag-chip" key={tag}>
                           {tag}
                         </span>
                       ))}
                     </span>
                   )}
                 </span>
-                {!found && <span class="cm-badge">not found</span>}
+                {!found && <span class="k-badge">not found</span>}
               </button>
               <button
-                class="cm-row-action"
+                class="k-row-action"
                 onClick={() => controller.editNote(mark.id)}
                 aria-label={mark.note ? 'Edit note' : 'Add note'}
                 title={mark.note ? 'Edit note' : 'Add note'}
@@ -391,7 +391,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
                 <PencilIcon />
               </button>
               <button
-                class="cm-row-action"
+                class="k-row-action"
                 onClick={() => void controller.remove(mark.id)}
                 aria-label="Delete highlight"
                 title="Delete highlight"
@@ -403,7 +403,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
         </ul>
       )}
       {state.health === 'no-messages' && (
-        <p class="cm-warning">
+        <p class="k-warning">
           Can't find any messages on this page. The site may have changed its layout.
         </p>
       )}
@@ -415,17 +415,17 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
 function Minimap({ state, controller }: Props & { state: ViewState }) {
   if (state.ticks.length === 0) return null;
   return (
-    <div class="cm-minimap" aria-label="Highlights on this page">
+    <div class="k-minimap" aria-label="Highlights on this page">
       {state.viewport && (
         <span
-          class="cm-minimap-view"
+          class="k-minimap-view"
           style={{ top: `${state.viewport.top * 100}%`, height: `${state.viewport.height * 100}%` }}
         />
       )}
       {state.ticks.map((tick) => (
         <button
           key={tick.id}
-          class="cm-tick"
+          class="k-tick"
           style={{ top: `${tick.at * 100}%`, background: HIGHLIGHT_COLORS[tick.color] }}
           title={tick.label}
           aria-label={`Go to highlight: ${tick.label}`}
@@ -458,15 +458,15 @@ function SearchPalette({ search, controller }: Props & { search: SearchState }) 
 
   return (
     <div
-      class="cm-backdrop"
+      class="k-backdrop"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) controller.closeSearch();
       }}
     >
-      <div class="cm-palette" role="dialog" aria-label="Search your highlights" onKeyDown={onKeyDown}>
+      <div class="k-palette" role="dialog" aria-label="Search your highlights" onKeyDown={onKeyDown}>
         <input
           ref={inputRef}
-          class="cm-palette-input"
+          class="k-palette-input"
           type="text"
           value={search.query}
           placeholder="Search everything you've highlighted…"
@@ -474,35 +474,35 @@ function SearchPalette({ search, controller }: Props & { search: SearchState }) 
           onInput={(event) => controller.searchFor(event.currentTarget.value)}
         />
         {search.results.length === 0 ? (
-          <p class="cm-empty">Nothing matches that.</p>
+          <p class="k-empty">Nothing matches that.</p>
         ) : (
-          <ul class="cm-palette-list">
+          <ul class="k-palette-list">
             {search.results.map((mark, index) => (
               <li key={mark.id}>
                 <button
-                  class={index === search.active ? 'cm-palette-item cm-palette-on' : 'cm-palette-item'}
+                  class={index === search.active ? 'k-palette-item k-palette-on' : 'k-palette-item'}
                   onMouseEnter={() => controller.moveSearchTo(index)}
                   onClick={() => controller.openSearchResult(mark)}
                 >
-                  <span class="cm-palette-site">{siteLabel(mark)}</span>
-                  <span class="cm-item-body">
-                    <span class="cm-text">{mark.snapshot}</span>
-                    {mark.note && <span class="cm-note">{mark.note}</span>}
+                  <span class="k-palette-site">{siteLabel(mark)}</span>
+                  <span class="k-item-body">
+                    <span class="k-text">{mark.snapshot}</span>
+                    {mark.note && <span class="k-note">{mark.note}</span>}
                   </span>
-                  <span class="cm-palette-chat">{mark.conversationTitle}</span>
+                  <span class="k-palette-chat">{mark.conversationTitle}</span>
                 </button>
               </li>
             ))}
           </ul>
         )}
-        <p class="cm-palette-footer">↑↓ to choose · Enter to open · Esc to close</p>
+        <p class="k-palette-footer">↑↓ to choose · Enter to open · Esc to close</p>
       </div>
     </div>
   );
 }
 
 function rowClass(found: boolean, dragging: boolean): string | undefined {
-  return [!found && 'cm-missing', dragging && 'cm-dragging'].filter(Boolean).join(' ') || undefined;
+  return [!found && 'k-missing', dragging && 'k-dragging'].filter(Boolean).join(' ') || undefined;
 }
 
 /** How far an entry shifts while another entry is dragged past it. */

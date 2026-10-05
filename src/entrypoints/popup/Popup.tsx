@@ -69,7 +69,7 @@ export function Popup() {
 
   return (
     <main class="pop">
-      <h1>AI Bookmark</h1>
+      <h1>Kona</h1>
 
       {!ready ? (
         <p class="pop-note">Loading…</p>

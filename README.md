@@ -1,6 +1,8 @@
-# AI Bookmark
+# Kona
 
 Highlight anything you read — AI chats or ordinary web pages — add a note, and find it again in one click. Everything stays on your computer.
+
+*कोना — "corner". The folded one you leave in a page so you can find your way back.*
 
 > **Status:** early prototype, not in the Chrome Web Store yet. Install it yourself with the steps below.
 
@@ -58,7 +60,7 @@ npm run build
 
 Then open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and choose `.output/chrome-mv3`. Works in Chrome, Edge and Brave.
 
-Open a chat on chatgpt.com, claude.ai or gemini.google.com and select some text. For any other site, click the AI Bookmark button in the toolbar and switch that site on; Chrome will ask you to allow it.
+Open a chat on chatgpt.com, claude.ai or gemini.google.com and select some text. For any other site, click the Kona button in the toolbar and switch that site on; Chrome will ask you to allow it.
 
 ## Keyboard shortcuts
 

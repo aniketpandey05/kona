@@ -5,15 +5,15 @@ import { HighlightPainter } from '../core/painter';
 import { App } from '../ui/App';
 // Bundled as text so the styles travel with the script, even on sites registered at runtime.
 import styles from '../ui/styles.css?inline';
-import { ChatmarksController, UI_TAG } from './controller';
+import { KonaController, UI_TAG } from './controller';
 
-export async function mountChatmarks(ctx: ContentScriptContext, adapter: SiteAdapter): Promise<void> {
+export async function mountKona(ctx: ContentScriptContext, adapter: SiteAdapter): Promise<void> {
   if (!HighlightPainter.isSupported()) {
-    console.warn('[ai-bookmark] This browser does not support the CSS Custom Highlight API.');
+    console.warn('[kona] This browser does not support the CSS Custom Highlight API.');
     return;
   }
 
-  const controller = new ChatmarksController(ctx, adapter);
+  const controller = new KonaController(ctx, adapter);
   const ui = await createShadowRootUi(ctx, {
     name: UI_TAG,
     position: 'inline',

@@ -5,7 +5,7 @@ import { defineConfig } from 'wxt';
 export default defineConfig({
   srcDir: 'src',
   manifest: {
-    name: 'AI Bookmark',
+    name: 'Kona',
     description: 'Highlight, note and bookmark anything you read, then jump back to it.',
     // "activeTab" lets the popup see which page you're on when you click the icon, and nothing more.
     // "scripting" lets the extension start highlighting on a site right after you allow it.
@@ -13,7 +13,7 @@ export default defineConfig({
     // The chat sites work out of the box; any other site is allowed one at a time from the popup.
     host_permissions: ['https://chatgpt.com/*', 'https://claude.ai/*', 'https://gemini.google.com/*'],
     optional_host_permissions: ['*://*/*'],
-    action: { default_title: 'AI Bookmark' },
+    action: { default_title: 'Kona' },
   },
   // Hot refresh doesn't work inside content scripts, so leave it off.
   vite: () => ({ plugins: [preact({ prefreshEnabled: false })] }),

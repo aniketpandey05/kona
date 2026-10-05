@@ -18,7 +18,7 @@ export interface TextSpan {
 
 // Text inside these is page chrome, not message content.
 export const DEFAULT_SKIP =
-  'button, svg, script, style, textarea, [aria-hidden="true"], .sr-only, [data-chatmarks-ui]';
+  'button, svg, script, style, textarea, [aria-hidden="true"], .sr-only, [data-kona-ui]';
 
 export function buildTextIndex(root: Element, skip: string = DEFAULT_SKIP): TextIndex {
   const nodes: Text[] = [];

@@ -7,9 +7,9 @@ export const HIGHLIGHT_COLORS: Record<HighlightColor, string> = {
   pink: 'rgba(244, 114, 182, 0.40)',
 };
 
-const FLASH = 'chatmarks-flash';
-const NOTED = 'chatmarks-noted';
-const layerName = (color: HighlightColor) => `chatmarks-${color}`;
+const FLASH = 'kona-flash';
+const NOTED = 'kona-noted';
+const layerName = (color: HighlightColor) => `kona-${color}`;
 
 export interface PaintEntry {
   color: HighlightColor;
@@ -36,7 +36,7 @@ export class HighlightPainter {
   constructor(doc: Document = document) {
     const colors = Object.keys(HIGHLIGHT_COLORS) as HighlightColor[];
     this.style = doc.createElement('style');
-    this.style.setAttribute('data-chatmarks-ui', '');
+    this.style.setAttribute('data-kona-ui', '');
     this.style.textContent = [
       // Dark text on every highlight, so pale colors stay readable on dark pages and in code blocks.
       ...colors.map(
