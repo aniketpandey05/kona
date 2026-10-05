@@ -19,9 +19,10 @@ const LEFT_FACETS = [
   '38,46 50,42 50,66 34,62', // upper face — wide at the brow so the skull has shape
   '34,62 50,66 50,86 42,80', // lower face
   '42,80 50,86 50,99', // muzzle
-  '36.6,52 17,50 15,59 34.6,61', // ear, out to the side so it never reads as more antler
-  '46,43.5 36,24 26,3 31,27 40.5,45.5', // antler beam, tapering to a point
-  '33.6,32 13,19 36.6,38', // tine, angled up away from the ear below it
+  '36.6,52 16,51 14,58 34.6,61', // ear, out to the side so it never reads as more antler
+  '45,45 19,10 41,42', // antler beam, sweeping out and up off the skull
+  '36.5,34.5 34,8 33.6,30.4', // inner tine, rising vertically off the beam
+  '30.3,25.7 26,3 27.4,21.7', // outer tine
 ] as const;
 
 const mirror = (points: string) =>
