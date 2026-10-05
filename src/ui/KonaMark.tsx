@@ -16,12 +16,12 @@ import type { JSX } from 'preact';
  * with its neighbour — so a seam is drawn once rather than twice over itself.
  */
 const LEFT_FACETS = [
-  '41,47 50,44 50,68 36,60', // upper face
-  '36,60 50,68 50,88 43,82', // lower face
-  '43,82 50,88 50,99', // muzzle
-  '38.5,54 19,47 14,59 36,60', // ear, hung off the face edge
-  '47,45 34,22 25,4 17,8 30,26 42,46.8', // antler beam, based on the skull edge
-  '32,29 12,24 9,33 36,37', // tine, based on the beam edge
+  '38,46 50,42 50,66 34,62', // upper face — wide at the brow so the skull has shape
+  '34,62 50,66 50,86 42,80', // lower face
+  '42,80 50,86 50,98 45,96', // muzzle, cut off square rather than tapered to a point
+  '36.6,52 19,49 16,63 34.6,61', // ear, out to the side so it never reads as more antler
+  '46,43.5 36,24 30,6 22,8 31,27 40.5,45.5', // antler beam, based on the skull edge
+  '33.6,32 18,18 13,26 36.6,38', // tine, angled up away from the ear below it
 ] as const;
 
 const mirror = (points: string) =>
