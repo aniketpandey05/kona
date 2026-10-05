@@ -18,10 +18,10 @@ import type { JSX } from 'preact';
 const LEFT_FACETS = [
   '38,46 50,42 50,66 34,62', // upper face — wide at the brow so the skull has shape
   '34,62 50,66 50,86 42,80', // lower face
-  '42,80 50,86 50,98 45,96', // muzzle, cut off square rather than tapered to a point
-  '36.6,52 19,49 16,63 34.6,61', // ear, out to the side so it never reads as more antler
-  '46,43.5 36,24 30,6 22,8 31,27 40.5,45.5', // antler beam, based on the skull edge
-  '33.6,32 18,18 13,26 36.6,38', // tine, angled up away from the ear below it
+  '42,80 50,86 50,99', // muzzle
+  '36.6,52 17,50 15,59 34.6,61', // ear, out to the side so it never reads as more antler
+  '46,43.5 36,24 26,3 31,27 40.5,45.5', // antler beam, tapering to a point
+  '33.6,32 13,19 36.6,38', // tine, angled up away from the ear below it
 ] as const;
 
 const mirror = (points: string) =>
@@ -62,8 +62,9 @@ export function KonaMark({ size = 20 }: { size?: number }): JSX.Element {
                 points={points}
                 fill="none"
                 stroke="#fff6e4"
-                stroke-width="4.5"
-                stroke-linejoin="round"
+                stroke-width="4.2"
+                stroke-linejoin="miter"
+                stroke-miterlimit="4"
               />
             ) : (
               <polygon key={points} points={points} fill="#fff6e4" />
