@@ -80,7 +80,14 @@ npm run build:app   # a static site in .output/app
 ```
 
 Serve `.output/app` over HTTPS — GitHub Pages is enough — open it on your phone and use
-*Add to Home screen*. Sharing only appears once it is installed.
+*Add to Home screen*. Android installs it as a real app: its own icon in the drawer, its
+own window, its own entry in Settings. **Sharing only appears once it is installed**, which
+is the step people miss.
+
+To hand it to someone as a file instead, [Bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap)
+wraps the same site in an APK they can download and sideload. The Play Store takes that
+APK too, for a one-off $25 developer account — though new personal accounts have to run a
+closed test with 12 testers for 14 days before they are allowed to publish.
 
 It keeps its own highlights, separate from the desktop ones; nothing syncs between them.
 The backup file is the same format in both, so you can carry highlights across by hand.
