@@ -19,7 +19,12 @@ export interface Mark {
   conversationId: string;
   conversationTitle: string;
   url: string;
-  message: MessageAnchor;
+  /**
+   * Where in a conversation this was marked. Absent for anything captured
+   * outside a page we were running in — a quote shared from a phone has no
+   * message to anchor to, only its own text.
+   */
+  message?: MessageAnchor;
   /** The highlighted passage; absent when the whole message is marked. */
   quote?: TextQuote;
   label: string;

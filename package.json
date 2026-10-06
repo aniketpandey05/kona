@@ -13,7 +13,9 @@
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare",
-    "test": "vitest run"
+    "test": "vitest run",
+    "dev:app": "vite --config app/vite.config.ts",
+    "build:app": "vite build --config app/vite.config.ts"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",

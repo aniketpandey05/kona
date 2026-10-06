@@ -27,7 +27,8 @@ Highlight anything you read — AI chats or ordinary web pages — add a note, a
 - `Alt+Shift+F` opens a search box over everything you've saved, right on the page you're reading. Picking a result from another chat opens it there.
 - One library holds every highlight from every site, labelled with where it came from, filterable by site and searchable by text, note, chat name or site.
 - Clicking a highlight opens that page and scrolls straight to it, re-using the tab if it's already open.
-- Every highlight has a copyable link that lands on the exact spot.
+- Every highlight has a copyable link that lands on the exact spot. It is an ordinary URL
+  text fragment, so it works for people who don't have Kona, and on a phone.
 - Filter by tag as well as by site, and search covers tags too.
 - Export what you're looking at as Markdown — one section per chat, with your notes, tags and a link back — which drops straight into Obsidian or Notion.
 - Export a backup file of everything and import it on another computer.
@@ -63,6 +64,28 @@ Then open `chrome://extensions`, turn on **Developer mode**, click **Load unpack
 
 Open a chat on chatgpt.com, claude.ai or gemini.google.com and select some text. For any other site, click the Kona button in the toolbar and switch that site on; Chrome will ask you to allow it.
 
+## On a phone (Android)
+
+Chrome on Android has no extensions, and Google has not said it ever will. So the phone
+version is a small installable web app instead of an extension, in `app/`.
+
+Select text anywhere on the phone — a browser, Reddit, a PDF reader — tap **Share**, pick
+**Kona**, and the passage is kept with its page and title. Add a note and tags, search
+everything later, and **Open original** takes you back to the exact sentence using a URL
+text fragment, which every modern browser understands without anything installed.
+
+```bash
+npm run dev:app     # http://localhost:5179
+npm run build:app   # a static site in .output/app
+```
+
+Serve `.output/app` over HTTPS — GitHub Pages is enough — open it on your phone and use
+*Add to Home screen*. Sharing only appears once it is installed.
+
+It keeps its own highlights, separate from the desktop ones; nothing syncs between them.
+The backup file is the same format in both, so you can carry highlights across by hand.
+iPhone is not supported: Safari does not let a web app register as a share target.
+
 ## Keyboard shortcuts
 
 | Keys | What happens |
@@ -97,7 +120,8 @@ npm run build     # production build in .output/chrome-mv3
 | Storing a highlight as quote + surrounding context, and finding it again | `src/core/quote.ts` |
 | Finding the right message by id, fingerprint or nearby position | `src/core/locate.ts` |
 | Painting highlights with the CSS Custom Highlight API, without touching the page | `src/core/painter.ts` |
-| Panel order, search, backups | `src/core/order.ts`, `search.ts`, `backup.ts` |
+| Panel order, search, backups, deep links | `src/core/order.ts`, `search.ts`, `backup.ts`, `link.ts` |
+| The Android web app — shares `src/core` with the extension | `app/` |
 | Page logic: selection, navigation, jumping, storage | `src/content/controller.ts` |
 | Panel, toolbar and note card (Preact, in a shadow root) | `src/ui/` |
 | Library page, welcome page, toolbar popup, background script | `src/entrypoints/` |

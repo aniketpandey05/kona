@@ -1,0 +1,21 @@
+{
+  "name": "Kona",
+  "short_name": "Kona",
+  "description": "Keep the passages worth keeping, and your notes on them.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#191a1c",
+  "theme_color": "#ea580c",
+  "icons": [
+    { "src": "icon/48.png", "sizes": "48x48", "type": "image/png" },
+    { "src": "icon/96.png", "sizes": "96x96", "type": "image/png" },
+    { "src": "icon/128.png", "sizes": "128x128", "type": "image/png", "purpose": "any" }
+  ],
+  "share_target": {
+    "action": "./",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  }
+}

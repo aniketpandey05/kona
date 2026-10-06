@@ -2,6 +2,7 @@ import { browser } from '#imports';
 import type { JSX } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { createBackup, readBackup } from '../../core/backup';
+import { linkToMark } from '../../core/link';
 import { toMarkdown } from '../../core/markdown';
 import type { RuntimeMessage } from '../../core/messages';
 import { sortByOrder } from '../../core/order';
@@ -78,7 +79,7 @@ export function Library() {
   };
 
   const copyLink = async (mark: Mark) => {
-    await navigator.clipboard.writeText(linkTo(mark));
+    await navigator.clipboard.writeText(linkToMark(mark));
     setCopiedId(mark.id);
     setTimeout(() => setCopiedId((id) => (id === mark.id ? null : id)), 1500);
   };
@@ -289,12 +290,6 @@ export function Library() {
 }
 
 /** A link that opens the page and jumps to the highlight; without the extension it just opens the page. */
-function linkTo(mark: Mark): string {
-  const url = new URL(mark.url);
-  url.hash = `bookmark=${mark.id}`;
-  return url.toString();
-}
-
 function countBySite(marks: Mark[]): Array<[string, number]> {
   const counts = new Map<string, number>();
   for (const mark of marks) {

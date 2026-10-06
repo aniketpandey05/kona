@@ -1,0 +1,393 @@
+/* Mobile first and mobile only: this is built for a phone held in one hand. */
+:root {
+  --bg: #f7f7f8;
+  --card: #ffffff;
+  --fg: #16181d;
+  --muted: #5f6672;
+  --border: rgba(16, 24, 40, 0.1);
+  --hover: rgba(16, 24, 40, 0.04);
+  --accent: #ea580c;
+  --danger: #dc2626;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #191a1c;
+    --card: #26272b;
+    --fg: #ececf1;
+    --muted: #a8a8b3;
+    --border: rgba(255, 255, 255, 0.11);
+    --hover: rgba(255, 255, 255, 0.06);
+    --accent: #fb923c;
+    --danger: #f87171;
+    color-scheme: dark;
+  }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.55 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 680px;
+  margin: 0 auto;
+  /* Keep clear of the notch and the home indicator. */
+  padding: max(16px, env(safe-area-inset-top)) 14px calc(32px + env(safe-area-inset-bottom));
+}
+
+.app-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.app-top h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 660;
+  letter-spacing: -0.02em;
+}
+
+.app-tool {
+  min-height: 40px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.app-tool:disabled {
+  opacity: 0.45;
+}
+
+.app-tool:active:not(:disabled) {
+  background: var(--hover);
+}
+
+.app-search {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 13px 14px;
+  font: inherit;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.app-search:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.app-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.app-chip {
+  min-height: 36px;
+  padding: 0 13px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.app-chip-on {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.app-notice {
+  margin: 12px 2px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.app-undo {
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.app-empty {
+  margin: 56px 0;
+  text-align: center;
+  color: var(--muted);
+}
+
+.app-hint {
+  max-width: 28ch;
+  margin: 6px auto 0;
+  font-size: 14px;
+  text-wrap: balance;
+}
+
+.app-group {
+  margin-top: 24px;
+}
+
+.app-group h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 4px 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.app-site {
+  flex: none;
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.app-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.app-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.app-group li + li {
+  border-top: 1px solid var(--border);
+}
+
+.app-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 14px 15px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-left: 3px solid var(--accent);
+  cursor: pointer;
+}
+
+.app-item:active {
+  background: var(--hover);
+}
+
+.app-text {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+.app-note {
+  font-size: 14px;
+  color: var(--muted);
+  white-space: pre-wrap;
+}
+
+.app-note::before {
+  content: '✎ ';
+}
+
+.app-row-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 3px;
+}
+
+.app-tag {
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--hover);
+  border: 0;
+  border-radius: 999px;
+}
+
+.app-markdown {
+  width: 100%;
+  margin-top: 28px;
+  padding: 13px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--bg);
+  background: var(--fg);
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* The editor comes up from the bottom, where a thumb already is. */
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.app-sheet {
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 86vh;
+  overflow-y: auto;
+  padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  background: var(--bg);
+  border-radius: 18px 18px 0 0;
+  animation: rise 0.16s ease-out;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(14px);
+  }
+}
+
+.app-quote {
+  margin: 0 0 16px;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+  color: var(--fg);
+  word-break: break-word;
+}
+
+.app-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.app-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 11px 12px;
+  font: inherit;
+  color: var(--fg);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  resize: vertical;
+}
+
+.app-textarea:focus,
+.app-taginput:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.app-tagrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.app-tag-x {
+  cursor: pointer;
+}
+
+.app-taginput {
+  flex: 1;
+  min-width: 110px;
+  padding: 9px 10px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--fg);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.app-sheet-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-danger,
+.app-open,
+.app-save {
+  min-height: 46px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  font: inherit;
+  font-size: 15px;
+  border-radius: 11px;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.app-danger {
+  color: var(--danger);
+  background: none;
+}
+
+.app-open {
+  margin-left: auto;
+  color: var(--fg);
+  background: var(--hover);
+}
+
+.app-save {
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

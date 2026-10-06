@@ -52,6 +52,8 @@ function resolveMark(
   indexOf: (message: MessageRef) => TextIndex,
 ): ResolvedMark | null {
   const anchor = mark.message;
+  // Nothing to place on this page if it was never anchored to a message.
+  if (!anchor) return null;
   const byId = anchor.messageId
     ? messages.find((m) => m.messageId === anchor.messageId)
     : undefined;
