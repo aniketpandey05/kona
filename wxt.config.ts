@@ -4,6 +4,10 @@ import { defineConfig } from 'wxt';
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   srcDir: 'src',
+  // WXT builds Firefox as MV2 by default, which silently drops
+  // optional_host_permissions — and with it the whole "switch this site on"
+  // flow, since every site but the three built-in ones is granted that way.
+  manifestVersion: 3,
   // publicDir is resolved against the project root, not srcDir, so without this
   // the icons sitting next to the source are silently left out of the build.
   publicDir: 'src/public',

@@ -42,6 +42,8 @@ export class HighlightPainter {
       ...colors.map(
         (c) => `::highlight(${layerName(c)}) { background-color: ${HIGHLIGHT_COLORS[c]}; color: #16181d; }`,
       ),
+      // Firefox does not apply text-decoration inside ::highlight(), so a noted
+      // highlight simply looks unmarked there. The panel still shows the note.
       `::highlight(${NOTED}) { text-decoration: underline dotted rgba(234, 88, 12, 0.9); text-decoration-thickness: 2px; }`,
       `::highlight(${FLASH}) { background-color: rgba(249, 115, 22, 0.85); color: #16181d; }`,
     ].join('\n');
