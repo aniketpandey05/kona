@@ -11,7 +11,7 @@ export default defineConfig({
   // publicDir is resolved against the project root, not srcDir, so without this
   // the icons sitting next to the source are silently left out of the build.
   publicDir: 'src/public',
-  manifest: {
+  manifest: ({ browser }) => ({
     name: 'Kona',
     description: 'Highlight, note and bookmark anything you read, then jump back to it.',
     // "activeTab" lets the popup see which page you're on when you click the icon, and nothing more.
@@ -21,7 +21,17 @@ export default defineConfig({
     host_permissions: ['https://chatgpt.com/*', 'https://claude.ai/*', 'https://gemini.google.com/*'],
     optional_host_permissions: ['*://*/*'],
     action: { default_title: 'Kona' },
-  },
+    // Firefox needs an explicit add-on id to be submitted, and a floor: the CSS
+    // Custom Highlight API that paints every highlight only arrived in 140, so
+    // below that Kona would install and then quietly fail to draw anything.
+    ...(browser === 'firefox'
+      ? {
+          browser_specific_settings: {
+            gecko: { id: 'kona@aniketpandey05.github.io', strict_min_version: '140.0' },
+          },
+        }
+      : {}),
+  }),
   // Hot refresh doesn't work inside content scripts, so leave it off.
   vite: () => ({ plugins: [preact({ prefreshEnabled: false })] }),
 });
