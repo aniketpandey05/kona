@@ -79,7 +79,8 @@ npm run dev:app     # http://localhost:5179
 npm run build:app   # a static site in .output/app
 ```
 
-Serve `.output/app` over HTTPS — GitHub Pages is enough — open it on your phone and use
+Every push publishes it to GitHub Pages, so it lives at
+**https://aniketpandey05.github.io/kona/**. Open that on your phone and use
 *Add to Home screen*. Android installs it as a real app: its own icon in the drawer, its
 own window, its own entry in Settings. **Sharing only appears once it is installed**, which
 is the step people miss.
