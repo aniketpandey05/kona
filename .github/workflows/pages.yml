@@ -38,6 +38,11 @@ jobs:
       - run: npm test
       - run: npm run build:app
       - uses: actions/configure-pages@v5
+        # Turn Pages on and point it at this workflow, rather than depending on
+        # the repository setting being right. Without this the step fails with a
+        # bare "Not Found" when Pages is off, or still set to deploy a branch.
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .output/app
