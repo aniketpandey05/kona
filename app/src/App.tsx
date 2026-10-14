@@ -181,6 +181,7 @@ export function App() {
               const body = (
                 <>
                   <span class="app-text">{mark.snapshot || mark.url}</span>
+                  {!mark.url && <span class="app-nolink">no link</span>}
                   {mark.note && <span class="app-note">{mark.note}</span>}
                   {!!mark.tags?.length && (
                     <span class="app-row-tags">
@@ -253,11 +254,62 @@ function Sheet({
 }) {
   const noteRef = useRef<HTMLTextAreaElement>(null);
   const tagRef = useRef<HTMLInputElement>(null);
+  const linkRef = useRef<HTMLInputElement>(null);
 
   return (
     <div class="app-backdrop" onClick={onClose}>
       <div class="app-sheet" onClick={(event) => event.stopPropagation()}>
         <blockquote class="app-quote">{mark.snapshot || mark.url}</blockquote>
+
+        {/* Whether a link came with the share decides whether this can ever jump
+            back, so say which plainly instead of leaving it to be guessed. */}
+        {mark.url ? (
+          <p class="app-source">
+            <a href={linkToMark(mark)} target="_blank" rel="noreferrer">
+              {hostOf(mark.url) || mark.url}
+            </a>
+          </p>
+        ) : (
+          <div class="app-source app-source-missing">
+            <p>No link came with this share, so there is nowhere to jump back to.</p>
+            <div class="app-tagrow">
+              <input
+                ref={linkRef}
+                class="app-taginput"
+                type="url"
+                inputMode="url"
+                placeholder="paste the page link"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck={false}
+              />
+              <button
+                class="app-tool"
+                onClick={() => {
+                  void navigator.clipboard
+                    .readText()
+                    .then((text) => {
+                      const found = /https?:\/\/\S+/.exec(text)?.[0];
+                      if (found && linkRef.current) linkRef.current.value = found;
+                    })
+                    .catch(() => undefined);
+                }}
+              >
+                Paste
+              </button>
+              <button
+                class="app-tool"
+                onClick={() => {
+                  const value = linkRef.current?.value.trim() ?? '';
+                  if (!/^https?:\/\//.test(value)) return;
+                  onChange({ url: value, conversationTitle: hostOf(value) || mark.conversationTitle });
+                }}
+              >
+                Attach
+              </button>
+            </div>
+          </div>
+        )}
 
         <label class="app-label" for="note">
           Note

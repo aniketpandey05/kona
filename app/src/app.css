@@ -413,3 +413,29 @@ input:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* Where this came from, and whether it can be returned to. */
+.app-source {
+  margin: -8px 0 16px;
+  font-size: 14px;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.app-source a {
+  color: var(--accent);
+}
+
+.app-source-missing p {
+  margin: 0 0 10px;
+}
+
+.app-nolink {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 1px 7px;
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
