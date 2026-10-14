@@ -118,6 +118,9 @@ export function App() {
         value={query}
         placeholder="Search what you've kept…"
         aria-label="Search"
+        autocapitalize="none"
+        autocorrect="off"
+        spellcheck={false}
         onInput={(event) => setQuery(event.currentTarget.value)}
       />
 
@@ -170,14 +173,14 @@ export function App() {
       {groups.map((group) => (
         <section class="app-group" key={group.key}>
           <h2>
-            <span class="app-site">{group.site}</span>
+            {group.site && <span class="app-site">{group.site}</span>}
             <span class="app-title">{group.title}</span>
           </h2>
           <ul>
-            {group.marks.map((mark) => (
-              <li key={mark.id}>
-                <button class="app-item" onClick={() => setEditing(mark)}>
-                  <span class="app-text">{mark.snapshot || '(link only)'}</span>
+            {group.marks.map((mark) => {
+              const body = (
+                <>
+                  <span class="app-text">{mark.snapshot || mark.url}</span>
                   {mark.note && <span class="app-note">{mark.note}</span>}
                   {!!mark.tags?.length && (
                     <span class="app-row-tags">
@@ -188,9 +191,33 @@ export function App() {
                       ))}
                     </span>
                   )}
-                </button>
-              </li>
-            ))}
+                </>
+              );
+              return (
+                <li key={mark.id}>
+                  {/* Tapping the quote goes back to where it came from, as it does
+                      in the extension. Text shared from an app has nowhere to go,
+                      so there it opens the note instead. */}
+                  {mark.url ? (
+                    <a class="app-item" href={linkToMark(mark)} target="_blank" rel="noreferrer">
+                      {body}
+                    </a>
+                  ) : (
+                    <button class="app-item" onClick={() => setEditing(mark)}>
+                      {body}
+                    </button>
+                  )}
+                  <button
+                    class="app-edit"
+                    onClick={() => setEditing(mark)}
+                    aria-label="Note and tags"
+                    title="Note and tags"
+                  >
+                    ✎
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </section>
       ))}
@@ -258,6 +285,10 @@ function Sheet({
             ref={tagRef}
             class="app-taginput"
             placeholder="add a tag"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck={false}
+            enterkeyhint="done"
             onKeyDown={(event) => {
               if (event.key !== 'Enter') return;
               const value = tagRef.current?.value ?? '';
@@ -309,10 +340,11 @@ function groupByPage(marks: Mark[]) {
   return [...groups.values()];
 }
 
+/** Empty for text shared from an app, which has no site to name. */
 function hostOf(url: string): string {
   try {
     return new URL(url).hostname.replace(/^www\./, '');
   } catch {
-    return 'note';
+    return '';
   }
 }
