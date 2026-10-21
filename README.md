@@ -140,3 +140,18 @@ npm run build     # production build in .output/chrome-mv3
 ## Fixing a site that broke
 
 When a site changes its layout, the panel shows a warning. The fix is usually a selector change in that site's adapter, for example `src/adapters/chatgpt.ts`. Each adapter answers the same few questions — where the messages are, which are yours, where a message's text lives, and whether a reply is still being written — so nothing outside that file should need touching.
+
+## Releasing
+
+```bash
+npm run zip          # .output/kona-<version>-chrome.zip for the Chrome Web Store
+npm run zip:firefox  # the same for addons.mozilla.org, plus a sources archive
+```
+
+`CHROMEWEBSTORE.md` holds the listing copy, the permission justifications and the data-use
+answers, so the submission form can be filled in from one place. The privacy policy is
+served at <https://aniketpandey05.github.io/kona/privacy.html>.
+
+## License
+
+MIT — see [LICENSE](LICENSE). Do what you like with it.
