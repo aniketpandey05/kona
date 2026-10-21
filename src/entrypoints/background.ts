@@ -7,7 +7,12 @@ const WELCOME_PAGE = '/welcome.html';
 const WEB_SCRIPT_ID = 'web-pages';
 const MENU_ID = 'highlight-selection';
 // The chat sites come with the extension; every other site is switched on by the user.
-const BUILT_IN = ['https://chatgpt.com/*', 'https://claude.ai/*', 'https://gemini.google.com/*'];
+const BUILT_IN = [
+  'https://*.chatgpt.com/*',
+  'https://chat.openai.com/*',
+  'https://*.claude.ai/*',
+  'https://gemini.google.com/*',
+];
 const pendingKey = (tabId: number) => `pending-jump:${tabId}`;
 
 export default defineBackground(() => {

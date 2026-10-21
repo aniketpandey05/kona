@@ -4,15 +4,27 @@ import { storage } from '#imports';
 // exceptions are stored; everywhere else is off until a site is allowed.
 const KEY = 'local:disabled-sites';
 
+/**
+ * www.example.com and example.com are the same site to a reader, so they have
+ * to be the same site to the switch — otherwise turning one off leaves the
+ * other on, and the popup grows a duplicate row.
+ */
+export const siteKey = (hostname: string): string => hostname.replace(/^www\./, '').toLowerCase();
+
+export function isSiteEnabled(disabled: readonly string[], hostname: string): boolean {
+  const key = siteKey(hostname);
+  return !disabled.some((each) => siteKey(each) === key);
+}
+
 export async function loadDisabledSites(): Promise<string[]> {
   return (await storage.getItem<string[]>(KEY)) ?? [];
 }
 
 export async function setSiteEnabled(hostname: string, enabled: boolean): Promise<void> {
   const disabled = await loadDisabledSites();
-  const next = enabled
-    ? disabled.filter((host) => host !== hostname)
-    : [...new Set([...disabled, hostname])];
+  const key = siteKey(hostname);
+  const without = disabled.filter((host) => siteKey(host) !== key);
+  const next = enabled ? without : [...without, key];
   await storage.setItem(KEY, next);
 }
 

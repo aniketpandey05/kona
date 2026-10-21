@@ -1,8 +1,10 @@
 # Kona
 
-Highlight anything you read — AI chats or ordinary web pages — add a note, and find it again in one click. Everything stays on your computer.
+A browser extension that highlights text on web pages and in AI chats, saves it with
+your notes, and takes you back to the exact spot later. Everything is stored on your
+own computer and nothing is sent anywhere.
 
-*कोना — "corner". The folded one you leave in a page so you can find your way back.*
+There is also a small phone app that keeps text you share to it from any Android app.
 
 > **Status:** early prototype, not in the Chrome Web Store yet. Install it yourself with the steps below.
 
@@ -11,7 +13,7 @@ Highlight anything you read — AI chats or ordinary web pages — add a note, a
 ## What it does
 
 **While you read**
-- Select text in any message on **ChatGPT**, **Claude** or **Gemini** and pick a color.
+- Select text in any message on **ChatGPT**, **Claude** or **Gemini** and pick a colour.
 - Or right-click the selection and choose **Highlight with Kona** — handy on sites whose own selection popup covers ours.
 - Switch it on for **any other site** from the toolbar button: blogs, docs, Stack Overflow, GitHub.
 - Switch any site **off** from the same button, the chat sites included. Everything disappears on that site and selections are ignored, while your highlights stay saved and return when you switch it back on. "Forget" an added site to hand its permission back to Chrome as well.
@@ -124,6 +126,7 @@ npm run build     # production build in .output/chrome-mv3
 | Piece | Where |
 |---|---|
 | Site-specific markup — the only part that should break when a site changes | `src/adapters/` |
+| Which hostnames count as the same site | `src/core/enabledSites.ts` |
 | Flattening a message's text and mapping offsets to DOM ranges | `src/core/textIndex.ts` |
 | Storing a highlight as quote + surrounding context, and finding it again | `src/core/quote.ts` |
 | Finding the right message by id, fingerprint or nearby position | `src/core/locate.ts` |

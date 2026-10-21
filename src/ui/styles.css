@@ -337,8 +337,14 @@
 .k-list li {
   display: flex;
   align-items: flex-start;
-  border-radius: 10px;
+  border-radius: 8px;
+  /* The colour comes from the highlight itself, set per row. */
+  border-left: 3px solid transparent;
   transition: background 0.12s ease;
+}
+
+.k-list li + li {
+  margin-top: 2px;
 }
 
 .k-list li:hover {
@@ -390,7 +396,8 @@
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  padding: 9px 4px 9px 6px;
+  padding: 10px 4px 10px 7px;
+  line-height: 1.45;
   text-align: left;
 }
 
@@ -674,10 +681,15 @@
   flex: none;
   display: flex;
   gap: 14px;
-  padding: 7px 12px;
-  font-size: 11px;
+  padding: 6px 12px;
+  font-size: 10px;
   color: var(--k-muted);
   border-top: 1px solid var(--k-border);
+  opacity: 0.75;
+}
+
+.k-panel:hover .k-panel-footer {
+  opacity: 1;
 }
 
 .k-panel-footer span {

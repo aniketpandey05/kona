@@ -348,7 +348,12 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
             <li
               key={mark.id}
               class={rowClass(found, drag?.id === mark.id)}
-              style={drag ? { transform: `translateY(${dragOffset(drag, index)}px)` } : undefined}
+              style={{
+                // Carry the highlight's colour out to the edge of the row, so the
+                // list can be scanned by colour the way the library's is.
+                borderLeftColor: HIGHLIGHT_COLORS[mark.color],
+                ...(drag ? { transform: `translateY(${dragOffset(drag, index)}px)` } : null),
+              }}
               onPointerEnter={() => !drag && controller.preview(mark.id)}
               onPointerLeave={() => !drag && controller.preview(null)}
             >

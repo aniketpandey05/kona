@@ -1,7 +1,7 @@
 import { browser, type ContentScriptContext } from '#imports';
 import type { MessageRef, SiteAdapter } from '../adapters/types';
 import { debounce } from '../core/debounce';
-import { loadDisabledSites, watchDisabledSites } from '../core/enabledSites';
+import { isSiteEnabled, loadDisabledSites, watchDisabledSites } from '../core/enabledSites';
 import { describeMessage, resolveMarks, type ResolvedMark } from '../core/locate';
 import type { PendingJump, RuntimeMessage } from '../core/messages';
 import { moveItem, nextOrder, sortByOrder } from '../core/order';
@@ -171,7 +171,7 @@ export class KonaController {
       this.refresh();
     });
 
-    const isOn = (disabled: string[]) => !disabled.includes(location.hostname);
+    const isOn = (disabled: string[]) => isSiteEnabled(disabled, location.hostname);
     this.setState({ enabled: isOn(await loadDisabledSites()) });
     watchDisabledSites((disabled) => {
       if (isOn(disabled) === this.state.enabled) return;

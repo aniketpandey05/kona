@@ -1,6 +1,6 @@
 import { browser } from '#imports';
 import { useEffect, useState } from 'preact/hooks';
-import { loadDisabledSites, setSiteEnabled, watchDisabledSites } from '../../core/enabledSites';
+import { isSiteEnabled, loadDisabledSites, setSiteEnabled, siteKey, watchDisabledSites } from '../../core/enabledSites';
 import type { RuntimeMessage } from '../../core/messages';
 import { KonaMark } from '../../ui/KonaMark';
 
@@ -39,7 +39,7 @@ export function Popup() {
     return watchDisabledSites(setSwitchedOff);
   }, []);
 
-  const isOn = (host: string) => !switchedOff.includes(host);
+  const isOn = (host: string) => isSiteEnabled(switchedOff, host);
 
   const toggleSite = async (host: string, on: boolean) => {
     await setSiteEnabled(host, on);
@@ -63,7 +63,7 @@ export function Popup() {
   };
 
   const hostname = url?.hostname ?? '';
-  const builtIn = BUILT_IN.some((site) => site.host === hostname);
+  const builtIn = BUILT_IN.some((site) => siteKey(site.host) === siteKey(hostname));
   const supported = url?.protocol === 'https:' || url?.protocol === 'http:';
   const pattern = url && supported ? patternFor(url) : null;
   const knownHere = builtIn || (pattern ? allowed.includes(pattern) : false);

@@ -18,7 +18,12 @@ export default defineConfig({
     // "scripting" lets the extension start highlighting on a site right after you allow it.
     permissions: ['storage', 'unlimitedStorage', 'scripting', 'activeTab', 'contextMenus'],
     // The chat sites work out of the box; any other site is allowed one at a time from the popup.
-    host_permissions: ['https://chatgpt.com/*', 'https://claude.ai/*', 'https://gemini.google.com/*'],
+    host_permissions: [
+      'https://*.chatgpt.com/*',
+      'https://chat.openai.com/*',
+      'https://*.claude.ai/*',
+      'https://gemini.google.com/*',
+    ],
     optional_host_permissions: ['*://*/*'],
     action: { default_title: 'Kona' },
     // Firefox needs an explicit add-on id to be submitted, and a floor: the CSS
