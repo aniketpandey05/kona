@@ -68,3 +68,46 @@ describe('linkToMark', () => {
     expect(linkToMark(mark({ snapshot: '   ' }))).toBe('https://example.com/post');
   });
 });
+
+describe('text that came from a share sheet', () => {
+  const ZWSP = String.fromCharCode(0x200b);
+  const NBSP = String.fromCharCode(0x00a0);
+  const SOFT_HYPHEN = String.fromCharCode(0x00ad);
+
+  const fragmentOf = (exact: string) =>
+    decodeURIComponent(linkToMark(mark({ quote: quote({ exact }) })).split('text=')[1] ?? '');
+
+  it('drops zero-width characters, which can never match', () => {
+    expect(fragmentOf(`the quick${ZWSP} brown fox`)).toBe('the quick brown fox');
+  });
+
+  it('drops soft hyphens, which justified text is full of', () => {
+    expect(fragmentOf(`the qu${SOFT_HYPHEN}ick brown fox`)).toBe('the quick brown fox');
+  });
+
+  it('turns a non-breaking space into an ordinary one', () => {
+    expect(fragmentOf(`the quick${NBSP}brown fox`)).toBe('the quick brown fox');
+  });
+
+  it('unwraps the quotation marks an app put around the selection', () => {
+    expect(fragmentOf('“the quick brown fox”')).toBe('the quick brown fox');
+    expect(fragmentOf('"the quick brown fox"')).toBe('the quick brown fox');
+  });
+
+  it('drops the ellipsis a truncating app appends', () => {
+    expect(fragmentOf('the quick brown fox…')).toBe('the quick brown fox');
+    expect(fragmentOf('the quick brown fox...')).toBe('the quick brown fox');
+  });
+
+  // Every rule above only ever shortens the needle, and a fragment matches any
+  // substring — so cleaning can make a match more likely but never less.
+  it('leaves an already-clean quote untouched', () => {
+    expect(fragmentOf('the quick brown fox')).toBe('the quick brown fox');
+  });
+
+  it('still gives up when there was nothing but noise', () => {
+    expect(linkToMark(mark({ snapshot: `${ZWSP}${NBSP}`, quote: undefined }))).toBe(
+      'https://example.com/post',
+    );
+  });
+});
