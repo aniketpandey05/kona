@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { createBackup, readBackup } from '../../src/core/backup';
 import { linkToMark } from '../../src/core/link';
+import { UI_COLORS } from '../../src/core/painter';
 import { toMarkdown } from '../../src/core/markdown';
 import { searchMarks } from '../../src/core/search';
 import { countTags, sameTag, addTags, removeTag } from '../../src/core/tags';
 import type { Theme } from '../../src/core/theme';
-import type { Mark } from '../../src/core/types';
+import type { HighlightColor, Mark } from '../../src/core/types';
 import { KonaMark } from '../../src/ui/KonaMark';
 import { markFromShare, readShare } from './share';
 import { applyTheme, loadTheme, saveTheme } from './theme';
 import { importMarks, loadAll, remove, save, watch } from './storage';
 
 const UNDO_MS = 6000;
+
+const COLOURS = Object.keys(UI_COLORS) as HighlightColor[];
 
 const THEMES: Array<{ value: Theme; label: string; glyph: string }> = [
   { value: 'system', label: 'Match system', glyph: '◐' },
@@ -223,11 +226,21 @@ export function App() {
                       in the extension. Text shared from an app has nowhere to go,
                       so there it opens the note instead. */}
                   {mark.url ? (
-                    <a class="app-item" href={linkToMark(mark)} target="_blank" rel="noreferrer">
+                    <a
+                      class="app-item"
+                      style={{ borderLeftColor: UI_COLORS[mark.color] }}
+                      href={linkToMark(mark)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       {body}
                     </a>
                   ) : (
-                    <button class="app-item" onClick={() => setEditing(mark)}>
+                    <button
+                      class="app-item"
+                      style={{ borderLeftColor: UI_COLORS[mark.color] }}
+                      onClick={() => setEditing(mark)}
+                    >
                       {body}
                     </button>
                   )}
@@ -345,6 +358,21 @@ function Sheet({
             </div>
           </div>
         )}
+
+        <span class="app-label">Colour</span>
+        <div class="app-swatches" role="group" aria-label="Colour">
+          {COLOURS.map((colour) => (
+            <button
+              key={colour}
+              class={mark.color === colour ? 'app-swatch app-swatch-on' : 'app-swatch'}
+              style={{ background: UI_COLORS[colour] }}
+              aria-pressed={mark.color === colour}
+              aria-label={colour}
+              title={colour}
+              onClick={() => onChange({ color: colour })}
+            />
+          ))}
+        </div>
 
         <label class="app-label" for="note">
           Note

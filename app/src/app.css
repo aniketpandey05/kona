@@ -230,6 +230,33 @@ body {
   cursor: pointer;
 }
 
+/* Big enough for a thumb, and solid rather than the translucent paint colours:
+   nothing shows through here, so the colour is a label, not a highlight. */
+.app-swatches {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.app-swatch {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.app-swatch-on {
+  transform: scale(1.06);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--fg);
+}
+
+.app-swatch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 /* Kept apart from the quote so a tap meant for one is never the other. */
 .app-edit {
   flex: none;
