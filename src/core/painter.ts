@@ -1,10 +1,26 @@
 import type { HighlightColor } from './types';
 
+/**
+ * For painting over text, where the words underneath have to stay readable —
+ * hence the transparency.
+ */
 export const HIGHLIGHT_COLORS: Record<HighlightColor, string> = {
   yellow: 'rgba(250, 204, 21, 0.45)',
   green: 'rgba(74, 222, 128, 0.40)',
   blue: 'rgba(96, 165, 250, 0.40)',
   pink: 'rgba(244, 114, 182, 0.40)',
+};
+
+/**
+ * The same hues at full strength, for the panel and library, where a colour
+ * sits on a plain background with nothing showing through. The transparent
+ * ones wash out to almost nothing there.
+ */
+export const UI_COLORS: Record<HighlightColor, string> = {
+  yellow: '#eab308',
+  green: '#22c55e',
+  blue: '#3b82f6',
+  pink: '#ec4899',
 };
 
 const FLASH = 'kona-flash';

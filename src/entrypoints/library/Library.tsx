@@ -6,7 +6,7 @@ import { linkToMark } from '../../core/link';
 import { toMarkdown } from '../../core/markdown';
 import type { RuntimeMessage } from '../../core/messages';
 import { sortByOrder } from '../../core/order';
-import { HIGHLIGHT_COLORS } from '../../core/painter';
+import { HIGHLIGHT_COLORS, UI_COLORS } from '../../core/painter';
 import { searchMarks } from '../../core/search';
 import { siteLabel } from '../../core/sites';
 import { importMarks, loadAllMarks, removeMark, upsertMark, watchAllMarks } from '../../core/store';
@@ -251,9 +251,9 @@ export function Library() {
           </h2>
           <ul>
             {group.marks.map((mark, index) => (
-              <li key={mark.id} style={{ borderLeft: `3px solid ${HIGHLIGHT_COLORS[mark.color]}` }}>
+              <li key={mark.id} style={{ borderLeft: `3px solid ${UI_COLORS[mark.color]}` }}>
                 <button class="lib-item" onClick={() => open(mark)} title="Open this page at the highlight">
-                  <span class="lib-number" style={{ background: HIGHLIGHT_COLORS[mark.color] }}>
+                  <span class="lib-number" style={{ background: UI_COLORS[mark.color] }}>
                     {index + 1}
                   </span>
                   <span class="lib-body">

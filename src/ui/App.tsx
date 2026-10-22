@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { KonaController, NoteCardState, SearchState, ViewState } from '../content/controller';
-import { HIGHLIGHT_COLORS } from '../core/painter';
+import { HIGHLIGHT_COLORS, UI_COLORS } from '../core/painter';
 import { siteLabel } from '../core/sites';
 import { addTags, removeTag } from '../core/tags';
 import { KonaMark } from './KonaMark';
@@ -351,7 +351,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
               style={{
                 // Carry the highlight's colour out to the edge of the row, so the
                 // list can be scanned by colour the way the library's is.
-                borderLeftColor: HIGHLIGHT_COLORS[mark.color],
+                borderLeftColor: UI_COLORS[mark.color],
                 ...(drag ? { transform: `translateY(${dragOffset(drag, index)}px)` } : null),
               }}
               onPointerEnter={() => !drag && controller.preview(mark.id)}
@@ -371,7 +371,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
                 <GripIcon />
               </button>
               <button class="k-item" onClick={() => controller.jump(mark.id)}>
-                <span class="k-number" style={{ background: HIGHLIGHT_COLORS[mark.color] }}>
+                <span class="k-number" style={{ background: UI_COLORS[mark.color] }}>
                   {index + 1}
                 </span>
                 <span class="k-item-body">
@@ -446,7 +446,7 @@ function Minimap({ state, controller }: Props & { state: ViewState }) {
         <button
           key={tick.id}
           class="k-tick"
-          style={{ top: `${tick.at * 100}%`, background: HIGHLIGHT_COLORS[tick.color] }}
+          style={{ top: `${tick.at * 100}%`, background: UI_COLORS[tick.color] }}
           title={tick.label}
           aria-label={`Go to highlight: ${tick.label}`}
           onClick={() => controller.jump(tick.id)}
