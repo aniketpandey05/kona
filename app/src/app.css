@@ -11,8 +11,9 @@
   color-scheme: light;
 }
 
+/* Dark by the phone's setting, unless light was chosen here. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #191a1c;
     --card: #26272b;
     --fg: #ececf1;
@@ -23,6 +24,19 @@
     --danger: #f87171;
     color-scheme: dark;
   }
+}
+
+/* Dark because it was chosen here, whatever the phone says. */
+:root[data-theme='dark'] {
+  --bg: #191a1c;
+  --card: #26272b;
+  --fg: #ececf1;
+  --muted: #a8a8b3;
+  --border: rgba(255, 255, 255, 0.11);
+  --hover: rgba(255, 255, 255, 0.06);
+  --accent: #fb923c;
+  --danger: #f87171;
+  color-scheme: dark;
 }
 
 * {
@@ -270,8 +284,35 @@ body {
 }
 
 /* How much is in here, beside the name. */
-.app-count {
+.app-theme {
+  display: flex;
+  gap: 2px;
   margin-left: auto;
+  padding: 2px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.app-theme-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 32px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.app-theme-on {
+  color: var(--fg);
+  background: var(--hover);
+}
+
+.app-count {
   font-size: 14px;
   color: var(--muted);
   font-variant-numeric: tabular-nums;

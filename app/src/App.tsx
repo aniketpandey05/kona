@@ -4,12 +4,20 @@ import { linkToMark } from '../../src/core/link';
 import { toMarkdown } from '../../src/core/markdown';
 import { searchMarks } from '../../src/core/search';
 import { countTags, sameTag, addTags, removeTag } from '../../src/core/tags';
+import type { Theme } from '../../src/core/theme';
 import type { Mark } from '../../src/core/types';
 import { KonaMark } from '../../src/ui/KonaMark';
 import { markFromShare, readShare } from './share';
+import { applyTheme, loadTheme, saveTheme } from './theme';
 import { importMarks, loadAll, remove, save, watch } from './storage';
 
 const UNDO_MS = 6000;
+
+const THEMES: Array<{ value: Theme; label: string; glyph: string }> = [
+  { value: 'system', label: 'Match system', glyph: '◐' },
+  { value: 'light', label: 'Light', glyph: '☀' },
+  { value: 'dark', label: 'Dark', glyph: '☾' },
+];
 
 export function App() {
   const [marks, setMarks] = useState<Mark[] | null>(null);
@@ -19,6 +27,7 @@ export function App() {
   const [deleted, setDeleted] = useState<Mark | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  const [theme, setTheme] = useState<Theme>('system');
 
   const refresh = () => void loadAll().then(setMarks);
 
@@ -40,6 +49,9 @@ export function App() {
       }
       refresh();
     })();
+    const stored = loadTheme();
+    setTheme(stored);
+    applyTheme(stored);
     return watch(refresh);
   }, []);
 
@@ -99,11 +111,25 @@ export function App() {
       <header class="app-top">
         <KonaMark size={26} />
         <h1>Kona</h1>
-        {marks !== null && marks.length > 0 && (
-          <span class="app-count">
-            {marks.length} kept
-          </span>
-        )}
+        {marks !== null && marks.length > 0 && <span class="app-count">{marks.length} kept</span>}
+        <div class="app-theme" role="group" aria-label="Appearance">
+          {THEMES.map(({ value, label, glyph }) => (
+            <button
+              key={value}
+              class={theme === value ? 'app-theme-button app-theme-on' : 'app-theme-button'}
+              aria-pressed={theme === value}
+              aria-label={label}
+              title={label}
+              onClick={() => {
+                setTheme(value);
+                saveTheme(value);
+                applyTheme(value);
+              }}
+            >
+              {glyph}
+            </button>
+          ))}
+        </div>
         <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={(e) => void onImport(e)} />
       </header>
 
