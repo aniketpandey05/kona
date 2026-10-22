@@ -23,6 +23,13 @@ const COLOURS = Object.keys(UI_COLORS) as HighlightColor[];
  */
 const LAST_LINK = 'kona:last-link';
 
+/**
+ * How far back a bare link will reach when offering to adopt captures that
+ * have none. A conversation is read, shared from, and then its link shared —
+ * all within a sitting.
+ */
+const ADOPTION_WINDOW_MS = 24 * 60 * 60 * 1000;
+
 function readLastLink(): string {
   try {
     return localStorage.getItem(LAST_LINK) ?? '';
@@ -56,6 +63,7 @@ export function App() {
   const fileInput = useRef<HTMLInputElement>(null);
   const [theme, setTheme] = useState<Theme>('system');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pendingLink, setPendingLink] = useState<{ url: string; orphans: Mark[] } | null>(null);
 
   const refresh = () => void loadAll().then(setMarks);
 
@@ -65,12 +73,24 @@ export function App() {
       const shared = readShare(location.search);
       if (shared) {
         const mark = markFromShare(shared);
-        if (mark) {
+        if (!mark) {
+          setNotice("That share didn't contain anything to keep.");
+        } else if (!mark.snapshot && mark.url) {
+          // A link on its own. Almost always the conversation that the
+          // link-less captures just before it came from, shared straight from
+          // the app's own share menu rather than copied and pasted.
+          const orphans = (await loadAll()).filter(
+            (each) => !each.url && Date.now() - each.createdAt < ADOPTION_WINDOW_MS,
+          );
+          if (orphans.length) setPendingLink({ url: mark.url, orphans });
+          else {
+            await save(mark);
+            setNotice('Saved the link.');
+          }
+        } else {
           await save(mark);
           setNotice('Saved.');
           setEditing(mark);
-        } else {
-          setNotice("That share didn't contain anything to keep.");
         }
         // Drop the query string so a reload cannot save the same thing twice.
         history.replaceState(null, '', location.pathname);
@@ -195,6 +215,49 @@ export function App() {
               #{label} {count}
             </button>
           ))}
+        </div>
+      )}
+
+      {pendingLink && (
+        <div class="app-adopt" role="status">
+          <p>
+            That's a link on its own. Attach it to the{' '}
+            <strong>
+              {pendingLink.orphans.length} capture{pendingLink.orphans.length === 1 ? '' : 's'}
+            </strong>{' '}
+            kept today without one?
+          </p>
+          <small>{pendingLink.url}</small>
+          <div class="app-adopt-actions">
+            <button
+              class="app-tool"
+              onClick={() => {
+                void save(markFromShare({ url: pendingLink.url, text: '' })!).then(() => {
+                  setNotice('Saved the link on its own.');
+                  setPendingLink(null);
+                  refresh();
+                });
+              }}
+            >
+              Keep separately
+            </button>
+            <button
+              class="app-save"
+              onClick={() => {
+                void (async () => {
+                  for (const each of pendingLink.orphans) {
+                    await save({ ...each, url: pendingLink.url, updatedAt: Date.now() });
+                  }
+                  rememberLink(pendingLink.url);
+                  setNotice(`Attached to ${pendingLink.orphans.length}.`);
+                  setPendingLink(null);
+                  refresh();
+                })();
+              }}
+            >
+              Attach to {pendingLink.orphans.length}
+            </button>
+          </div>
         </div>
       )}
 

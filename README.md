@@ -90,8 +90,9 @@ is the step people miss.
 
 Text shared from an app rather than a browser usually arrives without a link, because
 there is nothing to link to — the conversation lives inside the app. Both ChatGPT and
-Gemini can mint a public link for a whole conversation from their own share menu; paste
-that into a capture once and the rest offer to reuse it in a tap.
+Gemini can mint a public link for a whole conversation from their own share menu — share
+that link to Kona as well, and it offers to attach itself to everything kept from that
+conversation at once.
 
 To hand it to someone as a file instead, [Bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap)
 wraps the same site in an APK they can download and sideload. The Play Store takes that
