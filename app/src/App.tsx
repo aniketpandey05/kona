@@ -26,6 +26,7 @@ export function App() {
   const [marks, setMarks] = useState<Mark[] | null>(null);
   const [query, setQuery] = useState('');
   const [tag, setTag] = useState<string | null>(null);
+  const [colour, setColour] = useState<HighlightColor | null>(null);
   const [editing, setEditing] = useState<Mark | null>(null);
   const [deleted, setDeleted] = useState<Mark | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -65,11 +66,20 @@ export function App() {
   }, [notice]);
 
   const tags = useMemo(() => countTags(marks ?? []), [marks]);
+
+  /** Only the colours actually in use, commonest first. */
+  const colours = useMemo(() => {
+    const counts = new Map<HighlightColor, number>();
+    for (const mark of marks ?? []) counts.set(mark.color, (counts.get(mark.color) ?? 0) + 1);
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  }, [marks]);
+
   const shown = useMemo(() => {
     let list = marks ?? [];
+    if (colour) list = list.filter((mark) => mark.color === colour);
     if (tag) list = list.filter((mark) => mark.tags?.some((each) => sameTag(each, tag)));
     return query ? searchMarks(list, query) : list;
-  }, [marks, query, tag]);
+  }, [marks, query, tag, colour]);
 
   const groups = useMemo(() => groupByPage(shown), [shown]);
 
@@ -148,6 +158,23 @@ export function App() {
         onInput={(event) => setQuery(event.currentTarget.value)}
       />
 
+      {colours.length > 1 && (
+        <div class="app-tags" role="group" aria-label="Filter by colour">
+          {colours.map(([each, count]) => (
+            <button
+              key={each}
+              class={colour === each ? 'app-chip app-chip-on' : 'app-chip'}
+              aria-pressed={colour === each}
+              aria-label={`${count} ${each}`}
+              onClick={() => setColour(colour === each ? null : each)}
+            >
+              <span class="app-chip-dot" style={{ background: UI_COLORS[each] }} />
+              {count}
+            </button>
+          ))}
+        </div>
+      )}
+
       {tags.length > 0 && (
         <div class="app-tags" role="group" aria-label="Filter by tag">
           {tags.map(([label, count]) => (
@@ -191,7 +218,21 @@ export function App() {
       )}
 
       {marks !== null && marks.length > 0 && shown.length === 0 && (
-        <p class="app-empty">Nothing matches what you're looking for.</p>
+        <p class="app-empty">
+          Nothing matches what you're looking for.{' '}
+          {(colour || tag || query) && (
+            <button
+              class="app-undo"
+              onClick={() => {
+                setColour(null);
+                setTag(null);
+                setQuery('');
+              }}
+            >
+              Clear filters
+            </button>
+          )}
+        </p>
       )}
 
       {groups.map((group) => (

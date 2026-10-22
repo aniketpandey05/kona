@@ -73,7 +73,7 @@ version is a small installable web app instead of an extension, in `app/`.
 
 Select text anywhere on the phone — a browser, Reddit, a PDF reader — tap **Share**, pick
 **Kona**, and the passage is kept with its page and title. Give it a colour, a note and
-tags, search everything later, and **Open original** takes you back to the exact sentence
+tags, filter by either, search everything later, and **Open original** takes you back to the exact sentence
 using a URL text fragment, which every modern browser understands without anything
 installed.
 

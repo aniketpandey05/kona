@@ -135,6 +135,21 @@ body {
   border-color: var(--accent);
 }
 
+/* A colour chip says which colour, then how many of them. */
+.app-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.app-chip-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  /* So a pale swatch still has an edge against the chip it sits on. */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
 .app-notice {
   margin: 12px 2px 0;
   font-size: 14px;
