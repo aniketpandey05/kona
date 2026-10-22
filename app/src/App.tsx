@@ -32,6 +32,7 @@ export function App() {
   const [notice, setNotice] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const [theme, setTheme] = useState<Theme>('system');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const refresh = () => void loadAll().then(setMarks);
 
@@ -125,24 +126,9 @@ export function App() {
         <KonaMark size={26} />
         <h1>Kona</h1>
         {marks !== null && marks.length > 0 && <span class="app-count">{marks.length} kept</span>}
-        <div class="app-theme" role="group" aria-label="Appearance">
-          {THEMES.map(({ value, label, glyph }) => (
-            <button
-              key={value}
-              class={theme === value ? 'app-theme-button app-theme-on' : 'app-theme-button'}
-              aria-pressed={theme === value}
-              aria-label={label}
-              title={label}
-              onClick={() => {
-                setTheme(value);
-                saveTheme(value);
-                applyTheme(value);
-              }}
-            >
-              {glyph}
-            </button>
-          ))}
-        </div>
+        <button class="app-more" onClick={() => setMenuOpen(true)} aria-label="Settings and backups">
+          &#8942;
+        </button>
         <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={(e) => void onImport(e)} />
       </header>
 
@@ -300,22 +286,63 @@ export function App() {
         </section>
       ))}
 
-      {marks !== null && (marks.length > 0 || shown.length > 0) && (
-        <footer class="app-foot">
-          <button class="app-tool" disabled={!shown.length} onClick={() => download(toMarkdown(shown), 'text/markdown', 'md')}>
-            Markdown
-          </button>
-          <button
-            class="app-tool"
-            disabled={!marks.length}
-            onClick={() => download(createBackup(marks), 'application/json', 'json')}
-          >
-            Back up
-          </button>
-          <button class="app-tool" onClick={() => fileInput.current?.click()}>
-            Restore
-          </button>
-        </footer>
+      {menuOpen && (
+        <div class="app-backdrop" onClick={() => setMenuOpen(false)}>
+          <div class="app-sheet" onClick={(event) => event.stopPropagation()}>
+            <span class="app-label">Appearance</span>
+            <div class="app-theme" role="group" aria-label="Appearance">
+              {THEMES.map(({ value, label, glyph }) => (
+                <button
+                  key={value}
+                  class={theme === value ? 'app-theme-button app-theme-on' : 'app-theme-button'}
+                  aria-pressed={theme === value}
+                  aria-label={label}
+                  onClick={() => {
+                    setTheme(value);
+                    saveTheme(value);
+                    applyTheme(value);
+                  }}
+                >
+                  <span aria-hidden="true">{glyph}</span> {label}
+                </button>
+              ))}
+            </div>
+
+            <span class="app-label">Your highlights</span>
+            <button
+              class="app-row-action"
+              disabled={!shown.length}
+              onClick={() => {
+                download(toMarkdown(shown), 'text/markdown', 'md');
+                setMenuOpen(false);
+              }}
+            >
+              Export as Markdown
+              <small>{shown.length === marks?.length ? 'all of them' : `the ${shown.length} shown`}</small>
+            </button>
+            <button
+              class="app-row-action"
+              disabled={!marks?.length}
+              onClick={() => {
+                download(createBackup(marks ?? []), 'application/json', 'json');
+                setMenuOpen(false);
+              }}
+            >
+              Back up
+              <small>a file you can keep or move to another phone</small>
+            </button>
+            <button
+              class="app-row-action"
+              onClick={() => {
+                fileInput.current?.click();
+                setMenuOpen(false);
+              }}
+            >
+              Restore
+              <small>add highlights from a backup file</small>
+            </button>
+          </div>
+        </div>
       )}
 
       {editing && (

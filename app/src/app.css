@@ -326,31 +326,81 @@ body {
 }
 
 /* How much is in here, beside the name. */
-.app-theme {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-  padding: 2px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-}
-
-.app-theme-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 32px;
+/* One tap from anywhere, rather than a scroll to the end of the list. */
+.app-more {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  line-height: 1;
   color: var(--muted);
   background: none;
   border: 0;
-  border-radius: 999px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.app-more:active {
+  background: var(--hover);
+}
+
+.app-theme {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.app-theme-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 11px;
   cursor: pointer;
 }
 
 .app-theme-on {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* A full-width row with its explanation underneath, so nothing needs a tooltip. */
+.app-row-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 13px 14px;
+  font: inherit;
+  font-size: 16px;
   color: var(--fg);
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.app-row-action small {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.app-row-action:disabled {
+  opacity: 0.5;
+}
+
+.app-row-action:active:not(:disabled) {
   background: var(--hover);
 }
 
@@ -358,19 +408,6 @@ body {
   font-size: 14px;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
-}
-
-/* Keeping and restoring belong together, and belong out of the way. */
-.app-foot {
-  display: flex;
-  gap: 6px;
-  margin-top: 32px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-
-.app-foot .app-tool {
-  flex: 1;
 }
 
 /* The editor comes up from the bottom, where a thumb already is. */
