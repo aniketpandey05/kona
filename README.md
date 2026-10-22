@@ -88,6 +88,11 @@ Every push publishes it to GitHub Pages, so it lives at
 own window, its own entry in Settings. **Sharing only appears once it is installed**, which
 is the step people miss.
 
+Text shared from an app rather than a browser usually arrives without a link, because
+there is nothing to link to — the conversation lives inside the app. Both ChatGPT and
+Gemini can mint a public link for a whole conversation from their own share menu; paste
+that into a capture once and the rest offer to reuse it in a tap.
+
 To hand it to someone as a file instead, [Bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap)
 wraps the same site in an APK they can download and sideload. The Play Store takes that
 APK too, for a one-off $25 developer account — though new personal accounts have to run a

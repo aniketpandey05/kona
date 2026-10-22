@@ -16,6 +16,29 @@ const UNDO_MS = 6000;
 
 const COLOURS = Object.keys(UI_COLORS) as HighlightColor[];
 
+/**
+ * Captures from an app arrive with no link, and the fix is always the same
+ * link — the one public share URL for the conversation they all came from.
+ * Remembering the last one turns "paste it again" into one tap.
+ */
+const LAST_LINK = 'kona:last-link';
+
+function readLastLink(): string {
+  try {
+    return localStorage.getItem(LAST_LINK) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+function rememberLink(url: string): void {
+  try {
+    localStorage.setItem(LAST_LINK, url);
+  } catch {
+    // Not remembering it only costs a paste.
+  }
+}
+
 const THEMES: Array<{ value: Theme; label: string; glyph: string }> = [
   { value: 'system', label: 'Match system', glyph: '◐' },
   { value: 'light', label: 'Light', glyph: '☀' },
@@ -371,6 +394,7 @@ function Sheet({
   const noteRef = useRef<HTMLTextAreaElement>(null);
   const tagRef = useRef<HTMLInputElement>(null);
   const linkRef = useRef<HTMLInputElement>(null);
+  const lastLink = readLastLink();
 
   return (
     <div class="app-backdrop" onClick={onClose}>
@@ -418,12 +442,27 @@ function Sheet({
                 onClick={() => {
                   const value = linkRef.current?.value.trim() ?? '';
                   if (!/^https?:\/\//.test(value)) return;
+                  rememberLink(value);
                   onChange({ url: value, conversationTitle: hostOf(value) || mark.conversationTitle });
                 }}
               >
                 Attach
               </button>
             </div>
+            {lastLink && (
+              <button
+                class="app-row-action"
+                onClick={() =>
+                  onChange({
+                    url: lastLink,
+                    conversationTitle: hostOf(lastLink) || mark.conversationTitle,
+                  })
+                }
+              >
+                Use the last link again
+                <small>{lastLink}</small>
+              </button>
+            )}
           </div>
         )}
 
