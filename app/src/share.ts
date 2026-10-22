@@ -1,3 +1,4 @@
+import { cleanPassage } from '../../src/core/text';
 import type { Mark } from '../../src/core/types';
 
 /**
@@ -34,7 +35,7 @@ export function markFromShare(payload: SharedPayload, now = Date.now()): Mark | 
   const url = payload.url?.trim() || firstUrl(text);
   // Strip a trailing url out of the quote; many apps append the link to the text.
   const quoted = url ? text.replace(url, '').trim() : text;
-  const snapshot = collapse(quoted);
+  const snapshot = cleanPassage(quoted);
 
   if (!snapshot && !url) return null;
 
@@ -75,4 +76,3 @@ function firstUrl(text: string): string | undefined {
   return /https?:\/\/\S+/.exec(text)?.[0];
 }
 
-const collapse = (text: string) => text.replace(/\s+/g, ' ').trim();

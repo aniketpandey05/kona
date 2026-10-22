@@ -99,16 +99,11 @@ export function App() {
       <header class="app-top">
         <KonaMark size={26} />
         <h1>Kona</h1>
-        <button class="app-tool" onClick={() => fileInput.current?.click()}>
-          Import
-        </button>
-        <button
-          class="app-tool"
-          disabled={!marks?.length}
-          onClick={() => download(createBackup(marks ?? []), 'application/json', 'json')}
-        >
-          Export
-        </button>
+        {marks !== null && marks.length > 0 && (
+          <span class="app-count">
+            {marks.length} kept
+          </span>
+        )}
         <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={(e) => void onImport(e)} />
       </header>
 
@@ -173,7 +168,9 @@ export function App() {
       {groups.map((group) => (
         <section class="app-group" key={group.key}>
           <h2>
-            {group.site && <span class="app-site">{group.site}</span>}
+            {group.site && group.site !== group.title && (
+              <span class="app-site">{group.site}</span>
+            )}
             <span class="app-title">{group.title}</span>
           </h2>
           <ul>
@@ -223,10 +220,22 @@ export function App() {
         </section>
       ))}
 
-      {marks !== null && shown.length > 0 && (
-        <button class="app-markdown" onClick={() => download(toMarkdown(shown), 'text/markdown', 'md')}>
-          Export these as Markdown
-        </button>
+      {marks !== null && (marks.length > 0 || shown.length > 0) && (
+        <footer class="app-foot">
+          <button class="app-tool" disabled={!shown.length} onClick={() => download(toMarkdown(shown), 'text/markdown', 'md')}>
+            Markdown
+          </button>
+          <button
+            class="app-tool"
+            disabled={!marks.length}
+            onClick={() => download(createBackup(marks), 'application/json', 'json')}
+          >
+            Back up
+          </button>
+          <button class="app-tool" onClick={() => fileInput.current?.click()}>
+            Restore
+          </button>
+        </footer>
       )}
 
       {editing && (

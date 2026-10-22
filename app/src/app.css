@@ -269,17 +269,25 @@ body {
   border-radius: 999px;
 }
 
-.app-markdown {
-  width: 100%;
-  margin-top: 28px;
-  padding: 13px;
-  font: inherit;
-  font-weight: 600;
-  color: var(--bg);
-  background: var(--fg);
-  border: 0;
-  border-radius: 12px;
-  cursor: pointer;
+/* How much is in here, beside the name. */
+.app-count {
+  margin-left: auto;
+  font-size: 14px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Keeping and restoring belong together, and belong out of the way. */
+.app-foot {
+  display: flex;
+  gap: 6px;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.app-foot .app-tool {
+  flex: 1;
 }
 
 /* The editor comes up from the bottom, where a thumb already is. */

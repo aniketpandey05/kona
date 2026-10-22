@@ -47,6 +47,25 @@ describe('markFromShare', () => {
     expect(markFromShare({ text: '  a\n\n  b  ', url: 'https://e.com' })!.snapshot).toBe('a b');
   });
 
+  // What a share sheet hands over is rarely clean, and this text is not just
+  // matched against the page — it is what the library shows and what Markdown
+  // export writes out.
+  it('tidies the quote marks and ellipsis an app wrapped around the selection', () => {
+    const mark = markFromShare({
+      text: '“Antlers are shed and regrown each year…”',
+      url: 'https://e.com/p',
+    })!;
+    expect(mark.snapshot).toBe('Antlers are shed and regrown each year');
+    expect(mark.quote?.exact).toBe('Antlers are shed and regrown each year');
+  });
+
+  it('strips the invisible characters a selection drags along', () => {
+    const zwsp = String.fromCharCode(0x200b);
+    const nbsp = String.fromCharCode(0x00a0);
+    const mark = markFromShare({ text: `one${zwsp} two${nbsp}three`, url: 'https://e.com/p' })!;
+    expect(mark.snapshot).toBe('one two three');
+  });
+
   it('refuses a share with neither text nor link', () => {
     expect(markFromShare({ title: 'just a title' })).toBeNull();
   });

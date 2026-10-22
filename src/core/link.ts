@@ -1,3 +1,4 @@
+import { cleanPassage } from './text';
 import type { Mark } from './types';
 
 /**
@@ -24,11 +25,11 @@ export function linkToMark(mark: Mark): string {
  * keeps the URL short and survives small edits in the middle.
  */
 function textFragment(mark: Mark): string | null {
-  const exact = collapse(mark.quote?.exact ?? mark.snapshot);
+  const exact = cleanPassage(mark.quote?.exact ?? mark.snapshot);
   if (!exact) return null;
 
   const parts: string[] = [];
-  const prefix = lastWords(collapse(mark.quote?.prefix ?? ''), 4);
+  const prefix = lastWords(cleanPassage(mark.quote?.prefix ?? ''), 4);
   if (prefix) parts.push(`${encode(prefix)}-,`);
 
   const words = exact.split(' ');
@@ -39,56 +40,10 @@ function textFragment(mark: Mark): string | null {
     parts.push(encode(exact));
   }
 
-  const suffix = firstWords(collapse(mark.quote?.suffix ?? ''), 4);
+  const suffix = firstWords(cleanPassage(mark.quote?.suffix ?? ''), 4);
   if (suffix) parts.push(`,-${encode(suffix)}`);
 
   return parts.join('');
-}
-
-/**
- * Built from code points rather than written out, because these characters are
- * invisible: pasted into a regex they look like an empty bracket, and an editor
- * or a copy-paste can silently drop them.
- */
-function charClass(codePoints: number[]): RegExp {
-  return new RegExp(`[${codePoints.map((c) => String.fromCharCode(c)).join('')}]`, 'g');
-}
-
-/**
- * Zero-width space, zero-width non-joiner and joiner, byte order mark, soft
- * hyphen. Ordinary web text is full of them, a selection drags them along, and
- * once they are in the needle nothing will ever match it.
- */
-const INVISIBLE = charClass([0x200b, 0x200c, 0x200d, 0xfeff, 0x00ad]);
-/** A non-breaking space is not the space a fragment is compared against. */
-const NO_BREAK_SPACE = charClass([0x00a0]);
-/** Straight and curly quotes, and guillemets. */
-const LEADING_QUOTES = /^["'‘’“”«»]+/;
-const TRAILING_QUOTES = /["'‘’“”«»]+$/;
-/** Three dots or a real ellipsis, which truncating apps append. */
-const TRAILING_ELLIPSIS = /\s*(?:\.\.\.|…)$/;
-
-/**
- * Text arriving from a phone's share sheet is rarely byte-identical to what is
- * on the page, and a text fragment matches literally — one stray character and
- * the browser silently lands at the top instead.
- *
- * Everything stripped here makes the needle smaller, never larger, so matching
- * can only become more likely: a fragment matches any substring, so dropping a
- * trailing ellipsis, or the quotation marks an app wrapped around a selection,
- * still finds the passage.
- */
-function collapse(text: string): string {
-  return text
-    .replace(INVISIBLE, '')
-    // A non-breaking space is not the space a fragment is compared against.
-    .replace(NO_BREAK_SPACE, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(LEADING_QUOTES, '')
-    .replace(TRAILING_QUOTES, '')
-    .replace(TRAILING_ELLIPSIS, '')
-    .trim();
 }
 
 /** Whole words only; a fragment that starts mid-word will not match anything. */
