@@ -155,3 +155,7 @@ served at <https://aniketpandey05.github.io/kona/privacy.html>.
 ## License
 
 MIT — see [LICENSE](LICENSE). Do what you like with it.
+
+The built extension bundles Preact, which is also MIT. Its notice travels inside the
+package as `THIRD-PARTY-NOTICES.txt`, which is what its licence asks for. Nothing else
+Kona depends on ends up in the shipped code; the rest is build tooling.
