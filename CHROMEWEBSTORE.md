@@ -1,6 +1,6 @@
 # Chrome Web Store Listing — Kona
 
-> Last Updated: 2026-10-21 · Version 1.0.0
+> Last Updated: 2026-10-23 · Version 1.1.0
 
 Everything needed to fill in the Developer Dashboard, so nothing has to be invented at
 submission time. Exclude this file from the uploaded ZIP.
@@ -126,7 +126,7 @@ creditworthiness or for lending.
 - [ ] Screenshots padded to 1280×800
 - [ ] Privacy policy URL confirmed live after Pages deploy
 - [ ] $5 one-off developer registration paid
-- [ ] ZIP uploaded from `.output/kona-1.0.0-chrome.zip` (`npm run zip`)
+- [ ] ZIP uploaded from `.output/kona-1.1.0-chrome.zip` (`npm run zip`)
 
 The ZIP produced by `npm run zip` contains only the built extension — no `.git`, no
 `node_modules`, no source, and not this file.
@@ -135,4 +135,5 @@ The ZIP produced by `npm run zip` contains only the built extension — no `.git
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.1.0 | 2026-10-23 | Colour on phone captures, with filtering to match. Backups and appearance reachable from the header rather than the foot of the list. Shared text is tidied as it is stored. A conversation link shared to the app attaches itself to everything kept from that conversation. |
 | 1.0.0 | 2026-10-21 | First public release. Highlighting with notes and tags on ChatGPT, Claude, Gemini and any site the user switches on; side panel; cross-chat search; one library with Markdown and backup export; light and dark themes. |

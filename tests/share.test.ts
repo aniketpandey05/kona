@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { markFromShare, readShare } from '../app/src/share';
+import { ADOPTION_WINDOW_MS, markFromShare, planShare, readShare } from '../app/src/share';
+import type { Mark } from '../src/core/types';
+
+const NOW = 1_700_000_000_000;
 
 describe('readShare', () => {
   it('reads what Android puts in the query string', () => {
@@ -68,5 +71,65 @@ describe('markFromShare', () => {
 
   it('refuses a share with neither text nor link', () => {
     expect(markFromShare({ title: 'just a title' })).toBeNull();
+  });
+});
+
+describe('planShare', () => {
+  const kept = (over: Partial<Mark> = {}): Mark => ({
+    id: crypto.randomUUID(),
+    site: 'web',
+    conversationId: 'unsorted',
+    conversationTitle: 'Saved text',
+    url: '',
+    label: '',
+    color: 'yellow',
+    snapshot: 'something kept',
+    createdAt: NOW,
+    updatedAt: NOW,
+    ...over,
+  });
+
+  it('keeps an ordinary capture', () => {
+    const plan = planShare({ text: 'a passage', url: 'https://e.com/p' }, [], NOW);
+    expect(plan.kind).toBe('keep');
+  });
+
+  it('has nothing to do with an empty share', () => {
+    expect(planShare({ title: 'just a title' }, [], NOW).kind).toBe('nothing');
+  });
+
+  // The point of the whole thing: a link shared on its own, straight after the
+  // passages it belongs to.
+  it('offers a bare link to the captures that have none', () => {
+    const orphans = [kept(), kept()];
+    const plan = planShare({ url: 'https://g.co/gemini/share/x' }, orphans, NOW);
+    expect(plan).toMatchObject({ kind: 'adopt', url: 'https://g.co/gemini/share/x' });
+    expect(plan.kind === 'adopt' && plan.orphans).toHaveLength(2);
+  });
+
+  it('keeps a bare link on its own when nothing is waiting for it', () => {
+    expect(planShare({ url: 'https://e.com/p' }, [], NOW).kind).toBe('keep');
+  });
+
+  it('leaves captures that already have a link alone', () => {
+    const plan = planShare({ url: 'https://e.com/p' }, [kept({ url: 'https://other.com' })], NOW);
+    expect(plan.kind).toBe('keep');
+  });
+
+  // Anything older was a different conversation; adopting it would be wrong.
+  it('does not reach back past a day', () => {
+    const old = kept({ createdAt: NOW - ADOPTION_WINDOW_MS - 1 });
+    expect(planShare({ url: 'https://e.com/p' }, [old], NOW).kind).toBe('keep');
+  });
+
+  it('does reach back within a day', () => {
+    const recent = kept({ createdAt: NOW - ADOPTION_WINDOW_MS + 1000 });
+    expect(planShare({ url: 'https://e.com/p' }, [recent], NOW).kind).toBe('adopt');
+  });
+
+  // A share carrying both is a normal capture, not a link looking for a home.
+  it('treats a share with text and a link as an ordinary capture', () => {
+    const plan = planShare({ text: 'a passage', url: 'https://e.com/p' }, [kept()], NOW);
+    expect(plan.kind).toBe('keep');
   });
 });

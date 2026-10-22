@@ -8,7 +8,7 @@ import { countTags, sameTag, addTags, removeTag } from '../../src/core/tags';
 import type { Theme } from '../../src/core/theme';
 import type { HighlightColor, Mark } from '../../src/core/types';
 import { KonaMark } from '../../src/ui/KonaMark';
-import { markFromShare, readShare } from './share';
+import { markFromShare, planShare, readShare } from './share';
 import { applyTheme, loadTheme, saveTheme } from './theme';
 import { importMarks, loadAll, remove, save, watch } from './storage';
 
@@ -23,12 +23,6 @@ const COLOURS = Object.keys(UI_COLORS) as HighlightColor[];
  */
 const LAST_LINK = 'kona:last-link';
 
-/**
- * How far back a bare link will reach when offering to adopt captures that
- * have none. A conversation is read, shared from, and then its link shared —
- * all within a sitting.
- */
-const ADOPTION_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 function readLastLink(): string {
   try {
@@ -72,25 +66,15 @@ export function App() {
     void (async () => {
       const shared = readShare(location.search);
       if (shared) {
-        const mark = markFromShare(shared);
-        if (!mark) {
+        const plan = planShare(shared, await loadAll());
+        if (plan.kind === 'nothing') {
           setNotice("That share didn't contain anything to keep.");
-        } else if (!mark.snapshot && mark.url) {
-          // A link on its own. Almost always the conversation that the
-          // link-less captures just before it came from, shared straight from
-          // the app's own share menu rather than copied and pasted.
-          const orphans = (await loadAll()).filter(
-            (each) => !each.url && Date.now() - each.createdAt < ADOPTION_WINDOW_MS,
-          );
-          if (orphans.length) setPendingLink({ url: mark.url, orphans });
-          else {
-            await save(mark);
-            setNotice('Saved the link.');
-          }
+        } else if (plan.kind === 'adopt') {
+          setPendingLink({ url: plan.url, orphans: plan.orphans });
         } else {
-          await save(mark);
-          setNotice('Saved.');
-          setEditing(mark);
+          await save(plan.mark);
+          setNotice(plan.mark.snapshot ? 'Saved.' : 'Saved the link.');
+          if (plan.mark.snapshot) setEditing(plan.mark);
         }
         // Drop the query string so a reload cannot save the same thing twice.
         history.replaceState(null, '', location.pathname);

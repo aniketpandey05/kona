@@ -76,3 +76,42 @@ function firstUrl(text: string): string | undefined {
   return /https?:\/\/\S+/.exec(text)?.[0];
 }
 
+
+/**
+ * How far back a bare link reaches when offering to adopt captures that have
+ * none. A conversation gets read, shared from, and its link shared, all in one
+ * sitting; anything older belonged to a different one, and silently attaching
+ * the wrong link would be worse than asking again.
+ */
+export const ADOPTION_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * What to do with an incoming share. Kept apart from the component because the
+ * interesting case — a link arriving on its own — is a decision, not a render.
+ */
+export type SharePlan =
+  /** Nothing worth keeping arrived. */
+  | { kind: 'nothing' }
+  /** An ordinary capture: save it and open it for a note. */
+  | { kind: 'keep'; mark: Mark }
+  /**
+   * A link and nothing else, with recent captures that have none. Almost
+   * always the conversation those captures came from, shared from the app's
+   * own share menu rather than copied and pasted.
+   */
+  | { kind: 'adopt'; url: string; orphans: Mark[] };
+
+export function planShare(
+  payload: SharedPayload,
+  existing: readonly Mark[],
+  now = Date.now(),
+): SharePlan {
+  const mark = markFromShare(payload, now);
+  if (!mark) return { kind: 'nothing' };
+  if (mark.snapshot || !mark.url) return { kind: 'keep', mark };
+
+  const orphans = existing.filter(
+    (each) => !each.url && now - each.createdAt < ADOPTION_WINDOW_MS,
+  );
+  return orphans.length ? { kind: 'adopt', url: mark.url, orphans } : { kind: 'keep', mark };
+}
