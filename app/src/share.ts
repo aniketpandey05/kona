@@ -72,8 +72,41 @@ function hostOf(url: string): string {
   }
 }
 
+/**
+ * Apps rarely share a bare link. It arrives inside a sentence, wrapped in
+ * quotes, or with a full stop behind it, and \S+ swallows all of that. A
+ * trailing character is not harmless: Gemini answers a share id it cannot
+ * resolve by redirecting to a blank chat, so a stray '.' looks exactly like
+ * the highlight having gone missing.
+ */
 function firstUrl(text: string): string | undefined {
-  return /https?:\/\/\S+/.exec(text)?.[0];
+  const found = /https?:\/\/\S+/.exec(text)?.[0];
+  return found === undefined ? undefined : trimPunctuation(found);
+}
+
+/** Sentence punctuation, and closing marks that never opened. */
+function trimPunctuation(url: string): string {
+  const pairs: Record<string, string> = { ')': '(', ']': '[', '}': '{' };
+  let end = url.length;
+  while (end > 0) {
+    const last = url[end - 1]!;
+    if (/[.,;:!?'"]/.test(last)) {
+      end -= 1;
+      continue;
+    }
+    const opener = pairs[last];
+    const upTo = url.slice(0, end);
+    if (opener && count(upTo, opener) < count(upTo, last)) {
+      end -= 1;
+      continue;
+    }
+    break;
+  }
+  return url.slice(0, end);
+}
+
+function count(text: string, char: string): number {
+  return text.split(char).length - 1;
 }
 
 
