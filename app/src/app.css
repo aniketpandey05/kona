@@ -583,6 +583,18 @@ input:focus-visible {
   color: var(--accent);
 }
 
+/* Beside the domain, where the sheet's action row has no space left. */
+.app-inapp {
+  display: inline-block;
+  margin-left: 10px;
+  text-decoration: none;
+  padding: 2px 9px;
+  font-size: 12px;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
 .app-source-missing p {
   margin: 0 0 10px;
 }
