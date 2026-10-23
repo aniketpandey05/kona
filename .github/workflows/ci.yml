@@ -29,10 +29,13 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run build:firefox
+      # The Safari build is the extension half of the Apple version; the Xcode
+      # wrap around it needs a Mac, so this is as far as CI can take it.
+      - run: npm run build:safari
       - run: npm run build:app
 
       # The packaged extensions, so a release can be assembled from a green run.
-      - run: npm run zip && npm run zip:firefox
+      - run: npm run zip && npm run zip:firefox && npm run zip:safari
 
       # Out of .output and into a plain directory first. Globs do not reliably
       # look inside a dot-directory, and an upload that matches nothing fails

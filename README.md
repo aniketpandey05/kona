@@ -6,6 +6,9 @@ own computer and nothing is sent anywhere.
 
 There is also a small phone app that keeps text you share to it from any Android app.
 
+On Apple platforms Safari runs the extension itself — on iPhone and iPad as well as on a
+Mac — and that build is in `apple/`.
+
 > **Status:** early prototype, not in the Chrome Web Store yet. Install it yourself with the steps below.
 
 ![The side panel listing highlights in a chat](docs/screenshots/chat-panel.jpg)
@@ -101,7 +104,33 @@ closed test with 12 testers for 14 days before they are allowed to publish.
 
 It keeps its own highlights, separate from the desktop ones; nothing syncs between them.
 The backup file is the same format in both, so you can carry highlights across by hand.
-iPhone is not supported: Safari does not let a web app register as a share target.
+This is the Android path and only that: Safari has never let a web app register as a
+share target, so an iPhone cannot be shared to this way — and does not need to be,
+because Safari has real extensions.
+
+## On an iPhone, iPad or Mac (Safari)
+
+Phones are the other way round from what you would expect. Chrome on Android has no
+extensions and Google has not said it ever will; Safari has had them on iPhone and iPad
+since iOS 15. So the Apple version is not a web app at all — it is this extension, built
+from the same source, highlighting inside the page on a phone the way it does on a
+desktop.
+
+```bash
+npm run build:safari   # .output/safari-mv3 — builds on any OS
+apple/package.sh       # wraps it in the app Apple requires; needs a Mac with Xcode
+```
+
+Safari 17.2 is the floor, because that is where the CSS Custom Highlight API landed, and
+on an iPhone that is the iOS version too. Two things differ from Chrome: a phone has no
+right-click, so **Highlight with Kona** is a Mac-only convenience, and Safari asks about
+each site in its own prompt rather than Chrome's. As with the Android app, highlights
+stay in the browser they were made in, and the backup file is what carries them across.
+
+Every Safari extension ships inside an app, built with Xcode and signed, so this is the
+one part of Kona that needs a Mac and a paid developer account.
+[`apple/README.md`](apple/README.md) covers all of it, including which parts have not
+been run on a Mac yet.
 
 ## Keyboard shortcuts
 
@@ -140,6 +169,7 @@ npm run build     # production build in .output/chrome-mv3
 | Painting highlights with the CSS Custom Highlight API, without touching the page | `src/core/painter.ts` |
 | Panel order, search, backups, deep links | `src/core/order.ts`, `search.ts`, `backup.ts`, `link.ts` |
 | The Android web app — shares `src/core` with the extension | `app/` |
+| Wrapping the Safari build in the app Apple requires around it | `apple/` |
 | Page logic: selection, navigation, jumping, storage | `src/content/controller.ts` |
 | Panel, toolbar and note card (Preact, in a shadow root) | `src/ui/` |
 | Library page, welcome page, toolbar popup, background script | `src/entrypoints/` |
@@ -153,6 +183,7 @@ When a site changes its layout, the panel shows a warning. The fix is usually a 
 ```bash
 npm run zip          # .output/kona-<version>-chrome.zip for the Chrome Web Store
 npm run zip:firefox  # the same for addons.mozilla.org, plus a sources archive
+npm run zip:safari   # the extension resources, for the App Store Connect upload
 ```
 
 `CHROMEWEBSTORE.md` holds the listing copy, the permission justifications and the data-use

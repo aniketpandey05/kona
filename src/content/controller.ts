@@ -28,6 +28,9 @@ const JUMP_POLL_MS = 300;
 const LOAD_OLDER_STEPS = 12;
 const LOAD_OLDER_WAIT_MS = 400;
 const SEARCH_RESULTS = 8;
+// How long a selection has to stop changing before a finger is taken to have
+// finished dragging it about.
+const SELECTION_SETTLE_MS = 250;
 const UNDO_MS = 7000;
 const MARK_HASH = '#bookmark=';
 // Approximate note card size, used to keep it on screen. Matches .k-card in styles.css.
@@ -125,6 +128,11 @@ export class KonaController {
   private cursor = -1;
   // Streaming replies mutate the page constantly, so also refresh at least once a second.
   private readonly scheduleRefresh = debounce(() => this.refresh(), 200, 1000);
+  /** True only while a mouse button is down, which a finger never does. */
+  private mouseDown = false;
+  private readonly captureWhenSettled = debounce(() => {
+    if (!this.mouseDown) this.captureSelection();
+  }, SELECTION_SETTLE_MS);
 
   constructor(
     private readonly ctx: ContentScriptContext,
@@ -144,6 +152,7 @@ export class KonaController {
     this.ctx.onInvalidated(() => {
       observer.disconnect();
       this.scheduleRefresh.cancel();
+      this.captureWhenSettled.cancel();
       this.unwatch?.();
       this.painter.dispose();
     });
@@ -153,6 +162,15 @@ export class KonaController {
     });
     // The selection is only final after mouseup has been handled.
     this.ctx.addEventListener(document, 'mouseup', () => this.ctx.setTimeout(this.captureSelection, 0));
+    // A finger sends no mouseup worth waiting for. On a phone the selection is
+    // dragged about by handles Safari draws itself, and all the page hears is
+    // selectionchange — so a selection that has stopped changing counts as a
+    // finished one too. A mouse still waits for its button to come up, so
+    // nothing opens mid-drag where there is one.
+    this.ctx.addEventListener(document, 'selectionchange', this.captureWhenSettled);
+    this.ctx.addEventListener(document, 'pointerdown', this.onPointerDown, { capture: true });
+    this.ctx.addEventListener(document, 'pointerup', this.onPointerUp, { capture: true });
+    this.ctx.addEventListener(document, 'pointercancel', this.onPointerUp, { capture: true });
     this.ctx.addEventListener(document, 'click', this.onClick);
     this.ctx.addEventListener(document, 'keyup', this.onKeyUp);
     // Toolbar and card positions are viewport rects, which go stale when anything scrolls.
@@ -610,6 +628,14 @@ export class KonaController {
         streaming: this.adapter.isStreaming(message),
       },
     });
+  };
+
+  private onPointerDown = (event: PointerEvent): void => {
+    if (event.pointerType === 'mouse') this.mouseDown = true;
+  };
+
+  private onPointerUp = (): void => {
+    this.mouseDown = false;
   };
 
   private clearSelectionDraft = (): void => {

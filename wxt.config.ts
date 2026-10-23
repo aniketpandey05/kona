@@ -29,6 +29,11 @@ export default defineConfig({
     // Firefox needs an explicit add-on id to be submitted, and a floor: the CSS
     // Custom Highlight API that paints every highlight only arrived in 140, so
     // below that Kona would install and then quietly fail to draw anything.
+    // Safari's floor is the same API, which arrived in 17.2 on macOS and iOS
+    // alike. Below that Kona would install and then draw nothing.
+    ...(browser === 'safari'
+      ? { browser_specific_settings: { safari: { strict_min_version: '17.2' } } }
+      : {}),
     ...(browser === 'firefox'
       ? {
           browser_specific_settings: {

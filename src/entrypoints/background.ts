@@ -15,6 +15,17 @@ const BUILT_IN = [
 ];
 const pendingKey = (tabId: number) => `pending-jump:${tabId}`;
 
+/**
+ * Safari on iPhone and iPad has no right-click, so it ships no contextMenus
+ * API either, and a phone has no windows to bring forward. Reaching straight
+ * through a missing one would throw while the background script was still
+ * starting up, before a single listener was attached, taking the whole
+ * extension down with it. So both are read once, here, and everything that
+ * uses them does nothing where they do not exist.
+ */
+const menus: typeof browser.contextMenus | undefined = browser.contextMenus;
+const windows: typeof browser.windows | undefined = browser.windows;
+
 export default defineBackground(() => {
   // Keep the list of user-enabled sites and the script registered for them in step.
   browser.runtime.onInstalled.addListener((details) => {
@@ -28,7 +39,7 @@ export default defineBackground(() => {
   browser.permissions.onAdded.addListener(() => void syncWebSites(true));
   browser.permissions.onRemoved.addListener(() => void syncWebSites());
 
-  browser.contextMenus.onClicked.addListener((info, tab) => {
+  menus?.onClicked.addListener((info, tab) => {
     if (info.menuItemId !== MENU_ID || tab?.id === undefined) return;
     void browser.tabs
       .sendMessage(tab.id, { type: 'highlight-selection' } satisfies RuntimeMessage)
@@ -109,10 +120,13 @@ async function syncWebSites(startOnActiveTab = false): Promise<null> {
 /**
  * The right-click item only appears where highlighting actually works, so it is
  * rebuilt whenever the allowed sites change rather than offered everywhere.
+ * Where there is no such menu at all, switching a site on carries on without
+ * one: losing the menu must not cost you the highlighting.
  */
 async function buildMenu(userSites: string[]): Promise<void> {
-  await browser.contextMenus.removeAll();
-  browser.contextMenus.create({
+  if (!menus) return;
+  await menus.removeAll();
+  menus.create({
     id: MENU_ID,
     title: 'Highlight with Kona',
     contexts: ['selection'],
@@ -177,5 +191,5 @@ async function findTab(url: string) {
 
 async function focusTab(tab: { id?: number; windowId?: number }): Promise<void> {
   if (tab.id !== undefined) await browser.tabs.update(tab.id, { active: true });
-  if (tab.windowId !== undefined) await browser.windows.update(tab.windowId, { focused: true });
+  if (tab.windowId !== undefined) await windows?.update(tab.windowId, { focused: true });
 }
