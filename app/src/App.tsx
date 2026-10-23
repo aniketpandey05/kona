@@ -442,6 +442,7 @@ function Sheet({
   const tagRef = useRef<HTMLInputElement>(null);
   const linkRef = useRef<HTMLInputElement>(null);
   const lastLink = readLastLink();
+  const [copied, setCopied] = useState<'idle' | 'done' | 'failed'>('idle');
 
   return (
     <div class="app-backdrop" onClick={onClose}>
@@ -455,9 +456,23 @@ function Sheet({
             to be readable, and fixable, without exporting the whole library. */}
         <div class="app-source app-source-missing">
           {mark.url ? (
-            <a class="app-link" href={linkToMark(mark)} target="_blank" rel="noreferrer">
-              {mark.url}
-            </a>
+            <div class="app-linkrow">
+              <a class="app-link" href={linkToMark(mark)} target="_blank" rel="noreferrer">
+                {mark.url}
+              </a>
+              {/* Tapping a link is the one thing Android can take away: a chat
+                  site's own app is the verified handler for its domain, so the
+                  tap can land in the app instead of the page. A copied link
+                  pasted into a browser is the way round that. */}
+              <button
+                class="app-tool"
+                onClick={() => {
+                  void copyText(mark.url).then((ok) => setCopied(ok ? 'done' : 'failed'));
+                }}
+              >
+                {copied === 'done' ? 'Copied' : copied === 'failed' ? 'Press and hold' : 'Copy'}
+              </button>
+            </div>
           ) : (
             <p>No link came with this share, so there is nowhere to jump back to.</p>
           )}
@@ -621,5 +636,34 @@ function hostOf(url: string): string {
     return new URL(url).hostname.replace(/^www\./, '');
   } catch {
     return '';
+  }
+}
+
+/**
+ * Clipboard writes get refused often enough — a denied permission, an older
+ * webview, a page that is not the foreground tab — that a button which quietly
+ * does nothing is worse than no button. Try the modern call, fall back to a
+ * selection copy, and say which happened rather than swallowing it.
+ */
+async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // Refused; the old way still works in places the new one does not.
+  }
+  const field = document.createElement('textarea');
+  field.value = text;
+  field.setAttribute('readonly', '');
+  field.style.position = 'fixed';
+  field.style.opacity = '0';
+  document.body.append(field);
+  field.select();
+  try {
+    return document.execCommand('copy');
+  } catch {
+    return false;
+  } finally {
+    field.remove();
   }
 }

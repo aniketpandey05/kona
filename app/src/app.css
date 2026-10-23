@@ -585,9 +585,15 @@ input:focus-visible {
 
 /* The real link, shown in full: a tidied host hides exactly the thing that
    goes wrong with one. */
-.app-link {
-  display: block;
+.app-linkrow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
   margin-bottom: 10px;
+}
+
+.app-link {
+  flex: 1;
   font-size: 13px;
   line-height: 1.4;
 }
