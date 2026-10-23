@@ -347,8 +347,8 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
               highlighted here at all. Say which it is. */}
           {state.elsewhere > 0 && (
             <p class="k-elsewhere">
-              {state.elsewhere} {state.elsewhere === 1 ? 'highlight' : 'highlights'} on this site,
-              in other chats.{' '}
+              {state.elsewhere} {state.elsewhere === 1 ? 'highlight' : 'highlights'} on this site,{' '}
+              {state.elsewhereIn === 'pages' ? 'on other pages' : 'in other chats'}.{' '}
               <button class="k-text-button k-link" onClick={() => controller.openSiteLibrary()}>
                 See them
               </button>

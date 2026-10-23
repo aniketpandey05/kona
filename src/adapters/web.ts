@@ -5,6 +5,7 @@ const CONTENT = 'main, article, [role="main"], #content, .post, body';
 
 export const webAdapter: SiteAdapter = {
   site: 'web',
+  conversationNoun: 'page',
 
   // One page, one set of highlights. The query string can change what a page shows, so keep it.
   getConversationId(url) {

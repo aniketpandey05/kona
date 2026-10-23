@@ -8,7 +8,7 @@ import { moveItem, nextOrder, sortByOrder } from '../core/order';
 import { HighlightPainter } from '../core/painter';
 import { describeQuote } from '../core/quote';
 import { searchMarks } from '../core/search';
-import { siteLabel } from '../core/sites';
+import { sameSite, siteLabel } from '../core/sites';
 import { loadAllMarks, loadMarks, removeMark, saveOrder, upsertMark, watchMarks } from '../core/store';
 import { loadTheme, watchTheme, type Theme } from '../core/theme';
 import { buildTextIndex, spanFromRange, type TextIndex, type TextSpan } from '../core/textIndex';
@@ -91,6 +91,8 @@ export interface ViewState {
    * empty, which looks identical to having never highlighted here at all.
    */
   elsewhere: number;
+  /** What those other conversations are called on this site. */
+  elsewhereIn: 'chats' | 'pages';
   dark: boolean;
   notice: string | null;
 }
@@ -106,6 +108,7 @@ export class KonaController {
     enabled: true,
     conversationId: null,
     elsewhere: 0,
+    elsewhereIn: 'chats',
     items: [],
     ticks: [],
     viewport: null,
@@ -554,9 +557,13 @@ export class KonaController {
     const all = await loadAllMarks();
     // The conversation may have changed while that was being read.
     if (this.state.conversationId !== conversationId) return;
+    const self = { site: this.adapter.site, url: location.href };
     const here = (mark: Mark) =>
-      mark.site === this.adapter.site && mark.conversationId !== conversationId;
-    this.setState({ elsewhere: all.filter(here).length });
+      sameSite(mark, self) && mark.conversationId !== conversationId;
+    this.setState({
+      elsewhere: all.filter(here).length,
+      elsewhereIn: this.adapter.conversationNoun === 'page' ? 'pages' : 'chats',
+    });
   }
 
   private refresh(): void {

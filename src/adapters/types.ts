@@ -14,6 +14,8 @@ export interface MessageRef {
  */
 export interface SiteAdapter {
   site: SiteId;
+  /** What one conversation is, in the user's words. Chat sites have chats. */
+  conversationNoun?: 'chat' | 'page';
   getConversationId(url: URL): string | null;
   getConversationTitle(): string;
   getMessages(): MessageRef[];
