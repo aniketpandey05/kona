@@ -330,7 +330,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
         </button>
         <button
           class="k-icon-button"
-          onClick={() => controller.openLibrary()}
+          onClick={() => controller.openSiteLibrary()}
           aria-label="Open all my highlights"
           title="All my highlights"
         >
@@ -341,7 +341,20 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
         </button>
       </header>
       {state.items.length === 0 ? (
-        <p class="k-empty">Select text in any message to highlight it.</p>
+        <div class="k-empty">
+          <p>Select text in any message to highlight it.</p>
+          {/* An empty panel in a new chat looks the same as never having
+              highlighted here at all. Say which it is. */}
+          {state.elsewhere > 0 && (
+            <p class="k-elsewhere">
+              {state.elsewhere} {state.elsewhere === 1 ? 'highlight' : 'highlights'} on this site,
+              in other chats.{' '}
+              <button class="k-text-button k-link" onClick={() => controller.openSiteLibrary()}>
+                See them
+              </button>
+            </p>
+          )}
+        </div>
       ) : (
         <ul ref={listRef} class={drag ? 'k-list k-list-dragging' : 'k-list'}>
           {state.items.map(({ mark, found }, index) => (

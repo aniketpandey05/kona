@@ -32,7 +32,7 @@ interface ChatGroup {
 export function Library() {
   const [marks, setMarks] = useState<Mark[] | null>(null);
   const [query, setQuery] = useState('');
-  const [site, setSite] = useState<string | null>(null);
+  const [site, setSite] = useState<string | null>(siteFromUrl());
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -297,6 +297,11 @@ function countBySite(marks: Mark[]): Array<[string, number]> {
     counts.set(label, (counts.get(label) ?? 0) + 1);
   }
   return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+}
+
+/** The panel can open the library already narrowed to the site being read. */
+function siteFromUrl(): string | null {
+  return new URLSearchParams(location.search).get('site');
 }
 
 function groupByChat(marks: Mark[]): ChatGroup[] {

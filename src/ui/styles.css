@@ -496,6 +496,29 @@
   opacity: 1;
 }
 
+/* The empty panel holds paragraphs now, and nothing resets their margins. */
+.k-empty p {
+  margin: 0;
+}
+
+.k-empty .k-elsewhere {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--k-border);
+  font-size: 12px;
+}
+
+.k-link {
+  padding: 0;
+  color: var(--k-accent);
+  font-weight: 600;
+}
+
+.k-link:hover {
+  background: none;
+  text-decoration: underline;
+}
+
 .k-empty,
 .k-warning {
   margin: 0;

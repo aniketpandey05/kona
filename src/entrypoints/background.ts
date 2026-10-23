@@ -63,7 +63,7 @@ async function handle(message: RuntimeMessage, senderTabId: number | undefined) 
     case 'sites-changed':
       return syncWebSites(true);
     case 'open-library':
-      return openLibrary();
+      return openLibrary(message.site);
     default:
       return null;
   }
@@ -173,11 +173,18 @@ async function takePendingJump(tabId: number | undefined): Promise<PendingJump |
   return pending ?? null;
 }
 
-async function openLibrary(): Promise<null> {
-  const url = browser.runtime.getURL(LIBRARY_PAGE);
-  const existing = await findTab(url);
-  if (existing?.id === undefined) await browser.tabs.create({ url });
-  else await focusTab(existing);
+async function openLibrary(site?: string): Promise<null> {
+  const base = browser.runtime.getURL(LIBRARY_PAGE);
+  const url = site ? `${base}?site=${encodeURIComponent(site)}` : base;
+  // The trailing * so a library already showing a filter still counts as open.
+  const existing = await findTab(`${base}*`);
+  if (existing?.id === undefined) {
+    await browser.tabs.create({ url });
+    return null;
+  }
+  // It is open on some other filter; point it at the one that was asked for.
+  if (site) await browser.tabs.update(existing.id, { url });
+  await focusTab(existing);
   return null;
 }
 

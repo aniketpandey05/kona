@@ -19,4 +19,5 @@ export type RuntimeMessage =
   | { type: 'list-sites' }
   /** Sent when the right-click menu item is used, so the selection becomes a highlight. */
   | { type: 'highlight-selection' }
-  | { type: 'open-library' };
+  /** Opens the library, optionally narrowed to one site's label. */
+  | { type: 'open-library'; site?: string };

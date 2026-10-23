@@ -8,6 +8,7 @@ import { moveItem, nextOrder, sortByOrder } from '../core/order';
 import { HighlightPainter } from '../core/painter';
 import { describeQuote } from '../core/quote';
 import { searchMarks } from '../core/search';
+import { siteLabel } from '../core/sites';
 import { loadAllMarks, loadMarks, removeMark, saveOrder, upsertMark, watchMarks } from '../core/store';
 import { loadTheme, watchTheme, type Theme } from '../core/theme';
 import { buildTextIndex, spanFromRange, type TextIndex, type TextSpan } from '../core/textIndex';
@@ -85,6 +86,11 @@ export interface ViewState {
   /** The search box over every highlight from every site; null when closed. */
   search: SearchState | null;
   health: 'ok' | 'no-messages';
+  /**
+   * Highlights kept on this site but in other conversations. A new chat starts
+   * empty, which looks identical to having never highlighted here at all.
+   */
+  elsewhere: number;
   dark: boolean;
   notice: string | null;
 }
@@ -99,6 +105,7 @@ export class KonaController {
   private state: ViewState = {
     enabled: true,
     conversationId: null,
+    elsewhere: 0,
     items: [],
     ticks: [],
     viewport: null,
@@ -448,10 +455,15 @@ export class KonaController {
   }
 
   /** Opens the library page listing highlights from every site. */
-  openLibrary(): void {
+  openLibrary(site?: string): void {
     void browser.runtime
-      .sendMessage({ type: 'open-library' } satisfies RuntimeMessage)
+      .sendMessage({ type: 'open-library', site } satisfies RuntimeMessage)
       .catch(() => undefined);
+  }
+
+  /** The same library, already narrowed to the site being read. */
+  openSiteLibrary(): void {
+    this.openLibrary(siteLabel({ site: this.adapter.site, url: location.href }));
   }
 
   openCard(markId: string, focusNote = false): void {
@@ -518,13 +530,33 @@ export class KonaController {
     this.unwatch = watchMarks(this.adapter.site, conversationId, (marks) => {
       this.marks = marks;
       this.refresh();
+      void this.countElsewhere(conversationId);
     });
     const marks = await loadMarks(this.adapter.site, conversationId);
     if (this.state.conversationId !== conversationId) return;
     this.marks = marks;
     this.refresh();
+    void this.countElsewhere(conversationId);
     // Re-check once the page has had time to render, so a broken layout gets reported.
     this.ctx.setTimeout(() => this.refresh(), BROKEN_AFTER_MS + 100);
+  }
+
+  /**
+   * How much is kept on this site outside the conversation being looked at.
+   * Only worth knowing when there is nothing here, so it is not counted
+   * otherwise — it reads every highlight there is.
+   */
+  private async countElsewhere(conversationId: string): Promise<void> {
+    if (this.marks.length > 0) {
+      if (this.state.elsewhere !== 0) this.setState({ elsewhere: 0 });
+      return;
+    }
+    const all = await loadAllMarks();
+    // The conversation may have changed while that was being read.
+    if (this.state.conversationId !== conversationId) return;
+    const here = (mark: Mark) =>
+      mark.site === this.adapter.site && mark.conversationId !== conversationId;
+    this.setState({ elsewhere: all.filter(here).length });
   }
 
   private refresh(): void {
