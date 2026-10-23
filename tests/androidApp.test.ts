@@ -56,7 +56,7 @@ describe("openInAppUrl", () => {
     const spec = url.slice(url.indexOf("#Intent;") + 8, -";end".length);
     const fields = spec.split(";");
     expect(fields).toHaveLength(3);
-    const encoded = fields[2].replace("S.browser_fallback_url=", "");
+    const encoded = (fields[2] ?? "").replace("S.browser_fallback_url=", "");
     expect(decodeURIComponent(encoded)).toBe(fallback);
   });
 
