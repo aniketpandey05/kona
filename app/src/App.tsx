@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { createBackup, readBackup } from '../../src/core/backup';
 import { linkToMark } from '../../src/core/link';
-import { openInAppUrl } from './androidApp';
 import { UI_COLORS } from '../../src/core/painter';
 import { toMarkdown } from '../../src/core/markdown';
 import { searchMarks } from '../../src/core/search';
@@ -443,9 +442,6 @@ function Sheet({
   const tagRef = useRef<HTMLInputElement>(null);
   const linkRef = useRef<HTMLInputElement>(null);
   const lastLink = readLastLink();
-  // The web link scrolls to the passage; the app link lands in the chat you
-  // are already signed in to. Neither can do both, so offer both.
-  const appLink = mark.url ? openInAppUrl(mark.url, linkToMark(mark)) : null;
 
   return (
     <div class="app-backdrop" onClick={onClose}>
@@ -459,14 +455,6 @@ function Sheet({
             <a href={linkToMark(mark)} target="_blank" rel="noreferrer">
               {hostOf(mark.url) || mark.url}
             </a>
-            {/* Not target=_blank: the handover leaves Kona standing, and when
-                the app turns out not to be installed Chrome follows the
-                fallback here rather than into a stray tab. */}
-            {appLink && (
-              <a class="app-inapp" href={appLink}>
-                Open in app
-              </a>
-            )}
           </p>
         ) : (
           <div class="app-source app-source-missing">
