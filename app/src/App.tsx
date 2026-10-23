@@ -8,7 +8,7 @@ import { countTags, sameTag, addTags, removeTag } from '../../src/core/tags';
 import type { Theme } from '../../src/core/theme';
 import type { HighlightColor, Mark } from '../../src/core/types';
 import { KonaMark } from '../../src/ui/KonaMark';
-import { markFromShare, planShare, readShare } from './share';
+import { firstUrl, markFromShare, planShare, readShare } from './share';
 import { applyTheme, loadTheme, saveTheme } from './theme';
 import { importMarks, loadAll, remove, save, watch } from './storage';
 
@@ -448,70 +448,76 @@ function Sheet({
       <div class="app-sheet" onClick={(event) => event.stopPropagation()}>
         <blockquote class="app-quote">{mark.snapshot || mark.url}</blockquote>
 
-        {/* Whether a link came with the share decides whether this can ever jump
-            back, so say which plainly instead of leaving it to be guessed. */}
-        {mark.url ? (
-          <p class="app-source">
-            <a href={linkToMark(mark)} target="_blank" rel="noreferrer">
-              {hostOf(mark.url) || mark.url}
+        {/* The link is the whole of whether this can ever come back, so show the
+            real one rather than a tidied host. A wrong link and a missing one
+            look identical once a site has swallowed it — Gemini answers a share
+            id it cannot resolve with its home page and says nothing — so it has
+            to be readable, and fixable, without exporting the whole library. */}
+        <div class="app-source app-source-missing">
+          {mark.url ? (
+            <a class="app-link" href={linkToMark(mark)} target="_blank" rel="noreferrer">
+              {mark.url}
             </a>
-          </p>
-        ) : (
-          <div class="app-source app-source-missing">
+          ) : (
             <p>No link came with this share, so there is nowhere to jump back to.</p>
-            <div class="app-tagrow">
-              <input
-                ref={linkRef}
-                class="app-taginput"
-                type="url"
-                inputMode="url"
-                placeholder="paste the page link"
-                autocapitalize="none"
-                autocorrect="off"
-                spellcheck={false}
-              />
-              <button
-                class="app-tool"
-                onClick={() => {
-                  void navigator.clipboard
-                    .readText()
-                    .then((text) => {
-                      const found = /https?:\/\/\S+/.exec(text)?.[0];
-                      if (found && linkRef.current) linkRef.current.value = found;
-                    })
-                    .catch(() => undefined);
-                }}
-              >
-                Paste
-              </button>
-              <button
-                class="app-tool"
-                onClick={() => {
-                  const value = linkRef.current?.value.trim() ?? '';
-                  if (!/^https?:\/\//.test(value)) return;
-                  rememberLink(value);
-                  onChange({ url: value, conversationTitle: hostOf(value) || mark.conversationTitle });
-                }}
-              >
-                Attach
-              </button>
-            </div>
-            {lastLink && (
-              <button
-                class="app-row-action"
-                onClick={() =>
-                  onChange({
-                    url: lastLink,
-                    conversationTitle: hostOf(lastLink) || mark.conversationTitle,
+          )}
+          <div class="app-tagrow">
+            <input
+              ref={linkRef}
+              class="app-taginput"
+              type="url"
+              inputMode="url"
+              defaultValue={mark.url}
+              placeholder="paste the page link"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck={false}
+            />
+            <button
+              class="app-tool"
+              onClick={() => {
+                void navigator.clipboard
+                  .readText()
+                  .then((text) => {
+                    const found = firstUrl(text);
+                    if (found && linkRef.current) linkRef.current.value = found;
                   })
-                }
-              >
-                Use the last link again
-                <small>{lastLink}</small>
-              </button>
-            )}
+                  .catch(() => undefined);
+              }}
+            >
+              Paste
+            </button>
+            <button
+              class="app-tool"
+              onClick={() => {
+                const value = linkRef.current?.value.trim() ?? '';
+                // Emptied on purpose: drop the link rather than keep a wrong one.
+                if (value && !/^https?:\/\//.test(value)) return;
+                if (value) rememberLink(value);
+                onChange({
+                  url: value,
+                  conversationTitle: hostOf(value) || mark.conversationTitle,
+                });
+              }}
+            >
+              Save
+            </button>
           </div>
-        )}
+          {lastLink && lastLink !== mark.url && (
+            <button
+              class="app-row-action"
+              onClick={() =>
+                onChange({
+                  url: lastLink,
+                  conversationTitle: hostOf(lastLink) || mark.conversationTitle,
+                })
+              }
+            >
+              Use the last link again
+              <small>{lastLink}</small>
+            </button>
+          )}
+        </div>
 
         <span class="app-label">Colour</span>
         <div class="app-swatches" role="group" aria-label="Colour">

@@ -79,7 +79,7 @@ function hostOf(url: string): string {
  * resolve by redirecting to a blank chat, so a stray '.' looks exactly like
  * the highlight having gone missing.
  */
-function firstUrl(text: string): string | undefined {
+export function firstUrl(text: string): string | undefined {
   const found = /https?:\/\/\S+/.exec(text)?.[0];
   return found === undefined ? undefined : trimPunctuation(found);
 }

@@ -583,6 +583,15 @@ input:focus-visible {
   color: var(--accent);
 }
 
+/* The real link, shown in full: a tidied host hides exactly the thing that
+   goes wrong with one. */
+.app-link {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 .app-source-missing p {
   margin: 0 0 10px;
 }
