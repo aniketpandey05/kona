@@ -29,7 +29,7 @@
   "dependencies": {
     "preact": "^10.29.8"
   },
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/aniketpandey05/kona.git"

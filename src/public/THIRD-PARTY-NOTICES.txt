@@ -1,8 +1,10 @@
 Kona bundles the following third-party software into the distributed extension.
 Their licence notices are reproduced here as those licences require.
 
-Kona itself is MIT licensed. See LICENSE in the project repository:
-https://github.com/aniketpandey05/kona
+Kona itself is licensed under the GNU Affero General Public License v3.0 or later.
+See LICENSE in the project repository: https://github.com/aniketpandey05/kona
+
+Preact is MIT licensed, which the AGPL permits bundling.
 
 --------------------------------------------------------------------------------
 Preact (https://github.com/preactjs/preact)

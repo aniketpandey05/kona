@@ -182,11 +182,19 @@ free of the DOM so that is cheap to do.
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Do what you like with it.
+AGPL-3.0-or-later — see [LICENSE](LICENSE).
+
+Use it, read it, change it, share it. The one obligation: if you modify Kona and run it
+as a service for other people, you have to publish your changes under the same licence.
+Installing it, for yourself or across an organisation, carries no such obligation — that
+is not what the clause is for.
 
 The extension and the phone app are free, run entirely on your own computer, and will
-stay that way.
+stay that way. A hosted workspace for teams — shared highlights alongside your private
+ones — is planned separately, and that will be paid. It is a separate service; nothing
+moves out of the free version into it.
 
-The built extension bundles Preact, which is also MIT. Its notice travels inside the
-package as `THIRD-PARTY-NOTICES.txt`, which is what its licence asks for. Nothing else
-Kona depends on ends up in the shipped code; the rest is build tooling.
+The built extension bundles Preact, which is MIT and so freely combinable with the AGPL.
+Its notice travels inside the package as `THIRD-PARTY-NOTICES.txt`, which is what its
+licence asks for. Nothing else Kona depends on ends up in the shipped code; the rest is
+build tooling.
