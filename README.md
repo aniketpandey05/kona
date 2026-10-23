@@ -159,9 +159,33 @@ npm run zip:firefox  # the same for addons.mozilla.org, plus a sources archive
 answers, so the submission form can be filled in from one place. The privacy policy is
 served at <https://aniketpandey05.github.io/kona/privacy.html>.
 
+## Contributing
+
+Issues and pull requests are welcome.
+
+The most useful thing anyone can fix is a site that has changed its markup, because that
+is the one thing guaranteed to break. Each site is a single file in `src/adapters/`
+answering the same few questions — where the messages are, which are yours, where a
+message's text lives, and whether a reply is still being written. Nothing outside that
+file should need touching.
+
+```bash
+npm install
+npm test          # the suite, which runs without a browser
+npm run compile   # type check
+npm run dev       # Chrome with the extension loaded, rebuilding on save
+npm run dev:app   # the phone app on localhost:5179
+```
+
+Anything that changes behaviour should bring a test with it. The core is deliberately
+free of the DOM so that is cheap to do.
+
 ## License
 
 MIT — see [LICENSE](LICENSE). Do what you like with it.
+
+The extension and the phone app are free, run entirely on your own computer, and will
+stay that way.
 
 The built extension bundles Preact, which is also MIT. Its notice travels inside the
 package as `THIRD-PARTY-NOTICES.txt`, which is what its licence asks for. Nothing else
