@@ -9,6 +9,9 @@ on:
       - 'app/**'
       - 'src/core/**'
       - 'src/ui/**'
+      # The deploy is gated on compile and test, so a change to the tests alone
+      # can be what turns a failing deploy into a passing one.
+      - 'tests/**'
       - package.json
       - package-lock.json
       - .github/workflows/pages.yml
