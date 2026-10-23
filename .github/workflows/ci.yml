@@ -33,8 +33,18 @@ jobs:
 
       # The packaged extensions, so a release can be assembled from a green run.
       - run: npm run zip && npm run zip:firefox
+
+      # Out of .output and into a plain directory first. Globs do not reliably
+      # look inside a dot-directory, and an upload that matches nothing fails
+      # with everything before it green, which reads as a broken build.
+      - name: Collect the packages
+        run: |
+          mkdir -p packages
+          cp .output/*.zip packages/
+          ls -l packages
+
       - uses: actions/upload-artifact@v4
         with:
           name: extension-packages
-          path: .output/*.zip
+          path: packages/*.zip
           if-no-files-found: error
