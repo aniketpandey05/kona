@@ -52,6 +52,14 @@ export function Space({
   onBack: () => void;
 }) {
   const [showMemo, setShowMemo] = useState(false);
+  // What a claim rests on is the thing you open to check, not the thing you
+  // read down the page. Shut by default, one finding at a time.
+  const [openEvidence, setOpenEvidence] = useState<string[]>([]);
+  const [showSpare, setShowSpare] = useState(false);
+  const [addingFinding, setAddingFinding] = useState(false);
+  const [addingQuestion, setAddingQuestion] = useState(false);
+  const [deciding, setDeciding] = useState(false);
+
   const [claim, setClaim] = useState('');
   const [stance, setStance] = useState<Stance>('supports');
   const [chosen, setChosen] = useState<string[]>([]);
@@ -78,6 +86,13 @@ export function Space({
   const spare = held.filter((mark) => !cited.has(mark.id));
   const memo = buildMemo(space, marksByIds);
 
+  const toggleEvidence = (findingId: string): void =>
+    setOpenEvidence(
+      openEvidence.includes(findingId)
+        ? openEvidence.filter((entry) => entry !== findingId)
+        : [...openEvidence, findingId],
+    );
+
   const copyMemo = (): void => {
     void navigator.clipboard?.writeText(memoMarkdown(memo)).then(
       () => {
@@ -90,7 +105,7 @@ export function Space({
     );
   };
 
-  const toggle = (markId: string): void =>
+  const togglePick = (markId: string): void =>
     setChosen(
       chosen.includes(markId) ? chosen.filter((entry) => entry !== markId) : [...chosen, markId],
     );
@@ -110,8 +125,9 @@ export function Space({
             <p class="subtle">{space.purpose}</p>
           )}
           <p class="subtle">
-            {space.memberIds.length} people · {held.length} highlights ·{' '}
-            {space.findings.length} findings
+            {space.memberIds.length} people · {held.length} highlights · {space.findings.length}{' '}
+            findings
+            {space.openQuestions.length > 0 && ` · ${space.openQuestions.length} still open`}
           </p>
         </div>
         <span class={`status status-${status.tone}`}>{status.label}</span>
@@ -153,6 +169,8 @@ export function Space({
               <ul class="findings">
                 {space.findings.map((finding) => {
                   const author = memberById(finding.authorId);
+                  const sources = marksByIds(finding.markIds);
+                  const open = openEvidence.includes(finding.id);
                   return (
                     <li key={finding.id} class={`finding finding-${finding.stance}`}>
                       <div class="finding-top">
@@ -164,18 +182,38 @@ export function Space({
                         </span>
                       </div>
                       <p class="claim">{finding.claim}</p>
-                      <ul class="evidence-list">
-                        {marksByIds(finding.markIds).map((mark) => (
-                          <Evidence key={mark.id} mark={mark} />
-                        ))}
-                      </ul>
+                      <button
+                        type="button"
+                        class={open ? 'action action-on' : 'action'}
+                        aria-expanded={open}
+                        onClick={() => toggleEvidence(finding.id)}
+                      >
+                        {sources.length} {sources.length === 1 ? 'source' : 'sources'}
+                      </button>
+                      {open && (
+                        <ul class="evidence-list evidence-open">
+                          {sources.map((mark) => (
+                            <Evidence key={mark.id} mark={mark} />
+                          ))}
+                        </ul>
+                      )}
                     </li>
                   );
                 })}
               </ul>
             )}
 
-            {writable && spare.length > 0 && (
+            {writable && spare.length > 0 && !addingFinding && (
+              <button
+                type="button"
+                class="action panel-add"
+                onClick={() => setAddingFinding(true)}
+              >
+                Draw out a finding
+              </button>
+            )}
+
+            {writable && addingFinding && (
               <form
                 class="add-finding"
                 onSubmit={(event) => {
@@ -185,6 +223,7 @@ export function Space({
                   setClaim('');
                   setChosen([]);
                   setStance('supports');
+                  setAddingFinding(false);
                 }}
               >
                 <h3>Draw out a finding</h3>
@@ -194,6 +233,23 @@ export function Space({
                   value={claim}
                   onInput={(event) => setClaim((event.currentTarget as HTMLInputElement).value)}
                 />
+                <p class="subtle">Pick the evidence it rests on:</p>
+                <ul class="picker">
+                  {spare.map((mark) => (
+                    <li key={mark.id}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={chosen.includes(mark.id)}
+                          onChange={() => togglePick(mark.id)}
+                        />
+                        <span>
+                          {siteLabel(mark)} · {mark.snapshot.slice(0, 90)}…
+                        </span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
                 <div class="row">
                   <select
                     aria-label="How this finding relates to the question"
@@ -211,26 +267,23 @@ export function Space({
                     class="primary"
                     disabled={!claim.trim() || chosen.length === 0}
                   >
-                    Add{chosen.length > 0 ? ` with ${chosen.length} source${chosen.length > 1 ? 's' : ''}` : ''}
+                    Add
+                    {chosen.length > 0
+                      ? ` with ${chosen.length} source${chosen.length > 1 ? 's' : ''}`
+                      : ''}
+                  </button>
+                  <button
+                    type="button"
+                    class="action"
+                    onClick={() => {
+                      setAddingFinding(false);
+                      setClaim('');
+                      setChosen([]);
+                    }}
+                  >
+                    Cancel
                   </button>
                 </div>
-                <p class="subtle">Pick the evidence it rests on:</p>
-                <ul class="picker">
-                  {spare.map((mark) => (
-                    <li key={mark.id}>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={chosen.includes(mark.id)}
-                          onChange={() => toggle(mark.id)}
-                        />
-                        <span>
-                          {siteLabel(mark)} · {mark.snapshot.slice(0, 90)}…
-                        </span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
               </form>
             )}
           </div>
@@ -310,7 +363,18 @@ export function Space({
                 ))}
               </ul>
             )}
-            {writable && (
+
+            {writable && !addingQuestion && (
+              <button
+                type="button"
+                class="action panel-add"
+                onClick={() => setAddingQuestion(true)}
+              >
+                Add a question
+              </button>
+            )}
+
+            {writable && addingQuestion && (
               <form
                 class="invite"
                 onSubmit={(event) => {
@@ -318,6 +382,7 @@ export function Space({
                   if (!question.trim()) return;
                   addOpenQuestion(space.id, question.trim());
                   setQuestion('');
+                  setAddingQuestion(false);
                 }}
               >
                 <input
@@ -329,44 +394,73 @@ export function Space({
                 <button type="submit" class="action" disabled={!question.trim()}>
                   Add
                 </button>
-              </form>
-            )}
-          </div>
-
-          {!space.decision && writable && (
-            <div class="panel">
-              <h2>Settle it</h2>
-              <p class="subtle">
-                A space is finished when there is something to tell everyone else. The
-                evidence stays attached to it, which is what makes the decision checkable
-                later.
-              </p>
-              <form
-                class="invite"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  if (!decision.trim()) return;
-                  recordDecision(space.id, decision.trim());
-                  setDecision('');
-                }}
-              >
-                <input
-                  type="text"
-                  placeholder="So what are we doing?"
-                  value={decision}
-                  onInput={(event) => setDecision((event.currentTarget as HTMLInputElement).value)}
-                />
-                <button type="submit" class="primary" disabled={!decision.trim()}>
-                  Record it
+                <button type="button" class="action" onClick={() => setAddingQuestion(false)}>
+                  Cancel
                 </button>
               </form>
-            </div>
-          )}
+            )}
+
+            {!space.decision && writable && (
+              <div class="settle">
+                {deciding ? (
+                  <form
+                    class="invite"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      if (!decision.trim()) return;
+                      recordDecision(space.id, decision.trim());
+                      setDecision('');
+                      setDeciding(false);
+                    }}
+                  >
+                    <input
+                      type="text"
+                      placeholder="So what are we doing?"
+                      value={decision}
+                      onInput={(event) =>
+                        setDecision((event.currentTarget as HTMLInputElement).value)
+                      }
+                    />
+                    <button type="submit" class="primary" disabled={!decision.trim()}>
+                      Record it
+                    </button>
+                    <button type="button" class="action" onClick={() => setDeciding(false)}>
+                      Cancel
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <button type="button" class="primary" onClick={() => setDeciding(true)}>
+                      Settle it
+                    </button>
+                    <p class="subtle">
+                      A space is finished when there is something to tell everyone else. The
+                      evidence stays attached to it, which is what makes the decision
+                      checkable later.
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </>
       )}
 
       <div class="panel">
-        <h2>{space.question ? 'Evidence not yet used' : 'What is kept here'}</h2>
+        <div class="view-top">
+          <h2>{space.question ? 'Evidence not yet used' : 'What is kept here'}</h2>
+          {spare.length > 0 && (
+            <button
+              type="button"
+              class={showSpare ? 'action action-on' : 'action'}
+              aria-expanded={showSpare}
+              onClick={() => setShowSpare(!showSpare)}
+            >
+              {showSpare ? 'Hide' : `Show ${spare.length}`}
+            </button>
+          )}
+        </div>
+
         {spare.length === 0 ? (
           <p class="subtle">
             {held.length === 0
@@ -374,11 +468,19 @@ export function Space({
               : 'Every highlight in this space is behind a finding.'}
           </p>
         ) : (
-          <ul class="evidence-list">
-            {spare.map((mark) => (
-              <Evidence key={mark.id} mark={mark} />
-            ))}
-          </ul>
+          <>
+            <p class="subtle">
+              {spare.length} {spare.length === 1 ? 'highlight is' : 'highlights are'} in this
+              space without a finding resting on {spare.length === 1 ? 'it' : 'them'} yet.
+            </p>
+            {showSpare && (
+              <ul class="evidence-list evidence-open">
+                {spare.map((mark) => (
+                  <Evidence key={mark.id} mark={mark} />
+                ))}
+              </ul>
+            )}
+          </>
         )}
       </div>
     </section>
