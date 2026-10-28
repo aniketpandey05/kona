@@ -38,6 +38,24 @@ export const browser = {
       return path.replace(/^\//, './');
     },
   },
+  // The popup asks which tab you are on, and whether it may read that site.
+  // In the harness it is always the same pretend tab, already allowed.
+  tabs: {
+    async query(_filter: unknown) {
+      return [{ id: 1, url: 'https://chatgpt.com/c/harness-chat', active: true }];
+    },
+  },
+  permissions: {
+    async contains(_what: unknown) {
+      return true;
+    },
+    async request(_what: unknown) {
+      return true;
+    },
+    async remove(_what: unknown) {
+      return true;
+    },
+  },
   storage: {
     local: {
       async get(): Promise<Record<string, unknown>> {

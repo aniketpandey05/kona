@@ -124,6 +124,10 @@ body {
 }
 
 .wel-button {
+  /* One of these is a link to the Spaces page; it should not look different
+     from the button above it. */
+  display: inline-block;
+  text-decoration: none;
   margin-top: 12px;
   padding: 8px 16px;
   font: inherit;

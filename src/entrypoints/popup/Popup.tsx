@@ -159,15 +159,20 @@ export function Popup() {
         </section>
       )}
 
-      <button
-        class="pop-library"
-        onClick={() => {
-          void send({ type: 'open-library' });
-          window.close();
-        }}
-      >
-        Open my highlights
-      </button>
+      <div class="pop-links">
+        <button
+          class="pop-library"
+          onClick={() => {
+            void send({ type: 'open-library' });
+            window.close();
+          }}
+        >
+          Open my highlights
+        </button>
+        <a class="pop-library pop-secondary" href={browser.runtime.getURL('/spaces.html')}>
+          Spaces
+        </a>
+      </div>
     </main>
   );
 }

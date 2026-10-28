@@ -72,6 +72,19 @@ export function Welcome() {
           </button>
         </li>
         <li>
+          <h2>Work something out in a space</h2>
+          <p>
+            A space is one question and the highlights that answer it. Gather the ones that
+            bear on it, draw out what you now believe and which highlights say so, keep a
+            list of what you still do not know. Then write it up: every claim comes out
+            carrying a link to the exact sentence behind it, so anyone can check it without
+            having Kona.
+          </p>
+          <a class="wel-button" href={browser.runtime.getURL('/spaces.html')}>
+            Open spaces
+          </a>
+        </li>
+        <li>
           <h2>Turn on any other site</h2>
           <p>
             Blogs, docs, Stack Overflow, anything. Click the Kona button in the toolbar while you

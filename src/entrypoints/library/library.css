@@ -294,6 +294,8 @@ body {
 .lib-group li {
   display: flex;
   align-items: flex-start;
+  /* So the filing panel can take a line of its own under the row. */
+  flex-wrap: wrap;
   /* The left border is set per row to that highlight's colour. */
   border-left: 3px solid transparent;
   transition: background 0.12s ease;
@@ -485,4 +487,58 @@ input:focus-visible {
     min-height: 44px;
     opacity: 1;
   }
+}
+
+/* ---- filing a highlight into a space ---- */
+
+.lib-filing {
+  /* flex-basis, not width: this row is a flex container, and a width would
+     lose to the basis the other children already have. */
+  flex: 1 0 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 11px 12px;
+  background: var(--lib-hover);
+  border-radius: 10px;
+}
+
+.lib-filing-in {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--lib-muted);
+}
+
+.lib-filing-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.lib-filing-chip {
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--lib-fg);
+  background: var(--lib-card);
+  border: 1px solid var(--lib-border);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.lib-filing-chip:hover {
+  border-color: color-mix(in srgb, var(--lib-accent) 50%, var(--lib-border));
+}
+
+.lib-filing input[type='text'] {
+  min-height: 30px;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--lib-fg);
+  background: var(--lib-card);
+  border: 1px solid var(--lib-border);
+  border-radius: 8px;
 }

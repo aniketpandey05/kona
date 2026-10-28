@@ -9,7 +9,17 @@ import { sortByOrder } from '../../core/order';
 import { HIGHLIGHT_COLORS, UI_COLORS } from '../../core/painter';
 import { searchMarks } from '../../core/search';
 import { siteLabel } from '../../core/sites';
-import { importMarks, loadAllMarks, removeMark, upsertMark, watchAllMarks } from '../../core/store';
+import {
+  importMarks,
+  loadAllMarks,
+  loadSpaces,
+  removeMark,
+  saveSpace,
+  upsertMark,
+  watchAllMarks,
+  watchSpaces,
+} from '../../core/store';
+import { addMark as addToSpace, createSpace, type Space } from '../../core/spaces';
 import { countTags, sameTag } from '../../core/tags';
 import { applyTheme, loadTheme, saveTheme, watchTheme, type Theme } from '../../core/theme';
 import { KonaMark } from '../../ui/KonaMark';
@@ -38,12 +48,20 @@ export function Library() {
   const [message, setMessage] = useState<string | null>(null);
   const [deleted, setDeleted] = useState<Mark | null>(null);
   const [theme, setTheme] = useState<Theme>('system');
+  const [spaces, setSpaces] = useState<Space[]>([]);
+  // Which highlight is being filed, if any. One at a time keeps the list calm.
+  const [filing, setFiling] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const reload = () => void loadAllMarks().then(setMarks);
     reload();
     return watchAllMarks(reload);
+  }, []);
+
+  useEffect(() => {
+    void loadSpaces().then(setSpaces);
+    return watchSpaces(setSpaces);
   }, []);
 
   useEffect(() => {
@@ -273,6 +291,14 @@ export function Library() {
                     )}
                   </span>
                 </button>
+                <button
+                  class="lib-action"
+                  onClick={() => setFiling(filing === mark.id ? null : mark.id)}
+                  title="Put this highlight in a space"
+                  aria-expanded={filing === mark.id}
+                >
+                  Add to space
+                </button>
                 <button class="lib-action" onClick={() => void copyLink(mark)} title="Copy a link to this highlight">
                   {copiedId === mark.id ? 'Copied' : 'Copy link'}
                 </button>
@@ -283,6 +309,16 @@ export function Library() {
                 >
                   Delete
                 </button>
+                {filing === mark.id && (
+                  <AddToSpace
+                    mark={mark}
+                    spaces={spaces}
+                    onDone={(name) => {
+                      setFiling(null);
+                      setMessage(`Added to ${name}.`);
+                    }}
+                  />
+                )}
               </li>
             ))}
           </ul>
@@ -365,4 +401,81 @@ function formatWhen(timestamp: number): string {
   const days = Math.round(hours / 24);
   if (days < 30) return `${days} ${days === 1 ? 'day' : 'days'} ago`;
   return new Date(timestamp).toLocaleDateString();
+}
+
+/**
+ * Filing a highlight into a space from where you are reading it. The Spaces
+ * page can gather from the whole library, but by the time you are looking at
+ * one highlight and thinking "that belongs with the migration", walking over
+ * to another page to search for it again is the wrong shape.
+ */
+function AddToSpace({
+  mark,
+  spaces,
+  onDone,
+}: {
+  mark: Mark;
+  spaces: Space[];
+  onDone: (spaceName: string) => void;
+}) {
+  const [naming, setNaming] = useState(false);
+  const [name, setName] = useState('');
+
+  const already = spaces.filter((space) => space.markIds.includes(mark.id));
+  const open = spaces.filter((space) => !space.markIds.includes(mark.id));
+
+  const put = (space: Space) => {
+    void saveSpace(addToSpace(space, mark.id)).then(() => onDone(space.name));
+  };
+
+  const make = () => {
+    if (!name.trim()) return;
+    const space = addToSpace(createSpace(name), mark.id);
+    void saveSpace(space).then(() => onDone(space.name));
+  };
+
+  return (
+    <div class="lib-filing">
+      {already.length > 0 && (
+        <p class="lib-filing-in">
+          Already in {already.map((space) => space.name).join(', ')}.
+        </p>
+      )}
+
+      {open.length > 0 && (
+        <div class="lib-filing-row">
+          {open.map((space) => (
+            <button key={space.id} class="lib-filing-chip" onClick={() => put(space)}>
+              {space.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {naming ? (
+        <form
+          class="lib-filing-row"
+          onSubmit={(event) => {
+            event.preventDefault();
+            make();
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Name the space"
+            value={name}
+            autofocus
+            onInput={(event) => setName((event.currentTarget as HTMLInputElement).value)}
+          />
+          <button type="submit" class="lib-action" disabled={!name.trim()}>
+            Create and add
+          </button>
+        </form>
+      ) : (
+        <button class="lib-action" onClick={() => setNaming(true)}>
+          {spaces.length === 0 ? 'Make your first space' : 'New space…'}
+        </button>
+      )}
+    </div>
+  );
 }
