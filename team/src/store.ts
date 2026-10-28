@@ -263,6 +263,14 @@ export function activateSeat(id: string): void {
 export function removeMember(id: string): void {
   const member = members.find((entry) => entry.id === id);
   members = members.filter((entry) => entry.id !== id);
+  // Take them out of every space too, or a space goes on counting somebody
+  // who is no longer in the workspace. What they shared stays, and stays
+  // attributed to them - that is the point of it belonging to the space.
+  spaces = spaces.map((space) =>
+    space.memberIds.includes(id)
+      ? { ...space, memberIds: space.memberIds.filter((entry) => entry !== id) }
+      : space,
+  );
   log('member.removed', `Removed ${member?.email ?? id}; their shared highlights stay`);
 }
 

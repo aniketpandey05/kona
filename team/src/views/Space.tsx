@@ -1,9 +1,9 @@
 import { useState } from 'preact/hooks';
 import { linkToMark } from '../../../src/core/link';
 import { siteLabel } from '../../../src/core/sites';
-import { Avatar, spaceStatus, timeAgo } from '../components';
+import { Avatar, Locked, spaceStatus, timeAgo } from '../components';
 import { memberById } from '../demo';
-import { canWrite } from '../entitlement';
+import { canWrite, isTeam } from '../entitlement';
 import { buildMemo, memoMarkdown } from '../memo';
 import {
   addFinding,
@@ -46,10 +46,12 @@ export function Space({
   id,
   entitlement,
   onBack,
+  onUpgrade,
 }: {
   id: string;
   entitlement: Entitlement;
   onBack: () => void;
+  onUpgrade: () => void;
 }) {
   const [showMemo, setShowMemo] = useState(false);
   // What a claim rests on is the thing you open to check, not the thing you
@@ -66,6 +68,19 @@ export function Space({
   const [question, setQuestion] = useState('');
   const [decision, setDecision] = useState('');
   const [copied, setCopied] = useState(false);
+
+  // The Spaces list is gated, so it is easy to assume a single space is too.
+  // It is not reached only from that list: a link from a colleague, a bookmark,
+  // or going back after a downgrade all land here directly.
+  if (!isTeam(entitlement)) {
+    return (
+      <Locked
+        title="Shared spaces"
+        body="A space is one question a team is working on together — the evidence gathered under it, what is still unknown, and what was decided. It needs a shared workspace to live in."
+        onUpgrade={onUpgrade}
+      />
+    );
+  }
 
   const space = spaceOf(id);
   if (!space) {
@@ -195,9 +210,11 @@ export function Space({
                       </button>
                       {withdrawn > 0 && (
                         <p class="withdrawn">
+                          {/* Made private or deleted outright look the same from in
+                              here, so say what is true of both rather than guess. */}
                           {withdrawn === 1
-                            ? 'One source was made private by whoever found it, so it is no longer here.'
-                            : `${withdrawn} sources were made private by whoever found them, so they are no longer here.`}
+                            ? 'One source is no longer in this space.'
+                            : `${withdrawn} sources are no longer in this space.`}
                         </p>
                       )}
                       {open && sources.length > 0 && (

@@ -210,7 +210,12 @@ export function App() {
           />
         )}
         {route.name === 'space' && route.id && (
-          <Space id={route.id} entitlement={entitlement} onBack={() => go('#/spaces')} />
+          <Space
+            id={route.id}
+            entitlement={entitlement}
+            onBack={() => go('#/spaces')}
+            onUpgrade={() => go('#/plans')}
+          />
         )}
         {route.name === 'members' && (
           <Members entitlement={entitlement} onUpgrade={() => go('#/plans')} />
