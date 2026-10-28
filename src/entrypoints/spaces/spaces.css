@@ -574,3 +574,38 @@ a:focus-visible {
   padding-top: 16px;
   border-top: 1px solid var(--sp-border);
 }
+
+.sp-undo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 13px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  background: var(--sp-sunk);
+  border: 1px solid var(--sp-border);
+  border-radius: 10px;
+}
+
+.sp-rename {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.sp-rename input {
+  width: 100%;
+}
+
+.sp-claim-edit {
+  margin: 5px 0 9px;
+}
+
+.sp-claim-edit input {
+  flex: 1;
+  min-width: 220px;
+}

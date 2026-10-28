@@ -19,10 +19,12 @@ import {
   addQuestion,
   closeQuestion,
   createSpace,
+  editFinding,
   marksIn,
   recordDecision,
   removeFinding,
   removeMark,
+  rename,
   reopen,
   sourcesFor,
   statusOf,
@@ -40,6 +42,14 @@ const STANCE_LABEL: Record<Stance, string> = {
 };
 
 const spaceFromUrl = (): string | null => location.hash.replace(/^#\/?/, '') || null;
+
+/** Escape gets you out of a form, the way it closes a note in the page. */
+const onEscape = (cancel: () => void) => (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    cancel();
+  }
+};
 
 export function Spaces() {
   const [spaces, setSpaces] = useState<Space[] | null>(null);
@@ -77,6 +87,15 @@ export function Spaces() {
 
   const space = spaces?.find((entry) => entry.id === openId) ?? null;
 
+  // Deleting a space takes its findings and its decision with it, so it gets
+  // the same few seconds of Undo that deleting a highlight does.
+  const [deleted, setDeleted] = useState<Space | null>(null);
+  useEffect(() => {
+    if (!deleted) return;
+    const timer = setTimeout(() => setDeleted(null), 8000);
+    return () => clearTimeout(timer);
+  }, [deleted]);
+
   return (
     <main class="sp">
       <header class="sp-top">
@@ -86,10 +105,35 @@ export function Spaces() {
         </a>
       </header>
 
+      {deleted && (
+        <div class="sp-undo">
+          <span>Deleted “{deleted.name}”.</span>
+          <button
+            type="button"
+            class="sp-tool"
+            onClick={() => {
+              const back = deleted;
+              setDeleted(null);
+              void saveSpace(back).then(() => open(back.id));
+            }}
+          >
+            Undo
+          </button>
+        </div>
+      )}
+
       {spaces === null ? (
         <p class="sp-empty">Loading…</p>
       ) : space ? (
-        <SpaceView space={space} marks={marks} onBack={() => open(null)} />
+        <SpaceView
+          space={space}
+          marks={marks}
+          onBack={() => open(null)}
+          onDeleted={(gone) => {
+            setDeleted(gone);
+            open(null);
+          }}
+        />
       ) : (
         <SpaceList spaces={spaces} marks={marks} onOpen={open} />
       )}
@@ -130,6 +174,7 @@ function SpaceList({
       {adding ? (
         <form
           class="sp-new"
+          onKeyDown={onEscape(() => setAdding(false))}
           onSubmit={(event) => {
             event.preventDefault();
             create();
@@ -202,10 +247,12 @@ function SpaceView({
   space,
   marks,
   onBack,
+  onDeleted,
 }: {
   space: Space;
   marks: Mark[];
   onBack: () => void;
+  onDeleted: (space: Space) => void;
 }) {
   const [picking, setPicking] = useState(false);
   const [claim, setClaim] = useState('');
@@ -216,6 +263,11 @@ function SpaceView({
   const [asking, setAsking] = useState(false);
   const [decision, setDecision] = useState('');
   const [deciding, setDeciding] = useState(false);
+  const [renaming, setRenaming] = useState(false);
+  const [draftName, setDraftName] = useState(space.name);
+  const [draftQuestion, setDraftQuestion] = useState(space.question ?? '');
+  const [editingFinding, setEditingFinding] = useState<string | null>(null);
+  const [draftClaim, setDraftClaim] = useState('');
   const [openEvidence, setOpenEvidence] = useState<string[]>([]);
   const [showMemo, setShowMemo] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -263,9 +315,58 @@ function SpaceView({
         <span class={`sp-status sp-${status}`}>
           {status === 'shelf' ? 'Shelf' : status === 'settled' ? 'Settled' : 'Open'}
         </span>
+        {!renaming && (
+          <button
+            type="button"
+            class="sp-tool"
+            onClick={() => {
+              setDraftName(space.name);
+              setDraftQuestion(space.question ?? '');
+              setRenaming(true);
+            }}
+          >
+            {space.question ? 'Rename' : 'Name it, or ask a question'}
+          </button>
+        )}
       </div>
 
-      {space.question && <p class="sp-question-big">{space.question}</p>}
+      {renaming ? (
+        <form
+          class="sp-form sp-rename"
+          onKeyDown={onEscape(() => setRenaming(false))}
+          onSubmit={(event) => {
+            event.preventDefault();
+            write(rename(space, draftName, draftQuestion));
+            setRenaming(false);
+          }}
+        >
+          <input
+            type="text"
+            aria-label="Name of this space"
+            placeholder="Name"
+            value={draftName}
+            autofocus
+            onInput={(event) => setDraftName((event.currentTarget as HTMLInputElement).value)}
+          />
+          <input
+            type="text"
+            aria-label="The question this space is trying to settle"
+            placeholder="What are you trying to settle? (leave empty to keep it a shelf)"
+            value={draftQuestion}
+            onInput={(event) => setDraftQuestion((event.currentTarget as HTMLInputElement).value)}
+          />
+          <div class="sp-row">
+            <button type="submit" class="sp-primary" disabled={!draftName.trim()}>
+              Save
+            </button>
+            <button type="button" class="sp-tool" onClick={() => setRenaming(false)}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : (
+        space.question && <p class="sp-question-big">{space.question}</p>
+      )}
       <p class="sp-counts">
         {held.length} {held.length === 1 ? 'highlight' : 'highlights'} · {space.findings.length}{' '}
         {space.findings.length === 1 ? 'finding' : 'findings'}
@@ -282,6 +383,10 @@ function SpaceView({
         </section>
       )}
 
+      {/* Findings, the write-up and open questions are all about answering a
+          question. A shelf has not asked one, so it is shown none of them. */}
+      {space.question && (
+        <>
       <section class="sp-panel">
         <div class="sp-row sp-between">
           <h2>What I found</h2>
@@ -307,7 +412,40 @@ function SpaceView({
                   <span class={`sp-stance sp-stance-${finding.stance}`}>
                     {STANCE_LABEL[finding.stance]}
                   </span>
-                  <p class="sp-claim">{finding.claim}</p>
+                  {editingFinding === finding.id ? (
+                    <form
+                      class="sp-row sp-claim-edit"
+                      onKeyDown={onEscape(() => setEditingFinding(null))}
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        if (!draftClaim.trim()) return;
+                        write(editFinding(space, finding.id, draftClaim));
+                        setEditingFinding(null);
+                      }}
+                    >
+                      <input
+                        type="text"
+                        aria-label="What this finding claims"
+                        value={draftClaim}
+                        autofocus
+                        onInput={(event) =>
+                          setDraftClaim((event.currentTarget as HTMLInputElement).value)
+                        }
+                      />
+                      <button type="submit" class="sp-tool" disabled={!draftClaim.trim()}>
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        class="sp-tool"
+                        onClick={() => setEditingFinding(null)}
+                      >
+                        Cancel
+                      </button>
+                    </form>
+                  ) : (
+                    <p class="sp-claim">{finding.claim}</p>
+                  )}
                   <div class="sp-row">
                     <button
                       type="button"
@@ -317,6 +455,18 @@ function SpaceView({
                     >
                       {present.length} {present.length === 1 ? 'source' : 'sources'}
                     </button>
+                    {editingFinding !== finding.id && (
+                      <button
+                        type="button"
+                        class="sp-tool"
+                        onClick={() => {
+                          setDraftClaim(finding.claim);
+                          setEditingFinding(finding.id);
+                        }}
+                      >
+                        Edit
+                      </button>
+                    )}
                     <button
                       type="button"
                       class="sp-tool sp-danger"
@@ -354,6 +504,11 @@ function SpaceView({
         {drawing && (
           <form
             class="sp-form"
+            onKeyDown={onEscape(() => {
+              setDrawing(false);
+              setClaim('');
+              setChosen([]);
+            })}
             onSubmit={(event) => {
               event.preventDefault();
               if (!claim.trim() || chosen.length === 0) return;
@@ -511,6 +666,7 @@ function SpaceView({
         {asking ? (
           <form
             class="sp-row"
+            onKeyDown={onEscape(() => setAsking(false))}
             onSubmit={(event) => {
               event.preventDefault();
               if (!question.trim()) return;
@@ -544,6 +700,7 @@ function SpaceView({
             {deciding ? (
               <form
                 class="sp-row"
+                onKeyDown={onEscape(() => setDeciding(false))}
                 onSubmit={(event) => {
                   event.preventDefault();
                   if (!decision.trim()) return;
@@ -574,6 +731,8 @@ function SpaceView({
           </div>
         )}
       </section>
+        </>
+      )}
 
       <section class="sp-panel">
         <div class="sp-row sp-between">
@@ -608,12 +767,15 @@ function SpaceView({
           type="button"
           class="sp-tool sp-danger"
           onClick={() => {
-            void removeSpace(space.id).then(onBack);
+            void removeSpace(space.id).then(() => onDeleted(space));
           }}
         >
           Delete this space
         </button>
-        <span class="sp-muted">Deleting a space leaves every highlight in the library.</span>
+        <span class="sp-muted">
+          Deleting a space leaves every highlight in the library, and leaves you a few
+          seconds to undo it.
+        </span>
       </div>
     </>
   );
