@@ -40,7 +40,7 @@ export function Checkout({ onDone, onCancel }: { onDone: () => void; onCancel: (
             on.
           </p>
           <button type="button" class="primary" onClick={onDone}>
-            Open the workspace
+            Open the spaces
           </button>
         </div>
       </section>
@@ -50,9 +50,8 @@ export function Checkout({ onDone, onCancel }: { onDone: () => void; onCancel: (
   return (
     <section class="checkout">
       <div class="demo-note">
-        Stand-in for Stripe Checkout — no card is charged and nothing is sent anywhere. Set{' '}
-        <code>VITE_STRIPE_PAYMENT_LINK</code> to a test-mode payment link to use the real
-        thing.
+        A stand-in for Stripe Checkout. No card is charged, nothing is sent anywhere, and
+        no account is created.
       </div>
 
       <div class="panel checkout-card">

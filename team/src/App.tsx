@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
-import { isTeam, load, planLabel, watch as watchEntitlement } from './entitlement';
-import { watch as watchStore } from './store';
+import { grantTeam, isTeam, load, planLabel, watch as watchEntitlement } from './entitlement';
+import { activeSeats, log, watch as watchStore } from './store';
 import { Admin } from './views/Admin';
 import { Checkout } from './views/Checkout';
 import { Members } from './views/Members';
@@ -17,6 +17,7 @@ interface Route {
 }
 
 const SPACE_PREFIX = '#/spaces/';
+const INTRO_KEY = 'kona:team:intro-seen';
 
 function currentRoute(): Route {
   const hash = location.hash;
@@ -43,8 +44,76 @@ function go(hash: string): void {
   location.hash = hash;
 }
 
+function introSeen(): boolean {
+  try {
+    return localStorage.getItem(INTRO_KEY) === '1';
+  } catch {
+    // Private browsing refuses storage; showing the intro again is harmless.
+    return false;
+  }
+}
+
+function rememberIntro(): void {
+  try {
+    localStorage.setItem(INTRO_KEY, '1');
+  } catch {
+    // Not remembering it only means it appears once more.
+  }
+}
+
+/**
+ * Most people arrive here from a link with no idea what they are looking at,
+ * and the best part of the demo is two clicks behind a paywall. So say what
+ * this is, and say which two clicks.
+ */
+function Intro({ onClose }: { onClose: () => void }) {
+  return (
+    <aside class="intro">
+      <button type="button" class="intro-close" onClick={onClose} aria-label="Close">
+        ×
+      </button>
+      <h2>This is a demo of the paid tier.</h2>
+      <p>
+        The company, the people and every highlight in it are invented. There is no
+        sign-up, nothing is charged, and the checkout is a stand-in that walks the same
+        steps a real one would.
+      </p>
+      <p class="intro-path">
+        <strong>Thirty seconds:</strong> upgrade, open <strong>Spaces</strong>, pick the
+        Postgres one, and press <strong>Write it up</strong>.
+      </p>
+      <div class="intro-actions">
+        <a
+          class="primary"
+          href="#/plans"
+          onClick={() => {
+            rememberIntro();
+            onClose();
+          }}
+        >
+          Start
+        </a>
+        <button
+          type="button"
+          class="action"
+          onClick={() => {
+            grantTeam(Math.max(1, activeSeats()));
+            log('demo.skipped_checkout', 'Granted Team without going through checkout');
+            rememberIntro();
+            onClose();
+            go('#/spaces');
+          }}
+        >
+          Skip the checkout
+        </button>
+      </div>
+    </aside>
+  );
+}
+
 export function App() {
   const [route, setRoute] = useState<Route>(currentRoute);
+  const [showIntro, setShowIntro] = useState(() => !introSeen());
   // One counter re-renders the tree when either store moves underneath it.
   const [, bump] = useState(0);
 
@@ -75,6 +144,11 @@ export function App() {
   // A space you are reading is still the Spaces tab.
   const activeTab: RouteName = route.name === 'space' ? 'spaces' : route.name;
 
+  const closeIntro = (): void => {
+    rememberIntro();
+    setShowIntro(false);
+  };
+
   return (
     <div class="shell">
       <header class="top">
@@ -95,11 +169,7 @@ export function App() {
               aria-current={activeTab === item.name ? 'page' : undefined}
             >
               {item.label}
-              {item.locked && (
-                <span class="lock" title="Team plan">
-                  ·
-                </span>
-              )}
+              {item.locked && <span class="lock">Team</span>}
             </a>
           ))}
         </nav>
@@ -111,7 +181,12 @@ export function App() {
             class="action"
             title="Put the seeded workspace back and return to the free plan"
             onClick={() => {
-              localStorage.removeItem('kona:team:entitlement');
+              try {
+                localStorage.removeItem('kona:team:entitlement');
+                localStorage.removeItem(INTRO_KEY);
+              } catch {
+                // Nothing to clear if storage was refused in the first place.
+              }
               location.hash = '#/';
               location.reload();
             }}
@@ -122,6 +197,8 @@ export function App() {
       </header>
 
       <main>
+        {showIntro && !onTeam && route.name !== 'checkout' && <Intro onClose={closeIntro} />}
+
         {route.name === 'workspace' && (
           <Workspace entitlement={entitlement} onUpgrade={() => go('#/plans')} />
         )}
@@ -145,7 +222,7 @@ export function App() {
           <Pricing entitlement={entitlement} onCheckout={() => go('#/checkout')} />
         )}
         {route.name === 'checkout' && (
-          <Checkout onDone={() => go('#/')} onCancel={() => go('#/plans')} />
+          <Checkout onDone={() => go('#/spaces')} onCancel={() => go('#/plans')} />
         )}
       </main>
 

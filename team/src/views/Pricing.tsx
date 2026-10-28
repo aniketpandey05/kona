@@ -73,7 +73,7 @@ export function Pricing({
       <p class="subtle footnote">
         {stripeConfigured()
           ? 'Upgrade hands off to Stripe Checkout. Card details never touch us, which is what keeps this in PCI SAQ-A scope.'
-          : 'No Stripe key is configured, so Upgrade walks through a local stand-in that follows the same steps. Set VITE_STRIPE_PAYMENT_LINK to a test-mode payment link and the same button leaves for Stripe instead.'}
+          : 'Upgrade walks through a stand-in for Stripe Checkout — the same steps, with nothing charged and no card taken. Wired to a real key, that button hands off to Stripe instead, where card details never touch us, which is what keeps this in PCI SAQ-A scope.'}
       </p>
     </section>
   );
