@@ -818,6 +818,12 @@ h2 .locked-badge {
   margin-top: 18px;
 }
 
+.checkout-top h1 {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
 .checkout-top {
   display: flex;
   align-items: baseline;

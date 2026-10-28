@@ -150,6 +150,7 @@ export function MarkCard({
         {shared && canWrite && !mark.spaceId && onShare && (
           <select
             class="action action-select"
+            aria-label="Share this highlight to a space"
             value=""
             onChange={(event) => {
               const select = event.currentTarget as HTMLSelectElement;

@@ -196,6 +196,7 @@ export function Space({
                 />
                 <div class="row">
                   <select
+                    aria-label="How this finding relates to the question"
                     value={stance}
                     onChange={(event) =>
                       setStance((event.currentTarget as HTMLSelectElement).value as Stance)

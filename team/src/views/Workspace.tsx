@@ -114,6 +114,7 @@ export function Workspace({
         {shared && (
           <>
             <select
+              aria-label="Filter by space"
               value={spaceId}
               onChange={(event) =>
                 setSpaceId((event.currentTarget as HTMLSelectElement).value)
@@ -127,6 +128,7 @@ export function Workspace({
               ))}
             </select>
             <select
+              aria-label="Filter by person"
               value={authorId}
               onChange={(event) => setAuthorId((event.currentTarget as HTMLSelectElement).value)}
             >

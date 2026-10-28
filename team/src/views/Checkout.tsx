@@ -56,7 +56,7 @@ export function Checkout({ onDone, onCancel }: { onDone: () => void; onCancel: (
 
       <div class="panel checkout-card">
         <header class="checkout-top">
-          <strong>Kona Team</strong>
+          <h1>Kona Team</h1>
           <span class="mark-meta">{memberById(YOU).email}</span>
         </header>
 

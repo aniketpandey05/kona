@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ea580c" />
+    <meta name="robots" content="noindex" />
+    <title>Not here — Kona</title>
+    <!--
+      GitHub Pages serves this for any path it cannot find under /kona/. It is
+      copied verbatim from public/, so the styles are inline rather than built,
+      and every link is absolute: the address bar could be at any depth when
+      this is shown, which would break a relative one.
+    -->
+    <style>
+      :root {
+        --bg: #fbfbfc;
+        --card: #ffffff;
+        --fg: #16181d;
+        --muted: #5f6672;
+        --border: rgba(16, 24, 40, 0.11);
+        --hover: rgba(16, 24, 40, 0.04);
+        --accent: #ea580c;
+        --accent-fg: #ffffff;
+        color-scheme: light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #141517;
+          --card: #1e2023;
+          --fg: #ececf1;
+          --muted: #a3a6af;
+          --border: rgba(255, 255, 255, 0.12);
+          --hover: rgba(255, 255, 255, 0.06);
+          --accent: #fb923c;
+          --accent-fg: #1b1205;
+          color-scheme: dark;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.65 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      main {
+        max-width: 30rem;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 26px;
+        font-size: 17px;
+        font-weight: 660;
+        color: var(--fg);
+        text-decoration: none;
+      }
+
+      .logo {
+        width: 25px;
+        height: 25px;
+        border-radius: 8px;
+        background: linear-gradient(140deg, var(--accent), #f59e0b);
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 30px;
+        font-weight: 680;
+        letter-spacing: -0.022em;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0 0 22px;
+        color: var(--muted);
+      }
+
+      .links {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      a.primary,
+      a.ghost {
+        display: inline-flex;
+        align-items: center;
+        min-height: 42px;
+        padding: 0 18px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 9px;
+      }
+
+      a.primary {
+        color: var(--accent-fg);
+        background: var(--accent);
+      }
+
+      a.ghost {
+        color: var(--fg);
+        background: var(--card);
+        border: 1px solid var(--border);
+      }
+
+      a.ghost:hover {
+        background: var(--hover);
+      }
+
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="brand" href="/kona/">
+        <span class="logo" aria-hidden="true"></span>
+        <span>Kona</span>
+      </a>
+      <h1>There is nothing at this address.</h1>
+      <p>
+        The page you were after has either moved or never existed. Everything Kona has is
+        one of these three.
+      </p>
+      <div class="links">
+        <a class="primary" href="/kona/">Kona</a>
+        <a class="ghost" href="/kona/team/">Team demo</a>
+        <a class="ghost" href="/kona/app/">Phone app</a>
+      </div>
+    </main>
+  </body>
+</html>
