@@ -6,7 +6,9 @@ on:
   push:
     branches: [main]
     paths:
+      - 'site/**'
       - 'app/**'
+      - 'team/**'
       - 'src/core/**'
       - 'src/ui/**'
       # The deploy is gated on compile and test, so a change to the tests alone
@@ -39,7 +41,12 @@ jobs:
       - run: npm ci
       - run: npm run compile
       - run: npm test
+      # The landing page is the root of the published site; the phone app and
+      # the Team demo build underneath it. This one goes first, because it is
+      # the build that empties .output/site.
+      - run: npm run build:site
       - run: npm run build:app
+      - run: npm run build:team
       - uses: actions/configure-pages@v5
         # Turn Pages on and point it at this workflow, rather than depending on
         # the repository setting being right. Without this the step fails with a
@@ -48,7 +55,7 @@ jobs:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .output/app
+          path: .output/site
 
   deploy:
     needs: build

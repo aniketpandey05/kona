@@ -82,11 +82,11 @@ installed.
 
 ```bash
 npm run dev:app     # http://localhost:5179
-npm run build:app   # a static site in .output/app
+npm run build:app   # a static site in .output/site/app
 ```
 
 Every push publishes it to GitHub Pages, so it lives at
-**https://aniketpandey05.github.io/kona/**. Open that on your phone and use
+**https://aniketpandey05.github.io/kona/app/**. Open that on your phone and use
 *Add to Home screen*. Android installs it as a real app: its own icon in the drawer, its
 own window, its own entry in Settings. **Sharing only appears once it is installed**, which
 is the step people miss.
@@ -132,6 +132,42 @@ one part of Kona that needs a Mac and a paid developer account.
 [`apple/README.md`](apple/README.md) covers all of it, including which parts have not
 been run on a Mac yet.
 
+## The paid tier, as a demo
+
+Everything above is free and stays free. The planned paid product is a shared workspace:
+a team's highlights in one place, instead of scattered across everyone's browser.
+
+`team/` is a working demo of it — not a product, and not connected to anything. It runs
+the same `src/core` the extension does, over an invented company's highlights, and it
+exists so the difference between free and paid can be seen rather than described.
+
+```bash
+npm run dev:team     # http://localhost:5180
+npm run build:team   # into .output/site/team
+```
+
+It opens on the free plan, showing only your own highlights and saying how many of your
+colleagues' are missing. Upgrading walks through checkout, and the same screens come back
+with the whole workspace in them.
+
+What a team shares is a **space**: one question, the evidence gathered under it, what is
+still unknown, and the decision that came out. Each finding names the highlights it rests
+on, so a space writes itself up as a memo where every claim cites the exact sentence it
+came from — and those citations work for someone who has never installed Kona. A space
+with no question is just a shelf, like a prompt library, which is the same object with
+nothing to settle.
+
+There is also an admin page showing the entitlement token the client would be caching,
+because that is the part of billing worth getting right — a Stripe outage must never lock
+a paying customer out of their own highlights.
+
+Checkout is a local stand-in by default, so the demo runs with no account and no keys, and
+says so on screen. Point `VITE_STRIPE_PAYMENT_LINK` at a test-mode Stripe payment link and
+the same button hands off to Stripe instead.
+
+[`docs/enterprise.md`](docs/enterprise.md) is the plan behind it: who buys it, the tiers,
+the billing architecture, the security posture and the order it gets built in.
+
 ## Keyboard shortcuts
 
 | Keys | What happens |
@@ -154,10 +190,27 @@ Everything is stored in your browser, and the extension makes no network request
 
 ```bash
 npm run dev       # Chrome with the extension loaded, rebuilding on save
+npm run dev:site  # the landing page on localhost:5181
 npm test          # unit tests for anchoring, ordering, search and backups
 npm run compile   # type check
 npm run build     # production build in .output/chrome-mv3
 ```
+
+The published site is one GitHub Pages deploy with three things in it: the landing page at
+the root, the phone app under `/app/`, and the Team demo under `/team/`.
+
+```bash
+npm run build:web     # all three, in the order that works
+npm run preview:web   # serves the whole thing on one port, as it will be published
+```
+
+Build order matters: `build:site` empties the directory the other two build into, so
+`build:web` runs them in sequence.
+
+Use `preview:web` rather than the individual dev servers whenever you want to click
+between the three. Each `dev:` server only knows about its own folder, so a link to
+`/team/` from the landing page's dev server falls back to the landing page itself — which
+looks exactly like a broken demo and is not one.
 
 | Piece | Where |
 |---|---|
@@ -169,6 +222,8 @@ npm run build     # production build in .output/chrome-mv3
 | Painting highlights with the CSS Custom Highlight API, without touching the page | `src/core/painter.ts` |
 | Panel order, search, backups, deep links | `src/core/order.ts`, `search.ts`, `backup.ts`, `link.ts` |
 | The Android web app — shares `src/core` with the extension | `app/` |
+| The Team demo — the paid tier, on the same core | `team/` |
+| The landing page, and the root of the published site | `site/` |
 | Wrapping the Safari build in the app Apple requires around it | `apple/` |
 | Page logic: selection, navigation, jumping, storage | `src/content/controller.ts` |
 | Panel, toolbar and note card (Preact, in a shadow root) | `src/ui/` |
@@ -213,19 +268,28 @@ free of the DOM so that is cheap to do.
 
 ## License
 
-AGPL-3.0-or-later — see [LICENSE](LICENSE).
+Business Source License 1.1 — see [LICENSE](LICENSE).
 
-Use it, read it, change it, share it. The one obligation: if you modify Kona and run it
-as a service for other people, you have to publish your changes under the same licence.
-Installing it, for yourself or across an organisation, carries no such obligation — that
-is not what the clause is for.
+Read it, change it, build it, share it, and use it for anything you like — at home, at
+work, or across a company of any size. The single carve-out: you may not offer Kona to
+other people as a hosted or managed service. That is the one thing reserved, because it
+is the thing we intend to sell.
+
+On **2030-10-28** this converts automatically to AGPL-3.0-or-later, and the carve-out
+goes away. Any version also converts on its own fourth birthday, whichever comes first.
+
+Releases up to and including **1.1.0 were AGPL-3.0-or-later** and stay that way; nothing
+about this changes what was already published under those terms.
+
+BSL is not an OSI-approved open source licence, and this README should not call it one.
+It is source-available: the code is all here to read, build and modify.
 
 The extension and the phone app are free, run entirely on your own computer, and will
 stay that way. A hosted workspace for teams — shared highlights alongside your private
 ones — is planned separately, and that will be paid. It is a separate service; nothing
 moves out of the free version into it.
 
-The built extension bundles Preact, which is MIT and so freely combinable with the AGPL.
+The built extension bundles Preact, which is MIT and so freely combinable with this.
 Its notice travels inside the package as `THIRD-PARTY-NOTICES.txt`, which is what its
 licence asks for. Nothing else Kona depends on ends up in the shipped code; the rest is
 build tooling.

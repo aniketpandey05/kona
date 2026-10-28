@@ -1,0 +1,536 @@
+/* The landing page. Same tokens as the extension's library and the Team demo,
+   so the three do not look like three different products. */
+:root {
+  --bg: #fbfbfc;
+  --card: #ffffff;
+  --sunk: #f1f1f3;
+  --fg: #16181d;
+  --muted: #5f6672;
+  --border: rgba(16, 24, 40, 0.11);
+  --hover: rgba(16, 24, 40, 0.04);
+  --accent: #ea580c;
+  --accent-fg: #ffffff;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #141517;
+    --card: #1e2023;
+    --sunk: #1a1c1e;
+    --fg: #ececf1;
+    --muted: #a3a6af;
+    --border: rgba(255, 255, 255, 0.12);
+    --hover: rgba(255, 255, 255, 0.06);
+    --accent: #fb923c;
+    --accent-fg: #1b1205;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #141517;
+  --card: #1e2023;
+  --sunk: #1a1c1e;
+  --fg: #ececf1;
+  --muted: #a3a6af;
+  --border: rgba(255, 255, 255, 0.12);
+  --hover: rgba(255, 255, 255, 0.06);
+  --accent: #fb923c;
+  --accent-fg: #1b1205;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.65 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.022em;
+  line-height: 1.22;
+}
+
+kbd {
+  padding: 1px 5px;
+  font: 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--sunk);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+
+main,
+.top,
+.bottom {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+
+/* ---- nav ---- */
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 17px;
+  font-weight: 660;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.logo {
+  width: 25px;
+  height: 25px;
+  border-radius: 8px;
+  background: linear-gradient(140deg, var(--accent), #f59e0b);
+}
+
+.top nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.top nav a {
+  padding: 7px 11px;
+  font-size: 14.5px;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.top nav a:hover {
+  background: var(--hover);
+  color: var(--fg);
+}
+
+/* ---- buttons ---- */
+
+.cta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.primary,
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 19px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 9px;
+}
+
+.primary {
+  color: var(--accent-fg);
+  background: var(--accent);
+  border: 1px solid transparent;
+}
+
+.primary:hover {
+  filter: brightness(1.07);
+}
+
+.ghost {
+  color: var(--fg);
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.ghost:hover {
+  background: var(--hover);
+}
+
+/* ---- hero ---- */
+
+.hero {
+  padding: 56px 0 24px;
+  text-align: center;
+}
+
+.hero h1 {
+  max-width: 17ch;
+  margin: 0 auto;
+  font-size: clamp(34px, 5.4vw, 54px);
+  font-weight: 680;
+}
+
+.lede {
+  max-width: 62ch;
+  margin: 20px auto 26px;
+  font-size: clamp(16px, 1.9vw, 19px);
+  color: var(--muted);
+}
+
+.hero .cta {
+  justify-content: center;
+}
+
+.fine {
+  margin: 16px 0 0;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.centre {
+  text-align: center;
+}
+
+.shot {
+  margin: 44px 0 0;
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.shot-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 16px;
+}
+
+figcaption {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  max-width: 76ch;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.band .shot {
+  margin-top: 28px;
+}
+
+/* ---- bands ---- */
+
+.band {
+  margin: 72px 0;
+  padding: 44px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.band h2 {
+  max-width: 24ch;
+  margin: 0 0 16px;
+  font-size: clamp(23px, 3.1vw, 31px);
+  font-weight: 660;
+}
+
+.band p {
+  max-width: 68ch;
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 16.5px;
+}
+
+.band strong {
+  color: var(--fg);
+}
+
+.band-teams {
+  background: var(--sunk);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+}
+
+.band .cta {
+  margin-top: 24px;
+}
+
+.ticks {
+  max-width: 68ch;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+}
+
+.ticks li {
+  position: relative;
+  margin-bottom: 9px;
+  padding-left: 24px;
+}
+
+.ticks li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ---- sections ---- */
+
+section {
+  scroll-margin-top: 20px;
+}
+
+.section-title {
+  margin: 0 0 8px;
+  font-size: clamp(23px, 3.1vw, 30px);
+  font-weight: 660;
+}
+
+.section-lede {
+  max-width: 62ch;
+  margin: 0 0 28px;
+  color: var(--muted);
+}
+
+#what,
+#platforms,
+#pricing {
+  margin: 72px 0;
+}
+
+/* Four cards, so two rows of two rather than three and a straggler. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 26px;
+}
+
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid article {
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.grid h3 {
+  margin: 0 0 9px;
+  font-size: 17.5px;
+  font-weight: 640;
+}
+
+.grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* ---- platforms ---- */
+
+.platforms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.platforms article {
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.platforms h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 640;
+}
+
+.platforms p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+
+.platforms .note {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px;
+}
+
+/* ---- pricing ---- */
+
+.tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(228px, 1fr));
+  gap: 16px;
+}
+
+.tier {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+}
+
+.tier-lead {
+  border-color: var(--accent);
+}
+
+.tier h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.price {
+  margin: 10px 0 4px;
+}
+
+.price strong {
+  font-size: 30px;
+  font-weight: 680;
+  letter-spacing: -0.03em;
+}
+
+.price span {
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.pitch {
+  margin: 0 0 4px;
+  min-height: 3.4em;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+
+.tier ul {
+  flex: 1;
+  margin: 10px 0 22px;
+  padding-left: 19px;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+
+.tier li {
+  margin-bottom: 6px;
+}
+
+.tier .primary,
+.tier .ghost {
+  width: 100%;
+}
+
+.soon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+/* ---- footer ---- */
+
+.bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 40px;
+  padding-top: 24px;
+  padding-bottom: 44px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.bottom p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.bottom nav {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.bottom nav a {
+  color: var(--muted);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.bottom nav a:hover {
+  color: var(--fg);
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding-top: 34px;
+    text-align: left;
+  }
+
+  .hero h1 {
+    margin: 0;
+  }
+
+  .lede {
+    margin-left: 0;
+  }
+
+  .hero .cta {
+    justify-content: flex-start;
+  }
+
+  .band {
+    padding: 28px 22px;
+    margin: 52px 0;
+  }
+
+  #what,
+  #platforms,
+  #pricing {
+    margin: 52px 0;
+  }
+}

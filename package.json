@@ -17,7 +17,13 @@
     "postinstall": "wxt prepare",
     "test": "vitest run",
     "dev:app": "vite --config app/vite.config.ts",
-    "build:app": "vite build --config app/vite.config.ts"
+    "dev:site": "vite --config site/vite.config.ts",
+    "build:site": "vite build --config site/vite.config.ts",
+    "build:web": "npm run build:site && npm run build:app && npm run build:team",
+    "preview:web": "vite preview --config site/vite.config.ts",
+    "build:app": "vite build --config app/vite.config.ts",
+    "dev:team": "vite --config team/vite.config.ts",
+    "build:team": "vite build --config team/vite.config.ts"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",
@@ -31,7 +37,7 @@
   "dependencies": {
     "preact": "^10.29.8"
   },
-  "license": "AGPL-3.0-or-later",
+  "license": "BUSL-1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/aniketpandey05/kona.git"

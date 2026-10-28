@@ -43,7 +43,7 @@ whichever sites you switch on yourself, and you can switch any of them off again
 Export your highlights as Markdown for Obsidian or Notion, or as a backup file you can move
 to another computer.
 
-Free and open source: https://github.com/aniketpandey05/kona
+Free for a single user: https://github.com/aniketpandey05/kona
 
 **Category**
 Productivity
