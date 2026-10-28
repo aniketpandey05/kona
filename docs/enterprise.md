@@ -5,7 +5,13 @@
 >
 > There is a working demo of the Team tier in [`team/`](../team) — `npm run dev:team` —
 > which walks the whole thing: the free view, checkout, the shared workspace, research
-> spaces with cited write-ups, seats and the audit log. It is built on the same `src/core` as the extension, so the highlights in
+> spaces with cited write-ups, seats and the audit log.
+>
+> One caveat worth keeping straight. The demo's **semantic search is a stand-in**: it
+> widens each word of the query to the words that mean the same thing in that dataset and
+> says on screen which ones it added. The shipped version embeds each highlight and
+> compares vectors, which is what §7 is about when it calls client-side encryption a
+> design constraint. The demo shows the shape without pretending to be the thing. It is built on the same `src/core` as the extension, so the highlights in
 > it behave the way real ones do. [Build order](#9-build-order) says what gets built after.
 
 ## 1. The gap we are selling into
@@ -106,7 +112,8 @@ distribution engine and the reason anyone trusts us with the paid one.
 | All exports (Markdown, backup) | yes | yes | yes | yes |
 | Local-only, no account | yes | — | — | — |
 | Sync across your own devices | | yes | yes | yes |
-| Search your own highlights, AI-assisted | | yes | yes | yes |
+| Semantic search over your own highlights | | yes | yes | yes |
+| Semantic search across the whole workspace | | | yes | yes |
 | Shared spaces: question, evidence, decision | | | yes | yes |
 | Write-ups with every claim cited | | | yes | yes |
 | Comments and permissions | | | yes | yes |

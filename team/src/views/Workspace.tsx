@@ -5,6 +5,7 @@ import { toMarkdown } from '../../../src/core/markdown';
 import { MarkCard } from '../components';
 import { YOU } from '../demo';
 import { canWrite, isTeam } from '../entitlement';
+import { semanticSearch, wordsThatHelped } from '../semantic';
 import { allMarks, allMembers, allSpaces, clearUndo, pendingUndo, undoDelete } from '../store';
 import type { Entitlement, TeamMark } from '../types';
 
@@ -25,6 +26,7 @@ export function Workspace({
   const [spaceId, setSpaceId] = useState('');
   const [authorId, setAuthorId] = useState('');
   const [tag, setTag] = useState('');
+  const [meaning, setMeaning] = useState(true);
 
   const everything = allMarks();
   const undoable = pendingUndo();
@@ -48,7 +50,7 @@ export function Workspace({
     everything.filter((mark) => mark.authorId !== YOU).map((mark) => mark.authorId),
   ).size;
 
-  const filtered = useMemo(() => {
+  const { list: filtered, added } = useMemo(() => {
     let list = pool;
     if (activeTab === 'team' && spaceId) list = list.filter((mark) => mark.spaceId === spaceId);
     if (activeTab === 'team' && authorId) list = list.filter((mark) => mark.authorId === authorId);
@@ -57,10 +59,17 @@ export function Workspace({
         (mark.tags ?? []).some((entry) => entry.toLowerCase() === tag.toLowerCase()),
       );
     }
+    const empty: string[] = [];
+    if (!query.trim()) {
+      return { list: [...list].sort((a, b) => b.createdAt - a.createdAt), added: empty };
+    }
+    if (shared && meaning) {
+      const result = semanticSearch(list, query);
+      return { list: result.marks, added: wordsThatHelped(result.marks, result.added) };
+    }
     // searchMarks returns the same objects it was given, so they are still TeamMarks.
-    const ranked = (query.trim() ? searchMarks(list, query) : [...list]) as TeamMark[];
-    return query.trim() ? ranked : ranked.sort((a, b) => b.createdAt - a.createdAt);
-  }, [pool, activeTab, spaceId, authorId, tag, query]);
+    return { list: searchMarks(list, query) as TeamMark[], added: empty };
+  }, [pool, activeTab, spaceId, authorId, tag, query, shared, meaning]);
 
   const tags = useMemo(() => countTags(pool).slice(0, 8), [pool]);
 
@@ -168,6 +177,17 @@ export function Workspace({
           value={query}
           onInput={(event) => setQuery((event.currentTarget as HTMLInputElement).value)}
         />
+        {shared && (
+          <button
+            type="button"
+            class={meaning ? 'action action-on' : 'action'}
+            aria-pressed={meaning}
+            title="Match highlights that mean the same thing, not only the ones using the same words"
+            onClick={() => setMeaning(!meaning)}
+          >
+            Match meaning
+          </button>
+        )}
         {activeTab === 'team' && (
           <>
             <select
@@ -199,6 +219,13 @@ export function Workspace({
           </>
         )}
       </div>
+
+      {added.length > 0 && (
+        <p class="semantic-note">
+          Matching on meaning as well, so these count as the same idea:{' '}
+          {added.slice(0, 8).join(', ')}.
+        </p>
+      )}
 
       {tags.length > 0 && (
         <div class="tag-row">
@@ -234,9 +261,10 @@ export function Workspace({
 
       {shared && activeTab === 'mine' && (
         <p class="subtle footnote">
-          A highlight is yours until you put it in a space. Share one from the menu on its
-          card, and take it back the same way — it does not move, it only becomes visible to
-          the people in that space.
+          Everything here is private to you. <strong>Share with the team</strong> on any
+          card puts it in a space, where the people in that space can read it and reply;{' '}
+          <strong>Make private</strong> takes it straight back. The highlight itself never
+          moves — only who can see it changes.
         </p>
       )}
     </section>

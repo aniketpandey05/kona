@@ -1414,3 +1414,13 @@ h2 .locked-badge {
   margin: 10px 0 0;
   max-width: 64ch;
 }
+
+.semantic-note {
+  margin: 0 0 14px;
+  padding: 9px 12px;
+  max-width: 74ch;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--sunk);
+  border-radius: 9px;
+}

@@ -144,7 +144,7 @@ export function MarkCard({
         {space ? (
           <span class="chip chip-space">{space.name}</span>
         ) : (
-          <span class="chip chip-private">Only you</span>
+          <span class="chip chip-private">Private</span>
         )}
       </header>
 
@@ -197,8 +197,14 @@ export function MarkCard({
       )}
 
       <footer class="mark-actions">
-        <a class="action" href={link} target="_blank" rel="noreferrer noopener">
-          Open the exact sentence
+        <a
+          class="action"
+          href={link}
+          target="_blank"
+          rel="noreferrer noopener"
+          title="Lands on the exact sentence this came from"
+        >
+          Open
         </a>
         <button type="button" class="action" onClick={copy}>
           {copied ? 'Link copied' : 'Copy link'}
@@ -224,7 +230,7 @@ export function MarkCard({
               select.value = '';
             }}
           >
-            <option value="">Share to…</option>
+            <option value="">Share with the team…</option>
             {allSpaces().map((entry) => (
               <option key={entry.id} value={entry.id}>
                 {entry.name}
@@ -235,7 +241,7 @@ export function MarkCard({
 
         {shared && canWrite && mark.spaceId && (
           <button type="button" class="action" onClick={() => unshareMark(mark.id)}>
-            Make it mine again
+            Make private
           </button>
         )}
 
