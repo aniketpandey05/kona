@@ -5,8 +5,10 @@ your notes, and takes you back to the exact spot later. Everything is stored on 
 own computer and nothing is sent anywhere.
 
 The highlights you gather around one question become a **space**: the evidence, what you
-concluded from it, what you still do not know, and a write-up where every claim links
-back to the exact sentence behind it — checkable by someone who has never installed Kona.
+concluded from it, what you still do not know, and a write-up where every passage and
+every claim links back to the exact sentence behind it — checkable by someone who has
+never installed Kona. A space is a file you can hand to a colleague and take back with
+their work in it.
 
 There is also a small phone app that keeps text you share to it from any Android app.
 
@@ -144,20 +146,23 @@ them, and what you still do not know.
 
 Open **Spaces** from the library toolbar. Make one for whatever you are working out — a
 migration, a literature review, a decision somebody will ask you to justify — then gather
-the highlights that bear on it from anywhere in your library. Draw a **finding** out of
-them: what you now believe, and which highlights it rests on. Mark the ones that cut
-against it, because evidence that all nods along is usually evidence that stopped looking.
-Keep a list of what is still unknown. Record the decision when there is one.
+the highlights that bear on it from anywhere in your library.
+
+That is enough. Three passages in a space and **Write it up** already gives you a
+document. Anything further is optional: write down a conclusion and it goes on top,
+citing the highlights it rests on. Mark the ones that cut against it, because evidence
+that all nods along is usually evidence that stopped looking. Keep a list of what is
+still unknown. Record the decision when there is one.
 
 ![A space: the question, the decision, two findings and the evidence under them](docs/screenshots/spaces.jpg)
 
 *A space built from the sample conversations, with one finding's evidence open.*
 
-Then press **Write it up**. The space becomes a memo: the question as the title, the
-decision, each finding as a line carrying the sources it rests on, what is still open, and
-a numbered source list. Every citation is a link that lands on the exact sentence, so
-whoever reads it can check any claim in one click without having Kona. Copy it as Markdown
-or save it as a `.md` file.
+The write-up is the question as the title, the decision, your conclusions each carrying
+the sources behind them, every passage quoted underneath with its note, what is still
+open, and a numbered source list. Every citation is a link that lands on the exact
+sentence, so whoever reads it can check any claim in one click without having Kona. Copy
+it as Markdown or save it as a `.md` file.
 
 Take a highlight back out of a space and any finding resting on it says so rather than
 quietly standing on less — the claim is marked as short a source, in the space and in the
@@ -167,12 +172,27 @@ every highlight where it was.
 All of it is stored on your own computer like everything else, and none of it needs an
 account.
 
+### Handing a space to someone
+
+Press **Share** and a space becomes a file: the question, the passages, your conclusions
+and the links. Whoever opens it with **Open one someone sent** gets the lot, can add a
+passage or argue with a conclusion, and can send it back.
+
+Fitting an arriving space into a library that has its own ids is the fiddly part, and it
+is handled: highlights are matched on the passage and the conversation it came from, not
+on an id neither side agreed, so the same sentence does not arrive twice. Your own notes
+are never overwritten by a visitor's. A file from somebody else is rebuilt field by field
+rather than trusted — a claim may only cite highlights that came in the same file, and a
+highlight with an address no link can be built from is dropped.
+
+Two people cannot be in one space at the same moment this way. That is the part that
+needs a server.
+
 ## The paid tier, as a demo
 
-Everything above is free and stays free — spaces included. The planned paid product is
-the same spaces with *other people* in them: a team's highlights and findings in one
-place, instead of scattered across everyone's browser. That part needs a server, and it is
-the part that is not built.
+Everything above is free and stays free — spaces and sharing one included. The planned
+paid product is the same spaces *live*: everyone in one at once, instead of passing a
+file around. That part needs a server, and it is the part that is not built.
 
 `team/` is a working demo of it — not a product, and not connected to anything. It runs
 the same `src/core` the extension does, over an invented company's highlights, and it
@@ -187,12 +207,15 @@ It opens on the free plan, showing only your own highlights and saying how many 
 colleagues' are missing. Upgrading walks through checkout, and the same screens come back
 with the whole workspace in them.
 
-What a team shares is a **space**: one question, the evidence gathered under it, what is
-still unknown, and the decision that came out. Each finding names the highlights it rests
-on, so a space writes itself up as a memo where every claim cites the exact sentence it
-came from — and those citations work for someone who has never installed Kona. A space
-with no question is just a shelf, like a prompt library, which is the same object with
-nothing to settle.
+What a team works in is a **space**: one question, the evidence gathered under it, what
+is still unknown, and the decision that came out. It writes itself up as a memo where
+every claim cites the exact sentence it came from — and those citations work for someone
+who has never installed Kona. A space with no question is just a shelf, like a prompt
+library, which is the same object with nothing to settle.
+
+The extension's own **Plans** page says all of this too, including which plan you are on
+and that nothing in it asks you for a card. `src/core/plans.ts` is the copy of record for
+what Kona costs; the landing page mirrors it.
 
 There is also an admin page showing the entitlement token the client would be caching,
 because that is the part of billing worth getting right — a Stripe outage must never lock
@@ -260,13 +283,15 @@ looks exactly like a broken demo and is not one.
 | Painting highlights with the CSS Custom Highlight API, without touching the page | `src/core/painter.ts` |
 | Panel order, search, backups, deep links | `src/core/order.ts`, `search.ts`, `backup.ts`, `link.ts` |
 | A question, its evidence, and the write-up that comes out | `src/core/spaces.ts`, `memo.ts` |
+| Handing a space to someone, and fitting one that arrives into your library | `src/core/spaceShare.ts` |
+| What Kona costs — the copy the extension and the site both use | `src/core/plans.ts` |
 | The Android web app — shares `src/core` with the extension | `app/` |
 | The Team demo — the paid tier, on the same core | `team/` |
 | The landing page, and the root of the published site | `site/` |
 | Wrapping the Safari build in the app Apple requires around it | `apple/` |
 | Page logic: selection, navigation, jumping, storage | `src/content/controller.ts` |
 | Panel, toolbar and note card (Preact, in a shadow root) | `src/ui/` |
-| Library page, spaces page, welcome page, toolbar popup, background script | `src/entrypoints/` |
+| Library page, spaces page, plans page, welcome page, toolbar popup, background script | `src/entrypoints/` |
 
 ## Fixing a site that broke
 
