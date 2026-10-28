@@ -4,6 +4,10 @@ A browser extension that highlights text on web pages and in AI chats, saves it 
 your notes, and takes you back to the exact spot later. Everything is stored on your
 own computer and nothing is sent anywhere.
 
+The highlights you gather around one question become a **space**: the evidence, what you
+concluded from it, what you still do not know, and a write-up where every claim links
+back to the exact sentence behind it — checkable by someone who has never installed Kona.
+
 There is also a small phone app that keeps text you share to it from any Android app.
 
 On Apple platforms Safari runs the extension itself — on iPhone and iPad as well as on a
