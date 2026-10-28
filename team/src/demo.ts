@@ -324,7 +324,7 @@ export const MARKS: TeamMark[] = [
     color: 'blue',
     snapshot:
       'If you use link mode, the upgrade will be much faster and use less disk space, but you will not be able to access your old cluster once the new cluster is started.',
-    note: 'The docs say the same thing Claude did. Both in the collection so nobody re-asks.',
+    note: 'The docs say the same thing Claude did. Both in the space so nobody re-asks.',
     tags: ['postgres', 'migration'],
     createdAt: ago(3, 1),
     updatedAt: ago(3, 1),
@@ -433,7 +433,7 @@ export const MARKS: TeamMark[] = [
     color: 'yellow',
     snapshot:
       'A partial index is only usable when the planner can prove the query predicate implies the index predicate. A date range expressed against now() cannot be proven at plan time, so the index is skipped.',
-    note: 'Not shared to a collection yet — this is why the dashboard query was slow.',
+    note: 'Not shared yet — this is why the dashboard query was slow.',
     tags: ['postgres', 'performance'],
     createdAt: ago(0, 11),
     updatedAt: ago(0, 11),

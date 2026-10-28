@@ -5,7 +5,7 @@ import { toMarkdown } from '../../../src/core/markdown';
 import { MarkCard } from '../components';
 import { YOU } from '../demo';
 import { canWrite, isTeam } from '../entitlement';
-import { semanticSearch, wordsThatHelped } from '../semantic';
+import { hybridSearch } from '../hybrid';
 import { allMarks, allMembers, allSpaces, clearUndo, pendingUndo, undoDelete } from '../store';
 import type { Entitlement, TeamMark } from '../types';
 
@@ -26,7 +26,6 @@ export function Workspace({
   const [spaceId, setSpaceId] = useState('');
   const [authorId, setAuthorId] = useState('');
   const [tag, setTag] = useState('');
-  const [meaning, setMeaning] = useState(true);
 
   const everything = allMarks();
   const undoable = pendingUndo();
@@ -63,13 +62,15 @@ export function Workspace({
     if (!query.trim()) {
       return { list: [...list].sort((a, b) => b.createdAt - a.createdAt), added: empty };
     }
-    if (shared && meaning) {
-      const result = semanticSearch(list, query);
-      return { list: result.marks, added: wordsThatHelped(result.marks, result.added) };
+    // Hybrid is what the paid tiers buy. Free gets the extension's own lexical
+    // search, which is exactly what the free extension has.
+    if (shared) {
+      const result = hybridSearch(list, query);
+      return { list: result.marks, added: result.alsoMatched };
     }
     // searchMarks returns the same objects it was given, so they are still TeamMarks.
     return { list: searchMarks(list, query) as TeamMark[], added: empty };
-  }, [pool, activeTab, spaceId, authorId, tag, query, shared, meaning]);
+  }, [pool, activeTab, spaceId, authorId, tag, query, shared]);
 
   const tags = useMemo(() => countTags(pool).slice(0, 8), [pool]);
 
@@ -177,17 +178,6 @@ export function Workspace({
           value={query}
           onInput={(event) => setQuery((event.currentTarget as HTMLInputElement).value)}
         />
-        {shared && (
-          <button
-            type="button"
-            class={meaning ? 'action action-on' : 'action'}
-            aria-pressed={meaning}
-            title="Match highlights that mean the same thing, not only the ones using the same words"
-            onClick={() => setMeaning(!meaning)}
-          >
-            Match meaning
-          </button>
-        )}
         {activeTab === 'team' && (
           <>
             <select
@@ -221,10 +211,7 @@ export function Workspace({
       </div>
 
       {added.length > 0 && (
-        <p class="semantic-note">
-          Matching on meaning as well, so these count as the same idea:{' '}
-          {added.slice(0, 8).join(', ')}.
-        </p>
+        <p class="also-matched">Also matched on: {added.join(', ')}.</p>
       )}
 
       {tags.length > 0 && (

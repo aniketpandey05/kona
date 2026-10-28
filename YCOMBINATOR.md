@@ -283,7 +283,7 @@ paid adds the *shared* layer.
 |---|---|---|
 | Free | $0 forever | Everything Kona does today, local only, no account |
 | Pro | $7 / mo | Sync across your own devices, AI-assisted search over your own highlights |
-| Team | $14 / user / mo | Shared collections, comments, permissions, Slack and Notion sync, admin console |
+| Team | $14 / user / mo | Shared spaces, hybrid search, comments, permissions, Slack and Notion sync, admin console |
 | Enterprise | from $25 / user / mo, annual, 50-seat minimum | SSO and SCIM, audit log and export, retention and legal hold, EU data residency, DPA, SLA, self-host option |
 
 Self-serve runs on Stripe Checkout and Billing, so cards never touch our servers and we stay

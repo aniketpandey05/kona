@@ -133,8 +133,8 @@ export function Members({
       </ul>
 
       <p class="subtle footnote">
-        Removing someone frees their seat and keeps everything they shared, because the
-        collection belongs to the workspace rather than to a person. On Enterprise this list
+        Removing someone frees their seat and keeps everything they shared, because a
+        space belongs to the workspace rather than to a person. On Enterprise this list
         is driven by SCIM instead, which is the only way offboarding can be shown to work.
       </p>
     </section>

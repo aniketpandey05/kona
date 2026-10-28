@@ -7,11 +7,11 @@
 > which walks the whole thing: the free view, checkout, the shared workspace, research
 > spaces with cited write-ups, seats and the audit log.
 >
-> One caveat worth keeping straight. The demo's **semantic search is a stand-in**: it
-> widens each word of the query to the words that mean the same thing in that dataset and
-> says on screen which ones it added. The shipped version embeds each highlight and
-> compares vectors, which is what §7 is about when it calls client-side encryption a
-> design constraint. The demo shows the shape without pretending to be the thing. It is built on the same `src/core` as the extension, so the highlights in
+> One caveat worth keeping straight. The demo's search is genuinely hybrid — it fuses two
+> rankings — but only the lexical half is the real thing. That half is the extension's own
+> `searchMarks`, unchanged. The meaning half stands in for embeddings by widening each
+> word to the words that mean the same thing in that dataset, and it says on screen which
+> ones it used. The fusion is the same either way; see §7 for what ships. It is built on the same `src/core` as the extension, so the highlights in
 > it behave the way real ones do. [Build order](#9-build-order) says what gets built after.
 
 ## 1. The gap we are selling into
@@ -112,8 +112,8 @@ distribution engine and the reason anyone trusts us with the paid one.
 | All exports (Markdown, backup) | yes | yes | yes | yes |
 | Local-only, no account | yes | — | — | — |
 | Sync across your own devices | | yes | yes | yes |
-| Semantic search over your own highlights | | yes | yes | yes |
-| Semantic search across the whole workspace | | | yes | yes |
+| Hybrid search over your own highlights | | yes | yes | yes |
+| Hybrid search across the whole workspace | | | yes | yes |
 | Shared spaces: question, evidence, decision | | | yes | yes |
 | Write-ups with every claim cited | | | yes | yes |
 | Comments and permissions | | | yes | yes |
@@ -121,6 +121,7 @@ distribution engine and the reason anyone trusts us with the paid one.
 | Admin console, seat management | | | yes | yes |
 | SSO (SAML / OIDC), SCIM provisioning | | | | yes |
 | Audit log + export, retention, legal hold | | | | yes |
+| Dedicated search index, inside the residency region | | | | yes |
 | Data residency (US / EU), DPA, SLA | | | | yes |
 | Self-host / VPC deployment | | | | yes |
 
@@ -194,8 +195,16 @@ What a 200-person company's security review will ask, and the answer we want to 
   encrypted with a key the server never holds, so we cannot read them. This is a real
   differentiator and the only version consistent with what the free tier promises. The
   honest trade-off: it breaks server-side search over private highlights, so that search
-  runs on the client or against an encrypted index. Shared collections are
+  runs on the client or against an encrypted index. Shared spaces are
   server-readable by necessity.
+- **Search is hybrid, not keyword.** Lexical retrieval over the words actually written,
+  vector retrieval over an embedding of each highlight, and the two rankings fused with
+  reciprocal rank fusion. Keyword alone misses the passage that says the thing in other
+  words; vectors alone drift off what was typed. Fusing them keeps an exact match at the
+  top and still surfaces the one that shares no vocabulary with the query — which is the
+  difference between a team's search and Ctrl-F, and the reason this is worth charging
+  for. Each tenant gets its own index inside its residency region, and private highlights
+  are indexed on the client, for the reason in the bullet above.
 - **Least privilege at the browser.** Unchanged from today: Kona can only see the three
   chat sites plus whatever sites the user switches on, and any of them can be switched
   off again.
@@ -241,7 +250,7 @@ Phase 0 is done and is all the YC application needs. Nothing from phase 1 on exi
 | Phase | What | Rough effort |
 |---|---|---|
 | **0 — done** | This document, and the working demo in `team/`: free view, pricing, checkout, shared workspace, spaces with findings and cited write-ups, seats, admin and audit log. No server, no billing code, no real payment. | done |
-| **1 — private beta** | Accounts, tenants, shared collections. Stripe Checkout + Portal, webhooks, entitlement tokens. Postgres and an API, TLS, encryption at rest. | 4–6 weeks |
+| **1 — private beta** | Accounts, tenants, shared spaces. Stripe Checkout + Portal, webhooks, entitlement tokens. Postgres and an API, TLS, encryption at rest. | 4–6 weeks |
 | **2 — Team GA** | Spaces with findings, open questions and generated write-ups. Permissions, comments, Slack/Notion sync, admin console, seat management, audit log v1. | 6–10 weeks |
 | **3 — Enterprise** | SAML/OIDC SSO, SCIM, audit log export, retention and legal hold, EU residency, SOC 2 observation window open, pen test, VDP, DPA. | 3–6 months |
 | **4 — on demand** | Self-host / VPC deployment, for the minority who require it. | as sold |
