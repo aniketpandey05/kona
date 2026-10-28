@@ -7,9 +7,11 @@
   --muted: #5f6672;
   --border: rgba(16, 24, 40, 0.11);
   --hover: rgba(16, 24, 40, 0.04);
-  --accent: #ea580c;
+  /* Deeper than the dark theme's orange: white on #ea580c is only 3.5:1, and
+     #ea580c as text on a white card is the same. This clears 4.5:1 both ways. */
+  --accent: #c2410c;
   --accent-fg: #ffffff;
-  --danger: #dc2626;
+  --danger: #b91c1c;
   --ok: #15803d;
   --mark-yellow: rgba(250, 204, 21, 0.38);
   --mark-green: rgba(34, 197, 94, 0.28);

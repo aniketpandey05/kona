@@ -249,7 +249,14 @@ export function Workspace({
 
       {filtered.length === 0 ? (
         <p class="empty">
-          {activeTab === 'mine' ? 'Nothing of yours matches that.' : 'Nothing shared matches that.'}
+          {/* An empty shelf and an empty result are different things to be told. */}
+          {pool.length === 0
+            ? activeTab === 'mine'
+              ? 'You have not kept anything yet. Highlight something and it lands here.'
+              : 'Nothing has been shared yet. Share one of yours from the Mine tab.'
+            : activeTab === 'mine'
+              ? 'Nothing of yours matches that.'
+              : 'Nothing shared matches that.'}
         </p>
       ) : (
         <div class="feed">

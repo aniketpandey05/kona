@@ -19,7 +19,7 @@
     "dev:app": "vite --config app/vite.config.ts",
     "dev:site": "vite --config site/vite.config.ts",
     "build:site": "vite build --config site/vite.config.ts",
-    "build:web": "npm run build:site && npm run build:app && npm run build:team",
+    "build:web": "node -e \"require('fs').rmSync('.output/site',{recursive:true,force:true})\" && npm run build:site && npm run build:app && npm run build:team",
     "preview:web": "vite preview --config site/vite.config.ts",
     "build:app": "vite build --config app/vite.config.ts",
     "dev:team": "vite --config team/vite.config.ts",

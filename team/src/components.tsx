@@ -41,10 +41,14 @@ export function spaceStatus(space: Space): { label: string; tone: 'settled' | 'o
 }
 
 export function Avatar({ member, small = false }: { member: Member; small?: boolean }) {
+  // HSL lightness is not perceptually even across hues: green carries most of
+  // the luminance, so a green at the lightness that suited every other hue
+  // still left white initials at 3.5:1. 32% clears 4.5:1 for all of them.
+  const background = `hsl(${member.hue} 62% 32%)`;
   return (
     <span
       class={small ? 'avatar avatar-small' : 'avatar'}
-      style={{ background: `hsl(${member.hue} 62% 46%)` }}
+      style={{ background }}
       title={`${member.name} · ${member.email}`}
     >
       {member.initials}

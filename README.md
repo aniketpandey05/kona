@@ -204,8 +204,9 @@ npm run build:web     # all three, in the order that works
 npm run preview:web   # serves the whole thing on one port, as it will be published
 ```
 
-Build order matters: `build:site` empties the directory the other two build into, so
-`build:web` runs them in sequence.
+`build:web` clears `.output/site` once and then runs the three in order. The individual
+builds do not clear it, because they share that directory — a `build:site` that emptied it
+would take `/app/` and `/team/` with it, and nothing would say so until a link 404ed.
 
 Use `preview:web` rather than the individual dev servers whenever you want to click
 between the three. Each `dev:` server only knows about its own folder, so a link to

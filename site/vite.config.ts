@@ -14,7 +14,10 @@ export default defineConfig({
   base: './',
   build: {
     outDir: fileURLToPath(new URL('../.output/site', import.meta.url)),
-    emptyOutDir: true,
+    // Not emptyOutDir: this directory also holds the phone app at ./app and
+    // the Team demo at ./team, and wiping it from here deletes both of them
+    // silently. `build:web` clears it once, before all three run.
+    emptyOutDir: false,
   },
   server: { port: 5181, strictPort: true },
 });

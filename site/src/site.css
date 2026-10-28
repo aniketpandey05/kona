@@ -8,7 +8,9 @@
   --muted: #5f6672;
   --border: rgba(16, 24, 40, 0.11);
   --hover: rgba(16, 24, 40, 0.04);
-  --accent: #ea580c;
+  /* Deeper than the dark theme's orange. White on #ea580c is 3.5:1, and
+     #ea580c as link text on white is the same; this clears 4.5:1 both ways. */
+  --accent: #c2410c;
   --accent-fg: #ffffff;
   color-scheme: light;
 }
@@ -65,6 +67,16 @@ body {
 
 a {
   color: var(--accent);
+}
+
+/* The browser default ring is hard to see on the dark theme, and this page is
+   mostly links. The demo and the 404 page already do this. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 h1,
