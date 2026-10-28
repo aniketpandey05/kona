@@ -1,0 +1,260 @@
+/* The library's palette again, so Plans does not feel like a different product
+   bolted on. Four cards that have to be comparable at a glance, which means
+   the same shape and only one of them standing out: the one you are on. */
+:root {
+  --pl-bg: #f7f7f8;
+  --pl-card: #ffffff;
+  --pl-sunk: #f1f1f3;
+  --pl-fg: #16181d;
+  --pl-muted: #71717a;
+  --pl-faint: #a1a1aa;
+  --pl-border: rgba(16, 24, 40, 0.09);
+  --pl-hover: rgba(16, 24, 40, 0.04);
+  --pl-accent: #c2410c;
+  --pl-accent-fg: #ffffff;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --pl-bg: #191a1c;
+    --pl-card: #222326;
+    --pl-sunk: #1d1e21;
+    --pl-fg: #ececf1;
+    --pl-muted: #a1a1aa;
+    --pl-faint: #71717a;
+    --pl-border: rgba(255, 255, 255, 0.1);
+    --pl-hover: rgba(255, 255, 255, 0.05);
+    --pl-accent: #fb923c;
+    --pl-accent-fg: #1b1205;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --pl-bg: #191a1c;
+  --pl-card: #222326;
+  --pl-sunk: #1d1e21;
+  --pl-fg: #ececf1;
+  --pl-muted: #a1a1aa;
+  --pl-faint: #71717a;
+  --pl-border: rgba(255, 255, 255, 0.1);
+  --pl-hover: rgba(255, 255, 255, 0.05);
+  --pl-accent: #fb923c;
+  --pl-accent-fg: #1b1205;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--pl-bg);
+  color: var(--pl-fg);
+  font: 15px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.pl {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 16px 72px;
+}
+
+.pl-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.pl-top h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: -0.015em;
+}
+
+.pl-lede {
+  margin: 0 0 28px;
+  max-width: 60ch;
+  color: var(--pl-muted);
+}
+
+.pl-tool,
+.pl-primary {
+  display: inline-block;
+  padding: 7px 13px;
+  border: 1px solid var(--pl-border);
+  border-radius: 7px;
+  background: var(--pl-card);
+  color: var(--pl-fg);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pl-tool:hover {
+  background: var(--pl-hover);
+}
+
+.pl-primary {
+  border-color: transparent;
+  background: var(--pl-accent);
+  color: var(--pl-accent-fg);
+  font-weight: 600;
+}
+
+.pl-primary:hover {
+  filter: brightness(1.08);
+}
+
+.pl-tool:focus-visible,
+.pl-primary:focus-visible {
+  outline: 2px solid var(--pl-accent);
+  outline-offset: 2px;
+}
+
+/* Four across on a wide window, two on a laptop, one on a phone. */
+.pl-tiers {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(224px, 1fr));
+}
+
+.pl-tier {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border: 1px solid var(--pl-border);
+  border-radius: 12px;
+  background: var(--pl-card);
+}
+
+/* The one you are on is the only card that is allowed to shout. */
+.pl-tier-on {
+  border-color: var(--pl-accent);
+  box-shadow: 0 0 0 1px var(--pl-accent);
+}
+
+.pl-tier-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.pl-tier-head h2 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.pl-badge {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--pl-accent);
+  color: var(--pl-accent-fg);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pl-badge-soon {
+  background: var(--pl-sunk);
+  color: var(--pl-muted);
+  font-weight: 600;
+}
+
+.pl-price {
+  margin: 0 0 6px;
+  color: var(--pl-muted);
+  font-size: 13px;
+}
+
+.pl-price strong {
+  display: block;
+  color: var(--pl-fg);
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.pl-pitch {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.pl-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+  color: var(--pl-muted);
+}
+
+.pl-list li {
+  position: relative;
+  padding: 3px 0 3px 17px;
+}
+
+.pl-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 12px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--pl-faint);
+}
+
+/* The first line of every list says what the plan inherits, so it reads as
+   a continuation rather than another feature. */
+.pl-list li:first-child {
+  color: var(--pl-fg);
+  font-weight: 550;
+}
+
+.pl-note {
+  margin-top: 32px;
+  padding: 22px 24px;
+  border: 1px solid var(--pl-border);
+  border-radius: 12px;
+  background: var(--pl-sunk);
+}
+
+.pl-note h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.pl-note p {
+  margin: 0 0 12px;
+  max-width: 68ch;
+}
+
+.pl-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.pl-fine {
+  margin: 24px 0 0;
+  max-width: 68ch;
+  color: var(--pl-faint);
+  font-size: 13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

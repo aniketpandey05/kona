@@ -114,9 +114,14 @@ export function Spaces() {
     <main class="sp">
       <header class="sp-top">
         <h1>{space ? space.name : 'Spaces'}</h1>
-        <a class="sp-tool" href={browser.runtime.getURL('/library.html')}>
-          Library
-        </a>
+        <span class="sp-row">
+          <a class="sp-tool" href={browser.runtime.getURL('/library.html')}>
+            Library
+          </a>
+          <a class="sp-tool" href={browser.runtime.getURL('/plans.html')}>
+            Plans
+          </a>
+        </span>
       </header>
 
       {note && (

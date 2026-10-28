@@ -542,3 +542,17 @@ input:focus-visible {
   border: 1px solid var(--lib-border);
   border-radius: 8px;
 }
+
+/* A quiet line at the end: what Kona costs, where the page has run out. */
+.lib-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 40px;
+  padding-top: 18px;
+  border-top: 1px solid var(--lib-border);
+  color: var(--lib-muted);
+  font-size: 13px;
+}

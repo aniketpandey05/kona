@@ -283,16 +283,20 @@
           Nothing is ever taken out of the free version to sell back. Paid adds the shared
           layer on top of it.
         </p>
-        <!-- Prices here mirror team/src/billing.ts — change both together. -->
+        <!-- Prices and feature lines mirror src/core/plans.ts, which the
+             extension's own Plans page reads. Change both together. -->
         <div class="tiers">
           <article class="tier">
             <h3>Free</h3>
             <p class="price"><strong>$0</strong> <span>forever</span></p>
-            <p class="pitch">Everything Kona does today, for one person, on your own computer, with no account.</p>
+            <p class="pitch">Everything Kona does, on your own computer, with no account.</p>
             <ul>
+              <li>Highlight anything you read — papers, docs, Stack Overflow, AI chats</li>
               <li>Unlimited highlights, notes and tags</li>
               <li>One searchable library across every site</li>
-              <li>Links back to the exact sentence</li>
+              <li>Links that land on the exact sentence, for people without Kona</li>
+              <li>Spaces: a question, its evidence, and the write-up that comes out</li>
+              <li>Hand a space to anyone as a file, and take one back</li>
               <li>Markdown export and backups</li>
               <li>Nothing leaves your computer</li>
             </ul>
@@ -306,8 +310,8 @@
             <ul>
               <li>Everything in Free</li>
               <li>Sync across your own devices</li>
-              <li>Hybrid search over your own highlights</li>
-              <li>Private spaces of your own to organise them</li>
+              <li>Hybrid search over your own highlights — meaning as well as words</li>
+              <li>Highlights from your phone, through the share sheet</li>
             </ul>
             <span class="soon">Not built yet</span>
           </article>
@@ -315,14 +319,14 @@
           <article class="tier tier-lead">
             <h3>Team</h3>
             <p class="price"><strong>$14</strong> <span>per user / month</span></p>
-            <p class="pitch">Where your team works on a question together.</p>
+            <p class="pitch">The same spaces, live — so nobody is passing a file around.</p>
             <ul>
               <li>Everything in Pro</li>
-              <li>Shared spaces: question, evidence, decision</li>
-              <li>Write-ups where every claim cites its exact sentence</li>
-              <li>Comments and permissions</li>
-              <li>Hybrid search across the workspace — meaning as well as words</li>
-              <li>Admin console and seat management</li>
+              <li>One space several people work in at once</li>
+              <li>Discussion on a highlight, where the highlight is</li>
+              <li>Who gathered what, and who concluded what</li>
+              <li>Hybrid search across the whole workspace</li>
+              <li>Admin console, seats and permissions</li>
             </ul>
             <a class="primary" href="./team/">Try the demo</a>
           </article>
@@ -334,9 +338,8 @@
             <ul>
               <li>Everything in Team</li>
               <li>SSO (SAML / OIDC) and SCIM provisioning</li>
-              <li>Audit log with export</li>
+              <li>Audit log with export, retention policy, legal hold</li>
               <li>Your own search index, inside your residency region</li>
-              <li>Retention policy and legal hold</li>
               <li>EU or US data residency, DPA, SLA</li>
               <li>Self-hosted or VPC deployment</li>
             </ul>

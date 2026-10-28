@@ -329,6 +329,13 @@ export function Library() {
           </ul>
         </section>
       ))}
+
+      <footer class="lib-footer">
+        <span>Free for a single user. Nothing here leaves this computer.</span>
+        <a class="lib-tool" href={browser.runtime.getURL('/plans.html')}>
+          Plans
+        </a>
+      </footer>
     </main>
   );
 }
