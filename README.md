@@ -145,6 +145,10 @@ them: what you now believe, and which highlights it rests on. Mark the ones that
 against it, because evidence that all nods along is usually evidence that stopped looking.
 Keep a list of what is still unknown. Record the decision when there is one.
 
+![A space: the question, the decision, two findings and the evidence under them](docs/screenshots/spaces.jpg)
+
+*A space built from the sample conversations, with one finding's evidence open.*
+
 Then press **Write it up**. The space becomes a memo: the question as the title, the
 decision, each finding as a line carrying the sources it rests on, what is still open, and
 a numbered source list. Every citation is a link that lands on the exact sentence, so
