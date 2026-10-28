@@ -111,3 +111,23 @@ describe('text that came from a share sheet', () => {
     );
   });
 });
+
+describe('links from somebody else’s data', () => {
+  // Highlights arrive from backup files and shared spaces, so the URL is not
+  // ours. These end up as hrefs and inside exported Markdown.
+  it('gives no link to a scheme a text fragment cannot mean anything in', () => {
+    expect(linkToMark(mark({ url: 'javascript:alert(1)' }))).toBe('');
+    expect(linkToMark(mark({ url: 'data:text/html,<script>alert(1)</script>' }))).toBe('');
+    expect(linkToMark(mark({ url: 'vbscript:msgbox(1)' }))).toBe('');
+    expect(linkToMark(mark({ url: 'file:///etc/passwd' }))).toBe('');
+  });
+
+  it('gives no link rather than throwing on something that is not a URL', () => {
+    expect(linkToMark(mark({ url: '' }))).toBe('');
+    expect(linkToMark(mark({ url: 'not a url at all' }))).toBe('');
+  });
+
+  it('still links plain http as well as https', () => {
+    expect(linkToMark(mark({ url: 'http://example.com/post' }))).toContain('http://example.com/post');
+  });
+});

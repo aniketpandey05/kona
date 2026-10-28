@@ -4,8 +4,10 @@ import { linkToMark } from '../../core/link';
 import { buildMemo, memoMarkdown } from '../../core/memo';
 import { UI_COLORS } from '../../core/painter';
 import { searchMarks } from '../../core/search';
+import { adoptSpace, packSpace, readSharedSpace, shareFilename } from '../../core/spaceShare';
 import { siteLabel } from '../../core/sites';
 import {
+  importMarks,
   loadAllMarks,
   loadSpaces,
   removeSpace,
@@ -35,6 +37,15 @@ import {
 import { applyTheme, loadTheme, watchTheme, type Theme } from '../../core/theme';
 import type { Mark } from '../../core/types';
 
+function download(contents: string, type: string, filename: string): void {
+  const url = URL.createObjectURL(new Blob([contents], { type }));
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
 const STANCE_LABEL: Record<Stance, string> = {
   supports: 'In favour',
   contradicts: 'Against',
@@ -55,6 +66,9 @@ export function Spaces() {
   const [spaces, setSpaces] = useState<Space[] | null>(null);
   const [marks, setMarks] = useState<Mark[]>([]);
   const [openId, setOpenId] = useState<string | null>(spaceFromUrl);
+  // What happened when a space arrived. It is set as the view switches to the
+  // new space, so it has to live above both views to survive the switch.
+  const [note, setNote] = useState<string | null>(null);
 
   useEffect(() => {
     const reload = () => void loadSpaces().then(setSpaces);
@@ -105,6 +119,15 @@ export function Spaces() {
         </a>
       </header>
 
+      {note && (
+        <div class="sp-note">
+          <span>{note}</span>
+          <button type="button" class="sp-tool" onClick={() => setNote(null)}>
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {deleted && (
         <div class="sp-undo">
           <span>Deleted “{deleted.name}”.</span>
@@ -135,7 +158,7 @@ export function Spaces() {
           }}
         />
       ) : (
-        <SpaceList spaces={spaces} marks={marks} onOpen={open} />
+        <SpaceList spaces={spaces} marks={marks} onOpen={open} onNote={setNote} />
       )}
     </main>
   );
@@ -145,14 +168,46 @@ function SpaceList({
   spaces,
   marks,
   onOpen,
+  onNote,
 }: {
   spaces: Space[];
   marks: Mark[];
   onOpen: (id: string) => void;
+  onNote: (note: string) => void;
 }) {
   const [name, setName] = useState('');
   const [question, setQuestion] = useState('');
   const [adding, setAdding] = useState(false);
+
+  /**
+   * Taking in a space somebody sent. The highlights it carries are merged into
+   * the library — anything you already had stays yours — and the space arrives
+   * with its claims pointing at your copies. See `core/share`.
+   */
+  const importSpace = async (event: Event): Promise<void> => {
+    const input = event.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = ''; // so the same file can be picked again
+    if (!file) return;
+    try {
+      const incoming = readSharedSpace(await file.text());
+      const taken = adoptSpace(incoming, marks);
+      if (taken.added.length > 0 || taken.updated.length > 0) {
+        await importMarks([...taken.added, ...taken.updated]);
+      }
+      await saveSpace(taken.space);
+
+      const parts = [`“${taken.space.name}” is yours`];
+      if (taken.added.length > 0) parts.push(`${taken.added.length} new highlights`);
+      if (taken.reused > 0) parts.push(`${taken.reused} you already had`);
+      if (taken.updated.length > 0) parts.push(`${taken.updated.length} picked up a note`);
+      if (taken.dropped > 0) parts.push(`${taken.dropped} unreadable and skipped`);
+      onNote(`${parts.join(' · ')}.`);
+      onOpen(taken.space.id);
+    } catch (error) {
+      onNote(error instanceof Error ? error.message : 'That file could not be opened.');
+    }
+  };
 
   const create = (): void => {
     if (!name.trim()) return;
@@ -203,10 +258,21 @@ function SpaceList({
           </div>
         </form>
       ) : (
-        <button type="button" class="sp-primary" onClick={() => setAdding(true)}>
-          New space
-        </button>
+        <div class="sp-row">
+          <button type="button" class="sp-primary" onClick={() => setAdding(true)}>
+            New space
+          </button>
+          <label class="sp-tool sp-file">
+            Open one someone sent
+            <input
+              type="file"
+              accept=".json,application/json"
+              onChange={(event) => void importSpace(event)}
+            />
+          </label>
+        </div>
       )}
+
 
       {spaces.length === 0 ? (
         <p class="sp-empty">
@@ -300,13 +366,19 @@ function SpaceView({
   };
 
   const exportMemo = (): void => {
-    const blob = new Blob([memoMarkdown(memo)], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `${space.name.replace(/[^\w-]+/g, '-').toLowerCase()}.md`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    download(
+      memoMarkdown(memo),
+      'text/markdown',
+      `${space.name.replace(/[^\w-]+/g, '-').toLowerCase()}.md`,
+    );
+  };
+
+  /**
+   * The whole space as a file: the question, the passages, the conclusions and
+   * the links. Whoever opens it carries on from here — see `core/share`.
+   */
+  const shareSpace = (): void => {
+    download(packSpace(space, marks), 'application/json', shareFilename(space));
   };
 
   return (
@@ -333,6 +405,9 @@ function SpaceView({
             {space.question ? 'Rename' : 'Name it, or ask a question'}
           </button>
         )}
+        <button type="button" class="sp-tool" onClick={shareSpace} title="Save this space as a file you can send to anyone">
+          Share
+        </button>
         </span>
       </div>
 
@@ -474,9 +549,11 @@ function SpaceView({
                 {memo.citations.map((citation) => (
                   <li key={citation.n} id={`cite-${citation.n}`}>
                     {siteLabel(citation.mark)} — {citation.mark.conversationTitle}.{' '}
-                    <a href={citation.href} target="_blank" rel="noreferrer noopener">
-                      the exact sentence
-                    </a>
+                    {citation.href && (
+                      <a href={citation.href} target="_blank" rel="noreferrer noopener">
+                        the exact sentence
+                      </a>
+                    )}
                   </li>
                 ))}
               </ol>
@@ -866,6 +943,7 @@ function Picker({ space, marks }: { space: Space; marks: Mark[] }) {
 }
 
 function Evidence({ mark, onRemove }: { mark: Mark; onRemove?: () => void }) {
+  const link = linkToMark(mark);
   return (
     <li class="sp-ev">
       <span class="sp-dot" style={{ background: UI_COLORS[mark.color] }} />
@@ -876,9 +954,11 @@ function Evidence({ mark, onRemove }: { mark: Mark; onRemove?: () => void }) {
         <p class="sp-ev-text">{mark.snapshot}</p>
         {mark.note && <p class="sp-ev-note">{mark.note}</p>}
         <div class="sp-row">
-          <a class="sp-link" href={linkToMark(mark)} target="_blank" rel="noreferrer noopener">
-            Open the exact sentence
-          </a>
+          {link && (
+            <a class="sp-link" href={link} target="_blank" rel="noreferrer noopener">
+              Open the exact sentence
+            </a>
+          )}
           {onRemove && (
             <button type="button" class="sp-link" onClick={onRemove}>
               Take out of this space

@@ -97,7 +97,12 @@ export function Library() {
   };
 
   const copyLink = async (mark: Mark) => {
-    await navigator.clipboard.writeText(linkToMark(mark));
+    const link = linkToMark(mark);
+    if (!link) {
+      setMessage("This highlight has no address to link to.");
+      return;
+    }
+    await navigator.clipboard.writeText(link);
     setCopiedId(mark.id);
     setTimeout(() => setCopiedId((id) => (id === mark.id ? null : id)), 1500);
   };

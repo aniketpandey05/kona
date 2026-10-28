@@ -12,7 +12,20 @@ import type { Mark } from './types';
  * where no extension can run. Chrome 80+, Safari 16.1+ and Firefox 131+.
  */
 export function linkToMark(mark: Mark): string {
-  const url = new URL(mark.url);
+  let url: URL;
+  try {
+    url = new URL(mark.url);
+  } catch {
+    return '';
+  }
+  // A highlight can arrive from a backup file or a shared space, which is
+  // somebody else's data. `new URL` is happy with `javascript:alert(1)`, and
+  // this string ends up as an href here and inside the exported Markdown,
+  // which gets pasted into wikis and pull requests. Only the two schemes a
+  // text fragment means anything in are allowed through; anything else gets
+  // no link at all.
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
+
   const fragment = textFragment(mark);
   if (fragment) url.hash = `:~:text=${fragment}`;
   return url.toString();

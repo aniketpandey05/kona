@@ -21,6 +21,7 @@ import type { Mark } from './types';
 export interface Citation {
   n: number;
   mark: Mark;
+  /** Empty when the highlight's URL is not one a link can be built from. */
   href: string;
 }
 
@@ -125,7 +126,9 @@ export function memoMarkdown(memo: Memo): string {
     out.push('## Sources', '');
     for (const citation of memo.citations) {
       const where = `${siteLabel(citation.mark)} — ${citation.mark.conversationTitle}`;
-      out.push(`[^${citation.n}]: ${where}. <${citation.href}>`);
+      // Still cite it when there is no link to give: saying where a passage came
+      // from is worth something on its own.
+      out.push(citation.href ? `[^${citation.n}]: ${where}. <${citation.href}>` : `[^${citation.n}]: ${where}.`);
     }
     out.push('');
   }
