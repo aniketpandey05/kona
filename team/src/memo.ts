@@ -22,6 +22,8 @@ export interface MemoLine {
   claim: string;
   contradicts: boolean;
   cites: number[];
+  /** Sources whose author has since taken them back out of the space. */
+  withdrawn: number;
 }
 
 export interface Memo {
@@ -32,7 +34,10 @@ export interface Memo {
   citations: Citation[];
 }
 
-export function buildMemo(space: Space, lookup: (ids: readonly string[]) => TeamMark[]): Memo {
+export function buildMemo(
+  space: Space,
+  lookup: (ids: readonly string[]) => { present: TeamMark[]; withdrawn: number },
+): Memo {
   const citations: Citation[] = [];
   const numberOf = new Map<string, number>();
 
@@ -45,11 +50,15 @@ export function buildMemo(space: Space, lookup: (ids: readonly string[]) => Team
     return n;
   };
 
-  const lines = space.findings.map((finding) => ({
-    claim: finding.claim,
-    contradicts: finding.stance === 'contradicts',
-    cites: lookup(finding.markIds).map(cite),
-  }));
+  const lines = space.findings.map((finding) => {
+    const { present, withdrawn } = lookup(finding.markIds);
+    return {
+      claim: finding.claim,
+      contradicts: finding.stance === 'contradicts',
+      cites: present.map(cite),
+      withdrawn,
+    };
+  });
 
   return {
     title: space.question ?? space.name,
@@ -72,7 +81,11 @@ export function memoMarkdown(memo: Memo): string {
     out.push('## What we found', '');
     for (const line of memo.lines) {
       const marks = line.cites.map((n) => `[^${n}]`).join('');
-      out.push(`- ${line.contradicts ? 'Against: ' : ''}${line.claim} ${marks}`.trimEnd());
+      // Say it rather than quietly publishing a claim with less behind it.
+      const gone = line.withdrawn
+        ? ` _(${line.withdrawn} source${line.withdrawn > 1 ? 's' : ''} withdrawn)_`
+        : '';
+      out.push(`- ${line.contradicts ? 'Against: ' : ''}${line.claim} ${marks}${gone}`.trimEnd());
     }
     out.push('');
   }

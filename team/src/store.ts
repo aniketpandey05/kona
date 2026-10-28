@@ -48,6 +48,22 @@ export function marksByIds(ids: readonly string[]): TeamMark[] {
     .filter((mark): mark is TeamMark => mark !== undefined);
 }
 
+/**
+ * The sources a finding rests on that are *still in this space*.
+ *
+ * A finding holds ids, and an id outlives the sharing: make a cited highlight
+ * private and the id still resolves, which would show the whole passage to
+ * everyone in the space long after its author took it back. So a space asks
+ * for its sources this way, and is told how many have gone.
+ */
+export function sourcesInSpace(
+  spaceId: string,
+  ids: readonly string[],
+): { present: TeamMark[]; withdrawn: number } {
+  const present = marksByIds(ids).filter((mark) => mark.spaceId === spaceId);
+  return { present, withdrawn: ids.length - present.length };
+}
+
 export function auditEvents(): readonly AuditEvent[] {
   return [...audit].sort((a, b) => b.at - a.at);
 }

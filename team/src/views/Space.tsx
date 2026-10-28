@@ -9,10 +9,10 @@ import {
   addFinding,
   addOpenQuestion,
   closeOpenQuestion,
-  marksByIds,
   marksIn,
   recordDecision,
   reopenSpace,
+  sourcesInSpace,
   spaceOf,
 } from '../store';
 import type { Entitlement, Stance, TeamMark } from '../types';
@@ -84,7 +84,7 @@ export function Space({
   const held = marksIn(space.id);
   const cited = new Set(space.findings.flatMap((finding) => finding.markIds));
   const spare = held.filter((mark) => !cited.has(mark.id));
-  const memo = buildMemo(space, marksByIds);
+  const memo = buildMemo(space, (ids) => sourcesInSpace(space.id, ids));
 
   const toggleEvidence = (findingId: string): void =>
     setOpenEvidence(
@@ -169,7 +169,10 @@ export function Space({
               <ul class="findings">
                 {space.findings.map((finding) => {
                   const author = memberById(finding.authorId);
-                  const sources = marksByIds(finding.markIds);
+                  const { present: sources, withdrawn } = sourcesInSpace(
+                    space.id,
+                    finding.markIds,
+                  );
                   const open = openEvidence.includes(finding.id);
                   return (
                     <li key={finding.id} class={`finding finding-${finding.stance}`}>
@@ -190,7 +193,14 @@ export function Space({
                       >
                         {sources.length} {sources.length === 1 ? 'source' : 'sources'}
                       </button>
-                      {open && (
+                      {withdrawn > 0 && (
+                        <p class="withdrawn">
+                          {withdrawn === 1
+                            ? 'One source was made private by whoever found it, so it is no longer here.'
+                            : `${withdrawn} sources were made private by whoever found them, so they are no longer here.`}
+                        </p>
+                      )}
+                      {open && sources.length > 0 && (
                         <ul class="evidence-list evidence-open">
                           {sources.map((mark) => (
                             <Evidence key={mark.id} mark={mark} />
@@ -314,6 +324,12 @@ export function Space({
                         <a href={`#cite-${n}`}>[{n}]</a>
                       </sup>
                     ))}
+                    {line.withdrawn > 0 && (
+                      <em class="withdrawn-inline">
+                        {' '}
+                        ({line.withdrawn} withdrawn)
+                      </em>
+                    )}
                   </li>
                 ))}
               </ul>
