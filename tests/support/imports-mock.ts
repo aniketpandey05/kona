@@ -32,6 +32,11 @@ export const browser = {
       return null;
     },
     onMessage: { addListener(_listener: unknown) {}, removeListener(_listener: unknown) {} },
+    // Extension pages link to each other by extension URL; in the harness they
+    // are plain pages sitting next to one another.
+    getURL(path: string) {
+      return path.replace(/^\//, './');
+    },
   },
   storage: {
     local: {

@@ -1,4 +1,5 @@
 import { browser, storage } from '#imports';
+import type { Space } from './spaces';
 import type { Mark, SiteId } from './types';
 
 // Prototype storage: one array per conversation in chrome.storage.local.
@@ -108,4 +109,43 @@ export function watchAllMarks(onChange: () => void): () => void {
   };
   browser.storage.onChanged.addListener(listener);
   return () => browser.storage.onChanged.removeListener(listener);
+}
+
+// ---- spaces ----
+
+// There are a handful of spaces, not thousands, so one array under one key is
+// enough — and it keeps a space's parts from ever being written out of step.
+const SPACES_KEY = 'local:spaces' as const;
+
+export async function loadSpaces(): Promise<Space[]> {
+  const spaces = (await storage.getItem<Space[]>(SPACES_KEY)) ?? [];
+  return [...spaces].sort((a, b) => b.updatedAt - a.updatedAt);
+}
+
+/** Writes a space, adding it if it is new. */
+export function saveSpace(space: Space): Promise<void> {
+  return serialized(async () => {
+    const spaces = (await storage.getItem<Space[]>(SPACES_KEY)) ?? [];
+    const next = spaces.some((entry) => entry.id === space.id)
+      ? spaces.map((entry) => (entry.id === space.id ? space : entry))
+      : [...spaces, space];
+    await storage.setItem(SPACES_KEY, next);
+  });
+}
+
+export function removeSpace(id: string): Promise<void> {
+  return serialized(async () => {
+    const spaces = (await storage.getItem<Space[]>(SPACES_KEY)) ?? [];
+    await storage.setItem(
+      SPACES_KEY,
+      spaces.filter((space) => space.id !== id),
+    );
+  });
+}
+
+/** Keeps another tab's view of the spaces in step with this one. */
+export function watchSpaces(onChange: (spaces: Space[]) => void): () => void {
+  return storage.watch<Space[]>(SPACES_KEY, (spaces) =>
+    onChange([...(spaces ?? [])].sort((a, b) => b.updatedAt - a.updatedAt)),
+  );
 }

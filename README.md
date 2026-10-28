@@ -132,10 +132,39 @@ one part of Kona that needs a Mac and a paid developer account.
 [`apple/README.md`](apple/README.md) covers all of it, including which parts have not
 been run on a Mac yet.
 
+## Spaces
+
+The library keeps everything you ever marked, newest first. A **space** is the other thing
+you need: one question, the handful of highlights that bear on it, what you concluded from
+them, and what you still do not know.
+
+Open **Spaces** from the library toolbar. Make one for whatever you are working out — a
+migration, a literature review, a decision somebody will ask you to justify — then gather
+the highlights that bear on it from anywhere in your library. Draw a **finding** out of
+them: what you now believe, and which highlights it rests on. Mark the ones that cut
+against it, because evidence that all nods along is usually evidence that stopped looking.
+Keep a list of what is still unknown. Record the decision when there is one.
+
+Then press **Write it up**. The space becomes a memo: the question as the title, the
+decision, each finding as a line carrying the sources it rests on, what is still open, and
+a numbered source list. Every citation is a link that lands on the exact sentence, so
+whoever reads it can check any claim in one click without having Kona. Copy it as Markdown
+or save it as a `.md` file.
+
+Take a highlight back out of a space and any finding resting on it says so rather than
+quietly standing on less — the claim is marked as short a source, in the space and in the
+write-up both. A highlight deleted from the library does the same. Deleting a space leaves
+every highlight where it was.
+
+All of it is stored on your own computer like everything else, and none of it needs an
+account.
+
 ## The paid tier, as a demo
 
-Everything above is free and stays free. The planned paid product is a shared workspace:
-a team's highlights in one place, instead of scattered across everyone's browser.
+Everything above is free and stays free — spaces included. The planned paid product is
+the same spaces with *other people* in them: a team's highlights and findings in one
+place, instead of scattered across everyone's browser. That part needs a server, and it is
+the part that is not built.
 
 `team/` is a working demo of it — not a product, and not connected to anything. It runs
 the same `src/core` the extension does, over an invented company's highlights, and it
@@ -222,13 +251,14 @@ looks exactly like a broken demo and is not one.
 | Finding the right message by id, fingerprint or nearby position | `src/core/locate.ts` |
 | Painting highlights with the CSS Custom Highlight API, without touching the page | `src/core/painter.ts` |
 | Panel order, search, backups, deep links | `src/core/order.ts`, `search.ts`, `backup.ts`, `link.ts` |
+| A question, its evidence, and the write-up that comes out | `src/core/spaces.ts`, `memo.ts` |
 | The Android web app — shares `src/core` with the extension | `app/` |
 | The Team demo — the paid tier, on the same core | `team/` |
 | The landing page, and the root of the published site | `site/` |
 | Wrapping the Safari build in the app Apple requires around it | `apple/` |
 | Page logic: selection, navigation, jumping, storage | `src/content/controller.ts` |
 | Panel, toolbar and note card (Preact, in a shadow root) | `src/ui/` |
-| Library page, welcome page, toolbar popup, background script | `src/entrypoints/` |
+| Library page, spaces page, welcome page, toolbar popup, background script | `src/entrypoints/` |
 
 ## Fixing a site that broke
 

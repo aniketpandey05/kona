@@ -130,29 +130,34 @@ The individual product works and is in daily use by its authors.
 - Version 1.1.0. Builds for Chrome, Edge and Brave (MV3), for Firefox, and for Safari on
   iPhone, iPad and Mac from the same source.
 - An installable Android web app, live, because Chrome on Android has no extensions.
-- ~4,600 lines of TypeScript, 14 test files, 60 commits since 17 September 2026.
+- ~5,600 lines of TypeScript in the extension and phone app, another ~3,600 in the Team
+  demo, 126 tests across 15 files, 71 commits since 17 September 2026.
 - Highlighting, notes, tags, one cross-site library, full-text search from inside any page,
   Markdown export, backup and restore, deep links to the exact sentence, light/dark.
+- Spaces: a question, its evidence, findings, open questions, a decision, and a cited
+  write-up — all on your own highlights, stored on your own computer.
 
-The paid tier runs as a demo rather than a product. `team/` is built on the same core as
-the extension and shows the whole shape: the free view with only your own highlights and a
-count of how many your colleagues are keeping out of reach, then checkout, then the same
-screens with the workspace in them — five people's highlights, search across all of it,
-seats that move the billed quantity, and an audit log.
+**Spaces ship in the extension, on your real highlights.** A space is one question, the
+highlights that bear on it, the findings you draw out of them, what is still unknown, and
+the decision. Press "Write it up" and it produces a memo: the question as the title, each
+claim carrying numbered citations, and a source list where every citation is a link that
+lands on the exact sentence — checkable in one click by somebody who has never installed
+Kona. Take a highlight back out and any claim resting on it is marked as short a source
+rather than quietly standing on less.
 
-The part worth looking at is Spaces. Each one holds a question, the findings drawn out of
-the evidence, the ones that cut against, what is still open, and the decision. Press
-"Write it up" and it produces a memo where every claim carries numbered citations that
-land on the exact sentence. There is no server behind any of it and no real payment, which
-it says on screen.
+This matters for how we are building the business. Spaces are the core of what we intend
+to charge for, and the single-player version of them is finished and useful on its own —
+a literature review, a migration, a decision somebody will ask you to justify. What the
+paid tier adds is *other people* in the same space, and that is the part that honestly
+needs a server.
 
-What is real in it is the shape of the decisions: free for one person and paid for a
-team, seats billed on accepted
-invitations only, and an entitlement token the client caches so neither Stripe nor our own
-API going down can lock a paying customer out of their own highlights. Building it
-properly is about six weeks to a private beta; `docs/enterprise.md` has the architecture
-and the order. We built the single-player product first because it is what makes the
-shared one worth having.
+That multiplayer version runs as a demo at `/team/`: the free view, checkout, a shared
+workspace, spaces with comments and hybrid search, seats that move the billed quantity,
+and an audit log. No server behind it and no real payment, which it says on screen. What
+is real in it is the shape of the decisions — seats billed on accepted invitations only,
+and an entitlement token the client caches so neither Stripe nor our own API going down
+can lock a paying customer out of their own highlights. Roughly six weeks to a private
+beta; `docs/enterprise.md` has the architecture and the order.
 
 Not yet in the Chrome Web Store. **[FILL — update this if you submit before Monday; the
 listing copy and permission justifications are already written.]**

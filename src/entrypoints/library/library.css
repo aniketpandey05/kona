@@ -190,6 +190,10 @@ body {
   border-radius: 8px;
   cursor: pointer;
   transition: color 0.12s ease, background 0.12s ease;
+  /* One of these is a link to the Spaces page; it should not look different
+     from the buttons beside it. */
+  display: inline-block;
+  text-decoration: none;
 }
 
 .lib-tool:hover:not(:disabled) {

@@ -199,6 +199,9 @@ export function Library() {
                 ? `${shown} of ${total} highlights`
                 : `${total} highlights`}
           </p>
+          <a class="lib-tool" href={browser.runtime.getURL('/spaces.html')}>
+            Spaces
+          </a>
           <button class="lib-tool" onClick={exportMarkdown} disabled={shown === 0}>
             Export Markdown
           </button>
