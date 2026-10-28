@@ -172,4 +172,41 @@ describe('the write-up', () => {
     // Every source gets a footnote carrying a link that lands on the passage.
     expect(text).toContain('[^1]: example.com — A page. <https://example.com/page#:~:text=');
   });
+
+  // The thing that makes a space worth opening: you get a document out of it before
+  // you have worked anything out. Concluding something is an addition, not the toll.
+  it('is already a cited document from the first highlights, with nothing concluded', () => {
+    const gathered = [mark('k1', 'Link mode is faster', 10), mark('k2', 'But it is destructive', 20)];
+    let space = createSpace('Upgrade', 'What changed in 1.4?');
+    space = addMark(space, 'k1');
+    space = addMark(space, 'k2');
+
+    const memo = buildMemo(space, gathered);
+    expect(memo.lines).toEqual([]);
+    expect(memo.highlights.map((h) => h.mark.id)).toEqual(['k2', 'k1']);
+    expect(memo.citations).toHaveLength(2);
+
+    const text = memoMarkdown(memo);
+    expect(text).toContain('## What I kept');
+    expect(text).not.toContain('## What I concluded');
+    expect(text).toContain('> Link mode is faster');
+    expect(text).toContain('> But it is destructive');
+    // Each passage still names where it came from and carries its footnote.
+    expect(text).toContain('— example.com[^1]');
+    expect(text).toContain('[^2]: example.com — A page. <https://example.com/page#:~:text=');
+  });
+
+  it('carries the note you wrote on a highlight into the passage', () => {
+    const noted = [{ ...mark('k1', 'Link mode is faster', 10), note: 'Only with a backup.' }];
+    let space = createSpace('Upgrade', 'Safe?');
+    space = addMark(space, 'k1');
+    expect(memoMarkdown(buildMemo(space, noted))).toContain('> Only with a backup.');
+  });
+
+  it('drops a withdrawn highlight from the passages, not just the claims', () => {
+    const memo = buildMemo(removeMark(settled(), 'k2'), marks);
+    expect(memo.highlights.map((h) => h.mark.id)).toEqual(['k1']);
+    // The claim survives, marked short a source; the passage itself is gone.
+    expect(memoMarkdown(memo)).not.toContain('> But it is destructive');
+  });
 });

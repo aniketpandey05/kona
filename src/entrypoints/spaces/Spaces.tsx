@@ -36,9 +36,9 @@ import { applyTheme, loadTheme, watchTheme, type Theme } from '../../core/theme'
 import type { Mark } from '../../core/types';
 
 const STANCE_LABEL: Record<Stance, string> = {
-  supports: 'Supports',
-  contradicts: 'Cuts against',
-  open: 'Unresolved',
+  supports: 'In favour',
+  contradicts: 'Against',
+  open: 'Unsettled',
 };
 
 const spaceFromUrl = (): string | null => location.hash.replace(/^#\/?/, '') || null;
@@ -229,8 +229,11 @@ function SpaceList({
                   </span>
                   {space.question && <span class="sp-question">{space.question}</span>}
                   <span class="sp-counts">
-                    {held} {held === 1 ? 'highlight' : 'highlights'} · {space.findings.length}{' '}
-                    {space.findings.length === 1 ? 'finding' : 'findings'}
+                    {held} {held === 1 ? 'highlight' : 'highlights'}
+                    {space.findings.length > 0 &&
+                      ` · ${space.findings.length} ${
+                        space.findings.length === 1 ? 'conclusion' : 'conclusions'
+                      }`}
                     {space.openQuestions.length > 0 && ` · ${space.openQuestions.length} open`}
                   </span>
                 </button>
@@ -308,10 +311,12 @@ function SpaceView({
 
   return (
     <>
-      <div class="sp-row sp-back">
+      <div class="sp-head">
+      <div class="sp-row sp-between">
         <button type="button" class="sp-tool" onClick={onBack}>
           ← All spaces
         </button>
+        <span class="sp-row">
         <span class={`sp-status sp-${status}`}>
           {status === 'shelf' ? 'Shelf' : status === 'settled' ? 'Settled' : 'Open'}
         </span>
@@ -328,6 +333,7 @@ function SpaceView({
             {space.question ? 'Rename' : 'Name it, or ask a question'}
           </button>
         )}
+        </span>
       </div>
 
       {renaming ? (
@@ -365,16 +371,25 @@ function SpaceView({
           </div>
         </form>
       ) : (
-        space.question && <p class="sp-question-big">{space.question}</p>
+        <h2 class="sp-question-big">{space.question ?? space.name}</h2>
       )}
-      <p class="sp-counts">
-        {held.length} {held.length === 1 ? 'highlight' : 'highlights'} · {space.findings.length}{' '}
-        {space.findings.length === 1 ? 'finding' : 'findings'}
-        {space.openQuestions.length > 0 && ` · ${space.openQuestions.length} still open`}
-      </p>
+      <div class="sp-row sp-between sp-headfoot">
+        <p class="sp-counts">
+          {held.length} {held.length === 1 ? 'highlight' : 'highlights'}
+          {space.findings.length > 0 &&
+            ` · ${space.findings.length} ${space.findings.length === 1 ? 'conclusion' : 'conclusions'}`}
+          {space.openQuestions.length > 0 && ` · ${space.openQuestions.length} still open`}
+        </p>
+        {held.length > 0 && (
+          <button type="button" class="sp-primary" onClick={() => setShowMemo(!showMemo)}>
+            {showMemo ? 'Hide the write-up' : 'Write it up'}
+          </button>
+        )}
+      </div>
+      </div>
 
       {space.decision && (
-        <section class="sp-panel sp-decision">
+        <section class="sp-decision">
           <h2>Decision</h2>
           <p>{space.decision.body}</p>
           <button type="button" class="sp-tool" onClick={() => write(reopen(space))}>
@@ -383,24 +398,135 @@ function SpaceView({
         </section>
       )}
 
-      {/* Findings, the write-up and open questions are all about answering a
-          question. A shelf has not asked one, so it is shown none of them. */}
+      {showMemo && (
+        <section class="sp-memo">
+          <div class="sp-row sp-between">
+            <h2>The write-up</h2>
+            <div class="sp-row">
+              <button type="button" class="sp-tool" onClick={copyMemo}>
+                {copied ? 'Copied' : 'Copy as Markdown'}
+              </button>
+              <button type="button" class="sp-tool" onClick={exportMemo}>
+                Save .md
+              </button>
+            </div>
+          </div>
+          <p class="sp-muted">
+            Every passage and every claim carries a link that lands on the exact sentence it
+            came from — so whoever reads this can check it without having Kona.
+          </p>
+          <h3 class="sp-memo-title">{memo.title}</h3>
+          {memo.decision && <p class="sp-memo-decision">{memo.decision}</p>}
+          {memo.lines.length > 0 && (
+            <>
+              <h3>What I concluded</h3>
+              <ul class="sp-memo-lines">
+                {memo.lines.map((line, i) => (
+                  <li key={i}>
+                    {line.contradicts && <em>Against: </em>}
+                    {line.claim}{' '}
+                    {line.cites.map((n) => (
+                      <sup key={n}>
+                        <a href={`#cite-${n}`}>[{n}]</a>
+                      </sup>
+                    ))}
+                    {line.withdrawn > 0 && (
+                      <em class="sp-muted"> ({line.withdrawn} no longer here)</em>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {memo.highlights.length > 0 && (
+            <>
+              <h3>What I kept</h3>
+              <div class="sp-memo-kept">
+                {memo.highlights.map(({ n, mark }) => (
+                  <blockquote key={mark.id}>
+                    <p>{mark.snapshot}</p>
+                    {mark.note && <p class="sp-memo-note">{mark.note}</p>}
+                    <cite>
+                      {siteLabel(mark)}{' '}
+                      <sup>
+                        <a href={`#cite-${n}`}>[{n}]</a>
+                      </sup>
+                    </cite>
+                  </blockquote>
+                ))}
+              </div>
+            </>
+          )}
+          {memo.open.length > 0 && (
+            <>
+              <h3>Still open</h3>
+              <ul class="sp-memo-lines">
+                {memo.open.map((entry) => (
+                  <li key={entry}>{entry}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {memo.citations.length > 0 && (
+            <>
+              <h3>Sources</h3>
+              <ol class="sp-memo-sources">
+                {memo.citations.map((citation) => (
+                  <li key={citation.n} id={`cite-${citation.n}`}>
+                    {siteLabel(citation.mark)} — {citation.mark.conversationTitle}.{' '}
+                    <a href={citation.href} target="_blank" rel="noreferrer noopener">
+                      the exact sentence
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </>
+          )}
+        </section>
+      )}
+
+      <section class="sp-section">
+        <div class="sp-row sp-between">
+          <h2>Highlights</h2>
+          <button type="button" class="sp-tool" onClick={() => setPicking(!picking)}>
+            {picking ? 'Done' : 'Gather highlights'}
+          </button>
+        </div>
+
+        {picking && <Picker space={space} marks={marks} />}
+
+        {held.length === 0 ? (
+          <p class="sp-muted">
+            Nothing here yet. Pull in a few highlights with <strong>Gather highlights</strong>{' '}
+            and you have a write-up straight away — every passage quoted, each with a link
+            under it that lands on the exact sentence it came from.
+          </p>
+        ) : (
+          <ul class="sp-evidence">
+            {held.map((mark) => (
+              <Evidence
+                key={mark.id}
+                mark={mark}
+                onRemove={() => write(removeMark(space, mark.id))}
+              />
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Conclusions and open questions are both about answering a question. A
+          shelf has not asked one, so it is shown neither. The write-up is not
+          gated: highlights on their own already make one. */}
       {space.question && (
         <>
-      <section class="sp-panel">
-        <div class="sp-row sp-between">
-          <h2>What I found</h2>
-          {space.findings.length > 0 && (
-            <button type="button" class="sp-tool" onClick={() => setShowMemo(!showMemo)}>
-              {showMemo ? 'Hide the write-up' : 'Write it up'}
-            </button>
-          )}
-        </div>
+      <section class="sp-section">
+        <h2>What I concluded</h2>
 
         {space.findings.length === 0 ? (
           <p class="sp-muted">
-            Nothing drawn out yet. A finding is what you now believe, and the highlights it
-            rests on.
+            Nothing yet, which is fine — the write-up already has your highlights. Add a
+            conclusion when you have one and it goes on top, with the highlights it rests
+            on cited under it.
           </p>
         ) : (
           <ul class="sp-findings">
@@ -497,7 +623,7 @@ function SpaceView({
 
         {unused.length > 0 && !drawing && (
           <button type="button" class="sp-tool sp-add" onClick={() => setDrawing(true)}>
-            Draw out a finding
+            Add a conclusion
           </button>
         )}
 
@@ -521,12 +647,12 @@ function SpaceView({
           >
             <input
               type="text"
-              placeholder="What do you now believe?"
+              placeholder="What do you now think? One sentence."
               value={claim}
               autofocus
               onInput={(event) => setClaim((event.currentTarget as HTMLInputElement).value)}
             />
-            <p class="sp-muted">Pick the highlights it rests on:</p>
+            <p class="sp-muted">Which highlights say so?</p>
             <ul class="sp-picker">
               {unused.map((mark) => (
                 <li key={mark.id}>
@@ -558,9 +684,9 @@ function SpaceView({
                   setStance((event.currentTarget as HTMLSelectElement).value as Stance)
                 }
               >
-                <option value="supports">Supports the answer</option>
-                <option value="contradicts">Cuts against it</option>
-                <option value="open">Unresolved</option>
+                <option value="supports">My highlights back this up</option>
+                <option value="contradicts">My highlights argue against it</option>
+                <option value="open">I am not sure yet</option>
               </select>
               <button type="submit" class="sp-primary" disabled={!claim.trim() || !chosen.length}>
                 Add
@@ -581,68 +707,7 @@ function SpaceView({
         )}
       </section>
 
-      {showMemo && (
-        <section class="sp-panel sp-memo">
-          <div class="sp-row sp-between">
-            <h2>The write-up</h2>
-            <div class="sp-row">
-              <button type="button" class="sp-tool" onClick={copyMemo}>
-                {copied ? 'Copied' : 'Copy as Markdown'}
-              </button>
-              <button type="button" class="sp-tool" onClick={exportMemo}>
-                Save .md
-              </button>
-            </div>
-          </div>
-          <p class="sp-muted">
-            Every claim carries the sources it rests on, and every source link lands on the
-            exact sentence — so whoever reads this can check it without having Kona.
-          </p>
-          <h3 class="sp-memo-title">{memo.title}</h3>
-          {memo.decision && <p class="sp-memo-decision">{memo.decision}</p>}
-          <ul class="sp-memo-lines">
-            {memo.lines.map((line, i) => (
-              <li key={i}>
-                {line.contradicts && <em>Against: </em>}
-                {line.claim}{' '}
-                {line.cites.map((n) => (
-                  <sup key={n}>
-                    <a href={`#cite-${n}`}>[{n}]</a>
-                  </sup>
-                ))}
-                {line.withdrawn > 0 && <em class="sp-muted"> ({line.withdrawn} no longer here)</em>}
-              </li>
-            ))}
-          </ul>
-          {memo.open.length > 0 && (
-            <>
-              <h3>Still open</h3>
-              <ul class="sp-memo-lines">
-                {memo.open.map((entry) => (
-                  <li key={entry}>{entry}</li>
-                ))}
-              </ul>
-            </>
-          )}
-          {memo.citations.length > 0 && (
-            <>
-              <h3>Sources</h3>
-              <ol class="sp-memo-sources">
-                {memo.citations.map((citation) => (
-                  <li key={citation.n} id={`cite-${citation.n}`}>
-                    {siteLabel(citation.mark)} — {citation.mark.conversationTitle}.{' '}
-                    <a href={citation.href} target="_blank" rel="noreferrer noopener">
-                      the exact sentence
-                    </a>
-                  </li>
-                ))}
-              </ol>
-            </>
-          )}
-        </section>
-      )}
-
-      <section class="sp-panel">
+      <section class="sp-section">
         <h2>Still open</h2>
         {space.openQuestions.length === 0 ? (
           <p class="sp-muted">Nothing outstanding.</p>
@@ -733,34 +798,6 @@ function SpaceView({
       </section>
         </>
       )}
-
-      <section class="sp-panel">
-        <div class="sp-row sp-between">
-          <h2>Highlights here</h2>
-          <button type="button" class="sp-tool" onClick={() => setPicking(!picking)}>
-            {picking ? 'Done' : 'Gather highlights'}
-          </button>
-        </div>
-
-        {picking && <Picker space={space} marks={marks} />}
-
-        {held.length === 0 ? (
-          <p class="sp-muted">
-            Nothing gathered yet. Use <strong>Gather highlights</strong> to pull in what bears
-            on this.
-          </p>
-        ) : (
-          <ul class="sp-evidence">
-            {held.map((mark) => (
-              <Evidence
-                key={mark.id}
-                mark={mark}
-                onRemove={() => write(removeMark(space, mark.id))}
-              />
-            ))}
-          </ul>
-        )}
-      </section>
 
       <div class="sp-row sp-footer">
         <button

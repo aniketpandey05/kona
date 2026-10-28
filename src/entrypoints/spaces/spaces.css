@@ -1,12 +1,16 @@
-/* The same palette as the library, so the two pages feel like one product. */
+/* The same palette as the library, so the two pages feel like one product.
+   The layout is not the same: the library is a list, and a space is a
+   document — one question with an argument under it. It is set like one. */
 :root {
   --sp-bg: #f7f7f8;
   --sp-card: #ffffff;
   --sp-sunk: #f1f1f3;
   --sp-fg: #16181d;
   --sp-muted: #71717a;
+  --sp-faint: #a1a1aa;
   --sp-border: rgba(16, 24, 40, 0.09);
-  --sp-hover: rgba(16, 24, 40, 0.035);
+  --sp-rule: rgba(16, 24, 40, 0.07);
+  --sp-hover: rgba(16, 24, 40, 0.04);
   --sp-accent: #c2410c;
   --sp-accent-fg: #ffffff;
   --sp-danger: #b91c1c;
@@ -17,11 +21,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --sp-bg: #191a1c;
-    --sp-card: #26272b;
+    --sp-card: #222326;
     --sp-sunk: #1d1e21;
     --sp-fg: #ececf1;
     --sp-muted: #a1a1aa;
+    --sp-faint: #71717a;
     --sp-border: rgba(255, 255, 255, 0.1);
+    --sp-rule: rgba(255, 255, 255, 0.08);
     --sp-hover: rgba(255, 255, 255, 0.05);
     --sp-accent: #fb923c;
     --sp-accent-fg: #1b1205;
@@ -33,11 +39,13 @@
 
 :root[data-theme='dark'] {
   --sp-bg: #191a1c;
-  --sp-card: #26272b;
+  --sp-card: #222326;
   --sp-sunk: #1d1e21;
   --sp-fg: #ececf1;
   --sp-muted: #a1a1aa;
+  --sp-faint: #71717a;
   --sp-border: rgba(255, 255, 255, 0.1);
+  --sp-rule: rgba(255, 255, 255, 0.08);
   --sp-hover: rgba(255, 255, 255, 0.05);
   --sp-accent: #fb923c;
   --sp-accent-fg: #1b1205;
@@ -54,34 +62,38 @@ body {
   margin: 0;
   background: var(--sp-bg);
   color: var(--sp-fg);
-  font: 15px/1.55 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font: 15px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 .sp {
-  max-width: 780px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: 36px 20px 80px;
+  padding: 32px 22px 100px;
 }
+
+/* ---- the bar across the top ---- */
 
 .sp-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 14px;
+  padding-bottom: 14px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--sp-rule);
 }
 
 .sp-top h1 {
   margin: 0;
-  font-size: 23px;
-  font-weight: 650;
-  letter-spacing: -0.02em;
+  font-size: 17px;
+  font-weight: 640;
+  letter-spacing: -0.01em;
 }
 
 .sp-lede {
-  max-width: 64ch;
-  margin: 0 0 20px;
+  max-width: 58ch;
+  margin: -8px 0 26px;
   color: var(--sp-muted);
 }
 
@@ -91,7 +103,7 @@ body {
 }
 
 .sp-empty {
-  padding: 30px 0;
+  padding: 34px 0;
   color: var(--sp-muted);
 }
 
@@ -105,24 +117,26 @@ select {
 
 .sp-tool,
 .sp-primary {
-  min-height: 34px;
-  padding: 0 12px;
-  border-radius: 8px;
+  min-height: 32px;
+  padding: 0 11px;
+  font-size: 13px;
+  border-radius: 7px;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13.5px;
+  white-space: nowrap;
 }
 
 .sp-tool {
-  color: var(--sp-fg);
-  background: var(--sp-card);
-  border: 1px solid var(--sp-border);
+  color: var(--sp-muted);
+  background: none;
+  border: 1px solid transparent;
 }
 
 .sp-tool:hover:not(:disabled) {
+  color: var(--sp-fg);
   background: var(--sp-hover);
 }
 
@@ -134,32 +148,33 @@ select {
 }
 
 .sp-primary:hover:not(:disabled) {
-  filter: brightness(1.07);
+  filter: brightness(1.08);
 }
 
 .sp-tool:disabled,
 .sp-primary:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: default;
 }
 
-.sp-danger {
+.sp-danger:hover:not(:disabled) {
   color: var(--sp-danger);
 }
 
 .sp-on {
   color: var(--sp-accent);
-  border-color: color-mix(in srgb, var(--sp-accent) 50%, var(--sp-border));
+  background: var(--sp-hover);
 }
 
 .sp-link {
   padding: 0;
   font-size: 12.5px;
-  color: var(--sp-muted);
+  color: var(--sp-faint);
   background: none;
   border: 0;
-  text-decoration: underline;
   cursor: pointer;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
 }
 
 .sp-link:hover {
@@ -188,7 +203,7 @@ a:focus-visible {
 .sp-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -196,22 +211,14 @@ a:focus-visible {
   justify-content: space-between;
 }
 
-.sp-back {
-  margin-bottom: 10px;
-}
-
-.sp-add {
-  margin-top: 14px;
-}
-
-/* ---- the list ---- */
+/* ---- the list of spaces ---- */
 
 .sp-new {
   display: flex;
   flex-direction: column;
   gap: 9px;
   padding: 16px;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   background: var(--sp-card);
   border: 1px solid var(--sp-border);
   border-radius: 12px;
@@ -219,18 +226,16 @@ a:focus-visible {
 
 .sp-list {
   list-style: none;
-  margin: 22px 0 0;
+  margin: 20px 0 0;
   padding: 0;
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 .sp-card {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding: 16px;
+  display: block;
+  padding: 16px 18px;
   text-align: left;
   font: inherit;
   color: var(--sp-fg);
@@ -238,6 +243,7 @@ a:focus-visible {
   border: 1px solid var(--sp-border);
   border-radius: 12px;
   cursor: pointer;
+  transition: border-color 0.12s ease;
 }
 
 .sp-card:hover {
@@ -246,110 +252,131 @@ a:focus-visible {
 
 .sp-card-top {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
-  font-size: 16px;
+  gap: 12px;
+  margin-bottom: 3px;
 }
 
+.sp-card-top strong {
+  font-size: 15px;
+  font-weight: 620;
+}
+
+/* The question is what the space is; it leads on the card. */
 .sp-question {
-  color: var(--sp-fg);
-  font-size: 14px;
-}
-
-.sp-question-big {
-  margin: 4px 0 6px;
-  font-size: 17px;
-  line-height: 1.5;
-  max-width: 62ch;
+  display: block;
+  margin: 2px 0 10px;
+  font-size: 16px;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
 }
 
 .sp-counts {
-  color: var(--sp-muted);
-  font-size: 13px;
+  display: block;
+  color: var(--sp-faint);
+  font-size: 12.5px;
 }
 
 .sp-status {
   flex: none;
-  padding: 2px 9px;
-  font-size: 11.5px;
-  font-weight: 640;
-  border-radius: 999px;
-  border: 1px solid var(--sp-border);
-  color: var(--sp-muted);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--sp-faint);
 }
 
 .sp-settled {
   color: var(--sp-ok);
-  border-color: color-mix(in srgb, var(--sp-ok) 45%, transparent);
 }
 
 .sp-open {
   color: var(--sp-accent);
-  border-color: color-mix(in srgb, var(--sp-accent) 50%, transparent);
 }
 
-/* ---- panels ---- */
+/* ---- one space, set as a document ---- */
 
-.sp-panel {
-  padding: 18px;
-  margin-top: 16px;
-  background: var(--sp-card);
-  border: 1px solid var(--sp-border);
-  border-radius: 12px;
+.sp-head {
+  margin-bottom: 30px;
 }
 
-.sp-panel h2 {
-  margin: 0 0 4px;
-  font-size: 16px;
-  font-weight: 640;
+.sp-question-big {
+  margin: 10px 0 8px;
+  font-size: 26px;
+  line-height: 1.28;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  max-width: 24ch;
 }
 
-.sp-panel h3 {
-  margin: 18px 0 6px;
+.sp-section {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid var(--sp-rule);
+}
+
+.sp-section > h2 {
+  margin: 0 0 14px;
+  font-size: 11.5px;
+  font-weight: 680;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--sp-faint);
+}
+
+.sp-section h3 {
+  margin: 20px 0 6px;
   font-size: 14px;
   font-weight: 640;
 }
 
+/* The decision is the answer, so it reads like one. */
 .sp-decision {
-  border-color: color-mix(in srgb, var(--sp-ok) 40%, var(--sp-border));
+  margin-top: 26px;
+  padding: 18px 20px;
+  background: var(--sp-card);
+  border-left: 3px solid var(--sp-ok);
+  border-radius: 0 10px 10px 0;
 }
 
 .sp-decision p {
-  max-width: 66ch;
-  line-height: 1.6;
+  margin: 0 0 8px;
+  font-size: 16px;
+  line-height: 1.55;
+  max-width: 60ch;
 }
 
 /* ---- findings ---- */
 
 .sp-findings {
   list-style: none;
-  margin: 14px 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 22px;
 }
 
 .sp-finding {
-  padding-left: 12px;
-  border-left: 3px solid var(--sp-border);
+  padding-left: 14px;
+  border-left: 2px solid var(--sp-border);
 }
 
 .sp-finding.sp-supports {
-  border-left-color: color-mix(in srgb, var(--sp-ok) 55%, transparent);
+  border-left-color: color-mix(in srgb, var(--sp-ok) 60%, transparent);
 }
 
 .sp-finding.sp-contradicts {
-  border-left-color: color-mix(in srgb, var(--sp-danger) 55%, transparent);
+  border-left-color: color-mix(in srgb, var(--sp-danger) 60%, transparent);
 }
 
 .sp-stance {
-  font-size: 11px;
-  font-weight: 660;
-  letter-spacing: 0.03em;
+  font-size: 10.5px;
+  font-weight: 680;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--sp-muted);
+  color: var(--sp-faint);
 }
 
 .sp-stance-supports {
@@ -361,20 +388,21 @@ a:focus-visible {
 }
 
 .sp-claim {
-  margin: 5px 0 9px;
-  font-size: 15px;
-  line-height: 1.6;
-  max-width: 68ch;
+  margin: 4px 0 8px;
+  font-size: 16.5px;
+  line-height: 1.5;
+  max-width: 56ch;
+  letter-spacing: -0.008em;
 }
 
 .sp-withdrawn {
-  margin: 9px 0 0;
-  font-size: 13px;
+  margin: 8px 0 0;
+  font-size: 12.5px;
   font-style: italic;
-  color: var(--sp-muted);
+  color: var(--sp-faint);
 }
 
-/* ---- evidence and the picker ---- */
+/* ---- evidence ---- */
 
 .sp-evidence,
 .sp-candidates {
@@ -383,15 +411,15 @@ a:focus-visible {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .sp-ev {
   display: flex;
   gap: 10px;
-  padding: 11px 12px;
+  padding: 11px 13px;
   background: var(--sp-sunk);
-  border-radius: 10px;
+  border-radius: 9px;
 }
 
 .sp-ev > div {
@@ -400,38 +428,38 @@ a:focus-visible {
 }
 
 .sp-dot {
-  width: 10px;
-  height: 10px;
-  margin-top: 5px;
+  width: 8px;
+  height: 8px;
+  margin-top: 7px;
   flex: none;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .sp-cand-meta {
   display: block;
-  font-size: 12px;
-  color: var(--sp-muted);
+  font-size: 11.5px;
+  color: var(--sp-faint);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .sp-ev-text {
-  margin: 4px 0;
+  margin: 3px 0 5px;
   font-size: 14px;
   line-height: 1.55;
 }
 
 .sp-ev-note {
-  margin: 4px 0;
-  padding-left: 10px;
+  margin: 0 0 5px;
+  padding-left: 9px;
   border-left: 2px solid var(--sp-border);
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--sp-muted);
 }
 
 .sp-pick {
-  margin-top: 12px;
+  margin: 12px 0;
   padding: 14px;
   background: var(--sp-sunk);
   border-radius: 10px;
@@ -462,17 +490,18 @@ a:focus-visible {
 
 .sp-cand-text {
   display: block;
-  margin-top: 3px;
-  font-size: 13.5px;
+  margin-top: 2px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
 /* ---- forms ---- */
 
 .sp-form {
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid var(--sp-border);
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--sp-sunk);
+  border-radius: 10px;
 }
 
 .sp-form > input[type='text'] {
@@ -480,10 +509,32 @@ a:focus-visible {
   margin-bottom: 8px;
 }
 
+.sp-rename {
+  margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sp-rename input {
+  width: 100%;
+}
+
+.sp-claim-edit {
+  margin: 4px 0 8px;
+}
+
+.sp-claim-edit input {
+  flex: 1;
+  min-width: 200px;
+}
+
 .sp-picker {
   list-style: none;
   margin: 4px 0 12px;
   padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
 }
 
 .sp-picker label {
@@ -491,7 +542,7 @@ a:focus-visible {
   align-items: flex-start;
   gap: 8px;
   padding: 6px 0;
-  font-size: 13.5px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -501,7 +552,7 @@ a:focus-visible {
 
 .sp-questions {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 0;
   padding: 0;
 }
 
@@ -510,102 +561,136 @@ a:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 10px 0;
-  border-top: 1px solid var(--sp-border);
-  font-size: 14.5px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--sp-rule);
+  font-size: 15px;
 }
 
 .sp-settle {
   margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--sp-border);
 }
 
 /* ---- the write-up ---- */
 
 .sp-memo {
-  border-color: color-mix(in srgb, var(--sp-accent) 35%, var(--sp-border));
+  margin-top: 26px;
+  padding: 24px 26px;
+  background: var(--sp-card);
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
 }
 
 .sp-memo-title {
-  margin: 16px 0 8px;
-  font-size: 17px;
+  margin: 14px 0 10px;
+  font-size: 20px;
   font-weight: 650;
+  letter-spacing: -0.02em;
+  max-width: 28ch;
 }
 
 .sp-memo-decision {
-  padding: 10px 12px;
+  padding: 11px 13px;
+  margin: 0 0 14px;
   background: var(--sp-sunk);
-  border-radius: 9px;
-  max-width: 68ch;
+  border-radius: 8px;
+  max-width: 62ch;
 }
 
 .sp-memo-lines {
-  margin: 8px 0 0;
-  padding-left: 20px;
-  max-width: 70ch;
+  margin: 6px 0 0;
+  padding-left: 19px;
+  max-width: 62ch;
 }
 
 .sp-memo-lines li {
-  margin-bottom: 7px;
-  line-height: 1.6;
+  margin-bottom: 8px;
+  line-height: 1.62;
 }
 
 .sp-memo-lines sup a {
   color: var(--sp-accent);
   text-decoration: none;
-  font-weight: 640;
+  font-weight: 650;
 }
 
 .sp-memo-sources {
-  margin: 8px 0 0;
-  padding-left: 20px;
-  font-size: 13.5px;
+  margin: 6px 0 0;
+  padding-left: 19px;
+  font-size: 13px;
   color: var(--sp-muted);
-  max-width: 70ch;
+  max-width: 64ch;
 }
 
 .sp-memo-sources li {
   margin-bottom: 5px;
 }
 
-.sp-footer {
-  margin-top: 26px;
-  padding-top: 16px;
-  border-top: 1px solid var(--sp-border);
+.sp-memo-sources li:target {
+  color: var(--sp-fg);
 }
 
-.sp-undo {
+/* ---- banners and the footer ---- */
+
+.sp-undo,
+.sp-note {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 10px 13px;
-  margin-bottom: 16px;
+  padding: 11px 14px;
+  margin-bottom: 18px;
   font-size: 14px;
   background: var(--sp-sunk);
-  border: 1px solid var(--sp-border);
   border-radius: 10px;
 }
 
-.sp-rename {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 10px 0 0;
-  padding-top: 0;
-  border-top: 0;
+.sp-footer {
+  margin-top: 40px;
+  padding-top: 18px;
+  border-top: 1px solid var(--sp-rule);
 }
 
-.sp-rename input {
-  width: 100%;
+@media (max-width: 560px) {
+  .sp-question-big {
+    font-size: 21px;
+    max-width: none;
+  }
+
+  .sp-memo {
+    padding: 18px;
+  }
 }
 
-.sp-claim-edit {
-  margin: 5px 0 9px;
+/* The passages themselves, which are the document when nothing is concluded yet. */
+.sp-memo-kept blockquote {
+  margin: 0 0 18px;
+  padding: 0 0 0 16px;
+  border-left: 3px solid var(--sp-border);
 }
 
-.sp-claim-edit input {
-  flex: 1;
-  min-width: 220px;
+.sp-memo-kept blockquote p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--sp-fg);
+}
+
+.sp-memo-kept .sp-memo-note {
+  margin-top: 6px;
+  color: var(--sp-muted);
+  font-size: 14px;
+}
+
+.sp-memo-kept cite {
+  display: block;
+  margin-top: 8px;
+  font-style: normal;
+  font-size: 13px;
+  color: var(--sp-faint);
+}
+
+/* Counts on the left, the one button that matters on the right. */
+.sp-headfoot {
+  margin-top: 14px;
+  gap: 16px;
 }

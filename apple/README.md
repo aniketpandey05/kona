@@ -65,6 +65,13 @@ Three things are not.
   Reaching for a missing API at startup would take the whole background script
   down, so it is treated as optional — see the top of
   [`src/entrypoints/background.ts`](../src/entrypoints/background.ts).
+- **Selecting with a finger.** A desktop knows a selection is finished when
+  the mouse button comes up. A phone never sends that: the selection is dragged
+  about by handles Safari draws itself, and all the page hears is
+  `selectionchange`. So a selection that has stopped changing for a moment
+  counts as a finished one too, while a mouse still waits for its release —
+  see `captureWhenSettled` in
+  [`src/content/controller.ts`](../src/content/controller.ts).
 - **Safari asks about sites its own way.** Switching a site on still goes
   through `permissions.request`, but what the person sees is Safari's prompt and
   its own per-site memory, not Chrome's.
@@ -110,3 +117,10 @@ falls back to — and has not been run here, because this was written on Windows
 The first person with a Mac should expect to correct something, most likely the
 name of the generated extension target's `Resources` folder, which the script
 checks for and complains about by name.
+
+The touch path for selecting text was tried in a desktop browser, with the
+events a phone would send rather than a phone sending them: the picker opens
+for a selection made without a mouse, and still waits for the button on a
+desktop. Whether Safari's own selection handles feel right at 250ms is the
+first thing to judge on a real iPhone, and `SELECTION_SETTLE_MS` is the number
+to turn.
