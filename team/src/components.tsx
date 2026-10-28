@@ -1,8 +1,19 @@
 import { useState } from 'preact/hooks';
 import { linkToMark } from '../../src/core/link';
 import { siteLabel } from '../../src/core/sites';
-import { memberById } from './demo';
-import { allSpaces, spaceOf } from './store';
+import { YOU, memberById } from './demo';
+import {
+  allSpaces,
+  comment as addComment,
+  deleteComment,
+  deleteMark,
+  editComment,
+  editNote,
+  setResolved,
+  shareMark,
+  spaceOf,
+  unshareMark,
+} from './store';
 import type { HighlightColor } from '../../src/core/types';
 import type { Member, Space, TeamMark } from './types';
 
@@ -33,9 +44,7 @@ export function Avatar({ member, small = false }: { member: Member; small?: bool
   return (
     <span
       class={small ? 'avatar avatar-small' : 'avatar'}
-      style={{
-        background: `hsl(${member.hue} 62% 46%)`,
-      }}
+      style={{ background: `hsl(${member.hue} 62% 46%)` }}
       title={`${member.name} · ${member.email}`}
     >
       {member.initials}
@@ -76,22 +85,27 @@ export function MarkCard({
   mark,
   shared,
   canWrite,
-  onShare,
-  onUnshare,
-  onComment,
 }: {
   mark: TeamMark;
-  /** Whether the workspace view is on; off in the free tier, where only your own show. */
+  /** Whether the workspace is shared; off on the free plan, where only yours exist. */
   shared: boolean;
   canWrite: boolean;
-  onShare?: (id: string, collectionId: string) => void;
-  onUnshare?: (id: string) => void;
-  onComment?: (id: string, body: string) => void;
 }) {
   const author = memberById(mark.authorId);
   const space = spaceOf(mark.spaceId);
+  const mine = mark.authorId === YOU;
+  const comments = mark.comments ?? [];
+
+  // The thread stays shut until it is asked for. A feed where every card is
+  // also an open conversation is a feed nobody reads to the bottom.
+  const [openThread, setOpenThread] = useState(false);
   const [draft, setDraft] = useState('');
+  const [editingNote, setEditingNote] = useState(false);
+  const [noteDraft, setNoteDraft] = useState(mark.note ?? '');
+  const [editingReply, setEditingReply] = useState<string | null>(null);
+  const [replyDraft, setReplyDraft] = useState('');
   const [copied, setCopied] = useState(false);
+
   const link = linkToMark(mark);
 
   const copy = (): void => {
@@ -106,12 +120,23 @@ export function MarkCard({
     );
   };
 
+  const threadLabel = mark.resolved
+    ? 'Settled'
+    : comments.length === 0
+      ? 'Reply'
+      : `${comments.length} ${comments.length === 1 ? 'reply' : 'replies'}`;
+
   return (
-    <article class="mark">
+    <article class={mark.resolved ? 'mark mark-resolved' : 'mark'}>
       <header class="mark-top">
         {shared && <Avatar member={author} />}
         <div class="mark-who">
-          {shared && <strong>{author.name}</strong>}
+          {shared && (
+            <strong>
+              {author.name}
+              {mine && <span class="you">you</span>}
+            </strong>
+          )}
           <span class="mark-meta">
             {siteLabel(mark)} · {mark.conversationTitle} · {timeAgo(mark.createdAt)}
           </span>
@@ -119,7 +144,7 @@ export function MarkCard({
         {space ? (
           <span class="chip chip-space">{space.name}</span>
         ) : (
-          <span class="chip chip-private">Private</span>
+          <span class="chip chip-private">Only you</span>
         )}
       </header>
 
@@ -127,7 +152,39 @@ export function MarkCard({
         {mark.snapshot}
       </blockquote>
 
-      {mark.note && <p class="mark-note">{mark.note}</p>}
+      {editingNote ? (
+        <form
+          class="note-edit"
+          onSubmit={(event) => {
+            event.preventDefault();
+            editNote(mark.id, noteDraft);
+            setEditingNote(false);
+          }}
+        >
+          <input
+            type="text"
+            aria-label="Your note on this highlight"
+            placeholder="Why this mattered"
+            value={noteDraft}
+            onInput={(event) => setNoteDraft((event.currentTarget as HTMLInputElement).value)}
+          />
+          <button type="submit" class="action">
+            Save
+          </button>
+          <button
+            type="button"
+            class="action"
+            onClick={() => {
+              setNoteDraft(mark.note ?? '');
+              setEditingNote(false);
+            }}
+          >
+            Cancel
+          </button>
+        </form>
+      ) : (
+        mark.note && <p class="mark-note">{mark.note}</p>
+      )}
 
       {(mark.tags ?? []).length > 0 && (
         <div class="mark-tags">
@@ -147,14 +204,23 @@ export function MarkCard({
           {copied ? 'Link copied' : 'Copy link'}
         </button>
 
-        {shared && canWrite && !mark.spaceId && onShare && (
+        {/* Your own highlight is yours to change on any plan, and whatever the
+            billing is doing: the local copy belongs to whoever made it. Only the
+            shared actions below wait on canWrite. */}
+        {mine && !editingNote && (
+          <button type="button" class="action" onClick={() => setEditingNote(true)}>
+            {mark.note ? 'Edit note' : 'Add a note'}
+          </button>
+        )}
+
+        {shared && canWrite && !mark.spaceId && (
           <select
             class="action action-select"
             aria-label="Share this highlight to a space"
             value=""
             onChange={(event) => {
               const select = event.currentTarget as HTMLSelectElement;
-              if (select.value) onShare(mark.id, select.value);
+              if (select.value) shareMark(mark.id, select.value);
               select.value = '';
             }}
           >
@@ -167,51 +233,145 @@ export function MarkCard({
           </select>
         )}
 
-        {shared && canWrite && mark.spaceId && onUnshare && (
-          <button type="button" class="action" onClick={() => onUnshare(mark.id)}>
-            Make private
+        {shared && canWrite && mark.spaceId && (
+          <button type="button" class="action" onClick={() => unshareMark(mark.id)}>
+            Make it mine again
+          </button>
+        )}
+
+        {shared && (
+          <button
+            type="button"
+            class={openThread ? 'action action-on' : 'action'}
+            aria-expanded={openThread}
+            onClick={() => setOpenThread(!openThread)}
+          >
+            {threadLabel}
+          </button>
+        )}
+
+        {mine && (
+          <button type="button" class="action action-danger" onClick={() => deleteMark(mark.id)}>
+            Delete
           </button>
         )}
       </footer>
 
-      {shared && (mark.comments ?? []).length > 0 && (
-        <ul class="comments">
-          {(mark.comments ?? []).map((entry) => {
-            const who = memberById(entry.authorId);
-            return (
-              <li key={entry.id}>
-                <Avatar member={who} small />
-                <div>
-                  <strong>{who.name}</strong> <span class="mark-meta">{timeAgo(entry.createdAt)}</span>
-                  <p>{entry.body}</p>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      {shared && openThread && (
+        <div class="thread">
+          {comments.length === 0 && (
+            <p class="subtle">
+              Nothing said yet, and this is the place to say it. A highlight somebody has to
+              go and find in Slack is a highlight nobody discusses.
+            </p>
+          )}
 
-      {shared && canWrite && onComment && (
-        <form
-          class="comment-form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            const body = draft.trim();
-            if (!body) return;
-            onComment(mark.id, body);
-            setDraft('');
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Add a comment"
-            value={draft}
-            onInput={(event) => setDraft((event.currentTarget as HTMLInputElement).value)}
-          />
-          <button type="submit" class="action" disabled={!draft.trim()}>
-            Post
-          </button>
-        </form>
+          {comments.length > 0 && (
+            <ul class="comments">
+              {comments.map((entry) => {
+                const who = memberById(entry.authorId);
+                const ownReply = entry.authorId === YOU;
+                return (
+                  <li key={entry.id}>
+                    <Avatar member={who} small />
+                    <div>
+                      <strong>{who.name}</strong>{' '}
+                      <span class="mark-meta">
+                        {timeAgo(entry.createdAt)}
+                        {entry.editedAt ? ' · edited' : ''}
+                      </span>
+                      {editingReply === entry.id ? (
+                        <form
+                          class="note-edit"
+                          onSubmit={(event) => {
+                            event.preventDefault();
+                            if (!replyDraft.trim()) return;
+                            editComment(mark.id, entry.id, replyDraft.trim());
+                            setEditingReply(null);
+                          }}
+                        >
+                          <input
+                            type="text"
+                            aria-label="Edit your reply"
+                            value={replyDraft}
+                            onInput={(event) =>
+                              setReplyDraft((event.currentTarget as HTMLInputElement).value)
+                            }
+                          />
+                          <button type="submit" class="action">
+                            Save
+                          </button>
+                          <button type="button" class="action" onClick={() => setEditingReply(null)}>
+                            Cancel
+                          </button>
+                        </form>
+                      ) : (
+                        <>
+                          <p>{entry.body}</p>
+                          {ownReply && canWrite && !mark.resolved && (
+                            <div class="reply-actions">
+                              <button
+                                type="button"
+                                class="link-button"
+                                onClick={() => {
+                                  setReplyDraft(entry.body);
+                                  setEditingReply(entry.id);
+                                }}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                class="link-button"
+                                onClick={() => deleteComment(mark.id, entry.id)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+
+          {canWrite && !mark.resolved && (
+            <form
+              class="comment-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const body = draft.trim();
+                if (!body) return;
+                addComment(mark.id, body);
+                setDraft('');
+              }}
+            >
+              <input
+                type="text"
+                aria-label="Write a reply"
+                placeholder="Reply to this highlight"
+                value={draft}
+                onInput={(event) => setDraft((event.currentTarget as HTMLInputElement).value)}
+              />
+              <button type="submit" class="action" disabled={!draft.trim()}>
+                Post
+              </button>
+            </form>
+          )}
+
+          {canWrite && comments.length > 0 && (
+            <button
+              type="button"
+              class="action thread-settle"
+              onClick={() => setResolved(mark.id, !mark.resolved)}
+            >
+              {mark.resolved ? 'Reopen this thread' : 'Settle this thread'}
+            </button>
+          )}
+        </div>
       )}
     </article>
   );

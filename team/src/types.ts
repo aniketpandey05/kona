@@ -22,6 +22,8 @@ export interface Comment {
   authorId: string;
   body: string;
   createdAt: number;
+  /** Set when it has been changed since, so a reader knows the wording moved. */
+  editedAt?: number;
 }
 
 /**
@@ -31,8 +33,18 @@ export interface Comment {
  */
 export interface TeamMark extends Mark {
   authorId: string;
+  /**
+   * Absent until someone deliberately shares it. A highlight is private to the
+   * person who made it first; putting it in a space is a separate decision,
+   * taken after they have decided it is worth anyone else's time.
+   */
   spaceId?: string;
   comments?: Comment[];
+  /**
+   * A thread somebody has called finished. It collapses and stops asking for
+   * replies, the way a resolved thread does anywhere else.
+   */
+  resolved?: boolean;
 }
 
 /**

@@ -85,6 +85,74 @@ export function comment(id: string, body: string): void {
   log('comment.added', 'Commented on a highlight');
 }
 
+/** Only ever your own note; somebody else's wording is not yours to change. */
+export function editNote(id: string, note: string): void {
+  const trimmed = note.trim();
+  marks = marks.map((mark) =>
+    mark.id === id ? { ...mark, note: trimmed || undefined, updatedAt: Date.now() } : mark,
+  );
+  log('highlight.note_edited', trimmed ? 'Edited a note' : 'Cleared a note');
+}
+
+/**
+ * Deleting leaves an Undo for a few seconds, the way it does in the extension.
+ * Only one deletion is held at a time, which is all a few seconds needs.
+ */
+let lastDeleted: { mark: TeamMark; at: number } | null = null;
+
+export function deleteMark(id: string): void {
+  const mark = marks.find((entry) => entry.id === id);
+  if (!mark) return;
+  lastDeleted = { mark, at: Date.now() };
+  marks = marks.filter((entry) => entry.id !== id);
+  log('highlight.deleted', 'Deleted a highlight');
+}
+
+export function undoDelete(): void {
+  if (!lastDeleted) return;
+  marks = [...marks, lastDeleted.mark];
+  lastDeleted = null;
+  log('highlight.restored', 'Undid a deletion');
+}
+
+export function pendingUndo(): TeamMark | null {
+  return lastDeleted?.mark ?? null;
+}
+
+export function clearUndo(): void {
+  lastDeleted = null;
+  notify();
+}
+
+export function editComment(markId: string, commentId: string, body: string): void {
+  marks = marks.map((mark) =>
+    mark.id === markId
+      ? {
+          ...mark,
+          comments: (mark.comments ?? []).map((entry) =>
+            entry.id === commentId ? { ...entry, body, editedAt: Date.now() } : entry,
+          ),
+        }
+      : mark,
+  );
+  log('comment.edited', 'Edited a reply');
+}
+
+export function deleteComment(markId: string, commentId: string): void {
+  marks = marks.map((mark) =>
+    mark.id === markId
+      ? { ...mark, comments: (mark.comments ?? []).filter((entry) => entry.id !== commentId) }
+      : mark,
+  );
+  log('comment.deleted', 'Deleted a reply');
+}
+
+/** Calling a thread finished, so it stops asking for replies. */
+export function setResolved(id: string, resolved: boolean): void {
+  marks = marks.map((mark) => (mark.id === id ? { ...mark, resolved } : mark));
+  log(resolved ? 'thread.resolved' : 'thread.reopened', resolved ? 'Settled a thread' : 'Reopened a thread');
+}
+
 // ---- spaces ----
 
 function updateSpace(id: string, change: (space: Space) => Space): void {

@@ -1,12 +1,14 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { countTags } from '../../../src/core/tags';
 import { searchMarks } from '../../../src/core/search';
 import { toMarkdown } from '../../../src/core/markdown';
 import { MarkCard } from '../components';
-import { YOU, memberById } from '../demo';
+import { YOU } from '../demo';
 import { canWrite, isTeam } from '../entitlement';
-import { allMarks, allMembers, allSpaces, comment, shareMark, unshareMark } from '../store';
+import { allMarks, allMembers, allSpaces, clearUndo, pendingUndo, undoDelete } from '../store';
 import type { Entitlement, TeamMark } from '../types';
+
+type Tab = 'mine' | 'team';
 
 export function Workspace({
   entitlement,
@@ -18,29 +20,38 @@ export function Workspace({
   const shared = isTeam(entitlement);
   const writable = canWrite(entitlement);
 
+  const [tab, setTab] = useState<Tab>('team');
   const [query, setQuery] = useState('');
   const [spaceId, setSpaceId] = useState('');
   const [authorId, setAuthorId] = useState('');
   const [tag, setTag] = useState('');
 
   const everything = allMarks();
+  const undoable = pendingUndo();
 
-  // The free tier is the same workspace with only your own highlights in it.
-  // Nothing is deleted or withheld — there is simply no shared layer yet.
-  const pool = useMemo(
-    () => (shared ? everything : everything.filter((mark) => mark.authorId === YOU)),
-    [everything, shared],
-  );
+  // An Undo that never goes away is just a second delete button.
+  useEffect(() => {
+    if (!undoable) return;
+    const timer = setTimeout(clearUndo, 8000);
+    return () => clearTimeout(timer);
+  }, [undoable]);
 
-  const hiddenCount = everything.length - everything.filter((mark) => mark.authorId === YOU).length;
+  const mine = useMemo(() => everything.filter((mark) => mark.authorId === YOU), [everything]);
+  const team = useMemo(() => everything.filter((mark) => mark.spaceId), [everything]);
+
+  // On the free plan there is no shared layer, so there is only ever "mine".
+  const activeTab: Tab = shared ? tab : 'mine';
+  const pool = activeTab === 'mine' ? mine : team;
+
+  const hiddenCount = everything.length - mine.length;
   const colleagues = new Set(
     everything.filter((mark) => mark.authorId !== YOU).map((mark) => mark.authorId),
   ).size;
 
   const filtered = useMemo(() => {
     let list = pool;
-    if (spaceId) list = list.filter((mark) => mark.spaceId === spaceId);
-    if (authorId) list = list.filter((mark) => mark.authorId === authorId);
+    if (activeTab === 'team' && spaceId) list = list.filter((mark) => mark.spaceId === spaceId);
+    if (activeTab === 'team' && authorId) list = list.filter((mark) => mark.authorId === authorId);
     if (tag) {
       list = list.filter((mark) =>
         (mark.tags ?? []).some((entry) => entry.toLowerCase() === tag.toLowerCase()),
@@ -49,18 +60,25 @@ export function Workspace({
     // searchMarks returns the same objects it was given, so they are still TeamMarks.
     const ranked = (query.trim() ? searchMarks(list, query) : [...list]) as TeamMark[];
     return query.trim() ? ranked : ranked.sort((a, b) => b.createdAt - a.createdAt);
-  }, [pool, spaceId, authorId, tag, query]);
+  }, [pool, activeTab, spaceId, authorId, tag, query]);
 
-  const tags = useMemo(() => countTags(pool).slice(0, 10), [pool]);
+  const tags = useMemo(() => countTags(pool).slice(0, 8), [pool]);
 
   const exportMarkdown = (): void => {
     const blob = new Blob([toMarkdown(filtered)], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'kona-workspace.md';
+    anchor.download = 'kona-highlights.md';
     anchor.click();
     URL.revokeObjectURL(url);
+  };
+
+  const switchTab = (next: Tab): void => {
+    setTab(next);
+    setSpaceId('');
+    setAuthorId('');
+    setTag('');
   };
 
   return (
@@ -69,15 +87,54 @@ export function Workspace({
         <div>
           <h1>{shared ? 'Workspace' : 'Your highlights'}</h1>
           <p class="subtle">
-            {shared
-              ? `${everything.length} highlights from ${allMembers().filter((m) => m.seatActive).length} people`
-              : `${pool.length} highlights, on this computer only`}
+            {activeTab === 'mine'
+              ? shared
+                ? 'Everything you have kept. None of it is shared until you share it.'
+                : `${mine.length} highlights, on this computer only`
+              : `${team.length} shared by ${allMembers().filter((m) => m.seatActive).length} people`}
           </p>
         </div>
-        <button type="button" class="action" onClick={exportMarkdown} disabled={filtered.length === 0}>
+        <button
+          type="button"
+          class="action"
+          onClick={exportMarkdown}
+          disabled={filtered.length === 0}
+        >
           Export Markdown
         </button>
       </div>
+
+      {shared && (
+        <div class="tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'mine'}
+            class={activeTab === 'mine' ? 'tab tab-on' : 'tab'}
+            onClick={() => switchTab('mine')}
+          >
+            Mine <span class="tab-count">{mine.length}</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'team'}
+            class={activeTab === 'team' ? 'tab tab-on' : 'tab'}
+            onClick={() => switchTab('team')}
+          >
+            Team <span class="tab-count">{team.length}</span>
+          </button>
+        </div>
+      )}
+
+      {undoable && (
+        <div class="undo">
+          <span>Deleted a highlight.</span>
+          <button type="button" class="action" onClick={undoDelete}>
+            Undo
+          </button>
+        </div>
+      )}
 
       {!shared && hiddenCount > 0 && (
         <div class="upsell">
@@ -107,18 +164,16 @@ export function Workspace({
       <div class="filters">
         <input
           type="search"
-          placeholder={shared ? 'Search the whole workspace' : 'Search your highlights'}
+          placeholder={activeTab === 'mine' ? 'Search your highlights' : 'Search the workspace'}
           value={query}
           onInput={(event) => setQuery((event.currentTarget as HTMLInputElement).value)}
         />
-        {shared && (
+        {activeTab === 'team' && (
           <>
             <select
               aria-label="Filter by space"
               value={spaceId}
-              onChange={(event) =>
-                setSpaceId((event.currentTarget as HTMLSelectElement).value)
-              }
+              onChange={(event) => setSpaceId((event.currentTarget as HTMLSelectElement).value)}
             >
               <option value="">Every space</option>
               {allSpaces().map((space) => (
@@ -147,13 +202,6 @@ export function Workspace({
 
       {tags.length > 0 && (
         <div class="tag-row">
-          <button
-            type="button"
-            class={tag === '' ? 'chip chip-on' : 'chip'}
-            onClick={() => setTag('')}
-          >
-            All tags
-          </button>
           {tags.map(([label, count]) => (
             <button
               key={label}
@@ -164,32 +212,31 @@ export function Workspace({
               #{label} <span class="chip-count">{count}</span>
             </button>
           ))}
+          {tag && (
+            <button type="button" class="chip" onClick={() => setTag('')}>
+              Clear
+            </button>
+          )}
         </div>
       )}
 
       {filtered.length === 0 ? (
-        <p class="empty">Nothing matches that.</p>
+        <p class="empty">
+          {activeTab === 'mine' ? 'Nothing of yours matches that.' : 'Nothing shared matches that.'}
+        </p>
       ) : (
         <div class="feed">
           {filtered.map((mark) => (
-            <MarkCard
-              key={mark.id}
-              mark={mark}
-              shared={shared}
-              canWrite={writable}
-              onShare={shareMark}
-              onUnshare={unshareMark}
-              onComment={comment}
-            />
+            <MarkCard key={mark.id} mark={mark} shared={shared} canWrite={writable} />
           ))}
         </div>
       )}
 
-      {shared && (
+      {shared && activeTab === 'mine' && (
         <p class="subtle footnote">
-          Highlights stay where they were made. Sharing one puts it in a space; it is
-          still the same highlight, with the same link back to the sentence it came from.
-          {authorId && authorId !== YOU && ` Showing ${memberById(authorId).name} only.`}
+          A highlight is yours until you put it in a space. Share one from the menu on its
+          card, and take it back the same way — it does not move, it only becomes visible to
+          the people in that space.
         </p>
       )}
     </section>
