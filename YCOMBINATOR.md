@@ -55,9 +55,11 @@ Pick one — all four fit, with the count:
 | Highlight AI chats and keep what your team learns | 49 |
 | One searchable library for your team's AI work | 46 |
 | Where your team settles a question, with sources | 48 |
+| Shared memory for everything your team reads | 44 |
+| Highlight anything; keep what your team learns | 46 |
 
-Recommended: **Shared memory for what your team keeps from AI** — it names the buyer
-(team), the input (AI) and the job (memory) in six words.
+Recommended: **Shared memory for everything your team reads** — it names the buyer (team)
+and the job (memory) without tying the company to one source of reading.
 
 **5. Company URL, if any**
 
@@ -77,11 +79,11 @@ It goes live on the next push to `main`. Check it has deployed before you submit
 
 **7. What is your company going to make?**
 
-Kona turns the passages people highlight in AI chats into a team's shared memory.
+Kona turns the passages people highlight into a team's shared memory.
 
-Today Kona is a browser extension. You select text in a ChatGPT, Claude or Gemini
-conversation — or on any web page — pick a colour, add a note and a tag, and it joins one
-searchable library. Every highlight keeps a link that lands on the exact sentence it came
+Today Kona is a browser extension. You select text on any page you read — a paper,
+documentation, Stack Overflow, or a ChatGPT, Claude or Gemini conversation — pick a
+colour, add a note and a tag, and it joins one searchable library. Every highlight keeps a link that lands on the exact sentence it came
 from, and because that link is an ordinary URL text fragment it works for someone who has
 never installed Kona. Highlights survive the page being re-rendered, a reply being
 regenerated or a message being edited, because we find a passage again by its words and the

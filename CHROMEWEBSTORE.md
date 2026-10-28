@@ -11,17 +11,17 @@ submission time. Exclude this file from the uploaded ZIP.
 Kona — highlight and come back
 
 **Short Description** (132 max)
-Highlight text on any page or AI chat, keep it with your notes, and jump straight back to
-the exact spot later.
+Highlight anything you read — pages, docs, AI chats — keep it with your notes and jump
+back to the exact spot.
 
 **Detailed Description**
 
 Kona lets you highlight what matters as you read and takes you back to it later.
 
-Select text in a ChatGPT, Claude or Gemini conversation and pick a colour. Switch Kona on
-for any other site — a blog, documentation, Stack Overflow — and highlight there too. Add a
-note to any highlight, tag it, and it joins one searchable library covering everything you
-have ever marked.
+Switch Kona on for any site — a paper, documentation, Stack Overflow, a blog you keep
+coming back to — select some text and pick a colour. It works inside a ChatGPT, Claude or
+Gemini conversation too, which is the hard case. Add a note to any highlight, tag it, and
+it joins one searchable library covering everything you have ever marked.
 
 Highlights come back where you left them. Kona finds a passage again by its words and the
 words around it, so a highlight survives a page being re-rendered, a reply being
