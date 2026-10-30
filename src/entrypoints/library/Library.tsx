@@ -261,7 +261,9 @@ export function Library() {
 
       {marks !== null && total === 0 && (
         <p class="lib-empty">
-          Nothing saved yet. Select text in a message on ChatGPT, Claude or Gemini and pick a color.
+          Nothing saved yet. Select some text anywhere you read — a paper, documentation,
+          a chat — and pick a colour. ChatGPT, Claude and Gemini work straight away; switch
+          on any other site from the Kona button in the toolbar.
         </p>
       )}
       {marks !== null && total > 0 && shown === 0 && (

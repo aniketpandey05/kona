@@ -283,7 +283,8 @@ function SpaceList({
       {spaces.length === 0 ? (
         <p class="sp-empty">
           No spaces yet. Make one for whatever you are trying to work out, then gather the
-          highlights that bear on it.
+          highlights that bear on it — from here, or with the tray button on a highlight in
+          the panel while you are still reading.
         </p>
       ) : (
         <ul class="sp-list">
