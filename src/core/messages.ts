@@ -20,4 +20,6 @@ export type RuntimeMessage =
   /** Sent when the right-click menu item is used, so the selection becomes a highlight. */
   | { type: 'highlight-selection' }
   /** Opens the library, optionally narrowed to one site's label. */
-  | { type: 'open-library'; site?: string };
+  | { type: 'open-library'; site?: string }
+  /** Opens one space, straight from the panel that just filed something into it. */
+  | { type: 'open-space'; spaceId: string };

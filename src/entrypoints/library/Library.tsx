@@ -180,7 +180,7 @@ export function Library() {
           class="lib-search"
           type="search"
           value={query}
-          placeholder="Search highlights, notes, chat names and sites…"
+          placeholder="Search highlights, notes, titles and sites…"
           aria-label="Search highlights"
           autofocus
           onInput={(event) => setQuery(event.currentTarget.value)}
@@ -285,6 +285,19 @@ export function Library() {
                   <span class="lib-body">
                     <span class="lib-text">{mark.snapshot}</span>
                     {mark.note && <span class="lib-note">{mark.note}</span>}
+                    {spacesHolding(spaces, mark.id).length > 0 && (
+                      <span class="lib-in">
+                        In{' '}
+                        {spacesHolding(spaces, mark.id).map((space, i) => (
+                          <span key={space.id}>
+                            {i > 0 && ', '}
+                            <a href={browser.runtime.getURL(`/spaces.html#/${space.id}`)}>
+                              {space.name}
+                            </a>
+                          </span>
+                        ))}
+                      </span>
+                    )}
                     {!!mark.tags?.length && (
                       <span class="lib-tags">
                         {mark.tags.map((tag) => (
@@ -421,6 +434,11 @@ function formatWhen(timestamp: number): string {
  * one highlight and thinking "that belongs with the migration", walking over
  * to another page to search for it again is the wrong shape.
  */
+/** Which spaces hold this highlight, so a row can say where it has been filed. */
+function spacesHolding(spaces: Space[], markId: string): Space[] {
+  return spaces.filter((space) => space.markIds.includes(markId));
+}
+
 function AddToSpace({
   mark,
   spaces,

@@ -3,6 +3,7 @@ import type { PendingJump, RuntimeMessage } from '../core/messages';
 import type { Mark } from '../core/types';
 
 const LIBRARY_PAGE = '/library.html';
+const SPACES_PAGE = '/spaces.html';
 const WELCOME_PAGE = '/welcome.html';
 const WEB_SCRIPT_ID = 'web-pages';
 const MENU_ID = 'highlight-selection';
@@ -64,6 +65,8 @@ async function handle(message: RuntimeMessage, senderTabId: number | undefined) 
       return syncWebSites(true);
     case 'open-library':
       return openLibrary(message.site);
+    case 'open-space':
+      return openSpace(message.spaceId);
     default:
       return null;
   }
@@ -184,6 +187,20 @@ async function openLibrary(site?: string): Promise<null> {
   }
   // It is open on some other filter; point it at the one that was asked for.
   if (site) await browser.tabs.update(existing.id, { url });
+  await focusTab(existing);
+  return null;
+}
+
+async function openSpace(spaceId: string): Promise<null> {
+  const base = browser.runtime.getURL(SPACES_PAGE);
+  const url = `${base}#/${spaceId}`;
+  const existing = await findTab(`${base}*`);
+  if (existing?.id === undefined) {
+    await browser.tabs.create({ url });
+    return null;
+  }
+  // A spaces tab is already open, on some other space or none. Point it here.
+  await browser.tabs.update(existing.id, { url });
   await focusTab(existing);
   return null;
 }

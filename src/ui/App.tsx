@@ -3,6 +3,9 @@ import type { KonaController, NoteCardState, SearchState, ViewState } from '../c
 import { HIGHLIGHT_COLORS, UI_COLORS } from '../core/painter';
 import { siteLabel } from '../core/sites';
 import { addTags, removeTag } from '../core/tags';
+import { addMark as addToSpace, createSpace } from '../core/spaces';
+import { loadSpaces, saveSpace, watchSpaces } from '../core/store';
+import type { Space } from '../core/spaces';
 import { KonaMark } from './KonaMark';
 import type { HighlightColor, Mark } from '../core/types';
 
@@ -234,6 +237,23 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
   const listRef = useRef<HTMLUListElement>(null);
   // Moving with the keyboard re-renders the list; put focus back on the moved entry.
   const refocusId = useRef<string | null>(null);
+  // Spaces, so a highlight can be filed where it belongs without leaving the
+  // page you found it on. Loaded lazily: the panel is usually never opened.
+  const [spaces, setSpaces] = useState<Space[]>([]);
+  const [filing, setFiling] = useState<string | null>(null);
+  const [filed, setFiled] = useState<{ id: string; name: string } | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    void loadSpaces().then(setSpaces);
+    return watchSpaces(setSpaces);
+  }, [open]);
+
+  useEffect(() => {
+    if (!filed) return;
+    const timer = setTimeout(() => setFiled(null), 2600);
+    return () => clearTimeout(timer);
+  }, [filed]);
 
   useEffect(() => {
     const id = refocusId.current;
@@ -315,7 +335,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
   };
 
   return (
-    <section class="k-panel" aria-label="Highlights in this chat">
+    <section class="k-panel" aria-label={`Highlights on this ${state.noun}`}>
       <header class="k-panel-header">
         <KonaMark size={15} />
         <span class="k-panel-title">Highlights</span>
@@ -342,13 +362,17 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
       </header>
       {state.items.length === 0 ? (
         <div class="k-empty">
-          <p>Select text in any message to highlight it.</p>
-          {/* An empty panel in a new chat looks the same as never having
+          <p>
+            {state.noun === 'page'
+              ? 'Select any text on the page to highlight it.'
+              : 'Select text in any message to highlight it.'}
+          </p>
+          {/* An empty panel somewhere new looks the same as never having
               highlighted here at all. Say which it is. */}
           {state.elsewhere > 0 && (
             <p class="k-elsewhere">
               {state.elsewhere} {state.elsewhere === 1 ? 'highlight' : 'highlights'} on this site,{' '}
-              {state.elsewhereIn === 'pages' ? 'on other pages' : 'in other chats'}.{' '}
+              {state.noun === 'page' ? 'on other pages' : 'in other chats'}.{' '}
               <button class="k-text-button k-link" onClick={() => controller.openSiteLibrary()}>
                 See them
               </button>
@@ -411,6 +435,15 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
                 <PencilIcon />
               </button>
               <button
+                class={inCount(spaces, mark.id) ? 'k-row-action k-row-action-on' : 'k-row-action'}
+                onClick={() => setFiling((id) => (id === mark.id ? null : mark.id))}
+                aria-label={spaceActionLabel(spaces, mark.id)}
+                aria-expanded={filing === mark.id}
+                title={spaceActionLabel(spaces, mark.id)}
+              >
+                <SpaceIcon />
+              </button>
+              <button
                 class="k-row-action"
                 onClick={() => void controller.remove(mark.id)}
                 aria-label="Delete highlight"
@@ -418,13 +451,34 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
               >
                 ✕
               </button>
+              {filing === mark.id && (
+                <SpaceFiling
+                  mark={mark}
+                  spaces={spaces}
+                  onDone={(space) => {
+                    setFiling(null);
+                    setFiled({ id: space.id, name: space.name });
+                  }}
+                  onCancel={() => setFiling(null)}
+                />
+              )}
             </li>
           ))}
         </ul>
       )}
+
+      {filed && (
+        <p class="k-filed" role="status">
+          Added to “{filed.name}”.{' '}
+          <button class="k-text-button k-link" onClick={() => controller.openSpace(filed.id)}>
+            Open it
+          </button>
+        </p>
+      )}
       {state.health === 'no-messages' && (
         <p class="k-warning">
-          Can't find any messages on this page. The site may have changed its layout.
+          Can't find any {state.noun === 'page' ? 'text' : 'messages'} on this page. The site
+          may have changed its layout.
         </p>
       )}
       {/* The shortcuts are worth nothing if nobody knows they exist. */}
@@ -568,6 +622,113 @@ function LibraryIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
       <path d="M4 5h6v14H4zM14 5h6v14h-6M14 9h6M14 15h6" />
+    </svg>
+  );
+}
+
+function inCount(spaces: Space[], markId: string): number {
+  return spaces.filter((space) => space.markIds.includes(markId)).length;
+}
+
+function spaceActionLabel(spaces: Space[], markId: string): string {
+  const n = inCount(spaces, markId);
+  if (n === 0) return 'Add to a space';
+  return n === 1 ? 'In 1 space' : `In ${n} spaces`;
+}
+
+/**
+ * Filing a highlight into a space without leaving the page.
+ *
+ * The library can do this too, but by then you have stopped reading and gone
+ * looking for the thing you just marked. The moment you know which question a
+ * passage bears on is the moment you highlighted it.
+ */
+function SpaceFiling({
+  mark,
+  spaces,
+  onDone,
+  onCancel,
+}: {
+  mark: Mark;
+  spaces: Space[];
+  onDone: (space: Space) => void;
+  onCancel: () => void;
+}) {
+  const [naming, setNaming] = useState(false);
+  const [name, setName] = useState('');
+
+  const already = spaces.filter((space) => space.markIds.includes(mark.id));
+  const rest = spaces.filter((space) => !space.markIds.includes(mark.id));
+
+  const put = (space: Space) => {
+    void saveSpace(addToSpace(space, mark.id)).then(() => onDone(space));
+  };
+
+  const make = () => {
+    if (!name.trim()) return;
+    const space = addToSpace(createSpace(name), mark.id);
+    void saveSpace(space).then(() => onDone(space));
+  };
+
+  return (
+    <div
+      class="k-filing"
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          event.stopPropagation();
+          onCancel();
+        }
+      }}
+    >
+      {already.length > 0 && (
+        <p class="k-filing-in">Already in {already.map((space) => space.name).join(', ')}.</p>
+      )}
+
+      {rest.length > 0 && (
+        <div class="k-filing-row">
+          {rest.map((space) => (
+            <button key={space.id} class="k-filing-chip" onClick={() => put(space)}>
+              {space.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {naming ? (
+        <form
+          class="k-filing-row"
+          onSubmit={(event) => {
+            event.preventDefault();
+            make();
+          }}
+        >
+          <input
+            class="k-filing-input"
+            type="text"
+            placeholder="Name the space"
+            value={name}
+            autofocus
+            onInput={(event) => setName((event.currentTarget as HTMLInputElement).value)}
+          />
+          <button type="submit" class="k-filing-go" disabled={!name.trim()}>
+            Create and add
+          </button>
+        </form>
+      ) : (
+        <button class="k-filing-new" onClick={() => setNaming(true)}>
+          {spaces.length === 0 ? 'Make your first space' : 'New space…'}
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** A tray: where a highlight goes when it is about something you are working out. */
+function SpaceIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 14h5l1.5 2.5h5L16 14h5" />
+      <path d="M5.5 5h13l2.5 9v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4z" />
     </svg>
   );
 }

@@ -91,8 +91,12 @@ export interface ViewState {
    * empty, which looks identical to having never highlighted here at all.
    */
   elsewhere: number;
-  /** What those other conversations are called on this site. */
-  elsewhereIn: 'chats' | 'pages';
+  /**
+   * What the thing you are reading is called here. Kona started on AI chats
+   * and now runs on anything, so the panel has to stop calling a blog post a
+   * chat — the adapter already knows which it is.
+   */
+  noun: 'chat' | 'page';
   dark: boolean;
   notice: string | null;
 }
@@ -108,7 +112,7 @@ export class KonaController {
     enabled: true,
     conversationId: null,
     elsewhere: 0,
-    elsewhereIn: 'chats',
+    noun: 'chat',
     items: [],
     ticks: [],
     viewport: null,
@@ -361,7 +365,7 @@ export class KonaController {
     if (!scroller) return undefined;
 
     const startedAt = scroller.scrollTop;
-    this.notify('Looking further up the chat…');
+    this.notify(`Looking further up the ${this.state.noun}…`);
     for (let step = 0; step < LOAD_OLDER_STEPS && !this.ctx.isInvalid; step++) {
       const messagesBefore = this.adapter.getMessages().length;
       const topBefore = scroller.scrollTop;
@@ -464,6 +468,15 @@ export class KonaController {
       .catch(() => undefined);
   }
 
+  /** Opens one space, for the panel's "added to…" line. */
+  openSpace(spaceId: string): void {
+    void browser.runtime
+      .sendMessage({ type: 'open-space', spaceId } satisfies RuntimeMessage)
+      .catch(() => {
+        // The page may be closing; nothing to do.
+      });
+  }
+
   /** The same library, already narrowed to the site being read. */
   openSiteLibrary(): void {
     this.openLibrary(siteLabel({ site: this.adapter.site, url: location.href }));
@@ -562,7 +575,7 @@ export class KonaController {
       sameSite(mark, self) && mark.conversationId !== conversationId;
     this.setState({
       elsewhere: all.filter(here).length,
-      elsewhereIn: this.adapter.conversationNoun === 'page' ? 'pages' : 'chats',
+      noun: this.adapter.conversationNoun ?? 'chat',
     });
   }
 

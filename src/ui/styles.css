@@ -10,6 +10,11 @@
     0 6px 16px -4px rgba(16, 24, 40, 0.12),
     0 18px 40px -12px rgba(16, 24, 40, 0.18);
   --k-accent: #ea580c;
+  /* The accent as a *fill*, which is a different problem from the accent as a
+     line or a word: #ea580c under white text is only 3.5:1. A darker orange
+     carries white, and in dark mode the light orange carries dark text. */
+  --k-accent-fill: #c2410c;
+  --k-accent-fill-fg: #ffffff;
   --k-warning: #b45309;
   --k-danger: #dc2626;
   --k-radius: 14px;
@@ -29,6 +34,8 @@
     0 8px 20px -4px rgba(0, 0, 0, 0.5),
     0 24px 48px -12px rgba(0, 0, 0, 0.6);
   --k-accent: #fb923c;
+  --k-accent-fill: #fb923c;
+  --k-accent-fill-fg: #1b1205;
   --k-warning: #fbbf24;
   --k-danger: #f87171;
 }
@@ -821,4 +828,112 @@
   .k-panel-footer {
     display: none;
   }
+}
+
+/* Filing a highlight into a space, from the panel.
+
+   The row is a flex line, so the drawer has to be told to take a line of its
+   own: `width: 100%` loses to the `flex-basis: 0` the siblings carry, and the
+   drawer collapses to its content. `flex: 1 0 100%` is the one that works. */
+.k-list li {
+  flex-wrap: wrap;
+}
+
+.k-filing {
+  /* Two separate ways to come out wider than the row. There is no global
+     box-sizing in here, so the padding would be added to the basis; and the
+     basis has to leave room for the margins as well. Both, or the list gets a
+     horizontal scrollbar. */
+  box-sizing: border-box;
+  flex: 1 0 calc(100% - 18px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 9px 8px 9px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: var(--k-raised);
+}
+
+.k-filing-in {
+  margin: 0;
+  color: var(--k-muted);
+  font-size: 12px;
+}
+
+.k-filing-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.k-filing-chip,
+.k-filing-new,
+.k-filing-go {
+  padding: 4px 9px;
+  border: 1px solid var(--k-border);
+  border-radius: 999px;
+  background: var(--k-bg);
+  color: var(--k-fg);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.k-filing-chip:hover,
+.k-filing-new:hover,
+.k-filing-go:hover:not(:disabled) {
+  background: var(--k-hover);
+}
+
+.k-filing-new {
+  align-self: flex-start;
+  color: var(--k-muted);
+  border-style: dashed;
+}
+
+.k-filing-go {
+  border-color: transparent;
+  background: var(--k-accent-fill);
+  color: var(--k-accent-fill-fg);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.k-filing-go:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.k-filing-input {
+  box-sizing: border-box;
+  flex: 1 1 110px;
+  min-width: 0;
+  padding: 4px 9px;
+  border: 1px solid var(--k-border);
+  border-radius: 999px;
+  background: var(--k-bg);
+  color: var(--k-fg);
+  font: inherit;
+  font-size: 12px;
+}
+
+.k-filing-input:focus-visible,
+.k-filing-chip:focus-visible,
+.k-filing-new:focus-visible,
+.k-filing-go:focus-visible {
+  outline: 2px solid var(--k-accent);
+  outline-offset: 1px;
+}
+
+/* A highlight that is already in a space says so without being hovered. */
+.k-row-action-on {
+  opacity: 1;
+  color: var(--k-accent);
+}
+
+.k-filed {
+  margin: 0 12px 10px;
+  color: var(--k-muted);
+  font-size: 12px;
 }
