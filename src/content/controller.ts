@@ -7,7 +7,7 @@ import type { PendingJump, RuntimeMessage } from '../core/messages';
 import { moveItem, nextOrder, sortByOrder } from '../core/order';
 import { HighlightPainter } from '../core/painter';
 import { describeQuote } from '../core/quote';
-import { searchMarks } from '../core/search';
+import { searchLibrary } from '../core/search';
 import { sameSite, siteLabel } from '../core/sites';
 import { loadAllMarks, loadMarks, removeMark, saveOrder, upsertMark, watchMarks } from '../core/store';
 import { loadTheme, watchTheme, type Theme } from '../core/theme';
@@ -51,6 +51,8 @@ export interface SearchState {
   results: Mark[];
   /** Which result the arrow keys are on. */
   active: number;
+  /** Words nobody typed that earned a result its place. */
+  alsoMatched: string[];
 }
 
 export interface NoteCardState {
@@ -417,15 +419,25 @@ export class KonaController {
   async openSearch(): Promise<void> {
     this.allMarks = await loadAllMarks();
     const recent = [...this.allMarks].sort((a, b) => b.createdAt - a.createdAt);
-    this.setState({ search: { query: '', results: recent.slice(0, SEARCH_RESULTS), active: 0 } });
+    this.setState({
+      search: { query: '', results: recent.slice(0, SEARCH_RESULTS), active: 0, alsoMatched: [] },
+    });
   }
 
   searchFor(query: string): void {
     if (!this.state.search) return;
-    const matches = query.trim()
-      ? searchMarks(this.allMarks, query)
+    const found = query.trim() ? searchLibrary(this.allMarks, query) : null;
+    const matches = found
+      ? found.marks
       : [...this.allMarks].sort((a, b) => b.createdAt - a.createdAt);
-    this.setState({ search: { query, results: matches.slice(0, SEARCH_RESULTS), active: 0 } });
+    this.setState({
+      search: {
+        query,
+        results: matches.slice(0, SEARCH_RESULTS),
+        active: 0,
+        alsoMatched: found?.alsoMatched ?? [],
+      },
+    });
   }
 
   moveSearch(delta: number): void {

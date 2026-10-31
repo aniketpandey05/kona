@@ -86,7 +86,7 @@ export const TIERS: Tier[] = [
     features: [
       'Everything in Free',
       'Sync across your own devices',
-      'Hybrid search over your own highlights — meaning as well as words',
+      'Meaning from a model too, so it knows words you have never kept together',
       'Private spaces of your own to organise them',
     ],
     action: 'none',
@@ -102,7 +102,7 @@ export const TIERS: Tier[] = [
       'Shared spaces: a question, its evidence, and what was decided',
       'Write-ups where every claim cites the exact sentence',
       'Comments on any highlight',
-      'Hybrid search across the whole workspace',
+      "Search that runs over everyone's highlights, not only your own",
       'Slack, Notion and Obsidian sync',
       'Admin console and seat management',
     ],

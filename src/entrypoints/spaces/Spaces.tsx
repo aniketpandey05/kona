@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import { linkToMark } from '../../core/link';
 import { buildMemo, memoMarkdown } from '../../core/memo';
 import { UI_COLORS } from '../../core/painter';
-import { searchMarks } from '../../core/search';
+import { searchLibrary } from '../../core/search';
 import { hueOf, initials, nameIn, type Person } from '../../core/people';
 import { adoptSpace, packSpace, readSharedSpace, shareFilename } from '../../core/spaceShare';
 import { siteLabel } from '../../core/sites';
@@ -1051,13 +1051,22 @@ function SpaceView({
 function Picker({ space, marks, me }: { space: Space; marks: Mark[]; me: Person | null }) {
   const [query, setQuery] = useState('');
   const inSpace = new Set(space.markIds);
-  const candidates = useMemo(() => {
-    const pool = marks.filter((mark) => !inSpace.has(mark.id));
-    return (query.trim() ? searchMarks(pool, query) : pool)
-      .slice()
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .slice(0, 40);
-  }, [marks, query, space.markIds.join(',')]);
+  // The whole library is searched, not the part of it this space has not got,
+  // so that the search is reading the same index every time and judging a word
+  // against everything you have kept. What is already here drops out after.
+  const found = useMemo(() => {
+    if (!query.trim()) {
+      const newest = [...marks].sort((a, b) => b.createdAt - a.createdAt);
+      return { marks: newest, alsoMatched: [] as string[] };
+    }
+    return searchLibrary(marks, query);
+  }, [marks, query]);
+  // Best answer first while you are searching; most recent first while you are
+  // only looking. Sorting by date either way would throw the ranking away.
+  const candidates = useMemo(
+    () => found.marks.filter((mark) => !inSpace.has(mark.id)).slice(0, 40),
+    [found, space.markIds.join(',')],
+  );
 
   return (
     <div class="sp-pick">
@@ -1067,6 +1076,12 @@ function Picker({ space, marks, me }: { space: Space; marks: Mark[]; me: Person 
         value={query}
         onInput={(event) => setQuery((event.currentTarget as HTMLInputElement).value)}
       />
+      {found.alsoMatched.length > 0 && (
+        <p class="sp-muted">
+          Also matched {found.alsoMatched.join(' · ')} — words your own highlights keep
+          beside what you typed.
+        </p>
+      )}
       {candidates.length === 0 ? (
         <p class="sp-muted">
           {marks.length === 0

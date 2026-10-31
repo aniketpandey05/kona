@@ -11,13 +11,18 @@ import type { TeamMark } from './types';
  * top while still surfacing the one that never uses your words — which is the
  * whole reason a team's search has to be better than Ctrl-F.
  *
- * **What is real here.** The lexical half is the extension's own `searchMarks`,
- * unchanged. The meaning half, in the shipped product, embeds each highlight
- * once and compares vectors — which is why client-side encryption is a design
- * constraint rather than an afterthought (docs/enterprise.md §7). A demo cannot
- * carry a model, so that half widens each word to the words that mean the same
- * thing here, from the list below and nowhere else. The fusion is the same
- * either way.
+ * **What is real here.** The first ranking is the extension's own `searchMarks`,
+ * unchanged — which has itself grown a meaning half since this demo was
+ * written, one that learns which words keep arriving together in the library it
+ * is searching (`src/core/retrieve.ts`). That part is real, and it ships free.
+ *
+ * What it cannot do is relate two words nobody has ever kept together, and that
+ * is the half the paid tiers buy: an embedding of each highlight, from a model
+ * that has read more than one person's library — which is also why client-side
+ * encryption is a design constraint rather than an afterthought
+ * (docs/enterprise.md §7). A demo cannot carry a model, so the list below stands
+ * in for it, and it was written for this dataset and no other. The fusion is the
+ * same either way.
  */
 
 const CONCEPTS: string[][] = [

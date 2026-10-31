@@ -7,7 +7,7 @@ import { toMarkdown } from '../../core/markdown';
 import type { RuntimeMessage } from '../../core/messages';
 import { sortByOrder } from '../../core/order';
 import { HIGHLIGHT_COLORS, UI_COLORS } from '../../core/painter';
-import { searchMarks } from '../../core/search';
+import { prime, searchLibrary } from '../../core/search';
 import { siteLabel } from '../../core/sites';
 import type { Person } from '../../core/people';
 import {
@@ -89,14 +89,35 @@ export function Library() {
   };
 
   const all = marks ?? [];
+
+  // Opening the library is the moment to get the search index ready. It costs
+  // a few hundred milliseconds on a few thousand highlights, once, and the
+  // first keystroke is the worst possible moment to spend it.
+  useEffect(() => {
+    if (all.length === 0) return;
+    const warm = () => prime(all);
+    if (typeof requestIdleCallback === 'function') {
+      const handle = requestIdleCallback(warm, { timeout: 2000 });
+      return () => cancelIdleCallback(handle);
+    }
+    const timer = window.setTimeout(warm, 200);
+    return () => window.clearTimeout(timer);
+  }, [all]);
+
   const sites = countBySite(all);
   const tags = countTags(all);
-  const filtered = all.filter(
+  // Searched before being filtered, for two reasons. The index is kept for as
+  // long as the list it was built from, and `all` is the one list that does not
+  // change as you click a site or a tag. And how unusual a word is should be
+  // measured against everything you have kept, not against the corner of it
+  // you happen to be looking at.
+  const found = searchLibrary(all, query);
+  const filtered = found.marks.filter(
     (mark) =>
       (!site || siteLabel(mark) === site) &&
       (!activeTag || (mark.tags ?? []).some((tag) => sameTag(tag, activeTag))),
   );
-  const groups = groupByChat(searchMarks(filtered, query));
+  const groups = groupByChat(filtered);
   const total = all.length;
   const shownMarks = groups.flatMap((group) => group.marks);
   const shown = shownMarks.length;
@@ -194,6 +215,18 @@ export function Library() {
           autofocus
           onInput={(event) => setQuery(event.currentTarget.value)}
         />
+        {found.alsoMatched.length > 0 && (
+          <p class="lib-also">
+            Also matched{' '}
+            {found.alsoMatched.map((word, i) => (
+              <span key={word}>
+                {i > 0 && ' · '}
+                <em>{word}</em>
+              </span>
+            ))}{' '}
+            — words your own highlights keep beside what you typed.
+          </p>
+        )}
         {sites.length > 1 && (
           <div class="lib-filters" role="group" aria-label="Filter by site">
             <button class={site === null ? 'lib-chip lib-chip-on' : 'lib-chip'} onClick={() => setSite(null)}>
@@ -296,6 +329,11 @@ export function Library() {
                   <span class="lib-body">
                     <span class="lib-text">{mark.snapshot}</span>
                     {mark.note && <span class="lib-note">{mark.note}</span>}
+                    {found.byMeaning.has(mark.id) && (
+                      <span class="lib-why">
+                        Found by meaning — it uses none of your words
+                      </span>
+                    )}
                     {spacesHolding(spaces, mark.id).length > 0 && (
                       <span class="lib-in">
                         In{' '}

@@ -37,6 +37,7 @@ Mac — and that build is in `apple/`.
 **Afterwards**
 - `Alt+Shift+F` opens a search box over everything you've saved, right on the page you're reading. Picking a result from another chat opens it there.
 - One library holds every highlight from every site, labelled with where it came from, filterable by site and searchable by text, note, chat name or site.
+- Search finds the passage that says your thing in other words. Alongside the usual keyword ranking it measures which words keep turning up together in *your* highlights, and widens a query along those pairs — so a search for `downtime` turns up the one that only ever says `cutover`. It names the word that did it, and a library too small to have taught it anything claims nothing.
 - Clicking a highlight opens that page and scrolls straight to it, re-using the tab if it's already open.
 - Every highlight has a copyable link that lands on the exact spot. It is an ordinary URL
   text fragment, so it works for people who don't have Kona, and on a phone.

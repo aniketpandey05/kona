@@ -7,12 +7,13 @@
 > which walks the whole thing: the free view, checkout, the shared workspace, research
 > spaces with cited write-ups, seats and the audit log.
 >
-> One caveat worth keeping straight. The demo's search is genuinely hybrid — it fuses two
-> rankings — but only the lexical half is the real thing. That half is the extension's own
-> `searchMarks`, unchanged. The meaning half stands in for embeddings by widening each
-> word to the words that mean the same thing in that dataset, and it says on screen which
-> ones it used. The fusion is the same either way; see §7 for what ships. It is built on the same `src/core` as the extension, so the highlights in
-> it behave the way real ones do. [Build order](#9-build-order) says what gets built after.
+> One caveat worth keeping straight. The demo's search predates the real one and is now
+> the weaker of the two: its meaning half widens a word using a list written for that
+> dataset. The extension's own search, which shipped since, learns the same thing from
+> the user's library instead — see §7. Both fuse the two rankings the same way, and both
+> say on screen which words they used. The demo is built on the same `src/core` as the
+> extension, so the highlights in it behave the way real ones do.
+> [Build order](#9-build-order) says what gets built after.
 
 ## 1. The gap we are selling into
 
@@ -117,8 +118,9 @@ distribution engine and the reason anyone trusts us with the paid one.
 | Discussion on a highlight, merged on the way back | yes | yes | yes | yes |
 | Who found what and who concluded what | yes | yes | yes | yes |
 | Sync across your own devices | | yes | yes | yes |
-| Hybrid search over your own highlights | | yes | yes | yes |
-| Hybrid search across the whole workspace | | | yes | yes |
+| Hybrid search, meaning learned from your own library | yes | yes | yes | yes |
+| Meaning from a model rather than your own corpus | | yes | yes | yes |
+| Search across everyone's highlights | | | yes | yes |
 | One space several people work in at once | | | yes | yes |
 | Replies as they are written, not when the file arrives | | | yes | yes |
 | Names with an account behind them | | | yes | yes |
@@ -204,13 +206,23 @@ What a 200-person company's security review will ask, and the answer we want to 
   runs on the client or against an encrypted index. Shared spaces are
   server-readable by necessity.
 - **Search is hybrid, not keyword.** Lexical retrieval over the words actually written,
-  vector retrieval over an embedding of each highlight, and the two rankings fused with
+  a second retrieval over what those words mean, and the two rankings fused with
   reciprocal rank fusion. Keyword alone misses the passage that says the thing in other
-  words; vectors alone drift off what was typed. Fusing them keeps an exact match at the
+  words; meaning alone drifts off what was typed. Fusing them keeps an exact match at the
   top and still surfaces the one that shares no vocabulary with the query — which is the
-  difference between a team's search and Ctrl-F, and the reason this is worth charging
-  for. Each tenant gets its own index inside its residency region, and private highlights
-  are indexed on the client, for the reason in the bullet above.
+  difference between a real search and Ctrl-F.
+
+  The free tier already does this, with no server and no model: it measures which words
+  keep arriving together in that person's own highlights and widens a query along those
+  pairs (`src/core/retrieve.ts`). That is a genuine second ranking, and its limit is
+  genuine too — it can only relate words the person has actually seen together, and a
+  library under eight highlights teaches it nothing, so below that it claims nothing.
+
+  What the server buys is the half that cannot be measured locally: an embedding of each
+  highlight, which knows that two words mean the same thing whether or not this person
+  has ever kept them side by side. Each tenant gets its own index inside its residency
+  region, and private highlights are indexed on the client, for the reason in the bullet
+  above.
 - **Least privilege at the browser.** Unchanged from today: Kona can only see the three
   chat sites plus whatever sites the user switches on, and any of them can be switched
   off again.

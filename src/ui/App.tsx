@@ -571,6 +571,12 @@ function SearchPalette({ search, controller }: Props & { search: SearchState }) 
           aria-label="Search your highlights"
           onInput={(event) => controller.searchFor(event.currentTarget.value)}
         />
+        {search.alsoMatched.length > 0 && (
+          <p class="k-palette-also">
+            Also matched {search.alsoMatched.join(' · ')} — words your own highlights keep
+            beside what you typed.
+          </p>
+        )}
         {search.results.length === 0 ? (
           <p class="k-empty">Nothing matches that.</p>
         ) : (

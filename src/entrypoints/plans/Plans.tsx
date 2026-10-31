@@ -63,6 +63,26 @@ export function Plans() {
       </div>
 
       <section class="pl-note">
+        <h2>What “by meaning” means here</h2>
+        <p>
+          Searching your library does two things at once. It ranks the passages that use
+          the words you typed, and it looks for the ones that say the same thing in
+          different words — so a search for <strong>downtime</strong> also finds the
+          passage that only ever says <strong>cutover</strong>. When a word nobody typed
+          earns a result its place, the search tells you which word it was.
+        </p>
+        <p>
+          It works that out from your own highlights, by measuring which words keep
+          arriving together in what you have kept, and it runs here with nothing to
+          download. That gives it a real limit, worth knowing rather than discovering:
+          it can only relate words you have actually seen together, and under eight
+          highlights it has learned nothing and says nothing. Meaning that does not stop
+          at your own library needs a model, and a model needs a server; that is what Pro
+          would add.
+        </p>
+      </section>
+
+      <section class="pl-note">
         <h2>Working with other people today</h2>
         <p>
           A space is a file you can hand over: open one, press <strong>Share</strong>, and
