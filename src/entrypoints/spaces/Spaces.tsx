@@ -27,6 +27,7 @@ import {
   closeQuestion,
   commentsOn,
   createSpace,
+  editComment,
   editFinding,
   gathererOf,
   isSettled,
@@ -1113,6 +1114,8 @@ function Evidence({
 }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState('');
+  const [editing, setEditing] = useState<string | null>(null);
+  const [edit, setEdit] = useState('');
   const link = linkToMark(mark);
 
   const comments = space ? commentsOn(space, mark.id) : [];
@@ -1182,21 +1185,70 @@ function Evidence({
                   const who = comment.by
                     ? (space.people ?? []).find((person) => person.id === comment.by)
                     : undefined;
+                  // Yours to change: one you wrote, or one written before
+                  // anybody here had a name, which can only have been yours.
+                  const mine = !comment.by || comment.by === me?.id;
                   return (
                     <li key={comment.id}>
                       {who && <Avatar person={who} small />}
                       <div>
                         <strong>{who ? who.name : 'Someone'}</strong>
-                        <p>{comment.body}</p>
+                        {mine && <span class="sp-mine">you</span>}
+                        {editing === comment.id ? (
+                          <form
+                            class="sp-row"
+                            onKeyDown={onEscape(() => setEditing(null))}
+                            onSubmit={(event) => {
+                              event.preventDefault();
+                              if (!edit.trim()) return;
+                              write(editComment(space, comment.id, edit));
+                              setEditing(null);
+                            }}
+                          >
+                            <input
+                              type="text"
+                              aria-label="Reword what you said"
+                              value={edit}
+                              autofocus
+                              onInput={(event) =>
+                                setEdit((event.currentTarget as HTMLInputElement).value)
+                              }
+                            />
+                            <button type="submit" class="sp-tool" disabled={!edit.trim()}>
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              class="sp-tool"
+                              onClick={() => setEditing(null)}
+                            >
+                              Cancel
+                            </button>
+                          </form>
+                        ) : (
+                          <p>{comment.body}</p>
+                        )}
                       </div>
-                      {(!comment.by || comment.by === me?.id) && !settled && (
-                        <button
-                          type="button"
-                          class="sp-link"
-                          onClick={() => write(removeComment(space, comment.id))}
-                        >
-                          Delete
-                        </button>
+                      {mine && !settled && editing !== comment.id && (
+                        <span class="sp-row">
+                          <button
+                            type="button"
+                            class="sp-link"
+                            onClick={() => {
+                              setEdit(comment.body);
+                              setEditing(comment.id);
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            class="sp-link"
+                            onClick={() => write(removeComment(space, comment.id))}
+                          >
+                            Delete
+                          </button>
+                        </span>
                       )}
                     </li>
                   );

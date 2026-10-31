@@ -861,3 +861,23 @@ a:focus-visible {
 .sp-link-on {
   color: var(--sp-accent);
 }
+
+/* Which one is you, in a thread where everyone's name is just a name. */
+.sp-mine {
+  margin-left: 5px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--sp-border);
+  /* Muted on this pill measures 3.6:1 in light mode, which 10px type cannot
+     carry. The full foreground still reads as quiet at this size. */
+  color: var(--sp-fg);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.sp-comments form input[type='text'] {
+  flex: 1;
+  min-width: 0;
+}
