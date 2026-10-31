@@ -99,7 +99,7 @@ export function Space({
   const held = marksIn(space.id);
   const cited = new Set(space.findings.flatMap((finding) => finding.markIds));
   const spare = held.filter((mark) => !cited.has(mark.id));
-  const memo = buildMemo(space, (ids) => sourcesInSpace(space.id, ids));
+  const memo = buildMemo(space, (ids) => sourcesInSpace(space.id, ids), held);
 
   const toggleEvidence = (findingId: string): void =>
     setOpenEvidence(
@@ -140,10 +140,18 @@ export function Space({
             <p class="subtle">{space.purpose}</p>
           )}
           <p class="subtle">
-            {space.memberIds.length} people · {held.length} highlights · {space.findings.length}{' '}
-            findings
+            {space.memberIds.length} people · {held.length} highlights
+            {space.findings.length > 0 &&
+              ` · ${space.findings.length} ${
+                space.findings.length === 1 ? 'conclusion' : 'conclusions'
+              }`}
             {space.openQuestions.length > 0 && ` · ${space.openQuestions.length} still open`}
           </p>
+          {held.length > 0 && (
+            <button type="button" class="action" onClick={() => setShowMemo(!showMemo)}>
+              {showMemo ? 'Hide the write-up' : 'Write it up'}
+            </button>
+          )}
         </div>
         <span class={`status status-${status.tone}`}>{status.label}</span>
       </div>
@@ -163,22 +171,100 @@ export function Space({
         </div>
       )}
 
+        {showMemo && (
+          <div class="panel memo">
+            <div class="view-top">
+              <h2>The write-up</h2>
+              <button type="button" class="action" onClick={copyMemo}>
+                {copied ? 'Copied as Markdown' : 'Copy as Markdown'}
+              </button>
+            </div>
+            <p class="subtle">
+              Every passage and every claim carries a link that lands on the exact sentence
+              it came from — so whoever reads this can check it without having Kona.
+            </p>
+
+            <h3 class="memo-title">{memo.title}</h3>
+            {memo.decision && <p class="memo-decision">{memo.decision}</p>}
+            {memo.lines.length > 0 && (
+              <>
+                <h3>What we concluded</h3>
+                <ul class="memo-lines">
+                  {memo.lines.map((line, i) => (
+                    <li key={i}>
+                      {line.contradicts && <em>Against: </em>}
+                      {line.claim}{' '}
+                      {line.cites.map((n) => (
+                        <sup key={n}>
+                          <a href={`#cite-${n}`}>[{n}]</a>
+                        </sup>
+                      ))}
+                      {line.withdrawn > 0 && (
+                        <em class="withdrawn-inline">
+                          {' '}
+                          ({line.withdrawn} withdrawn)
+                        </em>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {memo.highlights.length > 0 && (
+              <>
+                <h3>What we kept</h3>
+                <div class="memo-kept">
+                  {memo.highlights.map(({ n, mark }) => (
+                    <blockquote key={mark.id}>
+                      <p>{mark.snapshot}</p>
+                      {mark.note && <p class="memo-note">{mark.note}</p>}
+                      <cite>
+                        {siteLabel(mark)}{' '}
+                        <sup>
+                          <a href={`#cite-${n}`}>[{n}]</a>
+                        </sup>
+                      </cite>
+                    </blockquote>
+                  ))}
+                </div>
+              </>
+            )}
+            {memo.open.length > 0 && (
+              <>
+                <h3>Still open</h3>
+                <ul class="memo-lines">
+                  {memo.open.map((entry) => (
+                    <li key={entry}>{entry}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <h3>Sources</h3>
+            <ol class="memo-sources">
+              {memo.citations.map((citation) => (
+                <li key={citation.n} id={`cite-${citation.n}`}>
+                  {siteLabel(citation.mark)} — {citation.mark.conversationTitle}.{' '}
+                  <a href={citation.href} target="_blank" rel="noreferrer noopener">
+                    the exact sentence
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
       {space.question && (
         <>
           <div class="panel">
             <div class="view-top">
-              <h2>What we found</h2>
-              {space.findings.length > 0 && (
-                <button type="button" class="action" onClick={() => setShowMemo(!showMemo)}>
-                  {showMemo ? 'Hide the write-up' : 'Write it up'}
-                </button>
-              )}
+              <h2>What we concluded</h2>
             </div>
 
             {space.findings.length === 0 ? (
               <p class="subtle">
-                Nothing drawn out of the evidence yet. A finding is what the team now
-                believes, and the highlights it rests on.
+                Nothing yet, which is fine — the write-up already has the highlights this
+                space holds. Add a conclusion when the team has one and it goes on top,
+                citing the highlights it rests on.
               </p>
             ) : (
               <ul class="findings">
@@ -315,64 +401,6 @@ export function Space({
             )}
           </div>
 
-          {showMemo && (
-            <div class="panel memo">
-              <div class="view-top">
-                <h2>The write-up</h2>
-                <button type="button" class="action" onClick={copyMemo}>
-                  {copied ? 'Copied as Markdown' : 'Copy as Markdown'}
-                </button>
-              </div>
-              <p class="subtle">
-                Assembled from the findings. Every claim carries the sources it rests on, and
-                every source link lands on the exact sentence — so whoever reads this can
-                check it without having Kona.
-              </p>
-
-              <h3 class="memo-title">{memo.title}</h3>
-              {memo.decision && <p class="memo-decision">{memo.decision}</p>}
-              <ul class="memo-lines">
-                {memo.lines.map((line, i) => (
-                  <li key={i}>
-                    {line.contradicts && <em>Against: </em>}
-                    {line.claim}{' '}
-                    {line.cites.map((n) => (
-                      <sup key={n}>
-                        <a href={`#cite-${n}`}>[{n}]</a>
-                      </sup>
-                    ))}
-                    {line.withdrawn > 0 && (
-                      <em class="withdrawn-inline">
-                        {' '}
-                        ({line.withdrawn} withdrawn)
-                      </em>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              {memo.open.length > 0 && (
-                <>
-                  <h3>Still open</h3>
-                  <ul class="memo-lines">
-                    {memo.open.map((entry) => (
-                      <li key={entry}>{entry}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-              <h3>Sources</h3>
-              <ol class="memo-sources">
-                {memo.citations.map((citation) => (
-                  <li key={citation.n} id={`cite-${citation.n}`}>
-                    {siteLabel(citation.mark)} — {citation.mark.conversationTitle}.{' '}
-                    <a href={citation.href} target="_blank" rel="noreferrer noopener">
-                      the exact sentence
-                    </a>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
 
           <div class="panel">
             <h2>Still open</h2>
@@ -504,7 +532,8 @@ export function Space({
           <>
             <p class="subtle">
               {spare.length} {spare.length === 1 ? 'highlight is' : 'highlights are'} in this
-              space without a finding resting on {spare.length === 1 ? 'it' : 'them'} yet.
+              space without a conclusion resting on {spare.length === 1 ? 'it' : 'them'} yet —
+              which is fine, they are in the write-up either way.
             </p>
             {showSpare && (
               <ul class="evidence-list evidence-open">

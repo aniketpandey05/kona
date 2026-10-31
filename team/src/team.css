@@ -1434,3 +1434,32 @@ h2 .locked-badge {
   color: var(--muted);
   font-size: 13px;
 }
+
+/* The passages themselves, which are the document when nothing is concluded
+   yet. Mirrors the extension's own write-up: the paid tier should never show
+   less than the free one. */
+.memo-kept blockquote {
+  margin: 0 0 18px;
+  padding: 0 0 0 16px;
+  border-left: 3px solid var(--border);
+}
+
+.memo-kept blockquote p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.memo-kept .memo-note {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.memo-kept cite {
+  display: block;
+  margin-top: 8px;
+  font-style: normal;
+  font-size: 13px;
+  color: var(--muted);
+}
