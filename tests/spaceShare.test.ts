@@ -6,7 +6,9 @@ import {
   addQuestion,
   createSpace,
   recordDecision,
+  removeMark,
 } from '../src/core/spaces';
+import type { Space } from '../src/core/spaces';
 import type { Mark } from '../src/core/types';
 
 function mark(id: string, snapshot: string, over: Partial<Mark> = {}): Mark {
@@ -151,7 +153,7 @@ describe('adopting a space into a library', () => {
     const { space, marks } = sender();
     const file = readSharedSpace(packSpace(space, marks));
 
-    const taken = adoptSpace(file, [], 500);
+    const taken = adoptSpace(file, [], [], 500);
     expect(taken.added.map((m) => m.id).sort()).toEqual(['a1', 'a2']);
     expect(taken.reused).toBe(0);
     expect(taken.space.markIds.sort()).toEqual(['a1', 'a2']);
@@ -164,7 +166,7 @@ describe('adopting a space into a library', () => {
     // The reader highlighted the same sentence themselves, so it has their id.
     const mine = [mark('mine-1', `  ${KEPT}  `, { note: 'My own reading.' })];
 
-    const taken = adoptSpace(file, mine, 500);
+    const taken = adoptSpace(file, mine, [], 500);
     expect(taken.reused).toBe(1);
     expect(taken.added.map((m) => m.id)).toEqual(['a2']);
     // The claim now rests on the reader's copy of that passage.
@@ -177,7 +179,7 @@ describe('adopting a space into a library', () => {
     const file = readSharedSpace(packSpace(space, marks));
     const mine = [mark('mine-1', KEPT, { note: 'My own reading.' })];
 
-    const taken = adoptSpace(file, mine, 500);
+    const taken = adoptSpace(file, mine, [], 500);
     expect(taken.updated).toEqual([]);
   });
 
@@ -186,7 +188,7 @@ describe('adopting a space into a library', () => {
     const file = readSharedSpace(packSpace(space, marks));
     const mine = [mark('mine-1', KEPT)];
 
-    const taken = adoptSpace(file, mine, 500);
+    const taken = adoptSpace(file, mine, [], 500);
     expect(taken.updated).toHaveLength(1);
     expect(taken.updated[0]!.id).toBe('mine-1');
     expect(taken.updated[0]!.note).toBe('Checked on 24.0.');
@@ -199,7 +201,7 @@ describe('adopting a space into a library', () => {
     // Same id, entirely different passage: the reader's 'a1' must survive.
     const mine = [mark('a1', 'Something unrelated', { conversationId: 'c9' })];
 
-    const taken = adoptSpace(file, mine, 500);
+    const taken = adoptSpace(file, mine, [], 500);
     const ids = taken.added.map((m) => m.id);
     expect(ids).not.toContain('a1');
     expect(ids).toHaveLength(2);
@@ -209,25 +211,111 @@ describe('adopting a space into a library', () => {
     expect(taken.space.markIds).toContain(renamed.id);
   });
 
-  it('gives the arriving space a new id, so importing twice does not clobber', () => {
+  it('gives an arriving space its own local id, but keeps where it came from', () => {
+    const { space, marks } = sender();
+    const taken = adoptSpace(readSharedSpace(packSpace(space, marks)), [], [], 500);
+    expect(taken.space.id).not.toBe(space.id);
+    expect(taken.merged).toBe(false);
+    // The origin is what makes the trip back a merge rather than a third copy.
+    expect(taken.space.origin).toBe(space.id);
+  });
+
+  it('merges a second import into the copy already here, rather than beside it', () => {
     const { space, marks } = sender();
     const file = readSharedSpace(packSpace(space, marks));
 
-    const first = adoptSpace(file, [], 500);
-    const second = adoptSpace(file, first.added, 600);
-    expect(first.space.id).not.toBe(space.id);
-    expect(second.space.id).not.toBe(first.space.id);
-    // The second import reuses every highlight rather than duplicating them.
-    expect(second.reused).toBe(2);
+    const first = adoptSpace(file, [], [], 500);
+    const second = adoptSpace(file, first.added, [first.space], 600);
+    expect(second.merged).toBe(true);
+    expect(second.space.id).toBe(first.space.id);
+    expect(second.space.markIds).toEqual(first.space.markIds);
+    expect(second.space.findings).toHaveLength(first.space.findings.length);
     expect(second.added).toEqual([]);
+    expect(second.reused).toBe(2);
+  });
+});
+
+describe('a space coming back with someone else’s work in it', () => {
+  const marks = [mark('a1', KEPT, { note: 'Checked on 24.0.' }), mark('a2', BIND)];
+
+  /** You send a space; they add to it; you take it back. */
+  function roundTrip(theirEdit: (space: Space) => Space) {
+    let mine = createSpace('Docker teardown', 'How do I stop the stack safely?');
+    mine = addMark(mine, 'a1');
+    mine = addFinding(mine, 'down keeps named volumes', 'supports', ['a1']);
+
+    const theirs = adoptSpace(readSharedSpace(packSpace(mine, marks)), [], [], 500);
+    const edited = theirEdit(theirs.space);
+    const back = adoptSpace(
+      readSharedSpace(packSpace(edited, [...marks, ...theirs.added])),
+      marks,
+      [mine],
+      600,
+    );
+    return { mine, back };
+  }
+
+  it('comes back into the same space, not a second one', () => {
+    const { mine, back } = roundTrip((space) => addQuestion(space, 'What about bind mounts?'));
+    expect(back.merged).toBe(true);
+    expect(back.space.id).toBe(mine.id);
+    expect(back.space.updatedAt).toBe(600);
   });
 
-  it('passes a space back and forth without the evidence growing', () => {
-    const { space, marks } = sender();
-    const there = adoptSpace(readSharedSpace(packSpace(space, marks)), [], 500);
-    const library = [...marks];
-    const back = adoptSpace(readSharedSpace(packSpace(there.space, there.added)), library, 600);
-    expect(back.added).toEqual([]);
-    expect(back.reused).toBe(2);
+  it('brings their highlights, conclusions and open questions with it', () => {
+    const { back } = roundTrip((space) => {
+      let edited = addMark(space, 'a2');
+      edited = addFinding(edited, 'Bind mounts are not covered', 'contradicts', ['a2']);
+      return addQuestion(edited, 'What about bind mounts?');
+    });
+    expect(back.space.markIds).toContain('a2');
+    expect(back.space.findings.map((f) => f.claim)).toEqual([
+      'down keeps named volumes',
+      'Bind mounts are not covered',
+    ]);
+    expect(back.space.openQuestions).toEqual(['What about bind mounts?']);
+  });
+
+  it('does not delete what they took out — the merge only ever adds', () => {
+    // They removed the highlight the whole space rests on. On their copy that
+    // is their business; on mine it would be an import deleting my work.
+    const { mine, back } = roundTrip((space) => removeMark(space, 'a1'));
+    expect(back.space.markIds).toEqual(mine.markIds);
+    expect(back.space.findings).toHaveLength(1);
+  });
+
+  it('takes a decision they reached, because mine has none', () => {
+    const { back } = roundTrip((space) => recordDecision(space, 'Go in January.', 550));
+    expect(back.space.decision?.body).toBe('Go in January.');
+  });
+
+  it('keeps my later decision over their earlier one', () => {
+    let mine = createSpace('Docker teardown', 'Safe?');
+    mine = addMark(mine, 'a1');
+    const theirs = adoptSpace(readSharedSpace(packSpace(mine, marks)), [], [], 500);
+    const decided = recordDecision(theirs.space, 'Wait until spring.', 520);
+    mine = recordDecision(mine, 'Go in January.', 580);
+
+    const back = adoptSpace(readSharedSpace(packSpace(decided, marks)), marks, [mine], 600);
+    expect(back.space.decision?.body).toBe('Go in January.');
+  });
+
+  it('does not let them rename a question I already asked', () => {
+    let mine = createSpace('Docker teardown', 'How do I stop the stack safely?');
+    mine = addMark(mine, 'a1');
+    const theirs = adoptSpace(readSharedSpace(packSpace(mine, marks)), [], [], 500);
+    const renamed = { ...theirs.space, question: 'Something else entirely' };
+
+    const back = adoptSpace(readSharedSpace(packSpace(renamed, marks)), marks, [mine], 600);
+    expect(back.space.question).toBe('How do I stop the stack safely?');
+  });
+
+  it('still files an unrelated space of theirs separately', () => {
+    const mine = addMark(createSpace('Docker teardown', 'Safe?'), 'a1');
+    const unrelated = addMark(createSpace('Thesis chapter 3', 'Replicates?'), 'a2');
+
+    const taken = adoptSpace(readSharedSpace(packSpace(unrelated, marks)), marks, [mine], 600);
+    expect(taken.merged).toBe(false);
+    expect(taken.space.id).not.toBe(mine.id);
   });
 });

@@ -32,6 +32,16 @@ export interface Decision {
 
 export interface Space {
   id: string;
+  /**
+   * The id this space had when somebody first made it, carried through every
+   * copy of it. Your copy of a space I sent you has its own local `id` but the
+   * same origin, so when you send it back I recognise it as mine rather than
+   * filing a second one beside it.
+   *
+   * Absent on spaces made before sharing existed; `originOf` falls back to the
+   * id, which is what it would have been.
+   */
+  origin?: string;
   name: string;
   /** What this space is trying to settle. Without one it is a shelf, which is a fine thing to be. */
   question?: string;
@@ -48,10 +58,17 @@ export interface Space {
 const newId = (): string =>
   `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
+/** Where a space came from, for spaces that predate the field. */
+export function originOf(space: Space): string {
+  return space.origin ?? space.id;
+}
+
 export function createSpace(name: string, question?: string, now = Date.now()): Space {
+  const id = newId();
   const trimmed = question?.trim();
   return {
-    id: newId(),
+    id,
+    origin: id,
     name: name.trim() || 'Untitled space',
     question: trimmed || undefined,
     markIds: [],

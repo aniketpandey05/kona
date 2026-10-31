@@ -196,13 +196,17 @@ function SpaceList({
     if (!file) return;
     try {
       const incoming = readSharedSpace(await file.text());
-      const taken = adoptSpace(incoming, marks);
+      const taken = adoptSpace(incoming, marks, spaces);
       if (taken.added.length > 0 || taken.updated.length > 0) {
         await importMarks([...taken.added, ...taken.updated]);
       }
       await saveSpace(taken.space);
 
-      const parts = [`“${taken.space.name}” is yours`];
+      const parts = [
+        taken.merged
+          ? `“${taken.space.name}” came back with their work in it`
+          : `“${taken.space.name}” is yours`,
+      ];
       if (taken.added.length > 0) parts.push(`${taken.added.length} new highlights`);
       if (taken.reused > 0) parts.push(`${taken.reused} you already had`);
       if (taken.updated.length > 0) parts.push(`${taken.updated.length} picked up a note`);

@@ -1,5 +1,6 @@
 import type { TextQuote } from './quote';
 import { cleanPassage } from './text';
+import { originOf } from './spaces';
 import type { Finding, Space, Stance } from './spaces';
 import type { HighlightColor, Mark, SiteId } from './types';
 
@@ -46,6 +47,8 @@ export interface IncomingSpace extends SharedSpace {
 /** What came in, and what it cost to take it. */
 export interface Adopted {
   space: Space;
+  /** True when this went into a space already here, rather than beside it. */
+  merged: boolean;
   /** Highlights the library did not have. These need saving. */
   added: Mark[];
   /** Local highlights that gained the sender's note. These need saving too. */
@@ -134,6 +137,7 @@ export function readSharedSpace(text: string): IncomingSpace {
 export function adoptSpace(
   shared: IncomingSpace,
   existing: readonly Mark[],
+  spaces: readonly Space[] = [],
   now = Date.now(),
 ): Adopted {
   const byPassage = new Map<string, Mark>();
@@ -172,26 +176,87 @@ export function adoptSpace(
     return out;
   };
 
-  const space: Space = {
-    ...shared.space,
-    // A fresh id. Importing the same file twice leaves you with two spaces,
-    // which you can delete — rather than silently overwriting the one you have
-    // been working in, which you cannot undo.
-    id: newId(),
-    markIds: mapped(shared.space.markIds),
-    findings: shared.space.findings.map((finding) => ({
-      ...finding,
-      markIds: mapped(finding.markIds),
-    })),
-    updatedAt: now,
-  };
+  const incomingMarkIds = mapped(shared.space.markIds);
+  const incomingFindings = shared.space.findings.map((finding) => ({
+    ...finding,
+    markIds: mapped(finding.markIds),
+  }));
+
+  // The copy of this space you already have, if this is one coming back to you.
+  const origin = originOf(shared.space);
+  const mine = spaces.find((candidate) => originOf(candidate) === origin);
+
+  const space: Space = mine
+    ? mergeInto(mine, { markIds: incomingMarkIds, findings: incomingFindings }, shared.space, now)
+    : {
+        ...shared.space,
+        // A local id of its own, but the origin is kept: that is what makes the
+        // next trip back a merge rather than a third copy.
+        id: newId(),
+        origin,
+        markIds: incomingMarkIds,
+        findings: incomingFindings,
+        updatedAt: now,
+      };
 
   return {
     space,
+    merged: !!mine,
     added,
     updated,
     reused,
     dropped: shared.dropped,
+  };
+}
+
+/**
+ * A space coming back with somebody else's work in it.
+ *
+ * The merge only ever adds. Two people editing apart cannot be reconciled
+ * without asking somebody, and the one thing worse than a duplicate space is
+ * an import that quietly deletes the paragraph you wrote this morning. So a
+ * highlight or a conclusion they removed stays in your copy, and you take it
+ * out yourself if you agree. Everything they added arrives.
+ */
+function mergeInto(
+  mine: Space,
+  theirs: { markIds: string[]; findings: Finding[] },
+  incoming: Space,
+  now: number,
+): Space {
+  const markIds = [...mine.markIds];
+  for (const id of theirs.markIds) if (!markIds.includes(id)) markIds.push(id);
+
+  const findings = [...mine.findings];
+  const haveFinding = new Set(findings.map((finding) => finding.id));
+  for (const finding of theirs.findings) {
+    if (!haveFinding.has(finding.id)) {
+      findings.push(finding);
+      haveFinding.add(finding.id);
+    }
+  }
+
+  const openQuestions = [...mine.openQuestions];
+  for (const question of incoming.openQuestions) {
+    if (!openQuestions.includes(question)) openQuestions.push(question);
+  }
+
+  // Whoever decided last wins, because a decision is a point in time. A
+  // decision never un-decides a space it arrives in.
+  const decision =
+    incoming.decision && (!mine.decision || incoming.decision.decidedAt > mine.decision.decidedAt)
+      ? incoming.decision
+      : mine.decision;
+
+  return {
+    ...mine,
+    // A question or a name they set is only taken where you have none.
+    question: mine.question ?? incoming.question,
+    markIds,
+    findings,
+    openQuestions,
+    ...(decision ? { decision } : {}),
+    updatedAt: now,
   };
 }
 
@@ -301,8 +366,10 @@ function cleanSpace(value: unknown, haveMarks: ReadonlySet<string>): Space | nul
   const decision = raw.decision as Partial<Space['decision']> | undefined;
   const body = str(decision?.body);
 
+  const id = str(raw.id) ?? newId();
   return {
-    id: str(raw.id) ?? newId(),
+    id,
+    origin: str(raw.origin) ?? id,
     name: raw.name.trim() || 'Untitled space',
     ...(str(raw.question) ? { question: raw.question } : {}),
     markIds: held,
