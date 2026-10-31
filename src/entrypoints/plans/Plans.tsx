@@ -67,13 +67,17 @@ export function Plans() {
         <p>
           A space is a file you can hand over: open one, press <strong>Share</strong>, and
           send it. Whoever opens it gets your question, your passages, what you concluded and
-          a link under each that lands on the exact sentence — and can add to it and send it
-          back. It needs no account on either side, and it is in the free plan.
+          a link under each that lands on the exact sentence. They can reply to a passage
+          where the passage is, conclude something of their own, and send it back — and it
+          merges into the space you already have rather than arriving beside it, with both
+          sides of the argument under the highlight and a name against every part. It needs
+          no account on either side, and it is in the free plan.
         </p>
         <p>
-          What Team adds is removing the passing around: the same space, live, with everyone
-          in it at once. That needs a server, and the server is not built. There is a working
-          demo of the shape of it.
+          Two things it is not. Nobody is in the space at the same time as you, so the reply
+          arrives when the file does. And a name here is one somebody typed, not one anything
+          checked. Removing both is what Team is for; that needs a server, and the server is
+          not built. There is a working demo of the shape of it.
         </p>
         <div class="pl-row">
           <a class="pl-primary" href={TEAM_DEMO_URL} target="_blank" rel="noreferrer noopener">

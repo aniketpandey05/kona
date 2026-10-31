@@ -1,4 +1,5 @@
 import { browser, storage } from '#imports';
+import { makePerson, type Person } from './people';
 import type { Space } from './spaces';
 import type { Mark, SiteId } from './types';
 
@@ -148,4 +149,35 @@ export function watchSpaces(onChange: (spaces: Space[]) => void): () => void {
   return storage.watch<Space[]>(SPACES_KEY, (spaces) =>
     onChange([...(spaces ?? [])].sort((a, b) => b.updatedAt - a.updatedAt)),
   );
+}
+
+// ---- who you are ----
+
+// One record, and it never leaves this computer on its own: it travels only
+// inside a space you choose to hand over. There is nothing to sign in to.
+const ME_KEY = 'local:me' as const;
+
+export async function loadMe(): Promise<Person | null> {
+  const me = await storage.getItem<Person>(ME_KEY);
+  return me && typeof me.id === 'string' && typeof me.name === 'string' ? me : null;
+}
+
+/**
+ * Setting or changing your name. The id is made once and kept, so a space you
+ * sent out still recognises your work when it comes back — renaming yourself
+ * relabels it rather than splitting it in two.
+ */
+export async function saveMe(name: string): Promise<Person | null> {
+  const current = await loadMe();
+  if (!name.trim()) {
+    await storage.removeItem(ME_KEY);
+    return null;
+  }
+  const me = makePerson(name, current?.id);
+  await storage.setItem(ME_KEY, me);
+  return me;
+}
+
+export function watchMe(onChange: (me: Person | null) => void): () => void {
+  return storage.watch<Person>(ME_KEY, (me) => onChange(me ?? null));
 }

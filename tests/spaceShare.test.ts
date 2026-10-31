@@ -1,12 +1,18 @@
 import { describe, expect, it } from 'vitest';
+import { makePerson } from '../src/core/people';
 import { adoptSpace, packSpace, readSharedSpace, shareFilename } from '../src/core/spaceShare';
 import {
+  addComment,
   addFinding,
   addMark,
   addQuestion,
+  commentsOn,
   createSpace,
+  gathererOf,
+  isSettled,
   recordDecision,
   removeMark,
+  setSettled,
 } from '../src/core/spaces';
 import type { Space } from '../src/core/spaces';
 import type { Mark } from '../src/core/types';
@@ -285,7 +291,7 @@ describe('a space coming back with someone else’s work in it', () => {
   });
 
   it('takes a decision they reached, because mine has none', () => {
-    const { back } = roundTrip((space) => recordDecision(space, 'Go in January.', 550));
+    const { back } = roundTrip((space) => recordDecision(space, 'Go in January.', null, 550));
     expect(back.space.decision?.body).toBe('Go in January.');
   });
 
@@ -293,8 +299,8 @@ describe('a space coming back with someone else’s work in it', () => {
     let mine = createSpace('Docker teardown', 'Safe?');
     mine = addMark(mine, 'a1');
     const theirs = adoptSpace(readSharedSpace(packSpace(mine, marks)), [], [], 500);
-    const decided = recordDecision(theirs.space, 'Wait until spring.', 520);
-    mine = recordDecision(mine, 'Go in January.', 580);
+    const decided = recordDecision(theirs.space, 'Wait until spring.', null, 520);
+    mine = recordDecision(mine, 'Go in January.', null, 580);
 
     const back = adoptSpace(readSharedSpace(packSpace(decided, marks)), marks, [mine], 600);
     expect(back.space.decision?.body).toBe('Go in January.');
@@ -317,5 +323,189 @@ describe('a space coming back with someone else’s work in it', () => {
     const taken = adoptSpace(readSharedSpace(packSpace(unrelated, marks)), marks, [mine], 600);
     expect(taken.merged).toBe(false);
     expect(taken.space.id).not.toBe(mine.id);
+  });
+});
+describe('handing a space over with people in it', () => {
+  const priya = makePerson('Priya', 'p1');
+  const sam = makePerson('Sam', 's1');
+
+  /** What Priya sends: two passages she found, with an argument about one. */
+  function hers() {
+    const marks = [mark('a1', KEPT), mark('a2', BIND)];
+    let space = createSpace('Docker teardown', 'How do I stop the stack safely?');
+    space = addMark(space, 'a1', priya);
+    space = addMark(space, 'a2', priya);
+    space = addFinding(space, 'down keeps named volumes', 'supports', ['a1'], priya);
+    space = addComment(space, 'a2', 'This is the one that bit us.', priya);
+    return { space, marks };
+  }
+
+  it('says who sent it', () => {
+    const { space, marks } = hers();
+    const incoming = readSharedSpace(packSpace(space, marks, priya));
+    expect(incoming.from?.name).toBe('Priya');
+    expect(adoptSpace(incoming, [], []).from?.name).toBe('Priya');
+  });
+
+  it('carries her name even if she has written nothing here yet', () => {
+    const space = addMark(createSpace('Reading list'), 'a1');
+    const incoming = readSharedSpace(packSpace(space, [mark('a1', KEPT)], priya));
+    expect(incoming.from?.name).toBe('Priya');
+  });
+
+  it('arrives with the credits and the argument intact', () => {
+    const { space, marks } = hers();
+    const taken = adoptSpace(readSharedSpace(packSpace(space, marks, priya)), [], []);
+    expect(taken.space.people?.map((person) => person.name)).toEqual(['Priya']);
+    expect(gathererOf(taken.space, 'a1')?.name).toBe('Priya');
+    expect(taken.space.findings[0]?.by).toBe('p1');
+    expect(commentsOn(taken.space, 'a2')[0]?.body).toBe('This is the one that bit us.');
+  });
+
+  it('moves the argument onto my copy of the same passage', () => {
+    const { space, marks } = hers();
+    // I already had the passage she commented on, under an id of my own.
+    const mine = [mark('mine-2', BIND)];
+    const taken = adoptSpace(readSharedSpace(packSpace(space, marks, priya)), mine, []);
+    expect(taken.space.markIds).toContain('mine-2');
+    expect(commentsOn(taken.space, 'mine-2')).toHaveLength(1);
+    expect(commentsOn(taken.space, 'a2')).toHaveLength(0);
+    expect(gathererOf(taken.space, 'mine-2')?.name).toBe('Priya');
+  });
+
+  it('keeps a settled thread settled', () => {
+    const { space, marks } = hers();
+    const closed = setSettled(space, 'a2', true);
+    const taken = adoptSpace(readSharedSpace(packSpace(closed, marks, priya)), [], []);
+    expect(isSettled(taken.space, 'a2')).toBe(true);
+  });
+
+  it('drops a reply about a highlight that did not come with it', () => {
+    const { space, marks } = hers();
+    const file = JSON.parse(packSpace(space, marks, priya)) as {
+      space: { comments: { markId: string }[] };
+    };
+    file.space.comments.push({ markId: 'never-sent' } as never);
+    const taken = adoptSpace(readSharedSpace(JSON.stringify(file)), [], []);
+    expect(taken.space.comments).toHaveLength(1);
+  });
+
+  it('drops a credit for a highlight that did not come with it', () => {
+    const { space, marks } = hers();
+    const file = JSON.parse(packSpace(space, marks, priya)) as {
+      space: { gathered: Record<string, unknown> };
+    };
+    file.space.gathered['never-sent'] = 'p1';
+    file.space.gathered['a1'] = { not: 'a person' };
+    const taken = adoptSpace(readSharedSpace(JSON.stringify(file)), [], []);
+    expect(Object.keys(taken.space.gathered ?? {})).toEqual(['a2']);
+  });
+
+  it('takes nothing from a people list that is not one', () => {
+    const { space, marks } = hers();
+    const file = JSON.parse(packSpace(space, marks, priya)) as { space: { people: unknown } };
+    file.space.people = [{ id: 'x' }, 'Priya', null, { name: 'No id' }];
+    const taken = adoptSpace(readSharedSpace(JSON.stringify(file)), [], []);
+    expect(taken.space.people).toEqual([]);
+  });
+});
+
+describe('a space coming back with their replies in it', () => {
+  const priya = makePerson('Priya', 'p1');
+  const sam = makePerson('Sam', 's1');
+
+  /**
+   * I send a space, Sam works on it, and it comes back. `theirEdit` is what he
+   * did while he had it.
+   */
+  function roundTrip(theirEdit: (space: Space) => Space) {
+    const marks = [mark('a1', KEPT), mark('a2', BIND)];
+    let mine = createSpace('Docker teardown', 'How do I stop the stack safely?');
+    mine = addMark(mine, 'a1', priya);
+    mine = addMark(mine, 'a2', priya);
+
+    const theirs = adoptSpace(readSharedSpace(packSpace(mine, marks, priya)), [], [], 500);
+    const edited = theirEdit(theirs.space);
+    const back = adoptSpace(readSharedSpace(packSpace(edited, marks, sam)), marks, [mine], 600);
+    return { mine, back };
+  }
+
+  it('is one space, with both of us in it', () => {
+    const { back } = roundTrip((space) => addComment(space, 'a2', 'Agreed, that one.', sam));
+    expect(back.merged).toBe(true);
+    expect(back.space.people?.map((person) => person.name).sort()).toEqual(['Priya', 'Sam']);
+    expect(back.gained.people).toBe(1);
+  });
+
+  it('brings his reply in and counts it', () => {
+    const { back } = roundTrip((space) => addComment(space, 'a2', 'Agreed, that one.', sam));
+    expect(commentsOn(back.space, 'a2').map((entry) => entry.body)).toEqual([
+      'Agreed, that one.',
+    ]);
+    expect(back.gained.replies).toBe(1);
+  });
+
+  it('puts his reply under mine rather than beside it', () => {
+    const marks = [mark('a1', KEPT), mark('a2', BIND)];
+    let mine = createSpace('Docker teardown', 'Safe?');
+    mine = addMark(mine, 'a2', priya);
+    mine = addComment(mine, 'a2', 'Is this still true?', priya, 100);
+
+    const theirs = adoptSpace(readSharedSpace(packSpace(mine, marks, priya)), [], [], 500);
+    const replied = addComment(theirs.space, 'a2', 'Not since 24.0.', sam, 550);
+    const back = adoptSpace(readSharedSpace(packSpace(replied, marks, sam)), marks, [mine], 600);
+
+    expect(commentsOn(back.space, 'a2').map((entry) => entry.body)).toEqual([
+      'Is this still true?',
+      'Not since 24.0.',
+    ]);
+  });
+
+  it('does not duplicate a reply when the same space comes back twice', () => {
+    const marks = [mark('a1', KEPT), mark('a2', BIND)];
+    let mine = addMark(createSpace('Docker teardown', 'Safe?'), 'a2', priya);
+    const theirs = adoptSpace(readSharedSpace(packSpace(mine, marks, priya)), [], [], 500);
+    const replied = addComment(theirs.space, 'a2', 'Not since 24.0.', sam, 550);
+
+    const file = packSpace(replied, marks, sam);
+    const first = adoptSpace(readSharedSpace(file), marks, [mine], 600);
+    const second = adoptSpace(readSharedSpace(file), marks, [first.space], 700);
+
+    expect(commentsOn(second.space, 'a2')).toHaveLength(1);
+    expect(second.gained.replies).toBe(0);
+  });
+
+  it('keeps a reply he deleted on his copy, because a merge never deletes', () => {
+    const marks = [mark('a1', KEPT), mark('a2', BIND)];
+    let mine = addMark(createSpace('Docker teardown', 'Safe?'), 'a2', priya);
+    mine = addComment(mine, 'a2', 'Is this still true?', priya, 100);
+    const theirs = adoptSpace(readSharedSpace(packSpace(mine, marks, priya)), [], [], 500);
+    const stripped = { ...theirs.space, comments: [] };
+    const back = adoptSpace(readSharedSpace(packSpace(stripped, marks, sam)), marks, [mine], 600);
+    expect(commentsOn(back.space, 'a2')).toHaveLength(1);
+  });
+
+  it('leaves my record of who found a passage alone', () => {
+    const { back } = roundTrip((space) => addMark(space, 'a1', sam));
+    expect(gathererOf(back.space, 'a1')?.name).toBe('Priya');
+  });
+
+  it('takes a thread he settled as settled', () => {
+    const { back } = roundTrip((space) => {
+      const said = addComment(space, 'a2', 'Settled it.', sam);
+      return setSettled(said, 'a2', true);
+    });
+    expect(isSettled(back.space, 'a2')).toBe(true);
+  });
+
+  it('counts what came back, so the banner can say what changed', () => {
+    const { back } = roundTrip((space) => {
+      let next = addFinding(space, 'down keeps volumes', 'supports', ['a1'], sam);
+      next = addComment(next, 'a2', 'Except bind mounts.', sam);
+      next = addQuestion(next, 'Which compose files use bind mounts?');
+      return next;
+    });
+    expect(back.gained).toEqual({ conclusions: 1, replies: 1, questions: 1, people: 1 });
+    expect(back.from?.name).toBe('Sam');
   });
 });

@@ -3,8 +3,9 @@ import type { KonaController, NoteCardState, SearchState, ViewState } from '../c
 import { HIGHLIGHT_COLORS, UI_COLORS } from '../core/painter';
 import { siteLabel } from '../core/sites';
 import { addTags, removeTag } from '../core/tags';
+import type { Person } from '../core/people';
 import { addMark as addToSpace, createSpace } from '../core/spaces';
-import { loadSpaces, saveSpace, watchSpaces } from '../core/store';
+import { loadMe, loadSpaces, saveSpace, watchMe, watchSpaces } from '../core/store';
 import type { Space } from '../core/spaces';
 import { KonaMark } from './KonaMark';
 import type { HighlightColor, Mark } from '../core/types';
@@ -242,11 +243,20 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [filing, setFiling] = useState<string | null>(null);
   const [filed, setFiled] = useState<{ id: string; name: string } | null>(null);
+  // Who you are, so a highlight filed from here is credited the same way one
+  // filed from the spaces page is.
+  const [me, setMe] = useState<Person | null>(null);
 
   useEffect(() => {
     if (!open) return;
     void loadSpaces().then(setSpaces);
-    return watchSpaces(setSpaces);
+    void loadMe().then(setMe);
+    const stopSpaces = watchSpaces(setSpaces);
+    const stopMe = watchMe(setMe);
+    return () => {
+      stopSpaces();
+      stopMe();
+    };
   }, [open]);
 
   useEffect(() => {
@@ -455,6 +465,7 @@ function Panel({ state, controller }: Props & { state: ViewState }) {
                 <SpaceFiling
                   mark={mark}
                   spaces={spaces}
+                  me={me}
                   onDone={(space) => {
                     setFiling(null);
                     setFiled({ id: space.id, name: space.name });
@@ -646,11 +657,13 @@ function spaceActionLabel(spaces: Space[], markId: string): string {
 function SpaceFiling({
   mark,
   spaces,
+  me,
   onDone,
   onCancel,
 }: {
   mark: Mark;
   spaces: Space[];
+  me: Person | null;
   onDone: (space: Space) => void;
   onCancel: () => void;
 }) {
@@ -661,12 +674,12 @@ function SpaceFiling({
   const rest = spaces.filter((space) => !space.markIds.includes(mark.id));
 
   const put = (space: Space) => {
-    void saveSpace(addToSpace(space, mark.id)).then(() => onDone(space));
+    void saveSpace(addToSpace(space, mark.id, me)).then(() => onDone(space));
   };
 
   const make = () => {
     if (!name.trim()) return;
-    const space = addToSpace(createSpace(name), mark.id);
+    const space = addToSpace(createSpace(name), mark.id, me);
     void saveSpace(space).then(() => onDone(space));
   };
 

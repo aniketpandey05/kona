@@ -9,14 +9,17 @@ import { sortByOrder } from '../../core/order';
 import { HIGHLIGHT_COLORS, UI_COLORS } from '../../core/painter';
 import { searchMarks } from '../../core/search';
 import { siteLabel } from '../../core/sites';
+import type { Person } from '../../core/people';
 import {
   importMarks,
   loadAllMarks,
+  loadMe,
   loadSpaces,
   removeMark,
   saveSpace,
   upsertMark,
   watchAllMarks,
+  watchMe,
   watchSpaces,
 } from '../../core/store';
 import { addMark as addToSpace, createSpace, type Space } from '../../core/spaces';
@@ -49,6 +52,7 @@ export function Library() {
   const [deleted, setDeleted] = useState<Mark | null>(null);
   const [theme, setTheme] = useState<Theme>('system');
   const [spaces, setSpaces] = useState<Space[]>([]);
+  const [me, setMe] = useState<Person | null>(null);
   // Which highlight is being filed, if any. One at a time keeps the list calm.
   const [filing, setFiling] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -62,6 +66,11 @@ export function Library() {
   useEffect(() => {
     void loadSpaces().then(setSpaces);
     return watchSpaces(setSpaces);
+  }, []);
+
+  useEffect(() => {
+    void loadMe().then(setMe);
+    return watchMe(setMe);
   }, []);
 
   useEffect(() => {
@@ -333,6 +342,7 @@ export function Library() {
                   <AddToSpace
                     mark={mark}
                     spaces={spaces}
+                    me={me}
                     onDone={(name) => {
                       setFiling(null);
                       setMessage(`Added to ${name}.`);
@@ -444,10 +454,12 @@ function spacesHolding(spaces: Space[], markId: string): Space[] {
 function AddToSpace({
   mark,
   spaces,
+  me,
   onDone,
 }: {
   mark: Mark;
   spaces: Space[];
+  me: Person | null;
   onDone: (spaceName: string) => void;
 }) {
   const [naming, setNaming] = useState(false);
@@ -457,12 +469,12 @@ function AddToSpace({
   const open = spaces.filter((space) => !space.markIds.includes(mark.id));
 
   const put = (space: Space) => {
-    void saveSpace(addToSpace(space, mark.id)).then(() => onDone(space.name));
+    void saveSpace(addToSpace(space, mark.id, me)).then(() => onDone(space.name));
   };
 
   const make = () => {
     if (!name.trim()) return;
-    const space = addToSpace(createSpace(name), mark.id);
+    const space = addToSpace(createSpace(name), mark.id, me);
     void saveSpace(space).then(() => onDone(space.name));
   };
 

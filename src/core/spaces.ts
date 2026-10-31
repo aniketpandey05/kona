@@ -1,3 +1,4 @@
+import { joinPeople, personIn, type Person } from './people';
 import type { Mark } from './types';
 
 /**
@@ -22,12 +23,33 @@ export interface Finding {
   stance: Stance;
   /** Ids of the highlights this rests on. */
   markIds: string[];
+  /** Who concluded it, as a person id in the space's own `people`. */
+  by?: string;
   createdAt: number;
 }
 
 export interface Decision {
   body: string;
+  /** Who settled it. */
+  by?: string;
   decidedAt: number;
+}
+
+/**
+ * Something said about one highlight, in one space.
+ *
+ * A thread belongs to the space and not to the highlight, because the same
+ * passage can be gathered under two questions and the argument about it in one
+ * is not the argument about it in the other. It also means a space you hand
+ * over carries its discussion with it and nothing else does.
+ */
+export interface Comment {
+  id: string;
+  /** The highlight this is about. */
+  markId: string;
+  body: string;
+  by?: string;
+  createdAt: number;
 }
 
 export interface Space {
@@ -51,6 +73,18 @@ export interface Space {
   /** What is still not known. The reason to come back to a space. */
   openQuestions: string[];
   decision?: Decision;
+  /**
+   * Everybody who has worked in any copy of this space, so a `by` anywhere in
+   * here can be turned into a name without asking a server. Absent until more
+   * than nobody has put their name to anything.
+   */
+  people?: Person[];
+  /** Who brought each highlight in, by highlight id. */
+  gathered?: Record<string, string>;
+  /** Discussion, one entry per thing said, each naming its highlight. */
+  comments?: Comment[];
+  /** Highlights whose thread somebody has called finished. */
+  settled?: string[];
   createdAt: number;
   updatedAt: number;
 }
@@ -93,9 +127,23 @@ export function rename(space: Space, name: string, question?: string, now = Date
 }
 
 /** Gathering a highlight into a space. Adding one twice is not an error. */
-export function addMark(space: Space, markId: string, now = Date.now()): Space {
+export function addMark(
+  space: Space,
+  markId: string,
+  me: Person | null = null,
+  now = Date.now(),
+): Space {
   if (space.markIds.includes(markId)) return space;
-  return touched(space, { markIds: [...space.markIds, markId] }, now);
+  return touched(
+    space,
+    {
+      markIds: [...space.markIds, markId],
+      ...(me
+        ? { people: joinPeople(space.people, me), gathered: { ...space.gathered, [markId]: me.id } }
+        : {}),
+    },
+    now,
+  );
 }
 
 /**
@@ -105,7 +153,20 @@ export function addMark(space: Space, markId: string, now = Date.now()): Space {
  */
 export function removeMark(space: Space, markId: string, now = Date.now()): Space {
   if (!space.markIds.includes(markId)) return space;
-  return touched(space, { markIds: space.markIds.filter((id) => id !== markId) }, now);
+  const gathered = { ...space.gathered };
+  delete gathered[markId];
+  return touched(
+    space,
+    {
+      markIds: space.markIds.filter((id) => id !== markId),
+      gathered,
+      // The argument about a passage goes out with the passage. Keeping it
+      // would leave replies on screen with nothing above them to reply to.
+      ...(space.comments ? { comments: space.comments.filter((entry) => entry.markId !== markId) } : {}),
+      ...(space.settled ? { settled: space.settled.filter((id) => id !== markId) } : {}),
+    },
+    now,
+  );
 }
 
 export function addFinding(
@@ -113,6 +174,7 @@ export function addFinding(
   claim: string,
   stance: Stance,
   markIds: readonly string[],
+  me: Person | null = null,
   now = Date.now(),
 ): Space {
   const body = claim.trim();
@@ -122,9 +184,17 @@ export function addFinding(
     claim: body,
     stance,
     markIds: [...markIds],
+    ...(me ? { by: me.id } : {}),
     createdAt: now,
   };
-  return touched(space, { findings: [...space.findings, finding] }, now);
+  return touched(
+    space,
+    {
+      findings: [...space.findings, finding],
+      ...(me ? { people: joinPeople(space.people, me) } : {}),
+    },
+    now,
+  );
 }
 
 export function editFinding(space: Space, findingId: string, claim: string, now = Date.now()): Space {
@@ -164,15 +234,134 @@ export function closeQuestion(space: Space, index: number, now = Date.now()): Sp
   );
 }
 
-export function recordDecision(space: Space, body: string, now = Date.now()): Space {
+export function recordDecision(
+  space: Space,
+  body: string,
+  me: Person | null = null,
+  now = Date.now(),
+): Space {
   const text = body.trim();
   if (!text) return space;
-  return touched(space, { decision: { body: text, decidedAt: now } }, now);
+  return touched(
+    space,
+    {
+      decision: { body: text, ...(me ? { by: me.id } : {}), decidedAt: now },
+      ...(me ? { people: joinPeople(space.people, me) } : {}),
+    },
+    now,
+  );
 }
 
 export function reopen(space: Space, now = Date.now()): Space {
   if (!space.decision) return space;
   return touched(space, { decision: undefined }, now);
+}
+
+// ---- discussion ----
+
+/**
+ * Saying something about a highlight.
+ *
+ * This is the part of working together that a file can actually carry. Nobody
+ * is typing at the same moment as anybody else, but you can disagree with a
+ * passage where the passage is, send the space back, and have the reply arrive
+ * underneath — which is most of what a comment thread is for, and a great deal
+ * better than the argument happening in a chat window where the quote is a
+ * screenshot.
+ */
+export function addComment(
+  space: Space,
+  markId: string,
+  body: string,
+  me: Person | null = null,
+  now = Date.now(),
+): Space {
+  const text = body.trim();
+  // Only about a highlight this space actually holds, so a thread can never
+  // outlive what it is about.
+  if (!text || !space.markIds.includes(markId)) return space;
+  const comment: Comment = {
+    id: newId(),
+    markId,
+    body: text,
+    ...(me ? { by: me.id } : {}),
+    createdAt: now,
+  };
+  return touched(
+    space,
+    {
+      comments: [...(space.comments ?? []), comment],
+      ...(me ? { people: joinPeople(space.people, me) } : {}),
+    },
+    now,
+  );
+}
+
+export function editComment(space: Space, commentId: string, body: string, now = Date.now()): Space {
+  const text = body.trim();
+  if (!text || !space.comments) return space;
+  return touched(
+    space,
+    {
+      comments: space.comments.map((entry) =>
+        entry.id === commentId ? { ...entry, body: text } : entry,
+      ),
+    },
+    now,
+  );
+}
+
+export function removeComment(space: Space, commentId: string, now = Date.now()): Space {
+  if (!space.comments) return space;
+  return touched(
+    space,
+    { comments: space.comments.filter((entry) => entry.id !== commentId) },
+    now,
+  );
+}
+
+/**
+ * Calling a thread finished, or opening it again. The replies stay either way;
+ * settling collapses the argument rather than deleting it, because the reason
+ * a passage was contested is part of why the conclusion reads as it does.
+ */
+export function setSettled(space: Space, markId: string, settled: boolean, now = Date.now()): Space {
+  const current = space.settled ?? [];
+  if (settled === current.includes(markId)) return space;
+  return touched(
+    space,
+    { settled: settled ? [...current, markId] : current.filter((id) => id !== markId) },
+    now,
+  );
+}
+
+/** Everything said about one highlight, oldest first. */
+export function commentsOn(space: Space, markId: string): Comment[] {
+  return (space.comments ?? [])
+    .filter((entry) => entry.markId === markId)
+    .sort((a, b) => a.createdAt - b.createdAt);
+}
+
+export function isSettled(space: Space, markId: string): boolean {
+  return (space.settled ?? []).includes(markId);
+}
+
+export function peopleOf(space: Space): Person[] {
+  return space.people ?? [];
+}
+
+/** Who brought this highlight in, where that is known and the space can name them. */
+export function gathererOf(space: Space, markId: string): Person | null {
+  return personIn(space.people, space.gathered?.[markId]);
+}
+
+/**
+ * Whether this space has been worked on by more than one person — which is the
+ * only thing that decides whether the page says "I" or "we", and whether there
+ * is any point showing a name against anything.
+ */
+export function isShared(space: Space): boolean {
+  return (space.people ?? []).length > 1;
 }
 
 /**

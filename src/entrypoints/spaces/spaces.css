@@ -728,3 +728,136 @@ a:focus-visible {
   font-size: 14px;
   color: var(--sp-fg);
 }
+
+/* ---- people ---- */
+
+/* An avatar is decorative — the name is always next to it — so it is hidden
+   from the accessibility tree and only has to be legible. 28% lightness is
+   what keeps white initials above 5:1 at every hue. */
+.sp-av {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+}
+
+.sp-av-sm {
+  width: 17px;
+  height: 17px;
+  font-size: 8.5px;
+}
+
+.sp-you {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sp-you-edit input[type='text'] {
+  width: 160px;
+}
+
+/* Everybody in the space, overlapped the way a face pile is, so a long list
+   does not push the counts off the line. */
+.sp-faces {
+  display: inline-flex;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.sp-faces .sp-av + .sp-av {
+  margin-left: -5px;
+  box-shadow: 0 0 0 1.5px var(--sp-bg);
+}
+
+/* Whose work this is. Quiet: it is a credit, not the point of the line. */
+.sp-by {
+  margin: 2px 0 0;
+  color: var(--sp-faint);
+  font-size: 12px;
+}
+
+/* A credit can follow a long chat name, so the meta line is allowed to wrap
+   here rather than cutting the name off mid-word. */
+.sp-ev .sp-cand-meta {
+  white-space: normal;
+}
+
+.sp-ev .sp-cand-meta .sp-av {
+  margin: 0 1px;
+}
+
+/* ---- discussion ---- */
+
+.sp-thread {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--sp-rule);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.sp-thread > .sp-row {
+  width: 100%;
+}
+
+.sp-thread input[type='text'] {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-thread .sp-muted {
+  margin: 0;
+  font-size: 12.5px;
+}
+
+.sp-comments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sp-comments li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.sp-comments li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-comments strong {
+  font-size: 12.5px;
+}
+
+.sp-comments p {
+  margin: 1px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* A settled thread is quieter but still there: why a passage was argued over
+   is part of why the conclusion reads as it does. */
+.sp-ev-settled {
+  opacity: 0.78;
+}
+
+.sp-link-on {
+  color: var(--sp-accent);
+}

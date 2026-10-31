@@ -4,30 +4,42 @@ import { linkToMark } from '../../core/link';
 import { buildMemo, memoMarkdown } from '../../core/memo';
 import { UI_COLORS } from '../../core/painter';
 import { searchMarks } from '../../core/search';
+import { hueOf, initials, nameIn, type Person } from '../../core/people';
 import { adoptSpace, packSpace, readSharedSpace, shareFilename } from '../../core/spaceShare';
 import { siteLabel } from '../../core/sites';
 import {
   importMarks,
   loadAllMarks,
+  loadMe,
   loadSpaces,
   removeSpace,
+  saveMe,
   saveSpace,
   watchAllMarks,
+  watchMe,
   watchSpaces,
 } from '../../core/store';
 import {
+  addComment,
   addFinding,
   addMark,
   addQuestion,
   closeQuestion,
+  commentsOn,
   createSpace,
   editFinding,
+  gathererOf,
+  isSettled,
+  isShared,
   marksIn,
+  peopleOf,
   recordDecision,
+  removeComment,
   removeFinding,
   removeMark,
   rename,
   reopen,
+  setSettled,
   sourcesFor,
   statusOf,
   unusedIn,
@@ -65,6 +77,7 @@ const onEscape = (cancel: () => void) => (event: KeyboardEvent) => {
 export function Spaces() {
   const [spaces, setSpaces] = useState<Space[] | null>(null);
   const [marks, setMarks] = useState<Mark[]>([]);
+  const [me, setMe] = useState<Person | null>(null);
   const [openId, setOpenId] = useState<string | null>(spaceFromUrl);
   // What happened when a space arrived. It is set as the view switches to the
   // new space, so it has to live above both views to survive the switch.
@@ -80,6 +93,11 @@ export function Spaces() {
     const reload = () => void loadAllMarks().then(setMarks);
     reload();
     return watchAllMarks(reload);
+  }, []);
+
+  useEffect(() => {
+    void loadMe().then(setMe);
+    return watchMe(setMe);
   }, []);
 
   useEffect(() => {
@@ -115,6 +133,7 @@ export function Spaces() {
       <header class="sp-top">
         <h1>{space ? space.name : 'Spaces'}</h1>
         <span class="sp-row">
+          <You me={me} />
           <a class="sp-tool" href={browser.runtime.getURL('/library.html')}>
             Library
           </a>
@@ -156,6 +175,7 @@ export function Spaces() {
         <SpaceView
           space={space}
           marks={marks}
+          me={me}
           onBack={() => open(null)}
           onDeleted={(gone) => {
             setDeleted(gone);
@@ -163,20 +183,98 @@ export function Spaces() {
           }}
         />
       ) : (
-        <SpaceList spaces={spaces} marks={marks} onOpen={open} onNote={setNote} />
+        <SpaceList spaces={spaces} marks={marks} me={me} onOpen={open} onNote={setNote} />
       )}
     </main>
+  );
+}
+
+/**
+ * Your name, which is the whole of signing in here.
+ *
+ * It is optional and it stays on this computer until you hand a space over, at
+ * which point it travels inside the file so the other side can put your name
+ * against your work. Nothing verifies it; it is good enough for three people
+ * passing a question around, which is what this is for.
+ */
+function You({ me }: { me: Person | null }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(me?.name ?? '');
+
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        class="sp-tool sp-you"
+        title={me ? 'Change the name on your work' : 'Put your name to your work'}
+        onClick={() => {
+          setDraft(me?.name ?? '');
+          setEditing(true);
+        }}
+      >
+        {me ? (
+          <>
+            <Avatar person={me} /> {me.name}
+          </>
+        ) : (
+          'Add your name'
+        )}
+      </button>
+    );
+  }
+
+  return (
+    <form
+      class="sp-row sp-you-edit"
+      onKeyDown={onEscape(() => setEditing(false))}
+      onSubmit={(event) => {
+        event.preventDefault();
+        void saveMe(draft);
+        setEditing(false);
+      }}
+    >
+      <input
+        type="text"
+        aria-label="Your name"
+        placeholder="Your name"
+        value={draft}
+        autofocus
+        onInput={(event) => setDraft((event.currentTarget as HTMLInputElement).value)}
+      />
+      <button type="submit" class="sp-tool">
+        Save
+      </button>
+      <button type="button" class="sp-tool" onClick={() => setEditing(false)}>
+        Cancel
+      </button>
+    </form>
+  );
+}
+
+function Avatar({ person, small }: { person: Person; small?: boolean }) {
+  return (
+    <span
+      class={small ? 'sp-av sp-av-sm' : 'sp-av'}
+      // 28% lightness keeps white initials above 5:1 at every hue, including
+      // the yellows that catch a filled chip out.
+      style={{ background: `hsl(${hueOf(person.id)} 55% 28%)` }}
+      aria-hidden="true"
+    >
+      {initials(person.name)}
+    </span>
   );
 }
 
 function SpaceList({
   spaces,
   marks,
+  me,
   onOpen,
   onNote,
 }: {
   spaces: Space[];
   marks: Mark[];
+  me: Person | null;
   onOpen: (id: string) => void;
   onNote: (note: string) => void;
 }) {
@@ -202,13 +300,20 @@ function SpaceList({
       }
       await saveSpace(taken.space);
 
+      const sender = taken.from ? ` from ${taken.from.name}` : '';
       const parts = [
         taken.merged
-          ? `“${taken.space.name}” came back with their work in it`
-          : `“${taken.space.name}” is yours`,
+          ? `“${taken.space.name}” came back${sender} with their work in it`
+          : `“${taken.space.name}”${sender} is yours`,
       ];
       if (taken.added.length > 0) parts.push(`${taken.added.length} new highlights`);
       if (taken.reused > 0) parts.push(`${taken.reused} you already had`);
+      const { conclusions, replies, questions } = taken.gained;
+      if (conclusions > 0)
+        parts.push(`${conclusions} ${conclusions === 1 ? 'conclusion' : 'conclusions'}`);
+      if (replies > 0) parts.push(`${replies} ${replies === 1 ? 'reply' : 'replies'}`);
+      if (questions > 0)
+        parts.push(`${questions} open ${questions === 1 ? 'question' : 'questions'}`);
       if (taken.updated.length > 0) parts.push(`${taken.updated.length} picked up a note`);
       if (taken.dropped > 0) parts.push(`${taken.dropped} unreadable and skipped`);
       onNote(`${parts.join(' · ')}.`);
@@ -326,11 +431,13 @@ function SpaceList({
 function SpaceView({
   space,
   marks,
+  me,
   onBack,
   onDeleted,
 }: {
   space: Space;
   marks: Mark[];
+  me: Person | null;
   onBack: () => void;
   onDeleted: (space: Space) => void;
 }) {
@@ -356,6 +463,10 @@ function SpaceView({
   const unused = useMemo(() => unusedIn(space, marks), [space, marks]);
   const memo = useMemo(() => buildMemo(space, marks), [space, marks]);
   const status = statusOf(space);
+  // Once more than one person has worked here the page stops saying "I".
+  const shared = isShared(space);
+  const people = peopleOf(space);
+  const us = shared ? 'we' : 'I';
 
   const write = (next: Space): void => void saveSpace(next);
 
@@ -389,7 +500,7 @@ function SpaceView({
    * the links. Whoever opens it carries on from here — see `core/share`.
    */
   const shareSpace = (): void => {
-    download(packSpace(space, marks), 'application/json', shareFilename(space));
+    download(packSpace(space, marks, me), 'application/json', shareFilename(space));
   };
 
   return (
@@ -461,9 +572,21 @@ function SpaceView({
       )}
       <div class="sp-row sp-between sp-headfoot">
         <p class="sp-counts">
+          {shared && (
+            <>
+              <span class="sp-faces">
+                {people.map((person) => (
+                  <Avatar key={person.id} person={person} small />
+                ))}
+              </span>
+              {people.length} people ·{' '}
+            </>
+          )}
           {held.length} {held.length === 1 ? 'highlight' : 'highlights'}
           {space.findings.length > 0 &&
             ` · ${space.findings.length} ${space.findings.length === 1 ? 'conclusion' : 'conclusions'}`}
+          {(space.comments ?? []).length > 0 &&
+            ` · ${space.comments?.length} ${space.comments?.length === 1 ? 'reply' : 'replies'}`}
           {space.openQuestions.length > 0 && ` · ${space.openQuestions.length} still open`}
         </p>
         {held.length > 0 && (
@@ -478,6 +601,9 @@ function SpaceView({
         <section class="sp-decision">
           <h2>Decision</h2>
           <p>{space.decision.body}</p>
+          {shared && nameIn(space.people, space.decision.by) && (
+            <p class="sp-by">— {nameIn(space.people, space.decision.by)}</p>
+          )}
           <button type="button" class="sp-tool" onClick={() => write(reopen(space))}>
             Reopen
           </button>
@@ -502,10 +628,15 @@ function SpaceView({
             came from — so whoever reads this can check it without having Kona.
           </p>
           <h3 class="sp-memo-title">{memo.title}</h3>
-          {memo.decision && <p class="sp-memo-decision">{memo.decision}</p>}
+          {memo.decision && (
+            <p class="sp-memo-decision">
+              {memo.decision}
+              {memo.decidedBy && <span class="sp-by"> — {memo.decidedBy}</span>}
+            </p>
+          )}
           {memo.lines.length > 0 && (
             <>
-              <h3>What I concluded</h3>
+              <h3>What {us} concluded</h3>
               <ul class="sp-memo-lines">
                 {memo.lines.map((line, i) => (
                   <li key={i}>
@@ -519,6 +650,7 @@ function SpaceView({
                     {line.withdrawn > 0 && (
                       <em class="sp-muted"> ({line.withdrawn} no longer here)</em>
                     )}
+                    {line.by && <span class="sp-by"> — {line.by}</span>}
                   </li>
                 ))}
               </ul>
@@ -526,9 +658,9 @@ function SpaceView({
           )}
           {memo.highlights.length > 0 && (
             <>
-              <h3>What I kept</h3>
+              <h3>What {us} kept</h3>
               <div class="sp-memo-kept">
-                {memo.highlights.map(({ n, mark }) => (
+                {memo.highlights.map(({ n, mark, by }) => (
                   <blockquote key={mark.id}>
                     <p>{mark.snapshot}</p>
                     {mark.note && <p class="sp-memo-note">{mark.note}</p>}
@@ -537,6 +669,7 @@ function SpaceView({
                       <sup>
                         <a href={`#cite-${n}`}>[{n}]</a>
                       </sup>
+                      {by && `, found by ${by}`}
                     </cite>
                   </blockquote>
                 ))}
@@ -581,7 +714,7 @@ function SpaceView({
           </button>
         </div>
 
-        {picking && <Picker space={space} marks={marks} />}
+        {picking && <Picker space={space} marks={marks} me={me} />}
 
         {held.length === 0 ? (
           <p class="sp-muted">
@@ -595,6 +728,8 @@ function SpaceView({
               <Evidence
                 key={mark.id}
                 mark={mark}
+                space={space}
+                me={me}
                 onRemove={() => write(removeMark(space, mark.id))}
               />
             ))}
@@ -608,7 +743,7 @@ function SpaceView({
       {space.question && (
         <>
       <section class="sp-section">
-        <h2>What I concluded</h2>
+        <h2>What {us} concluded</h2>
 
         {space.findings.length === 0 ? (
           <p class="sp-muted">
@@ -658,7 +793,12 @@ function SpaceView({
                       </button>
                     </form>
                   ) : (
-                    <p class="sp-claim">{finding.claim}</p>
+                    <>
+                      <p class="sp-claim">{finding.claim}</p>
+                      {shared && nameIn(space.people, finding.by) && (
+                        <p class="sp-by">— {nameIn(space.people, finding.by)}</p>
+                      )}
+                    </>
                   )}
                   <div class="sp-row">
                     <button
@@ -726,7 +866,7 @@ function SpaceView({
             onSubmit={(event) => {
               event.preventDefault();
               if (!claim.trim() || chosen.length === 0) return;
-              write(addFinding(space, claim, stance, chosen));
+              write(addFinding(space, claim, stance, chosen, me));
               setClaim('');
               setChosen([]);
               setStance('supports');
@@ -857,7 +997,7 @@ function SpaceView({
                 onSubmit={(event) => {
                   event.preventDefault();
                   if (!decision.trim()) return;
-                  write(recordDecision(space, decision));
+                  write(recordDecision(space, decision, me));
                   setDecision('');
                   setDeciding(false);
                 }}
@@ -907,7 +1047,7 @@ function SpaceView({
 }
 
 /** Choosing from everything in the library, which is where highlights actually live. */
-function Picker({ space, marks }: { space: Space; marks: Mark[] }) {
+function Picker({ space, marks, me }: { space: Space; marks: Mark[]; me: Person | null }) {
   const [query, setQuery] = useState('');
   const inSpace = new Set(space.markIds);
   const candidates = useMemo(() => {
@@ -936,7 +1076,7 @@ function Picker({ space, marks }: { space: Space; marks: Mark[] }) {
         <ul class="sp-candidates">
           {candidates.map((mark) => (
             <li key={mark.id}>
-              <button type="button" onClick={() => void saveSpace(addMark(space, mark.id))}>
+              <button type="button" onClick={() => void saveSpace(addMark(space, mark.id, me))}>
                 <span class="sp-dot" style={{ background: UI_COLORS[mark.color] }} />
                 <span>
                   <span class="sp-cand-meta">
@@ -953,14 +1093,53 @@ function Picker({ space, marks }: { space: Space; marks: Mark[] }) {
   );
 }
 
-function Evidence({ mark, onRemove }: { mark: Mark; onRemove?: () => void }) {
+/**
+ * A gathered highlight, and — when it is shown inside its own space rather
+ * than under a conclusion — the argument about it.
+ *
+ * The thread stays shut until it is asked for. A page where every passage is
+ * also an open conversation is a page nobody reads to the bottom.
+ */
+function Evidence({
+  mark,
+  space,
+  me,
+  onRemove,
+}: {
+  mark: Mark;
+  space?: Space;
+  me?: Person | null;
+  onRemove?: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState('');
   const link = linkToMark(mark);
+
+  const comments = space ? commentsOn(space, mark.id) : [];
+  const settled = space ? isSettled(space, mark.id) : false;
+  // Only worth saying once more than one person is in here. In a space only
+  // you have touched, a credit on every passage is noise.
+  const found = space && isShared(space) ? gathererOf(space, mark.id) : null;
+  const write = (next: Space): void => void saveSpace(next);
+
+  const label = settled
+    ? 'Settled'
+    : comments.length === 0
+      ? 'Reply'
+      : `${comments.length} ${comments.length === 1 ? 'reply' : 'replies'}`;
+
   return (
-    <li class="sp-ev">
+    <li class={settled ? 'sp-ev sp-ev-settled' : 'sp-ev'}>
       <span class="sp-dot" style={{ background: UI_COLORS[mark.color] }} />
       <div>
         <span class="sp-cand-meta">
           {siteLabel(mark)} · {mark.conversationTitle}
+          {found && (
+            <>
+              {' · found by '}
+              <Avatar person={found} small /> {found.name}
+            </>
+          )}
         </span>
         <p class="sp-ev-text">{mark.snapshot}</p>
         {mark.note && <p class="sp-ev-note">{mark.note}</p>}
@@ -970,12 +1149,95 @@ function Evidence({ mark, onRemove }: { mark: Mark; onRemove?: () => void }) {
               Open the exact sentence
             </a>
           )}
+          {space && (
+            <button
+              type="button"
+              class={open ? 'sp-link sp-link-on' : 'sp-link'}
+              aria-expanded={open}
+              onClick={() => setOpen(!open)}
+            >
+              {label}
+            </button>
+          )}
           {onRemove && (
             <button type="button" class="sp-link" onClick={onRemove}>
               Take out of this space
             </button>
           )}
         </div>
+
+        {space && open && (
+          <div class="sp-thread">
+            {comments.length === 0 && (
+              <p class="sp-muted">
+                Nothing said about this one yet. Write it here and it travels with the space,
+                so whoever you send it to reads the argument beside the passage rather than
+                hunting for it in a chat window.
+              </p>
+            )}
+
+            {comments.length > 0 && (
+              <ul class="sp-comments">
+                {comments.map((comment) => {
+                  const who = comment.by
+                    ? (space.people ?? []).find((person) => person.id === comment.by)
+                    : undefined;
+                  return (
+                    <li key={comment.id}>
+                      {who && <Avatar person={who} small />}
+                      <div>
+                        <strong>{who ? who.name : 'Someone'}</strong>
+                        <p>{comment.body}</p>
+                      </div>
+                      {(!comment.by || comment.by === me?.id) && !settled && (
+                        <button
+                          type="button"
+                          class="sp-link"
+                          onClick={() => write(removeComment(space, comment.id))}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+
+            {!settled && (
+              <form
+                class="sp-row"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (!draft.trim()) return;
+                  write(addComment(space, mark.id, draft, me ?? null));
+                  setDraft('');
+                }}
+              >
+                <input
+                  type="text"
+                  aria-label="Say something about this highlight"
+                  placeholder="What do you make of it?"
+                  value={draft}
+                  onInput={(event) => setDraft((event.currentTarget as HTMLInputElement).value)}
+                />
+                <button type="submit" class="sp-tool" disabled={!draft.trim()}>
+                  Post
+                </button>
+              </form>
+            )}
+
+            {comments.length > 0 && (
+              <button
+                type="button"
+                class="sp-link"
+                onClick={() => write(setSettled(space, mark.id, !settled))}
+              >
+                {settled ? 'Reopen this thread' : 'Settle this thread'}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </li>
   );

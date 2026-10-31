@@ -114,11 +114,15 @@ distribution engine and the reason anyone trusts us with the paid one.
 | Spaces: question, evidence, decision | yes | yes | yes | yes |
 | Write-ups with every claim cited | yes | yes | yes | yes |
 | Hand a space over as a file | yes | yes | yes | yes |
+| Discussion on a highlight, merged on the way back | yes | yes | yes | yes |
+| Who found what and who concluded what | yes | yes | yes | yes |
 | Sync across your own devices | | yes | yes | yes |
 | Hybrid search over your own highlights | | yes | yes | yes |
 | Hybrid search across the whole workspace | | | yes | yes |
 | One space several people work in at once | | | yes | yes |
-| Comments and permissions | | | yes | yes |
+| Replies as they are written, not when the file arrives | | | yes | yes |
+| Names with an account behind them | | | yes | yes |
+| Permissions | | | yes | yes |
 | Slack / Notion / Obsidian sync | | | yes | yes |
 | Admin console, seat management | | | yes | yes |
 | SSO (SAML / OIDC), SCIM provisioning | | | | yes |

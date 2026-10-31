@@ -1,14 +1,23 @@
 import { describe, expect, it } from 'vitest';
+import { makePerson } from '../src/core/people';
 import {
+  addComment,
   addFinding,
   addMark,
   addQuestion,
   closeQuestion,
+  commentsOn,
   createSpace,
+  editComment,
+  gathererOf,
+  isSettled,
+  isShared,
   marksIn,
   recordDecision,
+  removeComment,
   removeMark,
   reopen,
+  setSettled,
   sourcesFor,
   statusOf,
   unusedIn,
@@ -208,5 +217,144 @@ describe('the write-up', () => {
     expect(memo.highlights.map((h) => h.mark.id)).toEqual(['k1']);
     // The claim survives, marked short a source; the passage itself is gone.
     expect(memoMarkdown(memo)).not.toContain('> But it is destructive');
+  });
+});
+
+describe('putting a name to the work', () => {
+  const priya = makePerson('Priya', 'p1');
+  const sam = makePerson('Sam', 's1');
+
+  it('credits whoever brought a highlight in', () => {
+    const space = addMark(createSpace('Upgrade', 'When?'), 'k1', priya);
+    expect(gathererOf(space, 'k1')?.name).toBe('Priya');
+    expect(space.people).toEqual([priya]);
+  });
+
+  it('records nothing when nobody has said who they are', () => {
+    const space = addMark(createSpace('Upgrade', 'When?'), 'k1');
+    expect(gathererOf(space, 'k1')).toBeNull();
+    expect(space.people).toBeUndefined();
+  });
+
+  it('is not a shared space until a second person turns up', () => {
+    let space = addMark(createSpace('Upgrade', 'When?'), 'k1', priya);
+    expect(isShared(space)).toBe(false);
+    space = addMark(space, 'k2', sam);
+    expect(isShared(space)).toBe(true);
+  });
+
+  it('credits a conclusion and a decision', () => {
+    let space = addMark(createSpace('Upgrade', 'When?'), 'k1', priya);
+    space = addFinding(space, 'Link mode is faster', 'supports', ['k1'], sam);
+    space = recordDecision(space, 'Go in January.', priya);
+    expect(space.findings[0]?.by).toBe('s1');
+    expect(space.decision?.by).toBe('p1');
+    expect(space.people).toHaveLength(2);
+  });
+
+  it('forgets who found a highlight that has been taken back out', () => {
+    let space = addMark(createSpace('Upgrade', 'When?'), 'k1', priya);
+    space = removeMark(space, 'k1');
+    expect(space.gathered?.k1).toBeUndefined();
+  });
+});
+
+describe('arguing about one highlight', () => {
+  const priya = makePerson('Priya', 'p1');
+
+  const gathered = () => addMark(createSpace('Upgrade', 'When?'), 'k1', priya);
+
+  it('keeps what was said, against the highlight it was said about', () => {
+    const space = addComment(gathered(), 'k1', 'This was 13, not 16.', priya);
+    const said = commentsOn(space, 'k1');
+    expect(said).toHaveLength(1);
+    expect(said[0]?.body).toBe('This was 13, not 16.');
+    expect(said[0]?.by).toBe('p1');
+  });
+
+  it('will not take a reply about a highlight this space does not hold', () => {
+    const space = addComment(gathered(), 'k9', 'Nothing to reply to.', priya);
+    expect(space.comments ?? []).toHaveLength(0);
+  });
+
+  it('will not take an empty reply', () => {
+    expect(addComment(gathered(), 'k1', '   ', priya).comments ?? []).toHaveLength(0);
+  });
+
+  it('shows a thread oldest first, however it was written', () => {
+    let space = addComment(gathered(), 'k1', 'Second', priya, 200);
+    space = addComment(space, 'k1', 'First', priya, 100);
+    expect(commentsOn(space, 'k1').map((entry) => entry.body)).toEqual(['First', 'Second']);
+  });
+
+  it('keeps one highlight’s argument out of another’s', () => {
+    let space = addMark(gathered(), 'k2', priya);
+    space = addComment(space, 'k1', 'About the first', priya);
+    expect(commentsOn(space, 'k2')).toHaveLength(0);
+  });
+
+  it('lets what was said be reworded or withdrawn', () => {
+    let space = addComment(gathered(), 'k1', 'Thsi was 13.', priya);
+    const id = space.comments?.[0]?.id ?? '';
+    space = editComment(space, id, 'This was 13.');
+    expect(commentsOn(space, 'k1')[0]?.body).toBe('This was 13.');
+    space = removeComment(space, id);
+    expect(commentsOn(space, 'k1')).toHaveLength(0);
+  });
+
+  it('settles a thread without deleting it, and opens it again', () => {
+    let space = addComment(gathered(), 'k1', 'Agreed then.', priya);
+    space = setSettled(space, 'k1', true);
+    expect(isSettled(space, 'k1')).toBe(true);
+    expect(commentsOn(space, 'k1')).toHaveLength(1);
+    space = setSettled(space, 'k1', false);
+    expect(isSettled(space, 'k1')).toBe(false);
+  });
+
+  it('takes the argument out with the passage it was about', () => {
+    let space = addComment(gathered(), 'k1', 'Not so.', priya);
+    space = setSettled(space, 'k1', true);
+    space = removeMark(space, 'k1');
+    expect(space.comments).toHaveLength(0);
+    expect(space.settled).toHaveLength(0);
+  });
+});
+
+describe('a write-up more than one person worked on', () => {
+  const priya = makePerson('Priya', 'p1');
+  const sam = makePerson('Sam', 's1');
+  const marks = [mark('k1', 'Link mode is faster'), mark('k2', 'But it is destructive')];
+
+  const both = () => {
+    let space = addMark(createSpace('Upgrade', 'Can we upgrade without downtime?'), 'k1', priya);
+    space = addMark(space, 'k2', sam);
+    space = addFinding(space, 'Link mode is faster', 'supports', ['k1'], sam);
+    space = recordDecision(space, 'Go in January.', priya);
+    return space;
+  };
+
+  it('says we, and says who', () => {
+    const memo = buildMemo(both(), marks);
+    expect(memo.shared).toBe(true);
+    expect(memo.decidedBy).toBe('Priya');
+    expect(memo.lines[0]?.by).toBe('Sam');
+    expect(memo.highlights.find((entry) => entry.mark.id === 'k2')?.by).toBe('Sam');
+
+    const out = memoMarkdown(memo);
+    expect(out).toContain('## What we decided');
+    expect(out).toContain('## What we concluded');
+    expect(out).toContain('## What we kept');
+    expect(out).toContain('— Sam');
+    expect(out).toContain('found by Priya');
+  });
+
+  it('says I, and names nobody, when it is only mine', () => {
+    let space = addMark(createSpace('Upgrade', 'When?'), 'k1', priya);
+    space = addFinding(space, 'Link mode is faster', 'supports', ['k1'], priya);
+    const memo = buildMemo(space, marks);
+    expect(memo.shared).toBe(false);
+    expect(memo.lines[0]?.by).toBeUndefined();
+    expect(memoMarkdown(memo)).toContain('## What I concluded');
+    expect(memoMarkdown(memo)).not.toContain('— Priya');
   });
 });

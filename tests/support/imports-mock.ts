@@ -17,6 +17,13 @@ export const storage = {
     watchers.get(key)?.forEach((listener) => listener(value));
     changeListeners.forEach((listener) => listener({ [plainKey(key)]: { newValue: value } }, 'local'));
   },
+  async removeItem(key: string): Promise<void> {
+    localStorage.removeItem(plainKey(key));
+    watchers.get(key)?.forEach((listener) => listener(null));
+    changeListeners.forEach((listener) =>
+      listener({ [plainKey(key)]: { newValue: undefined } }, 'local'),
+    );
+  },
   watch<T>(key: string, callback: (value: T | null) => void): () => void {
     const listener = callback as Listener;
     if (!watchers.has(key)) watchers.set(key, new Set());

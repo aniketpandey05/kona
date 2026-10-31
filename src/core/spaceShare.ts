@@ -1,7 +1,8 @@
+import { mergePeople, personIn, type Person } from './people';
 import type { TextQuote } from './quote';
 import { cleanPassage } from './text';
 import { originOf } from './spaces';
-import type { Finding, Space, Stance } from './spaces';
+import type { Comment, Finding, Space, Stance } from './spaces';
 import type { HighlightColor, Mark, SiteId } from './types';
 
 /**
@@ -34,6 +35,12 @@ export interface SharedSpace {
   kind: 'space';
   version: number;
   exportedAt: number;
+  /**
+   * Whoever pressed Share, as a person id in `space.people`. It is how the
+   * other side can say who sent this back. Asserted and not verified — see
+   * `core/people`.
+   */
+  by?: string;
   space: Space;
   marks: Mark[];
 }
@@ -42,13 +49,27 @@ export interface SharedSpace {
 export interface IncomingSpace extends SharedSpace {
   /** Entries in the file that nothing could be made of. */
   dropped: number;
+  /** Who sent it, where the file names them. */
+  from?: Person;
 }
 
 /** What came in, and what it cost to take it. */
+/** What a space coming back brought with it that was not already here. */
+export interface Gained {
+  conclusions: number;
+  replies: number;
+  questions: number;
+  people: number;
+}
+
 export interface Adopted {
   space: Space;
   /** True when this went into a space already here, rather than beside it. */
   merged: boolean;
+  /** Who sent it, where the file names them. */
+  from?: Person;
+  /** On a merge, the work of theirs that was new to you. */
+  gained: Gained;
   /** Highlights the library did not have. These need saving. */
   added: Mark[];
   /** Local highlights that gained the sender's note. These need saving too. */
@@ -65,7 +86,7 @@ const newId = (): string => `${Date.now().toString(36)}${Math.random().toString(
  * Only the highlights this space holds — never the whole library. Sharing one
  * question's evidence should not hand over everything else you have read.
  */
-export function packSpace(space: Space, marks: readonly Mark[]): string {
+export function packSpace(space: Space, marks: readonly Mark[], me: Person | null = null): string {
   const held = space.markIds
     .map((id) => marks.find((mark) => mark.id === id))
     .filter((mark): mark is Mark => !!mark);
@@ -75,7 +96,10 @@ export function packSpace(space: Space, marks: readonly Mark[]): string {
     kind: 'space',
     version: SHARE_VERSION,
     exportedAt: Date.now(),
-    space,
+    ...(me ? { by: me.id } : {}),
+    // Your own name goes with it even if you have not written anything here
+    // yet, because the other side has to be able to say who sent it.
+    space: me ? { ...space, people: mergePeople(space.people, [me]) } : space,
     marks: held,
   };
   return JSON.stringify(payload, null, 2);
@@ -113,14 +137,19 @@ export function readSharedSpace(text: string): IncomingSpace {
   const space = cleanSpace(raw.space, new Set(marks.map((mark) => mark.id)));
   if (!space) throw new Error("That file doesn't contain a space.");
 
+  const by = str(raw.by);
+  const from = personIn(space.people, by);
+
   return {
     app: 'kona',
     kind: 'space',
     version: typeof raw.version === 'number' ? raw.version : SHARE_VERSION,
     exportedAt: typeof raw.exportedAt === 'number' ? raw.exportedAt : Date.now(),
+    ...(by ? { by } : {}),
     space,
     marks,
     dropped: offered.length - marks.length,
+    ...(from ? { from } : {}),
   };
 }
 
@@ -182,31 +211,69 @@ export function adoptSpace(
     markIds: mapped(finding.markIds),
   }));
 
+  // Every id a thread or a credit points at has to be moved onto the local
+  // copy of the same passage too, or the discussion arrives detached from what
+  // it is about.
+  const incomingComments: Comment[] = (shared.space.comments ?? [])
+    .map((comment) => ({ ...comment, markId: idFor.get(comment.markId) ?? '' }))
+    .filter((comment) => incomingMarkIds.includes(comment.markId));
+  const incomingSettled = mapped(shared.space.settled ?? []);
+  const incomingGathered: Record<string, string> = {};
+  for (const [theirId, who] of Object.entries(shared.space.gathered ?? {})) {
+    const local = idFor.get(theirId);
+    if (local) incomingGathered[local] = who;
+  }
+
+  const theirs: Theirs = {
+    markIds: incomingMarkIds,
+    findings: incomingFindings,
+    comments: incomingComments,
+    settled: incomingSettled,
+    gathered: incomingGathered,
+  };
+
   // The copy of this space you already have, if this is one coming back to you.
   const origin = originOf(shared.space);
   const mine = spaces.find((candidate) => originOf(candidate) === origin);
 
-  const space: Space = mine
-    ? mergeInto(mine, { markIds: incomingMarkIds, findings: incomingFindings }, shared.space, now)
+  const taken = mine
+    ? mergeInto(mine, theirs, shared.space, now)
     : {
-        ...shared.space,
-        // A local id of its own, but the origin is kept: that is what makes the
-        // next trip back a merge rather than a third copy.
-        id: newId(),
-        origin,
-        markIds: incomingMarkIds,
-        findings: incomingFindings,
-        updatedAt: now,
+        space: {
+          ...shared.space,
+          // A local id of its own, but the origin is kept: that is what makes
+          // the next trip back a merge rather than a third copy.
+          id: newId(),
+          origin,
+          markIds: incomingMarkIds,
+          findings: incomingFindings,
+          comments: incomingComments,
+          settled: incomingSettled,
+          gathered: incomingGathered,
+          updatedAt: now,
+        },
+        gained: { conclusions: 0, replies: 0, questions: 0, people: 0 },
       };
 
   return {
-    space,
+    space: taken.space,
     merged: !!mine,
+    ...(shared.from ? { from: shared.from } : {}),
+    gained: taken.gained,
     added,
     updated,
     reused,
     dropped: shared.dropped,
   };
+}
+
+/** The incoming space with every highlight id already moved onto the local copies. */
+interface Theirs {
+  markIds: string[];
+  findings: Finding[];
+  comments: Comment[];
+  settled: string[];
+  gathered: Record<string, string>;
 }
 
 /**
@@ -220,26 +287,53 @@ export function adoptSpace(
  */
 function mergeInto(
   mine: Space,
-  theirs: { markIds: string[]; findings: Finding[] },
+  theirs: Theirs,
   incoming: Space,
   now: number,
-): Space {
+): { space: Space; gained: Gained } {
   const markIds = [...mine.markIds];
   for (const id of theirs.markIds) if (!markIds.includes(id)) markIds.push(id);
 
   const findings = [...mine.findings];
   const haveFinding = new Set(findings.map((finding) => finding.id));
+  let conclusions = 0;
   for (const finding of theirs.findings) {
     if (!haveFinding.has(finding.id)) {
       findings.push(finding);
       haveFinding.add(finding.id);
+      conclusions += 1;
     }
   }
 
-  const openQuestions = [...mine.openQuestions];
-  for (const question of incoming.openQuestions) {
-    if (!openQuestions.includes(question)) openQuestions.push(question);
+  const comments = [...(mine.comments ?? [])];
+  const haveComment = new Set(comments.map((comment) => comment.id));
+  let replies = 0;
+  for (const comment of theirs.comments) {
+    if (!haveComment.has(comment.id) && markIds.includes(comment.markId)) {
+      comments.push(comment);
+      haveComment.add(comment.id);
+      replies += 1;
+    }
   }
+
+  // A thread either of you has called finished is finished. Settling is not a
+  // deletion, so taking the more settled of the two states loses nothing.
+  const settled = [...(mine.settled ?? [])];
+  for (const id of theirs.settled) if (!settled.includes(id)) settled.push(id);
+
+  // Who found a passage is a fact about the past, so the first answer stands.
+  const gathered = { ...theirs.gathered, ...mine.gathered };
+
+  const openQuestions = [...mine.openQuestions];
+  let questions = 0;
+  for (const question of incoming.openQuestions) {
+    if (!openQuestions.includes(question)) {
+      openQuestions.push(question);
+      questions += 1;
+    }
+  }
+
+  const people = mergePeople(mine.people, incoming.people);
 
   // Whoever decided last wins, because a decision is a point in time. A
   // decision never un-decides a space it arrives in.
@@ -249,14 +343,26 @@ function mergeInto(
       : mine.decision;
 
   return {
-    ...mine,
-    // A question or a name they set is only taken where you have none.
-    question: mine.question ?? incoming.question,
-    markIds,
-    findings,
-    openQuestions,
-    ...(decision ? { decision } : {}),
-    updatedAt: now,
+    space: {
+      ...mine,
+      // A question or a name they set is only taken where you have none.
+      question: mine.question ?? incoming.question,
+      markIds,
+      findings,
+      openQuestions,
+      people,
+      gathered,
+      comments,
+      settled,
+      ...(decision ? { decision } : {}),
+      updatedAt: now,
+    },
+    gained: {
+      conclusions,
+      replies,
+      questions,
+      people: people.length - (mine.people ?? []).length,
+    },
   };
 }
 
@@ -356,6 +462,7 @@ function cleanSpace(value: unknown, haveMarks: ReadonlySet<string>): Space | nul
             claim,
             stance: STANCES.includes(finding.stance as Stance) ? (finding.stance as Stance) : 'open',
             markIds: strings(finding.markIds).filter((id) => keep.has(id)),
+            ...(str(finding.by) ? { by: finding.by } : {}),
             createdAt: num(finding.createdAt, Date.now()),
           };
         })
@@ -375,8 +482,74 @@ function cleanSpace(value: unknown, haveMarks: ReadonlySet<string>): Space | nul
     markIds: held,
     findings,
     openQuestions: strings(raw.openQuestions).filter((entry) => entry.trim()),
-    ...(body ? { decision: { body, decidedAt: num(decision?.decidedAt, createdAt) } } : {}),
+    people: cleanPeople(raw.people),
+    gathered: cleanGathered(raw.gathered, keep),
+    comments: cleanComments(raw.comments, keep),
+    settled: strings(raw.settled).filter((entry) => keep.has(entry)),
+    ...(body
+      ? {
+          decision: {
+            body,
+            ...(str(decision?.by) ? { by: decision?.by } : {}),
+            decidedAt: num(decision?.decidedAt, createdAt),
+          },
+        }
+      : {}),
     createdAt,
     updatedAt: num(raw.updatedAt, createdAt),
   };
+}
+
+/** A person is a name and an id, and nothing else is taken from the file. */
+function cleanPeople(value: unknown): Person[] {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set<string>();
+  const out: Person[] = [];
+  for (const entry of value) {
+    const raw = entry as Partial<Person> | null;
+    const id = str(raw?.id);
+    const name = str(raw?.name);
+    if (!id || !name || seen.has(id)) continue;
+    seen.add(id);
+    out.push({ id, name: name.trim().slice(0, 60) });
+  }
+  return out;
+}
+
+/**
+ * Who found what, as a fresh object built from entries the file actually has.
+ * A credit for a highlight that did not come in the same file is dropped, the
+ * same rule the claims follow.
+ */
+function cleanGathered(value: unknown, keep: ReadonlySet<string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return out;
+  for (const [markId, who] of Object.entries(value as Record<string, unknown>)) {
+    if (keep.has(markId) && typeof who === 'string' && who.trim()) out[markId] = who;
+  }
+  return out;
+}
+
+/** A reply needs something said and a highlight in this file to be said about. */
+function cleanComments(value: unknown, keep: ReadonlySet<string>): Comment[] {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set<string>();
+  const out: Comment[] = [];
+  for (const entry of value) {
+    const raw = entry as Partial<Comment> | null;
+    const markId = str(raw?.markId);
+    const bodyText = str(raw?.body);
+    if (!markId || !bodyText || !keep.has(markId)) continue;
+    const commentId = str(raw?.id) ?? newId();
+    if (seen.has(commentId)) continue;
+    seen.add(commentId);
+    out.push({
+      id: commentId,
+      markId,
+      body: bodyText,
+      ...(str(raw?.by) ? { by: raw?.by } : {}),
+      createdAt: num(raw?.createdAt, Date.now()),
+    });
+  }
+  return out;
 }

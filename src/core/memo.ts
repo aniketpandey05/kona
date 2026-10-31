@@ -1,6 +1,7 @@
 import { linkToMark } from './link';
+import { nameIn } from './people';
 import { siteLabel } from './sites';
-import { marksIn, sourcesFor } from './spaces';
+import { gathererOf, isShared, marksIn, sourcesFor } from './spaces';
 import type { Space } from './spaces';
 import type { Mark } from './types';
 
@@ -16,6 +17,10 @@ import type { Mark } from './types';
  * The reason this is worth doing here rather than in a document editor: every
  * highlight already carries a link that lands on the precise words, so the
  * write-up comes out checkable by somebody who has never installed Kona.
+ *
+ * It says "I" or "we" depending on whether more than one person has worked in
+ * the space, and puts names against the parts that have one. A document two
+ * people wrote and that claims a single author is a worse document.
  */
 
 export interface Citation {
@@ -31,16 +36,23 @@ export interface MemoLine {
   cites: number[];
   /** Sources the space no longer holds, so a thinner claim is not published whole. */
   withdrawn: number;
+  /** Who concluded it, where the space can name them. */
+  by?: string;
 }
 
 export interface MemoHighlight {
   n: number;
   mark: Mark;
+  /** Who found it. */
+  by?: string;
 }
 
 export interface Memo {
   title: string;
+  /** True once more than one person has worked here; the document says "we". */
+  shared: boolean;
   decision?: string;
+  decidedBy?: string;
   /** What you concluded. Empty until you write something down, which is fine. */
   lines: MemoLine[];
   /** Everything gathered here. This is the document when there is nothing else. */
@@ -64,6 +76,10 @@ export function buildMemo(space: Space, marks: readonly Mark[]): Memo {
 
   // Conclusions number their sources first, so the citations read in the order
   // the document does.
+  const shared = isShared(space);
+  const who = (id: string | undefined): string | undefined =>
+    (shared ? nameIn(space.people, id) : null) ?? undefined;
+
   const lines = space.findings.map((finding) => {
     const { present, withdrawn } = sourcesFor(space, finding, marks);
     return {
@@ -71,14 +87,20 @@ export function buildMemo(space: Space, marks: readonly Mark[]): Memo {
       contradicts: finding.stance === 'contradicts',
       cites: present.map(cite),
       withdrawn,
+      ...(who(finding.by) ? { by: who(finding.by) } : {}),
     };
   });
 
-  const highlights = marksIn(space, marks).map((mark) => ({ n: cite(mark), mark }));
+  const highlights = marksIn(space, marks).map((mark) => {
+    const found = shared ? gathererOf(space, mark.id)?.name : undefined;
+    return { n: cite(mark), mark, ...(found ? { by: found } : {}) };
+  });
 
   return {
     title: space.question ?? space.name,
+    shared,
     decision: space.decision?.body,
+    ...(who(space.decision?.by) ? { decidedBy: who(space.decision?.by) } : {}),
     lines,
     highlights,
     open: [...space.openQuestions],
@@ -89,30 +111,35 @@ export function buildMemo(space: Space, marks: readonly Mark[]): Memo {
 /** The same thing as Markdown, for pasting into wherever you actually write. */
 export function memoMarkdown(memo: Memo): string {
   const out: string[] = [`# ${memo.title}`, ''];
+  const us = memo.shared ? 'we' : 'I';
 
   if (memo.decision) {
-    out.push('## What I decided', '', memo.decision, '');
+    out.push(`## What ${us} decided`, '', memo.decision, '');
+    if (memo.decidedBy) out.push(`— ${memo.decidedBy}`, '');
   }
 
   if (memo.lines.length > 0) {
-    out.push('## What I concluded', '');
+    out.push(`## What ${us} concluded`, '');
     for (const line of memo.lines) {
       const marks = line.cites.map((n) => `[^${n}]`).join('');
       // Say it, rather than quietly publishing a claim with less behind it.
       const gone = line.withdrawn
         ? ` _(${line.withdrawn} source${line.withdrawn > 1 ? 's' : ''} no longer here)_`
         : '';
-      out.push(`- ${line.contradicts ? 'Against: ' : ''}${line.claim} ${marks}${gone}`.trimEnd());
+      const by = line.by ? ` — ${line.by}` : '';
+      out.push(
+        `- ${line.contradicts ? 'Against: ' : ''}${line.claim} ${marks}${gone}${by}`.trimEnd(),
+      );
     }
     out.push('');
   }
 
   if (memo.highlights.length > 0) {
-    out.push('## What I kept', '');
-    for (const { n, mark } of memo.highlights) {
+    out.push(`## What ${us} kept`, '');
+    for (const { n, mark, by } of memo.highlights) {
       out.push(`> ${mark.snapshot}`);
       if (mark.note) out.push('>', `> ${mark.note}`);
-      out.push('', `— ${siteLabel(mark)}[^${n}]`, '');
+      out.push('', `— ${siteLabel(mark)}[^${n}]${by ? `, found by ${by}` : ''}`, '');
     }
   }
 
