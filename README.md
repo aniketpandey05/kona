@@ -41,7 +41,8 @@ Mac — and that build is in `apple/`.
 - Clicking a highlight opens that page and scrolls straight to it, re-using the tab if it's already open.
 - Every highlight has a copyable link that lands on the exact spot. It is an ordinary URL
   text fragment, so it works for people who don't have Kona, and on a phone.
-- Filter by tag as well as by site, and search covers tags too.
+- Filter by tag as well as by site, and search covers tags too. Once you have spaces, filter by which space holds a highlight, and — in a space that has been round to a colleague and back — by who found it.
+- Change a highlight'''s note and tags from the library, not only from the page it came from.
 - Export what you're looking at as Markdown — one section per chat, with your notes, tags and a link back — which drops straight into Obsidian or Notion.
 - Export a backup file of everything and import it on another computer.
 - Light, dark or match-your-system, chosen in the library and used everywhere, including the panel inside chats.

@@ -8,6 +8,7 @@ import {
   addQuestion,
   commentsOn,
   createSpace,
+  editComment,
   gathererOf,
   isSettled,
   recordDecision,
@@ -507,5 +508,65 @@ describe('a space coming back with their replies in it', () => {
     });
     expect(back.gained).toEqual({ conclusions: 1, replies: 1, questions: 1, people: 1 });
     expect(back.from?.name).toBe('Sam');
+  });
+});
+
+describe('a reply reworded on the other copy', () => {
+  const priya = makePerson('Priya', 'p1');
+  const sam = makePerson('Sam', 's1');
+  const marks = [mark('a2', BIND)];
+
+  /** I send a space, Sam replies on his copy, and it comes back to me. */
+  function afterHisReply() {
+    const mine = addMark(createSpace('Docker teardown', 'Safe?'), 'a2', priya);
+    const theirs = adoptSpace(readSharedSpace(packSpace(mine, marks, priya)), [], [], 500);
+    const replied = addComment(theirs.space, 'a2', 'Not since 24.0.', sam, 550);
+    const back = adoptSpace(readSharedSpace(packSpace(replied, marks, sam)), marks, [mine], 600);
+    const id = replied.comments?.[0]?.id ?? '';
+    return { replied, back: back.space, id };
+  }
+
+  it('takes his later wording over the copy I already had', () => {
+    const { replied, back, id } = afterHisReply();
+    const reworded = editComment(replied, id, 'Not since 24.0.1, in fact.', 700);
+    const again = adoptSpace(readSharedSpace(packSpace(reworded, marks, sam)), marks, [back], 800);
+
+    expect(commentsOn(again.space, 'a2')).toHaveLength(1);
+    expect(commentsOn(again.space, 'a2')[0]?.body).toBe('Not since 24.0.1, in fact.');
+    // Rewording is not a new reply, so the banner must not count it as one.
+    expect(again.gained.replies).toBe(0);
+  });
+
+  it('carries the fact that it was edited at all', () => {
+    const { replied, back, id } = afterHisReply();
+    const reworded = editComment(replied, id, 'Not since 24.0.1, in fact.', 700);
+    const again = adoptSpace(readSharedSpace(packSpace(reworded, marks, sam)), marks, [back], 800);
+    expect(commentsOn(again.space, 'a2')[0]?.editedAt).toBe(700);
+  });
+
+  it('keeps my wording when mine is the later one', () => {
+    const { replied, back, id } = afterHisReply();
+    const hisEdit = editComment(replied, id, 'His wording.', 700);
+    const mineEdit = editComment(back, id, 'My later wording.', 900);
+    const merged = adoptSpace(readSharedSpace(packSpace(hisEdit, marks, sam)), marks, [mineEdit], 950);
+    expect(commentsOn(merged.space, 'a2')[0]?.body).toBe('My later wording.');
+  });
+
+  it('leaves a reply neither of us touched alone', () => {
+    const { replied, back } = afterHisReply();
+    const again = adoptSpace(readSharedSpace(packSpace(replied, marks, sam)), marks, [back], 800);
+    expect(commentsOn(again.space, 'a2')[0]?.body).toBe('Not since 24.0.');
+    expect(commentsOn(again.space, 'a2')[0]?.editedAt).toBeUndefined();
+  });
+
+  it('refuses an edited time that is not a time', () => {
+    const { replied } = afterHisReply();
+    const file = JSON.parse(packSpace(replied, marks, sam)) as {
+      space: { comments: { editedAt?: unknown }[] };
+    };
+    file.space.comments[0]!.editedAt = 'yesterday';
+    const taken = adoptSpace(readSharedSpace(JSON.stringify(file)), [], []);
+    expect(taken.space.comments?.[0]?.editedAt).toBeUndefined();
+    expect(taken.space.comments?.[0]?.body).toBe('Not since 24.0.');
   });
 });

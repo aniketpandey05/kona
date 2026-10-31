@@ -306,14 +306,22 @@ function mergeInto(
   }
 
   const comments = [...(mine.comments ?? [])];
-  const haveComment = new Set(comments.map((comment) => comment.id));
+  const whereComment = new Map(comments.map((comment, at) => [comment.id, at]));
   let replies = 0;
   for (const comment of theirs.comments) {
-    if (!haveComment.has(comment.id) && markIds.includes(comment.markId)) {
+    if (!markIds.includes(comment.markId)) continue;
+    const at = whereComment.get(comment.id);
+    if (at === undefined) {
+      whereComment.set(comment.id, comments.length);
       comments.push(comment);
-      haveComment.add(comment.id);
       replies += 1;
+      continue;
     }
+    // The same reply on both sides. Whoever reworded it last is the one who
+    // decided what it says, and the body is the only thing that can differ, so
+    // taking the later wording loses nothing and keeps the two copies agreeing.
+    const ours = comments[at]!;
+    if ((comment.editedAt ?? 0) > (ours.editedAt ?? 0)) comments[at] = comment;
   }
 
   // A thread either of you has called finished is finished. Settling is not a
@@ -549,6 +557,9 @@ function cleanComments(value: unknown, keep: ReadonlySet<string>): Comment[] {
       body: bodyText,
       ...(str(raw?.by) ? { by: raw?.by } : {}),
       createdAt: num(raw?.createdAt, Date.now()),
+      ...(typeof raw?.editedAt === 'number' && Number.isFinite(raw.editedAt)
+        ? { editedAt: raw.editedAt }
+        : {}),
     });
   }
   return out;

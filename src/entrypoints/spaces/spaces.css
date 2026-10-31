@@ -881,3 +881,14 @@ a:focus-visible {
   flex: 1;
   min-width: 0;
 }
+
+/*
+ * Quieter than the "you" pill beside it: this is a note about the reply, not a
+ * label on the person. No pill, so the two never read as a matched pair.
+ */
+.sp-edited {
+  margin-left: 5px;
+  color: var(--sp-muted);
+  font-size: 11px;
+  font-weight: 500;
+}

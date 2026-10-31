@@ -1,6 +1,6 @@
 import { browser } from '#imports';
 import type { JSX } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { createBackup, readBackup } from '../../core/backup';
 import { linkToMark } from '../../core/link';
 import { toMarkdown } from '../../core/markdown';
@@ -22,8 +22,8 @@ import {
   watchMe,
   watchSpaces,
 } from '../../core/store';
-import { addMark as addToSpace, createSpace, type Space } from '../../core/spaces';
-import { countTags, sameTag } from '../../core/tags';
+import { addMark as addToSpace, createSpace, whoFound, type Space } from '../../core/spaces';
+import { addTags, countTags, removeTag, sameTag } from '../../core/tags';
 import { applyTheme, loadTheme, saveTheme, watchTheme, type Theme } from '../../core/theme';
 import { KonaMark } from '../../ui/KonaMark';
 import type { Mark } from '../../core/types';
@@ -55,6 +55,9 @@ export function Library() {
   const [me, setMe] = useState<Person | null>(null);
   // Which highlight is being filed, if any. One at a time keeps the list calm.
   const [filing, setFiling] = useState<string | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [inSpace, setInSpace] = useState<string | null>(null);
+  const [foundBy, setFoundBy] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -106,6 +109,22 @@ export function Library() {
 
   const sites = countBySite(all);
   const tags = countTags(all);
+
+  // Who found what, gathered from every space at once. A space you have never
+  // handed to anyone credits only you, so there is one name and nothing worth
+  // filtering by — the chips appear when a second person does.
+  const credits = useMemo(() => whoFound(spaces), [spaces]);
+  const people = useMemo(() => {
+    const seen = new Map<string, Person>();
+    for (const credited of credits.values()) {
+      for (const person of credited) seen.set(person.id, person);
+    }
+    return [...seen.values()].sort((a, b) => (a.name < b.name ? -1 : 1));
+  }, [credits]);
+  const filled = useMemo(
+    () => spaces.filter((space) => space.markIds.length > 0),
+    [spaces],
+  );
   // Searched before being filtered, for two reasons. The index is kept for as
   // long as the list it was built from, and `all` is the one list that does not
   // change as you click a site or a tag. And how unusual a word is should be
@@ -115,7 +134,9 @@ export function Library() {
   const filtered = found.marks.filter(
     (mark) =>
       (!site || siteLabel(mark) === site) &&
-      (!activeTag || (mark.tags ?? []).some((tag) => sameTag(tag, activeTag))),
+      (!activeTag || (mark.tags ?? []).some((tag) => sameTag(tag, activeTag))) &&
+      (!inSpace || spacesHolding(spaces, mark.id).some((space) => space.id === inSpace)) &&
+      (!foundBy || (credits.get(mark.id) ?? []).some((person) => person.id === foundBy)),
   );
   const groups = groupByChat(filtered);
   const total = all.length;
@@ -256,11 +277,37 @@ export function Library() {
             ))}
           </div>
         )}
+        {filled.length > 0 && (
+          <div class="lib-filters" role="group" aria-label="Filter by space">
+            {filled.map((space) => (
+              <button
+                key={space.id}
+                class={inSpace === space.id ? 'lib-chip lib-chip-on' : 'lib-chip'}
+                onClick={() => setInSpace(inSpace === space.id ? null : space.id)}
+              >
+                In {space.name} {space.markIds.length}
+              </button>
+            ))}
+          </div>
+        )}
+        {people.length > 1 && (
+          <div class="lib-filters" role="group" aria-label="Filter by who found it">
+            {people.map((person) => (
+              <button
+                key={person.id}
+                class={foundBy === person.id ? 'lib-chip lib-chip-on' : 'lib-chip'}
+                onClick={() => setFoundBy(foundBy === person.id ? null : person.id)}
+              >
+                Found by {person.name}
+              </button>
+            ))}
+          </div>
+        )}
         <div class="lib-tools">
           <p class="lib-count">
             {marks === null
               ? 'Loading…'
-              : query || site || activeTag
+              : query || site || activeTag || inSpace || foundBy
                 ? `${shown} of ${total} highlights`
                 : `${total} highlights`}
           </p>
@@ -360,11 +407,25 @@ export function Library() {
                 </button>
                 <button
                   class="lib-action"
-                  onClick={() => setFiling(filing === mark.id ? null : mark.id)}
+                  onClick={() => {
+                    setEditing(null);
+                    setFiling(filing === mark.id ? null : mark.id);
+                  }}
                   title="Put this highlight in a space"
                   aria-expanded={filing === mark.id}
                 >
                   Add to space
+                </button>
+                <button
+                  class="lib-action"
+                  onClick={() => {
+                    setFiling(null);
+                    setEditing(editing === mark.id ? null : mark.id);
+                  }}
+                  title="Change the note and the tags"
+                  aria-expanded={editing === mark.id}
+                >
+                  Edit
                 </button>
                 <button class="lib-action" onClick={() => void copyLink(mark)} title="Copy a link to this highlight">
                   {copiedId === mark.id ? 'Copied' : 'Copy link'}
@@ -376,6 +437,15 @@ export function Library() {
                 >
                   Delete
                 </button>
+                {editing === mark.id && (
+                  <EditMark
+                    mark={mark}
+                    onClose={(saved) => {
+                      setEditing(null);
+                      if (saved) setMessage('Saved.');
+                    }}
+                  />
+                )}
                 {filing === mark.id && (
                   <AddToSpace
                     mark={mark}
@@ -487,6 +557,105 @@ function formatWhen(timestamp: number): string {
 /** Which spaces hold this highlight, so a row can say where it has been filed. */
 function spacesHolding(spaces: Space[], markId: string): Space[] {
   return spaces.filter((space) => space.markIds.includes(markId));
+}
+
+/**
+ * Changing the note and the tags without going back to the page.
+ *
+ * The note is where a highlight stops being a quote and starts being yours,
+ * and until now the only place to write one was the panel on the page it came
+ * from — which is no use at all a week later, in the one view that holds
+ * everything. The phone could already do this; the library could not.
+ */
+function EditMark({ mark, onClose }: { mark: Mark; onClose: (saved: boolean) => void }) {
+  const [note, setNote] = useState(mark.note ?? '');
+  const [tags, setTags] = useState<string[]>(mark.tags ?? []);
+  const [draft, setDraft] = useState('');
+
+  const save = () => {
+    const written = note.trim();
+    const next: Mark = { ...mark, updatedAt: Date.now() };
+    // Deleted rather than set to undefined: these are optional, and a key
+    // holding nothing is not the same as a key that is not there — it would
+    // travel into a backup file and out the other side.
+    if (written) next.note = written;
+    else delete next.note;
+    if (tags.length > 0) next.tags = tags;
+    else delete next.tags;
+    void upsertMark(next).then(() => onClose(true));
+  };
+
+  const addDraft = () => {
+    if (!draft.trim()) return;
+    setTags(addTags(tags, draft));
+    setDraft('');
+  };
+
+  return (
+    <div
+      class="lib-editing"
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose(false);
+      }}
+    >
+      <label class="lib-edit-label" for={`note-${mark.id}`}>
+        Note
+      </label>
+      <textarea
+        id={`note-${mark.id}`}
+        class="lib-edit-note"
+        rows={3}
+        value={note}
+        autofocus
+        placeholder="What made this worth keeping?"
+        onInput={(event) => setNote((event.currentTarget as HTMLTextAreaElement).value)}
+      />
+
+      {tags.length > 0 && (
+        <div class="lib-filing-row">
+          {tags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              class="lib-filing-chip"
+              onClick={() => setTags(removeTag(tags, tag))}
+              title={`Remove #${tag}`}
+            >
+              #{tag} ✕
+            </button>
+          ))}
+        </div>
+      )}
+
+      <form
+        class="lib-filing-row"
+        onSubmit={(event) => {
+          event.preventDefault();
+          addDraft();
+        }}
+      >
+        <input
+          type="text"
+          placeholder="Add a tag"
+          aria-label="Add a tag"
+          value={draft}
+          onInput={(event) => setDraft((event.currentTarget as HTMLInputElement).value)}
+        />
+        <button type="submit" class="lib-action" disabled={!draft.trim()}>
+          Add
+        </button>
+      </form>
+
+      <div class="lib-filing-row">
+        <button type="button" class="lib-action" onClick={save}>
+          Save
+        </button>
+        <button type="button" class="lib-action" onClick={() => onClose(false)}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function AddToSpace({

@@ -50,6 +50,13 @@ export interface Comment {
   body: string;
   by?: string;
   createdAt: number;
+  /**
+   * Set once the wording has moved since it was written. Somebody reading a
+   * reply they have read before is entitled to know it is not the same reply,
+   * and in a space that has been round to somebody else and back, quietly
+   * rewriting what you said is the one edit that would actually mislead.
+   */
+  editedAt?: number;
 }
 
 export interface Space {
@@ -300,11 +307,15 @@ export function addComment(
 export function editComment(space: Space, commentId: string, body: string, now = Date.now()): Space {
   const text = body.trim();
   if (!text || !space.comments) return space;
+  // Saving a reply without having changed it is not an edit, and marking it as
+  // one would be telling a reader something happened that did not.
+  const before = space.comments.find((entry) => entry.id === commentId);
+  if (!before || before.body === text) return space;
   return touched(
     space,
     {
       comments: space.comments.map((entry) =>
-        entry.id === commentId ? { ...entry, body: text } : entry,
+        entry.id === commentId ? { ...entry, body: text, editedAt: now } : entry,
       ),
     },
     now,
@@ -353,6 +364,28 @@ export function peopleOf(space: Space): Person[] {
 /** Who brought this highlight in, where that is known and the space can name them. */
 export function gathererOf(space: Space, markId: string): Person | null {
   return personIn(space.people, space.gathered?.[markId]);
+}
+
+/**
+ * Who brought each highlight in, across every space at once.
+ *
+ * The library holds highlights, not spaces, so the credit it wants is not
+ * "who put this in that space" but "who found this at all". A highlight can
+ * sit in two spaces and have been gathered into each by a different person,
+ * so it maps to everyone credited rather than to one name.
+ */
+export function whoFound(spaces: readonly Space[]): Map<string, Person[]> {
+  const found = new Map<string, Person[]>();
+  for (const space of spaces) {
+    for (const [markId, personId] of Object.entries(space.gathered ?? {})) {
+      const person = personIn(space.people, personId);
+      if (!person) continue;
+      const credited = found.get(markId) ?? [];
+      if (!credited.some((entry) => entry.id === person.id)) credited.push(person);
+      found.set(markId, credited);
+    }
+  }
+  return found;
 }
 
 /**

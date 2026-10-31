@@ -21,6 +21,7 @@ import {
   sourcesFor,
   statusOf,
   unusedIn,
+  whoFound,
 } from '../src/core/spaces';
 import { buildMemo, memoMarkdown } from '../src/core/memo';
 import type { Mark } from '../src/core/types';
@@ -356,5 +357,62 @@ describe('a write-up more than one person worked on', () => {
     expect(memo.lines[0]?.by).toBeUndefined();
     expect(memoMarkdown(memo)).toContain('## What I concluded');
     expect(memoMarkdown(memo)).not.toContain('— Priya');
+  });
+});
+
+describe('who found what, across every space', () => {
+  const priya = makePerson('Priya', 'p1');
+  const sam = makePerson('Sam', 's1');
+
+  it('credits a highlight from whichever space holds it', () => {
+    const upgrade = addMark(createSpace('Upgrade'), 'k1', priya);
+    const docker = addMark(createSpace('Docker'), 'k2', sam);
+    const found = whoFound([upgrade, docker]);
+    expect(found.get('k1')?.map((person) => person.name)).toEqual(['Priya']);
+    expect(found.get('k2')?.map((person) => person.name)).toEqual(['Sam']);
+  });
+
+  it('credits both when two spaces disagree about who found it', () => {
+    const upgrade = addMark(createSpace('Upgrade'), 'k1', priya);
+    const docker = addMark(createSpace('Docker'), 'k1', sam);
+    expect(whoFound([upgrade, docker]).get('k1')?.map((person) => person.name)).toEqual([
+      'Priya',
+      'Sam',
+    ]);
+  });
+
+  it('credits a person once, however many spaces they put it in', () => {
+    const upgrade = addMark(createSpace('Upgrade'), 'k1', priya);
+    const docker = addMark(createSpace('Docker'), 'k1', priya);
+    expect(whoFound([upgrade, docker]).get('k1')).toHaveLength(1);
+  });
+
+  it('says nothing about a highlight nobody put a name to', () => {
+    expect(whoFound([addMark(createSpace('Upgrade'), 'k1')]).size).toBe(0);
+  });
+});
+
+describe('a reply that has been reworded', () => {
+  const priya = makePerson('Priya', 'p1');
+  const gathered = () => addMark(createSpace('Upgrade', 'When?'), 'k1', priya);
+
+  it('says when it was changed', () => {
+    let space = addComment(gathered(), 'k1', 'Thsi was 13.', priya, 100);
+    const id = space.comments?.[0]?.id ?? '';
+    space = editComment(space, id, 'This was 13.', 200);
+    expect(commentsOn(space, 'k1')[0]?.body).toBe('This was 13.');
+    expect(commentsOn(space, 'k1')[0]?.editedAt).toBe(200);
+  });
+
+  it('is not called edited when the wording has not moved', () => {
+    let space = addComment(gathered(), 'k1', 'This was 13.', priya, 100);
+    const id = space.comments?.[0]?.id ?? '';
+    space = editComment(space, id, '   This was 13.   ', 200);
+    expect(commentsOn(space, 'k1')[0]?.editedAt).toBeUndefined();
+  });
+
+  it('starts out not edited', () => {
+    const space = addComment(gathered(), 'k1', 'This was 13.', priya, 100);
+    expect(commentsOn(space, 'k1')[0]?.editedAt).toBeUndefined();
   });
 });

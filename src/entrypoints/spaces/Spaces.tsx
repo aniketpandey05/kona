@@ -1209,6 +1209,11 @@ function Evidence({
                       <div>
                         <strong>{who ? who.name : 'Someone'}</strong>
                         {mine && <span class="sp-mine">you</span>}
+                        {comment.editedAt && (
+                          <span class="sp-edited" title={`Reworded ${new Date(comment.editedAt).toLocaleString()}`}>
+                            edited
+                          </span>
+                        )}
                         {editing === comment.id ? (
                           <form
                             class="sp-row"

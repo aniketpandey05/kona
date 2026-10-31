@@ -493,7 +493,10 @@ input:focus-visible {
 
 .lib-filing {
   /* flex-basis, not width: this row is a flex container, and a width would
-     lose to the basis the other children already have. */
+     lose to the basis the other children already have. border-box with it,
+     because a basis of 100% is the content box — without this the padding is
+     added on top and the panel hangs off the side of the row it is in. */
+  box-sizing: border-box;
   flex: 1 0 100%;
   display: flex;
   flex-direction: column;
@@ -604,4 +607,43 @@ input:focus-visible {
   color: var(--lib-muted);
   background: var(--lib-hover);
   border-radius: 999px;
+}
+
+/* Changing the note and the tags, in the row the highlight is already in. */
+.lib-editing {
+  /* flex-basis and border-box, for the same reasons as .lib-filing above. */
+  box-sizing: border-box;
+  flex: 1 0 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 12px 14px 14px;
+  background: var(--lib-hover);
+  border-radius: 10px;
+}
+
+.lib-edit-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lib-muted);
+}
+
+.lib-edit-note {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 9px 11px;
+  font: inherit;
+  font-size: 13px;
+  color: inherit;
+  resize: vertical;
+  background: var(--lib-card);
+  border: 1px solid var(--lib-border);
+  border-radius: 8px;
+}
+
+.lib-edit-note:focus {
+  outline: none;
+  border-color: var(--lib-accent);
+  box-shadow: 0 0 0 3px var(--lib-ring);
 }
