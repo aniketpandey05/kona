@@ -45,7 +45,8 @@ Mac — and that build is in `apple/`.
 - Change a highlight's note and tags from the library, not only from the page it came from.
 - Put your name to your work and your computer makes a signing key. Everything you write in a shared space is signed with it, and a space coming back is checked against the key you already hold for that person — so nobody can write a reply in your name, and anything whose words moved after it was signed is flagged rather than hidden. It proves the sender is the same person as last time; it does not prove who they are in the world, which is what an account would add.
 - Export what you're looking at as Markdown — one section per chat, with your notes, tags and a link back — which drops straight into Obsidian or Notion.
-- Export a backup file of everything and import it on another computer.
+- Export a backup file of everything — highlights, spaces and your name — and import it on another computer.
+- Or point Kona at a folder your machine already syncs (Drive, Dropbox, iCloud, OneDrive, Syncthing) and it keeps the library there. Your own folder keeps your own computers in step; a folder you share with somebody keeps a space in step with them, with no file to send and their replies arriving on their own. Kona makes no network request to do it — it writes a file, and something you already trust carries it. It is as quick as your sync client is, it needs the folder picker so it is desktop Chrome, Edge and Brave only, and anybody who can read the folder can read what is in it.
 - Light, dark or match-your-system, chosen in the library and used everywhere, including the panel inside chats.
 
 **When pages change**

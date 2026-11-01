@@ -647,3 +647,24 @@ input:focus-visible {
   border-color: var(--lib-accent);
   box-shadow: 0 0 0 3px var(--lib-ring);
 }
+
+/* Where sync is going and when it last went, which is all there is to say. */
+.lib-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lib-sync-where {
+  font-size: 12px;
+  color: var(--lib-muted);
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lib-sync-bad {
+  font-size: 12px;
+  color: var(--lib-danger);
+}

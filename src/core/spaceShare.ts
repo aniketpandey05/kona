@@ -285,6 +285,34 @@ interface Theirs {
  * highlight or a conclusion they removed stays in your copy, and you take it
  * out yourself if you agree. Everything they added arrives.
  */
+/**
+ * Two copies of the same space that already speak the same mark ids.
+ *
+ * The handover path has to rewrite every id before it can merge, because the
+ * other person's library numbers the same passages differently. A folder both
+ * sides read does not: the marks travel in the same file and are stored under
+ * the ids they arrive with, so the merge can run directly. It is the same
+ * merge either way, which is the point of it being here.
+ */
+export function mergeSpace(
+  mine: Space,
+  theirs: Space,
+  now = Date.now(),
+): { space: Space; gained: Gained } {
+  return mergeInto(
+    mine,
+    {
+      markIds: theirs.markIds,
+      findings: theirs.findings,
+      comments: theirs.comments ?? [],
+      settled: theirs.settled ?? [],
+      gathered: theirs.gathered ?? {},
+    },
+    theirs,
+    now,
+  );
+}
+
 function mergeInto(
   mine: Space,
   theirs: Theirs,

@@ -102,12 +102,23 @@ export function Plans() {
           than hiding it.
         </p>
         <p>
-          Two things it is not. Nobody is in the space at the same time as you, so a reply
-          arrives when the file does. And a key proves the person is the same one as last
-          time, not who they are in the world: the first time a name reaches you, you are
-          taking it on trust, and there is nobody to ask if it should stop being trusted.
-          An account answers that, and an account needs a server, which is not built. There
-          is a working demo of the shape of it.
+          There is a second way, for when passing a file about gets old. Point Kona at a
+          folder your computer already keeps in sync — Drive, Dropbox, iCloud, OneDrive,
+          Syncthing, any of them — and it keeps the library there. Your own folder keeps
+          your own machines in step. A folder you share with somebody keeps a space in step
+          with them, with no file to send and their replies arriving on their own. Kona
+          makes no network request to do it; it writes a file, and something you already
+          trust carries it.
+        </p>
+        <p>
+          What that is not. It goes as fast as your sync client does, which is seconds
+          rather than as-you-type. It needs the folder picker, so it is Chrome, Edge and
+          Brave on a desktop and not a phone. There are no permissions: anybody who can
+          read the folder can read the space, and there is no taking that back. And a key
+          proves somebody is the same person as last time, not who they are in the world —
+          the first time a name reaches you, you take it on trust. Removing those four is
+          what Team is for; that needs a server, and the server is not built. There is a
+          working demo of the shape of it.
         </p>
         <div class="pl-row">
           <a class="pl-primary" href={TEAM_DEMO_URL} target="_blank" rel="noreferrer noopener">

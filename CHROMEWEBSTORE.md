@@ -60,7 +60,11 @@ there is no account, no server, and no analytics. It can only see the three chat
 whichever sites you switch on yourself, and you can switch any of them off again.
 
 Export your highlights as Markdown for Obsidian or Notion, or as a backup file — highlights,
-spaces and all — that you can move to another computer.
+spaces and all — that you can move to another computer. Or point Kona at a folder your
+machine already keeps in sync and it will keep the library there: your own folder keeps
+your own computers in step, and a folder you share with somebody keeps a space in step
+with them. This still makes no network request — Kona writes a file, and the sync client
+you already use carries it.
 
 Free for a single user: https://github.com/aniketpandey05/kona
 
@@ -105,6 +109,10 @@ The two `.jpg` files are kept as the sources for that step.
 ## Permissions Justification
 
 Every entry below is phrased for a reviewer: what breaks without it.
+
+Folder sync adds no permission. `showDirectoryPicker` is gated on a click and on the
+folder the user chooses in the system dialog, so it needs nothing in the manifest, and
+it is still true that the extension makes no network request of any kind.
 
 | Permission | Why it is needed |
 |---|---|

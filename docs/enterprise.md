@@ -118,11 +118,12 @@ distribution engine and the reason anyone trusts us with the paid one.
 | Discussion on a highlight, merged on the way back | yes | yes | yes | yes |
 | Who found what and who concluded what | yes | yes | yes | yes |
 | Contributions signed with a key, checked on the way in | yes | yes | yes | yes |
-| Sync across your own devices | | yes | yes | yes |
+| Two machines in step through a folder they already sync | yes | yes | yes | yes |
+| Sync with no folder to arrange, and where a folder cannot reach | | yes | yes | yes |
 | Hybrid search, meaning learned from your own library | yes | yes | yes | yes |
 | Meaning from a model rather than your own corpus | | yes | yes | yes |
 | Search across everyone's highlights | | | yes | yes |
-| One space several people work in at once | | | yes | yes |
+| A space that updates as people type, not as a sync client catches up | | | yes | yes |
 | Replies as they are written, not when the file arrives | | | yes | yes |
 | Names an organisation vouches for, and can revoke | | | yes | yes |
 | Permissions | | | yes | yes |

@@ -29,6 +29,7 @@ import { addMark as addToSpace, createSpace, whoFound, type Space } from '../../
 import { addTags, countTags, removeTag, sameTag } from '../../core/tags';
 import { applyTheme, loadTheme, saveTheme, watchTheme, type Theme } from '../../core/theme';
 import { KonaMark } from '../../ui/KonaMark';
+import { useFolderSync } from '../../ui/useFolderSync';
 import type { Mark } from '../../core/types';
 
 const THEMES: Array<{ value: Theme; label: string; icon: () => JSX.Element }> = [
@@ -344,6 +345,7 @@ export function Library() {
           <button class="lib-tool" onClick={() => void exportBackup()} disabled={total === 0}>
             Export backup
           </button>
+          <FolderSync />
           <button class="lib-tool" onClick={() => fileInput.current?.click()}>
             Import backup
           </button>
@@ -581,6 +583,60 @@ function formatWhen(timestamp: number): string {
 /** Which spaces hold this highlight, so a row can say where it has been filed. */
 function spacesHolding(spaces: Space[], markId: string): Space[] {
   return spaces.filter((space) => space.markIds.includes(markId));
+}
+
+/**
+ * Sync, as much of it as there is to say.
+ *
+ * Off, this is one more tool in the row. On, it is a line that says where it
+ * is going and when it last went — which is all anybody wants from sync until
+ * it stops working, and then it is the only thing they want.
+ */
+function FolderSync() {
+  const { state, connect, reconnect, disconnect, now } = useFolderSync();
+
+  // Nothing to offer on a browser without the folder picker, and a disabled
+  // button explaining itself would be worse than no button.
+  if (state.kind === 'unsupported') return null;
+
+  if (state.kind === 'off') {
+    return (
+      <button
+        class="lib-tool"
+        onClick={() => void connect()}
+        title="Keep this library in step with another computer, through a folder your machine already syncs"
+      >
+        Sync through a folder
+      </button>
+    );
+  }
+
+  if (state.kind === 'needs-permission') {
+    return (
+      <button class="lib-tool" onClick={() => void reconnect()}>
+        Reconnect {state.name}
+      </button>
+    );
+  }
+
+  return (
+    <span class="lib-sync">
+      <button
+        class="lib-tool"
+        onClick={() => void now()}
+        disabled={state.busy}
+        title={`Syncing through ${state.name}`}
+      >
+        {state.busy ? 'Syncing…' : state.trouble ? 'Sync failed' : 'In sync'}
+      </button>
+      <span class={state.trouble ? 'lib-sync-bad' : 'lib-sync-where'}>
+        {state.trouble ?? state.name}
+      </span>
+      <button class="lib-tool" onClick={() => void disconnect()}>
+        Stop
+      </button>
+    </span>
+  );
 }
 
 /**

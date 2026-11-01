@@ -1,6 +1,7 @@
 import { browser, storage } from '#imports';
 import type { Identity } from './backup';
 import { makeKeypair } from './identity';
+import type { SyncStore } from './sync';
 import { makePerson, type Person } from './people';
 import type { Space } from './spaces';
 import type { Mark, SiteId } from './types';
@@ -165,6 +166,18 @@ export function importSpaces(
     return { added: fresh.length, kept: incoming.length - fresh.length };
   });
 }
+
+/**
+ * The library, as the folder sync is allowed to see it: read both lists, write
+ * one of either. Here rather than in `sync.ts` so that the engine stays free
+ * of WXT and can be tested against a store that is only a variable.
+ */
+export const syncStore: SyncStore = {
+  marks: () => loadAllMarks(),
+  spaces: () => loadSpaces(),
+  saveMark: (mark) => upsertMark(mark),
+  saveSpace: (space) => saveSpace(space),
+};
 
 /** Keeps another tab's view of the spaces in step with this one. */
 export function watchSpaces(onChange: (spaces: Space[]) => void): () => void {

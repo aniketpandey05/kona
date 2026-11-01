@@ -8,6 +8,7 @@ import { hueOf, initials, nameIn, type Person } from '../../core/people';
 import { adoptSpace, packSpace, readSharedSpace, shareFilename } from '../../core/spaceShare';
 import { checkSpace, DECISION, signMine, type Checked } from '../../core/spaceSign';
 import { fingerprint } from '../../core/identity';
+import { useFolderSync } from '../../ui/useFolderSync';
 import { siteLabel } from '../../core/sites';
 import {
   importMarks,
@@ -140,6 +141,7 @@ export function Spaces() {
       <header class="sp-top">
         <h1>{space ? space.name : 'Spaces'}</h1>
         <span class="sp-row">
+          <FolderSync />
           <You me={me} />
           <a class="sp-tool" href={browser.runtime.getURL('/library.html')}>
             Library
@@ -1107,6 +1109,59 @@ function SpaceView({
         </span>
       </div>
     </>
+  );
+}
+
+/**
+ * Sync, on the page where somebody else's reply would arrive.
+ *
+ * The same hook the library uses, which means two open pages each run their
+ * own pass. They can overlap and one can write over a read the other had not
+ * finished — and it comes out right anyway, because the merge only ever adds:
+ * whatever a clobbered write dropped is still on the machine it came from and
+ * goes back next pass.
+ */
+function FolderSync() {
+  const { state, connect, reconnect, disconnect, now } = useFolderSync();
+
+  if (state.kind === 'unsupported') return null;
+
+  if (state.kind === 'off') {
+    return (
+      <button
+        type="button"
+        class="sp-tool"
+        onClick={() => void connect()}
+        title="Share a folder with somebody and a space in it stays in step with them, with no file to send"
+      >
+        Sync
+      </button>
+    );
+  }
+
+  if (state.kind === 'needs-permission') {
+    return (
+      <button type="button" class="sp-tool" onClick={() => void reconnect()}>
+        Reconnect {state.name}
+      </button>
+    );
+  }
+
+  return (
+    <span class="sp-row">
+      <button
+        type="button"
+        class="sp-tool"
+        onClick={() => void now()}
+        disabled={state.busy}
+        title={state.trouble ?? `Syncing through ${state.name}`}
+      >
+        {state.busy ? 'Syncing…' : state.trouble ? 'Sync failed' : `In sync · ${state.name}`}
+      </button>
+      <button type="button" class="sp-tool" onClick={() => void disconnect()}>
+        Stop
+      </button>
+    </span>
   );
 }
 
