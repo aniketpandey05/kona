@@ -30,9 +30,11 @@ export function Plans() {
       </header>
 
       <p class="pl-lede">
-        Kona is free for a single user, and that is not a trial. Everything on this computer
-        — your highlights, your library, your spaces, the write-ups they produce — keeps
-        working whether or not anything below ever ships.
+        Kona is free, and that is not a trial. Everything on this computer — your
+        highlights, your library, your spaces, the write-ups they produce — keeps working
+        whether or not anything below ever ships, and so does sharing a space with somebody
+        else. What the paid tiers sell is not the sharing; it is not having to arrange it,
+        and the controls a folder cannot give you.
       </p>
 
       <div class="pl-tiers">
@@ -162,8 +164,8 @@ export function Plans() {
 
       <p class="pl-fine">
         No part of Kona asks you for a card, and nothing on this computer is sent anywhere.
-        Free is free for one person; the paid plans are what a team would pay for, if and
-        when they exist.
+        Free does not stop at one person; the paid plans are what a team would pay for
+        once arranging it themselves stops being enough, if and when they exist.
       </p>
     </main>
   );

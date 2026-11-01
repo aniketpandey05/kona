@@ -34,8 +34,9 @@ export const PLANS: readonly Plan[] = [
     id: 'free',
     name: 'Free',
     price: '$0',
-    per: 'forever, for one person',
-    pitch: 'Everything Kona does, on your own computer, with no account.',
+    per: 'forever, however many of you there are',
+    pitch:
+      'Everything Kona does, on your own computers, with no account — and with anyone you share a folder with.',
     included: [
       'Highlight anything you read — papers, docs, Stack Overflow, AI chats',
       'Unlimited highlights, notes and tags',

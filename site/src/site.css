@@ -736,3 +736,73 @@ section {
 .real strong {
   color: var(--fg);
 }
+
+/* ---- building it yourself, folded away ----
+
+   This was a section of its own with a full-size title, which made a page
+   about a product read like a page about a repository. It is the same three
+   commands; they are just no longer the second thing anybody sees. */
+
+.build {
+  margin-top: 26px;
+  padding: 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.build summary {
+  cursor: pointer;
+  font-size: 15.5px;
+  font-weight: 620;
+  /* The default triangle is tiny and differently placed in every browser. */
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.build summary::-webkit-details-marker {
+  display: none;
+}
+
+.build summary::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(-45deg);
+  transition: transform 140ms ease;
+}
+
+.build[open] summary::before {
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .build summary::before {
+    transition: none;
+  }
+}
+
+.build summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.build-lede {
+  margin: 14px 0 0;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+
+.build .steps {
+  margin-top: 22px;
+}
+
+.build .fine {
+  margin-top: 20px;
+}
