@@ -21,7 +21,7 @@
  * mistake in the UI cannot reach anywhere else on the disk.
  */
 
-import { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, Tray } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Menu, nativeImage, nativeTheme, Tray } from 'electron';
 import { basename, join } from 'node:path';
 import { folderAt, readJson, writeJson } from './disk';
 import { EVERYTHING, type Scope } from '../../src/core/sync';
@@ -68,7 +68,9 @@ function createWindow(): BrowserWindow {
     show: false,
     title: 'Kona',
     icon: asset('icon', '512.png'),
-    backgroundColor: '#fdfcfb',
+    // What the page paints a moment later, so a dark desktop does not get a
+    // white flash on the way in. These are app.css's own --bg values.
+    backgroundColor: nativeTheme.shouldUseDarkColors ? '#191a1c' : '#f7f7f8',
     webPreferences: {
       preload: join(__dirname, 'preload.cjs'),
       contextIsolation: true,
