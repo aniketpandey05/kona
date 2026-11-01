@@ -134,7 +134,7 @@ export async function syncOnce(
   // Read with the same validation a backup gets, because a file in a shared
   // folder is exactly as trustworthy as one somebody emailed. Once, because
   // validating a whole library is not free.
-  const incoming = text ? readBackup(text) : null;
+  const incoming = text ? readBackup(text, true) : null;
 
   if (incoming) {
 
@@ -230,4 +230,46 @@ async function toPublish(
 /** Whether a pass actually changed anything on this side. */
 export function changedHere(synced: Synced): boolean {
   return synced.added + synced.updated + synced.spacesAdded + synced.spacesMerged > 0;
+}
+
+export interface ByHand {
+  /** What the pass found and took. */
+  synced: Synced;
+  /**
+   * The file as it should now be, or null when this side had nothing to add
+   * and the one in the folder is already right.
+   */
+  give: string | null;
+}
+
+/**
+ * The same pass, driven by hand, for the browsers that will not hold a folder.
+ *
+ * `showDirectoryPicker` is desktop Chromium and nothing else: Firefox and
+ * Safari have not shipped it, and Chrome on Android does not offer it. That is
+ * a platform fact and no amount of work here changes it — but it only stops
+ * the *automatic* part. The file in the folder is an ordinary file, so anyone
+ * can open it, take what is in it, and be handed back the version to put
+ * where they got it.
+ *
+ * It is two taps instead of none, which is a real difference and a much
+ * smaller one than being shut out of a workspace because of a browser. The
+ * engine, the merge and the scope are all the same, so a colleague doing this
+ * by hand and a colleague whose folder syncs itself are working on one file.
+ */
+export async function syncByHand(
+  text: string | null,
+  store: SyncStore,
+  scope: Scope = EVERYTHING,
+  now = Date.now(),
+): Promise<ByHand> {
+  let give: string | null = null;
+  const folder: Folder = {
+    read: async () => text,
+    write: async (next) => {
+      give = next;
+    },
+  };
+  const synced = await syncOnce(folder, store, scope, now);
+  return { synced, give };
 }

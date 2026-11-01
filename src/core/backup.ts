@@ -71,7 +71,7 @@ export function createBackup(
  * Older backups, and the bare array of highlights the very first ones were,
  * still read. They simply have no spaces in them.
  */
-export function readBackup(text: string): Restored {
+export function readBackup(text: string, allowEmpty = false): Restored {
   let data: unknown;
   try {
     data = JSON.parse(text);
@@ -90,7 +90,11 @@ export function readBackup(text: string): Restored {
         .filter((space): space is Space => !!space)
     : [];
 
-  if (marks.length === 0 && spaces.length === 0) {
+  // A backup with nothing in it is somebody having picked the wrong file, and
+  // saying so is more use than an empty restore. A sync file with nothing in
+  // it is the ordinary first state of a shared folder, so that caller asks for
+  // it to be allowed.
+  if (!allowEmpty && marks.length === 0 && spaces.length === 0) {
     throw new Error('No highlights were found in that file.');
   }
   return { marks, spaces, identity: cleanIdentity(raw?.identity) };

@@ -125,6 +125,7 @@ distribution engine and the reason anyone trusts us with the paid one.
 | Search across everyone's highlights | | | yes | yes |
 | A space that updates as people type, not as a sync client catches up | | | yes | yes |
 | Choose which spaces a shared folder carries | yes | yes | yes | yes |
+| The same pass by hand, where there is no folder picker | yes | yes | yes | yes |
 | Per-person read and write, revocable | | | yes | yes |
 | Replies as they are written, not when the file arrives | | | yes | yes |
 | Names an organisation vouches for, and can revoke | | | yes | yes |

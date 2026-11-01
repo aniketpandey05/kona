@@ -64,7 +64,8 @@ spaces and all — that you can move to another computer. Or point Kona at a fol
 machine already keeps in sync and it will keep the library there: your own folder keeps
 your own computers in step, and a folder you share with somebody keeps a space in step
 with them. A shared folder only ever carries the spaces you tick and the passages they
-cite — nothing else in your library is written to it. This still makes no network
+cite — nothing else in your library is written to it. On browsers without a folder
+picker the same file can be opened and put back by hand. This still makes no network
 request: Kona writes a file, and the sync client you already use carries it.
 
 Free for a single user: https://github.com/aniketpandey05/kona

@@ -1005,3 +1005,22 @@ input:focus-visible {
 .app-space-foot {
   margin: 26px 0 8px;
 }
+
+/* Which spaces go into a file somebody else will read. */
+.app-scope {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 2px 0 6px;
+  padding: 8px 10px;
+  background: var(--hover);
+  border-radius: 10px;
+}
+
+.app-scope-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 2px;
+  font-size: 14px;
+}

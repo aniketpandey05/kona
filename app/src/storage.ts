@@ -2,6 +2,7 @@ import type { Identity } from '../../src/core/backup';
 import { makeKeypair } from '../../src/core/identity';
 import { makePerson, type Person } from '../../src/core/people';
 import type { Space } from '../../src/core/spaces';
+import { EVERYTHING, type Scope, type SyncStore } from '../../src/core/sync';
 import type { Mark } from '../../src/core/types';
 
 /**
@@ -227,4 +228,27 @@ const notify = () => listeners.forEach((listener) => listener());
 export function watch(onChange: () => void): () => void {
   listeners.add(onChange);
   return () => listeners.delete(onChange);
+}
+
+/**
+ * The library, as the sync engine is allowed to see it. The phone has no
+ * folder picker — Chrome on Android does not offer one — so this is only ever
+ * driven by hand, over a file out of a folder the phone already syncs.
+ */
+export const syncStore: SyncStore = {
+  marks: () => loadAll(),
+  spaces: () => loadSpaces(),
+  saveMark: (mark) => save(mark),
+  saveSpace: (space) => saveSpace(space),
+};
+
+const SCOPE = 'kona:sync-scope';
+
+export function loadScope(): Scope {
+  const scope = read<Scope>(SCOPE);
+  return scope?.kind === 'spaces' && Array.isArray(scope.origins) ? scope : EVERYTHING;
+}
+
+export function saveScope(scope: Scope): void {
+  write(SCOPE, scope);
 }

@@ -117,12 +117,19 @@ export function Plans() {
           cite — the rest of your library is never written there at all.
         </p>
         <p>
+          Keeping the folder in step by itself needs a folder picker, which only Chrome,
+          Edge and Brave on a desktop have. Everywhere else — Firefox, Safari, the phone —
+          the same file can be worked by hand: open it out of the folder and Kona hands
+          back the one to put where you found it. Two taps rather than none, on the same
+          file, so nobody is shut out of a workspace by their browser.
+        </p>
+        <p>
           It is a stand-in for Pro's sync rather than the same thing, and the difference is
-          the work: you arrange the folder, you keep the sync client running, and you only
-          get it where the folder picker exists. Pro is that job done for you, on every
-          device including the ones a folder cannot reach. And ticking a space is as far as
-          permissions go here — who may write, and taking access back from one person
-          rather than un-sharing the whole folder, is Team's, and needs a server.
+          the work: you arrange the folder, you keep the sync client running, and on half
+          the browsers you do the round trip yourself. Pro is that job done for you, on
+          every device. And ticking a space is as far as permissions go here — who may
+          write, and taking access back from one person rather than un-sharing the whole
+          folder, is Team's, and needs a server.
         </p>
         <p>
           What that is not. It goes as fast as your sync client does, which is seconds

@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
+import { readBackup } from '../src/core/backup';
 import { makePerson } from '../src/core/people';
 import { addComment, addFinding, addMark, createSpace, type Space } from '../src/core/spaces';
-import { changedHere, syncOnce, type Folder, type Scope, type SyncStore } from '../src/core/sync';
+import {
+  changedHere,
+  syncByHand,
+  syncOnce,
+  type Folder,
+  type Scope,
+  type SyncStore,
+} from '../src/core/sync';
 import type { Mark } from '../src/core/types';
 
 const mark = (id: string, snapshot: string, updatedAt = 100): Mark =>
@@ -350,5 +358,95 @@ describe('a folder shared with somebody', () => {
     const file = JSON.parse(disk.contents!) as { marks: Mark[]; spaces: Space[] };
     expect(file.spaces ?? []).toEqual([]);
     expect(file.marks).toEqual([]);
+  });
+});
+
+describe('the same folder, worked by hand', () => {
+  const priya = makePerson('Priya', 'p1');
+  const sam = makePerson('Sam', 's1');
+  const work = mark('w1', 'A rehearsed cutover is the only kind worth doing');
+  const privateOne = mark('x1', 'My doctor said to cut down on coffee');
+
+  const workspace = (): Space => {
+    const space = { ...createSpace('Postgres 17 upgrade', 'Safe?'), id: 'sp', origin: 'sp' };
+    return addMark(space, 'w1', priya, 100);
+  };
+  const shared: Scope = { kind: 'spaces', origins: ['sp'] };
+
+  it('hands back a file when this side has something to add', async () => {
+    const one = side([work, privateOne], [workspace()]);
+    const { synced, give } = await syncByHand(null, one.store, shared);
+    expect(synced.wrote).toBe(true);
+    expect(give).toBeTruthy();
+    expect(give).not.toContain('coffee');
+  });
+
+  it('hands back nothing when the file is already right', async () => {
+    const one = side([work], [workspace()]);
+    const first = await syncByHand(null, one.store, shared);
+    const again = await syncByHand(first.give, one.store, shared);
+    expect(again.give).toBeNull();
+    expect(changedHere(again.synced)).toBe(false);
+  });
+
+  it('meets a side whose folder syncs itself, on one file', async () => {
+    const disk = folder();
+    const automatic = side([work], [workspace()]);
+    // The Chromium side writes the folder on its own.
+    await syncOnce(disk.folder, automatic.store, shared);
+
+    // The Firefox side opens that same file, replies, and is handed one back.
+    const byHand = side();
+    const taken = await syncByHand(disk.contents, byHand.store, shared);
+    expect(taken.synced.spacesAdded).toBe(1);
+    await byHand.store.saveSpace(
+      addComment(byHand.held.spaces[0]!, 'w1', 'Twice, and on a copy.', sam, 300),
+    );
+    const giving = await syncByHand(disk.contents, byHand.store, shared);
+
+    // They put it back where they found it, and the automatic side picks it up.
+    await disk.folder.write(giving.give!);
+    await syncOnce(disk.folder, automatic.store, shared);
+
+    expect((automatic.held.spaces[0]?.comments ?? []).map((entry) => entry.body)).toEqual([
+      'Twice, and on a copy.',
+    ]);
+  });
+
+  it('refuses a file that is not a library', async () => {
+    const one = side([work]);
+    await expect(syncByHand('{"hello":"world"}', one.store)).rejects.toThrow(/backup/);
+  });
+});
+
+describe('an empty shared folder', () => {
+  const priya = makePerson('Priya', 'p1');
+  const work = mark('w1', 'A rehearsed cutover is the only kind worth doing');
+  const workspace = (): Space => {
+    const space = { ...createSpace('Postgres 17 upgrade', 'Safe?'), id: 'sp', origin: 'sp' };
+    return addMark(space, 'w1', priya, 100);
+  };
+
+  // The first person to share a folder before ticking a space leaves an empty
+  // file in it. The second person opening that file must not be told off.
+  const empty = JSON.stringify({ app: 'kona', version: 2, marks: [], spaces: [] });
+
+  it('is read as empty rather than refused', async () => {
+    const one = side([work], [workspace()]);
+    const { synced } = await syncByHand(empty, one.store, { kind: 'spaces', origins: ['sp'] });
+    expect(synced.wrote).toBe(true);
+  });
+
+  it('is filled by the first side with something to put in it', async () => {
+    const disk = folder(empty);
+    const one = side([work], [workspace()]);
+    await syncOnce(disk.folder, one.store, { kind: 'spaces', origins: ['sp'] });
+    const file = JSON.parse(disk.contents!) as { spaces: Space[] };
+    expect(file.spaces.map((space) => space.name)).toEqual(['Postgres 17 upgrade']);
+  });
+
+  it('is still an error when it is meant to be a backup', async () => {
+    // Restoring from an empty file is somebody having picked the wrong one.
+    expect(() => readBackup(empty)).toThrow(/No highlights/);
   });
 });

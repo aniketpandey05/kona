@@ -9,7 +9,8 @@ import type { Theme } from '../../src/core/theme';
 import type { HighlightColor, Mark } from '../../src/core/types';
 import { KonaMark } from '../../src/ui/KonaMark';
 import type { Person } from '../../src/core/people';
-import { addMark as addToSpace, createSpace, type Space } from '../../src/core/spaces';
+import { addMark as addToSpace, createSpace, originOf, type Space } from '../../src/core/spaces';
+import { EVERYTHING, SYNC_FILE, syncByHand, type Scope } from '../../src/core/sync';
 import { SpacesList, SpaceView } from './Spaces';
 import { firstUrl, markFromShare, planShare, readShare } from './share';
 import { applyTheme, loadTheme, saveTheme } from './theme';
@@ -20,12 +21,15 @@ import {
   importSpaces,
   loadAll,
   loadMe,
+  loadScope,
   loadSpaces,
   remove,
   restoreIdentity,
   save,
   saveMe,
+  saveScope,
   saveSpace,
+  syncStore,
   watch,
 } from './storage';
 
@@ -80,6 +84,9 @@ export function App() {
   const [naming, setNaming] = useState(false);
   const [route, setRoute] = useState(location.hash);
   const [filing, setFiling] = useState<Mark | null>(null);
+  const [scope, setScopeState] = useState<Scope>(EVERYTHING);
+  const [sharing, setSharing] = useState(false);
+  const syncInput = useRef<HTMLInputElement>(null);
 
   const refresh = () => {
     void loadAll().then(setMarks);
@@ -113,6 +120,7 @@ export function App() {
     // Not just loading: anybody who put their name in before signing existed
     // gets a key here, without having to do anything about it.
     void ensureSigningKey().then(setMe);
+    setScopeState(loadScope());
     return watch(refresh);
   }, []);
 
@@ -187,6 +195,40 @@ export function App() {
     link.download = `kona-${new Date().toISOString().slice(0, 10)}.${extension}`;
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  /**
+   * Sync, as much of it as a phone can have. Chrome on Android has no folder
+   * picker, so Kona cannot keep a folder in step by itself; it takes what is
+   * in the file you open and hands back the one to put where you found it.
+   */
+  const onSyncFile = async (event: Event) => {
+    const input = event.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    try {
+      const { synced, give } = await syncByHand(await file.text(), syncStore, scope);
+      if (give) download(give, 'application/json', 'json');
+      const took = synced.added + synced.updated + synced.spacesAdded + synced.spacesMerged;
+      setNotice(
+        give
+          ? `Took ${took}, and saved the file to put back.`
+          : took
+            ? `Took ${took}. Nothing to put back.`
+            : 'Already in step.',
+      );
+      refresh();
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'That file could not be read.');
+    }
+  };
+
+  const shared = scope.kind === 'spaces' ? new Set(scope.origins) : null;
+
+  const changeScope = (next: Scope) => {
+    setScopeState(next);
+    saveScope(next);
   };
 
   const onImport = async (event: Event) => {
@@ -268,6 +310,7 @@ export function App() {
           &#8942;
         </button>
         <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={(e) => void onImport(e)} />
+        <input ref={syncInput} type="file" accept="application/json,.json" hidden onChange={(e) => void onSyncFile(e)} />
       </header>
 
       <input
@@ -495,6 +538,59 @@ export function App() {
                 </button>
               ))}
             </div>
+
+            <span class="app-label">Sync</span>
+            <button
+              class="app-row-action"
+              onClick={() => {
+                setMenuOpen(false);
+                syncInput.current?.click();
+              }}
+            >
+              Sync through a file
+              <small>
+                open it from a folder this phone already syncs, and put the new one back
+              </small>
+            </button>
+            <button class="app-row-action" onClick={() => setSharing(!sharing)}>
+              {shared ? `Sharing ${shared.size} ${shared.size === 1 ? 'space' : 'spaces'}` : 'Sharing everything'}
+              <small>
+                {shared
+                  ? 'only these spaces and the passages they cite go in the file'
+                  : 'for a file only you see — change it to share with people'}
+              </small>
+            </button>
+            {sharing && (
+              <div class="app-scope">
+                <label class="app-scope-row">
+                  <input
+                    type="checkbox"
+                    checked={!shared}
+                    onChange={() =>
+                      changeScope(shared ? EVERYTHING : { kind: 'spaces', origins: [] })
+                    }
+                  />
+                  <span>Everything</span>
+                </label>
+                {shared &&
+                  spaces.map((space) => (
+                    <label key={space.id} class="app-scope-row">
+                      <input
+                        type="checkbox"
+                        checked={shared.has(originOf(space))}
+                        onChange={() => {
+                          const next = new Set(shared);
+                          const origin = originOf(space);
+                          if (next.has(origin)) next.delete(origin);
+                          else next.add(origin);
+                          changeScope({ kind: 'spaces', origins: [...next] });
+                        }}
+                      />
+                      <span>{space.name}</span>
+                    </label>
+                  ))}
+              </div>
+            )}
 
             <span class="app-label">Spaces</span>
             <button

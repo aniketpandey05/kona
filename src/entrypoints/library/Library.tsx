@@ -30,6 +30,9 @@ import { addTags, countTags, removeTag, sameTag } from '../../core/tags';
 import { applyTheme, loadTheme, saveTheme, watchTheme, type Theme } from '../../core/theme';
 import { KonaMark } from '../../ui/KonaMark';
 import { useFolderSync } from '../../ui/useFolderSync';
+import { savedScope, setScope } from '../../core/folder';
+import { syncStore } from '../../core/store';
+import { EVERYTHING, SYNC_FILE, syncByHand, type Scope } from '../../core/sync';
 import type { Mark } from '../../core/types';
 
 const THEMES: Array<{ value: Theme; label: string; icon: () => JSX.Element }> = [
@@ -592,14 +595,165 @@ function spacesHolding(spaces: Space[], markId: string): Space[] {
  * is going and when it last went — which is all anybody wants from sync until
  * it stops working, and then it is the only thing they want.
  */
+/**
+ * Which spaces a shared file carries. The same list whether the folder syncs
+ * itself or is being worked by hand, because it is the same decision.
+ */
+function ScopePanel({
+  spaces,
+  where,
+  shared,
+  onToggle,
+}: {
+  spaces: Space[];
+  where: string;
+  shared: ReadonlySet<string>;
+  onToggle: (origin: string) => void;
+}) {
+  return (
+    <div class="lib-folder">
+      <p class="lib-folder-why">
+        Everyone you share <strong>{where}</strong> with can read these spaces and the
+        passages they cite. Nothing else from this library goes in.
+      </p>
+      {spaces.length === 0 ? (
+        <p class="lib-empty">No spaces to share yet.</p>
+      ) : (
+        spaces.map((space) => (
+          <label key={space.id} class="lib-folder-space">
+            <input
+              type="checkbox"
+              checked={shared.has(originOf(space))}
+              onChange={() => onToggle(originOf(space))}
+            />
+            <span>
+              {space.name}
+              <small>
+                {space.markIds.length} {space.markIds.length === 1 ? 'highlight' : 'highlights'}
+              </small>
+            </span>
+          </label>
+        ))
+      )}
+    </div>
+  );
+}
+
+/**
+ * Sync on a browser that will not hold a folder.
+ *
+ * Open the file out of the folder your machine already syncs, and Kona takes
+ * what is in it and hands back the version to put where you found it. Two
+ * taps rather than none — and the same file the automatic side maintains, so
+ * a team is not split by somebody's choice of browser.
+ */
+function ByHandSync({ spaces }: { spaces: Space[] }) {
+  const [scope, hold] = useState<Scope>(EVERYTHING);
+  const [choosing, setChoosing] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+  const picker = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    void savedScope().then(hold);
+  }, []);
+
+  const sharing = scope.kind === 'spaces' ? new Set(scope.origins) : null;
+
+  const toggle = (origin: string) => {
+    const next = new Set(sharing ?? []);
+    if (next.has(origin)) next.delete(origin);
+    else next.add(origin);
+    const wanted: Scope = { kind: 'spaces', origins: [...next] };
+    hold(wanted);
+    void setScope(wanted);
+  };
+
+  const take = async (event: Event) => {
+    const input = event.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    try {
+      const { synced, give } = await syncByHand(await file.text(), syncStore, scope);
+      if (give) {
+        const url = URL.createObjectURL(new Blob([give], { type: 'application/json' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = SYNC_FILE;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+      const took = synced.added + synced.updated + synced.spacesAdded + synced.spacesMerged;
+      setNote(
+        give
+          ? `Took ${took} and saved the file to put back.`
+          : took
+            ? `Took ${took}. Nothing to put back.`
+            : 'Already in step.',
+      );
+    } catch (error) {
+      setNote(error instanceof Error ? error.message : 'That file could not be read.');
+    }
+  };
+
+  return (
+    <>
+      <button
+        class="lib-tool"
+        onClick={() => picker.current?.click()}
+        title="Open the sync file out of a folder your computer already keeps in sync"
+      >
+        Sync through a file
+      </button>
+      <button class="lib-tool" onClick={() => setChoosing(!choosing)} aria-expanded={choosing}>
+        {sharing ? `${sharing.size} shared` : 'Sharing everything'}
+      </button>
+      {note && <span class="lib-sync-where">{note}</span>}
+      <input
+        ref={picker}
+        type="file"
+        accept="application/json,.json"
+        hidden
+        onChange={(event) => void take(event)}
+      />
+      {choosing && (
+        <div class="lib-folder">
+          <p class="lib-folder-why">
+            This browser has no folder picker — Firefox, Safari and Chrome on Android do not
+            offer one — so Kona cannot keep the folder in step by itself. Open the file from
+            it and Kona will hand you back the one to put where you found it.
+          </p>
+          <label class="lib-folder-space">
+            <input
+              type="checkbox"
+              checked={!sharing}
+              onChange={() => {
+                const wanted: Scope = sharing ? EVERYTHING : { kind: 'spaces', origins: [] };
+                hold(wanted);
+                void setScope(wanted);
+              }}
+            />
+            <span>
+              Everything
+              <small>For a file only you see. Untick it to share a folder with people.</small>
+            </span>
+          </label>
+          {sharing && (
+            <ScopePanel spaces={spaces} where="that file" shared={sharing} onToggle={toggle} />
+          )}
+        </div>
+      )}
+    </>
+  );
+}
+
 function FolderSync({ spaces }: { spaces: Space[] }) {
   const { state, connect, reconnect, disconnect, now, carry } = useFolderSync();
   const [asking, setAsking] = useState(false);
   const [choosing, setChoosing] = useState(false);
 
-  // Nothing to offer on a browser without the folder picker, and a disabled
-  // button explaining itself would be worse than no button.
-  if (state.kind === 'unsupported') return null;
+  // No picker here, so the same file by hand instead of nothing at all.
+  if (state.kind === 'unsupported') return <ByHandSync spaces={spaces} />;
 
   if (state.kind === 'needs-permission') {
     return (
@@ -689,32 +843,7 @@ function FolderSync({ spaces }: { spaces: Space[] }) {
       </span>
 
       {sharing && choosing && (
-        <div class="lib-folder">
-          <p class="lib-folder-why">
-            Everyone you share <strong>{state.name}</strong> with can read these spaces and the
-            passages they cite. Nothing else from this library goes in.
-          </p>
-          {spaces.length === 0 ? (
-            <p class="lib-empty">No spaces to share yet.</p>
-          ) : (
-            spaces.map((space) => (
-              <label key={space.id} class="lib-folder-space">
-                <input
-                  type="checkbox"
-                  checked={shared.has(originOf(space))}
-                  onChange={() => toggle(originOf(space))}
-                />
-                <span>
-                  {space.name}
-                  <small>
-                    {space.markIds.length}{' '}
-                    {space.markIds.length === 1 ? 'highlight' : 'highlights'}
-                  </small>
-                </span>
-              </label>
-            ))
-          )}
-        </div>
+        <ScopePanel spaces={spaces} where={state.name} shared={shared} onToggle={toggle} />
       )}
     </>
   );

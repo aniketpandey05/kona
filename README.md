@@ -47,7 +47,8 @@ Mac — and that build is in `apple/`.
 - Export what you're looking at as Markdown — one section per chat, with your notes, tags and a link back — which drops straight into Obsidian or Notion.
 - Export a backup file of everything — highlights, spaces and your name — and import it on another computer.
 - Or point Kona at a folder your machine already syncs (Drive, Dropbox, iCloud, OneDrive, Syncthing) and it keeps the library there. Your own folder keeps your own computers in step; a folder you share with somebody keeps a space in step with them, with no file to send and their replies arriving on their own. Kona makes no network request to do it — it writes a file, and something you already trust carries it.
-- Which folder it is decides who can read what, so Kona asks before writing anything. A folder of your own carries everything. **A folder you share carries only the spaces you tick, and only the passages those spaces cite** — nothing else in your library is written there. It is as quick as your sync client is, and it needs the folder picker, so it is desktop Chrome, Edge and Brave only.
+- Which folder it is decides who can read what, so Kona asks before writing anything. A folder of your own carries everything. **A folder you share carries only the spaces you tick, and only the passages those spaces cite** — nothing else in your library is written there.
+- Keeping that folder in step on its own needs a folder picker, which only desktop Chrome, Edge and Brave have. Everywhere else — Firefox, Safari, the phone app — **Sync through a file** does the same pass by hand: open the file out of the folder, and Kona hands back the one to put where you found it. Same file, same merge, same choice of what goes in it, so a team is not split by somebody's browser.
 - Light, dark or match-your-system, chosen in the library and used everywhere, including the panel inside chats.
 
 **When pages change**
