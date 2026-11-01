@@ -493,7 +493,7 @@ export function Library() {
       ))}
 
       <footer class="lib-footer">
-        <span>Free for a single user. Nothing here leaves this computer.</span>
+        <span>Free on this device. Nothing here leaves this computer.</span>
         <a class="lib-tool" href={browser.runtime.getURL('/plans.html')}>
           Plans
         </a>

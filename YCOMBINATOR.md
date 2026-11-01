@@ -297,16 +297,19 @@ Four things we think we understand better:
 
 **19. How do or will you make money? How much could you make?**
 
-Free for a single user, paid for teams. The local, accountless version is free
-forever — it
-is our distribution and the reason anyone trusts us with the paid one. Nothing is ever moved out of it into a paid tier;
-paid adds the *shared* layer.
+The line is how far it reaches. **Free is one device** — everything Kona does, on the
+one you read on, forever, with no account. That is our distribution and the reason anyone
+trusts us with the paid one. **Pro is your devices**, the same library on all of them.
+**Team is other people in it.**
+
+Two parts of that — sync, and sharing a space — are built and running today, ahead of
+any billing, which we say on the pricing page rather than leave to be discovered.
 
 | | Price | What it adds |
 |---|---|---|
-| Free | $0 forever | Everything Kona does today, local only, no account — spaces, signed contributions, and sync through a folder you already keep in step |
-| Pro | $7 / mo | Sync with nothing to arrange and on the devices a folder cannot reach, search whose meaning half comes from a model rather than your own library |
-| Team | $14 / user / mo | Live shared spaces, permissions you can take back from one person, names your organisation vouches for, search across everyone's highlights, admin console and seats |
+| Free | $0 forever | Everything Kona does on one device, local only, no account — highlights, the library, search, spaces and their write-ups, exports |
+| Pro | $7 / mo | The same library on every device: sync through a folder you already have, the desktop app that keeps it in step, or nothing to arrange at all; and meaning from a model |
+| Team | $14 / user / mo | Other people in your spaces: handing one over and taking it back, the discussion that comes with it, signed attribution, then live updates, permissions you can take back, vouched names, search across everyone's highlights, admin and seats |
 | Enterprise | from $25 / user / mo, annual, 50-seat minimum | SSO and SCIM, audit log and export, retention and legal hold, EU data residency, DPA, SLA, self-host option |
 
 Self-serve runs on Stripe Checkout and Billing, so cards never touch our servers and we stay

@@ -68,7 +68,7 @@ cite — nothing else in your library is written to it. On browsers without a fo
 picker the same file can be opened and put back by hand. This still makes no network
 request: Kona writes a file, and the sync client you already use carries it.
 
-Free, and it does not stop at one person: https://github.com/aniketpandey05/kona
+Free on the device you read on: https://github.com/aniketpandey05/kona
 
 **Category**
 Productivity

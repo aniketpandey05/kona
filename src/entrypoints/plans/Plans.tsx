@@ -1,6 +1,6 @@
 import { browser } from '#imports';
 import { useEffect } from 'preact/hooks';
-import { CURRENT_PLAN, PLANS, PRICING_URL, TEAM_DEMO_URL } from '../../core/plans';
+import { CURRENT_PLAN, PLANS, PRICING_URL, SHIPPED_AHEAD, TEAM_DEMO_URL } from '../../core/plans';
 import { applyTheme, loadTheme, watchTheme } from '../../core/theme';
 import type { Theme } from '../../core/theme';
 
@@ -30,11 +30,11 @@ export function Plans() {
       </header>
 
       <p class="pl-lede">
-        Kona is free, and that is not a trial. Everything on this computer — your
-        highlights, your library, your spaces, the write-ups they produce — keeps working
-        whether or not anything below ever ships, and so does sharing a space with somebody
-        else. What the paid tiers sell is not the sharing; it is not having to arrange it,
-        and the controls a folder cannot give you.
+        Kona is free on the device you read on, and that is not a trial. Your highlights,
+        your library, your spaces and the write-ups they produce keep working on this
+        machine whether or not anything below ever ships. The paid tiers are the two things
+        one device cannot do by itself: Pro is the same library on all of your devices, and
+        Team is other people in it.
       </p>
 
       <div class="pl-tiers">
@@ -164,8 +164,7 @@ export function Plans() {
 
       <p class="pl-fine">
         No part of Kona asks you for a card, and nothing on this computer is sent anywhere.
-        Free does not stop at one person; the paid plans are what a team would pay for
-        once arranging it themselves stops being enough, if and when they exist.
+        Free is one device and never expires. {SHIPPED_AHEAD}
       </p>
     </main>
   );

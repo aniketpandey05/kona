@@ -102,35 +102,44 @@ audit-log work worth building.
 
 ## 5. Tiers
 
-One rule governs this table: **nothing moves out of Free into a paid tier.** Paid adds the
-*shared* layer. The free, local, accountless version stays complete forever — it is the
-distribution engine and the reason anyone trusts us with the paid one.
+The line is **how far it reaches**, and it falls in two places. Free is one device:
+everything Kona does, on the one you read on, forever. **Pro** is your devices — the same
+library on all of them. **Team** is other people in it.
+
+That is a change from how this was first written, which said nothing would ever move out
+of Free. Two things have: sync, and sharing a space with somebody. Both are built and
+running today, ahead of any billing, and both are where the line falls when the paid tiers
+exist rather than a gate closed now. Saying so is the point — a free tier that quietly
+turns out to be the whole product leaves nothing to sell, and a paid tier announced after
+people are relying on it is worse.
 
 | | Free | Pro | Team | Enterprise |
 |---|---|---|---|---|
 | **Price** | $0 forever | $7 / mo | $14 / user / mo | from $25 / user / mo, annual, 50-seat min |
+| **Reaches** | one device | your devices | your people | your organisation |
 | Unlimited highlights, notes, tags | yes | yes | yes | yes |
-| All exports (Markdown, backup) | yes | yes | yes | yes |
+| Whichever one device you read on — extension, phone or desktop | yes | yes | yes | yes |
+| All exports (Markdown, backup file) | yes | yes | yes | yes |
 | Local-only, no account | yes | — | — | — |
 | Spaces: question, evidence, decision | yes | yes | yes | yes |
 | Write-ups with every claim cited | yes | yes | yes | yes |
-| Hand a space over as a file | yes | yes | yes | yes |
-| Discussion on a highlight, merged on the way back | yes | yes | yes | yes |
-| Who found what and who concluded what | yes | yes | yes | yes |
-| Contributions signed with a key, checked on the way in | yes | yes | yes | yes |
-| Sync across your own devices | | yes | yes | yes |
-| Sync with nothing to arrange, and where a folder cannot reach | | yes | yes | yes |
 | Hybrid search, meaning learned from your own library | yes | yes | yes | yes |
+| Every surface at once, on one library | | yes | yes | yes |
+| Sync across your own devices, through a folder you already have | | yes | yes | yes |
+| The desktop app keeping that folder in step with its window shut | | yes | yes | yes |
+| The same pass by hand, where there is no folder picker | | yes | yes | yes |
+| Sync with nothing to arrange, and where a folder cannot reach | | yes | yes | yes |
 | Meaning from a model rather than your own corpus | | yes | yes | yes |
+| Hand a space over as a file, and take it back | | | yes | yes |
+| Discussion on a highlight, merged on the way back | | | yes | yes |
+| Who found what and who concluded what | | | yes | yes |
+| Contributions signed with a key, checked on the way in | | | yes | yes |
+| Choose which spaces a shared folder carries | | | yes | yes |
 | Search across everyone's highlights | | | yes | yes |
 | A space that updates as people type, not as a sync client catches up | | | yes | yes |
-| Choose which spaces a shared folder carries | yes | yes | yes | yes |
-| The same pass by hand, where there is no folder picker | yes | yes | yes | yes |
-| A desktop app that keeps the folder in step with its window shut | yes | yes | yes | yes |
-| Per-person read and write, revocable | | | yes | yes |
 | Replies as they are written, not when the file arrives | | | yes | yes |
+| Per-person read and write, revocable | | | yes | yes |
 | Names an organisation vouches for, and can revoke | | | yes | yes |
-| Permissions | | | yes | yes |
 | Slack / Notion / Obsidian sync | | | yes | yes |
 | Admin console, seat management | | | yes | yes |
 | SSO (SAML / OIDC), SCIM provisioning | | | | yes |
