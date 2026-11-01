@@ -376,41 +376,6 @@ section {
   font-size: 15px;
 }
 
-/* ---- platforms ---- */
-
-.platforms {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
-  gap: 16px;
-  margin-top: 26px;
-}
-
-.platforms article {
-  padding: 20px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-}
-
-.platforms h3 {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 640;
-}
-
-.platforms p {
-  margin: 0 0 8px;
-  color: var(--muted);
-  font-size: 14.5px;
-}
-
-.platforms .note {
-  margin: 10px 0 0;
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
-  font-size: 13.5px;
-}
-
 /* ---- pricing ---- */
 
 .tiers {
@@ -551,4 +516,223 @@ section {
   #pricing {
     margin: 52px 0;
   }
+}
+
+/* ===========================================================================
+   Getting it, and the steps to do so — the part a reader came for and the
+   page did not have. Everything below shares the tokens above on purpose.
+   =========================================================================== */
+
+/* ---- the highlight in the headline ----
+
+   The product, demonstrated in the first line somebody reads: a marker drawn
+   across the words rather than a screenshot of one. It paints itself on load
+   because that is what the extension does, and holds still for anybody who
+   has asked for less movement. */
+
+:root {
+  --hl: rgba(250, 204, 21, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --hl: rgba(250, 204, 21, 0.26);
+  }
+}
+
+:root[data-theme='dark'] {
+  --hl: rgba(250, 204, 21, 0.26);
+}
+
+.hl {
+  color: inherit;
+  /* A <mark> comes with the browser's own yellow block behind it, which would
+     sit under the gradient and defeat the whole effect. */
+  background-color: transparent;
+  background-image: linear-gradient(var(--hl), var(--hl));
+  background-repeat: no-repeat;
+  /* Sits behind the descenders rather than boxing the text, the way a real
+     marker does. */
+  background-position: 0 88%;
+  background-size: 0% 46%;
+  border-radius: 2px;
+  animation: draw 620ms cubic-bezier(0.22, 0.61, 0.36, 1) 320ms forwards;
+}
+
+@keyframes draw {
+  to {
+    background-size: 100% 46%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hl {
+    animation: none;
+    background-size: 100% 46%;
+  }
+}
+
+/* ---- get it ---- */
+
+.get {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.get article {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.get header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.get h3 {
+  margin: 0;
+  font-size: 16.5px;
+  font-weight: 650;
+}
+
+.get p {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+
+/* Pushes the action to the bottom, so a row of cards lines up however much
+   text each of them carries. */
+.get .act {
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.get .primary,
+.get .ghost {
+  width: 100%;
+  min-height: 40px;
+  font-size: 14.5px;
+}
+
+/* ---- what state a thing is in, said rather than implied ---- */
+
+.pill {
+  flex: none;
+  padding: 3px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--sunk);
+  color: var(--muted);
+}
+
+.pill-ready {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 38%, transparent);
+  background: color-mix(in srgb, var(--accent) 11%, transparent);
+}
+
+/* ---- commands you can copy ---- */
+
+.cmd {
+  margin: 0;
+  padding: 12px 14px;
+  /* Wrapped rather than scrolled. A command cut off at the edge of a card is
+     one somebody copies wrong, and a horizontal scrollbar inside a step is
+     not something anyone looks for. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 13.5px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--fg);
+  background: var(--sunk);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.cmd span {
+  color: var(--muted);
+  user-select: none;
+}
+
+/* ---- the steps ---- */
+
+.steps {
+  counter-reset: step;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  counter-increment: step;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.steps li::before {
+  content: counter(step);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-fg);
+  background: var(--accent);
+  border-radius: 9px;
+}
+
+.steps h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 640;
+}
+
+.steps p {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+
+/* The grid stretches every step to the tallest, so this lines the command
+   blocks up along the bottom however much prose each one needed. */
+.steps .cmd {
+  margin-top: auto;
+}
+
+/* ---- a claim that is true, marked as such ---- */
+
+.real {
+  margin: 26px 0 0;
+  padding: 16px 18px;
+  background: var(--sunk);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+
+.real strong {
+  color: var(--fg);
 }

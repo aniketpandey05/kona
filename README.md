@@ -323,6 +323,10 @@ npm run preview:web   # serves the whole thing on one port, as it will be publis
 builds do not clear it, because they share that directory — a `build:site` that emptied it
 would take `/app/` and `/team/` with it, and nothing would say so until a link 404ed.
 
+That same bundle is what `vercel.json` deploys, so the site can be served from Vercel and
+GitHub Pages without the two drifting apart. The config skips Electron's binary download
+during the build, since the site does not need it and it is 150MB of nothing.
+
 Use `preview:web` rather than the individual dev servers whenever you want to click
 between the three. Each `dev:` server only knows about its own folder, so a link to
 `/team/` from the landing page's dev server falls back to the landing page itself — which
