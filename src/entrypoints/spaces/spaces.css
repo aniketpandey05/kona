@@ -892,3 +892,40 @@ a:focus-visible {
   font-size: 11px;
   font-weight: 500;
 }
+
+/*
+ * A signature that checks out. Deliberately small and unremarkable: the usual
+ * answer is yes, and a page covered in green ticks is a page where nobody
+ * reads them.
+ */
+.sp-proven {
+  margin-left: 4px;
+  color: var(--sp-ok);
+  font-weight: 700;
+  cursor: help;
+}
+
+/* The opposite, which has to be impossible to skim past. */
+.sp-broken {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  /* 13% measured 4.50:1 in light mode, which is the AA floor exactly and no
+     margin at all for eleven-pixel type. 7% measures comfortably above it. */
+  background: color-mix(in srgb, var(--sp-danger) 7%, transparent);
+  color: var(--sp-danger);
+  font-size: 11px;
+  font-weight: 650;
+  cursor: help;
+}
+
+.sp-alarm {
+  margin: 0 0 12px;
+  padding: 10px 13px;
+  border: 1px solid color-mix(in srgb, var(--sp-danger) 45%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--sp-danger) 10%, transparent);
+  color: var(--sp-danger);
+  font-size: 13px;
+  line-height: 1.5;
+}

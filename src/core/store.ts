@@ -1,4 +1,5 @@
 import { browser, storage } from '#imports';
+import { makeKeypair } from './identity';
 import { makePerson, type Person } from './people';
 import type { Space } from './spaces';
 import type { Mark, SiteId } from './types';
@@ -156,6 +157,16 @@ export function watchSpaces(onChange: (spaces: Space[]) => void): () => void {
 // One record, and it never leaves this computer on its own: it travels only
 // inside a space you choose to hand over. There is nothing to sign in to.
 const ME_KEY = 'local:me' as const;
+/**
+ * The private half of your signing key, kept apart from the person record so
+ * that there is no path by which it could be spread into a space and handed
+ * to somebody. Only the public half is ever part of a `Person`.
+ */
+const SIGNING_KEY = 'local:signing-key' as const;
+
+export async function loadSigningKey(): Promise<JsonWebKey | null> {
+  return (await storage.getItem<JsonWebKey>(SIGNING_KEY)) ?? null;
+}
 
 export async function loadMe(): Promise<Person | null> {
   const me = await storage.getItem<Person>(ME_KEY);
@@ -170,12 +181,37 @@ export async function loadMe(): Promise<Person | null> {
 export async function saveMe(name: string): Promise<Person | null> {
   const current = await loadMe();
   if (!name.trim()) {
+    // Clearing your name is starting over, so the key goes with it rather than
+    // being paired with whatever id you are given next.
     await storage.removeItem(ME_KEY);
+    await storage.removeItem(SIGNING_KEY);
     return null;
   }
-  const me = makePerson(name, current?.id);
+  const me = { ...makePerson(name, current?.id), ...(current?.key ? { key: current.key } : {}) };
   await storage.setItem(ME_KEY, me);
-  return me;
+  return withKey(me);
+}
+
+/**
+ * You, with a key, making one if this is the first time.
+ *
+ * Separate from `saveMe` because somebody who named themselves before any of
+ * this existed should get a key without having to retype their name, and
+ * because making one is a trip through WebCrypto that nothing else should
+ * have to wait for.
+ */
+export async function ensureSigningKey(): Promise<Person | null> {
+  return withKey(await loadMe());
+}
+
+async function withKey(me: Person | null): Promise<Person | null> {
+  if (!me || me.key) return me;
+  const pair = await makeKeypair();
+  if (!pair) return me;
+  const keyed: Person = { ...me, key: pair.publicKey };
+  await storage.setItem(SIGNING_KEY, pair.privateKey);
+  await storage.setItem(ME_KEY, keyed);
+  return keyed;
 }
 
 export function watchMe(onChange: (me: Person | null) => void): () => void {

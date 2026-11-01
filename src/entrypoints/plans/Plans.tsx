@@ -94,10 +94,20 @@ export function Plans() {
           no account on either side, and it is in the free plan.
         </p>
         <p>
-          Two things it is not. Nobody is in the space at the same time as you, so the reply
-          arrives when the file does. And a name here is one somebody typed, not one anything
-          checked. Removing both is what Team is for; that needs a server, and the server is
-          not built. There is a working demo of the shape of it.
+          A name in a space is not just typed, either. Your computer makes a key the first
+          time you put your name in, everything you write in a space is signed with it, and
+          the other side checks it against the key it already holds for you. So nobody can
+          write a reply in your name, or quietly change the words in one you wrote — and if
+          they try, the space says <strong>does not check out</strong> against it rather
+          than hiding it.
+        </p>
+        <p>
+          Two things it is not. Nobody is in the space at the same time as you, so a reply
+          arrives when the file does. And a key proves the person is the same one as last
+          time, not who they are in the world: the first time a name reaches you, you are
+          taking it on trust, and there is nobody to ask if it should stop being trusted.
+          An account answers that, and an account needs a server, which is not built. There
+          is a working demo of the shape of it.
         </p>
         <div class="pl-row">
           <a class="pl-primary" href={TEAM_DEMO_URL} target="_blank" rel="noreferrer noopener">

@@ -117,13 +117,14 @@ distribution engine and the reason anyone trusts us with the paid one.
 | Hand a space over as a file | yes | yes | yes | yes |
 | Discussion on a highlight, merged on the way back | yes | yes | yes | yes |
 | Who found what and who concluded what | yes | yes | yes | yes |
+| Contributions signed with a key, checked on the way in | yes | yes | yes | yes |
 | Sync across your own devices | | yes | yes | yes |
 | Hybrid search, meaning learned from your own library | yes | yes | yes | yes |
 | Meaning from a model rather than your own corpus | | yes | yes | yes |
 | Search across everyone's highlights | | | yes | yes |
 | One space several people work in at once | | | yes | yes |
 | Replies as they are written, not when the file arrives | | | yes | yes |
-| Names with an account behind them | | | yes | yes |
+| Names an organisation vouches for, and can revoke | | | yes | yes |
 | Permissions | | | yes | yes |
 | Slack / Notion / Obsidian sync | | | yes | yes |
 | Admin console, seat management | | | yes | yes |

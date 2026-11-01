@@ -7,16 +7,23 @@
  * which is what lets the other side show your name against your conclusion
  * instead of an id it has no way to look up.
  *
- * That has a consequence worth being plain about: a name here is asserted, not
- * verified. It is good enough for three people passing a question around, and
- * it is not an identity system. The paid Team plan, where there is a server to
- * check against, is where that changes.
+ * A name on its own would be asserted and nothing more. A person who has a
+ * key is different: everything they write in a space is signed with it, so a
+ * copy coming back can be checked against the key you already hold for them.
+ * The first time somebody's name arrives you take it on trust; after that the
+ * key has to match. `identity.ts` is careful about where that stops.
  */
 
 export interface Person {
   /** Made once on this computer, and reused so a copy coming back recognises you. */
   id: string;
   name: string;
+  /**
+   * The public half of a key made on their computer, if they have one. It is
+   * what turns the name from a claim into something checkable: see
+   * `identity.ts` for exactly how much that proves, and how much it does not.
+   */
+  key?: string;
 }
 
 const newId = (): string => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
@@ -65,14 +72,26 @@ export function nameIn(people: readonly Person[] | undefined, id: string | undef
  */
 export function joinPeople(people: readonly Person[] | undefined, me: Person): Person[] {
   const list = people ?? [];
-  if (list.some((person) => person.id === me.id && person.name === me.name)) return [...list];
+  const same = (person: Person): boolean =>
+    person.id === me.id && person.name === me.name && person.key === me.key;
+  if (list.some(same)) return [...list];
+  // Replaced outright rather than patched: a key you have just made is as much
+  // a part of who you are here as the name, and a half-updated entry would
+  // leave your own signatures unverifiable on your own copy.
   if (list.some((person) => person.id === me.id)) {
-    return list.map((person) => (person.id === me.id ? { ...person, name: me.name } : person));
+    return list.map((person) => (person.id === me.id ? me : person));
   }
   return [...list, me];
 }
 
-/** Both lists, mine first; a name I already have for somebody is the one I keep. */
+/**
+ * Both lists, mine first.
+ *
+ * A person I already have is kept exactly as I have them — their name and,
+ * more to the point, their key. That is the whole defence against somebody
+ * sending a file that claims an id already in my copy: the key I hold wins,
+ * so their contributions are checked against the real one and fail.
+ */
 export function mergePeople(mine: readonly Person[] | undefined, theirs: readonly Person[] | undefined): Person[] {
   const out = [...(mine ?? [])];
   const have = new Set(out.map((person) => person.id));
@@ -80,7 +99,15 @@ export function mergePeople(mine: readonly Person[] | undefined, theirs: readonl
     if (!have.has(person.id)) {
       out.push(person);
       have.add(person.id);
+      continue;
     }
+    // Somebody I already know, who has since made themselves a key. Taking it
+    // is the first use the trust rests on; what matters is that a key I
+    // already hold is never replaced by one arriving in a file, which is what
+    // stops a later file claiming to be them.
+    const at = out.findIndex((entry) => entry.id === person.id);
+    const ours = out[at];
+    if (ours && !ours.key && person.key) out[at] = { ...ours, key: person.key };
   }
   return out;
 }

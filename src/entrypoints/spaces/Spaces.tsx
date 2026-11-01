@@ -6,11 +6,15 @@ import { UI_COLORS } from '../../core/painter';
 import { searchLibrary } from '../../core/search';
 import { hueOf, initials, nameIn, type Person } from '../../core/people';
 import { adoptSpace, packSpace, readSharedSpace, shareFilename } from '../../core/spaceShare';
+import { checkSpace, DECISION, signMine, type Checked } from '../../core/spaceSign';
+import { fingerprint } from '../../core/identity';
 import { siteLabel } from '../../core/sites';
 import {
   importMarks,
   loadAllMarks,
+  ensureSigningKey,
   loadMe,
+  loadSigningKey,
   loadSpaces,
   removeSpace,
   saveMe,
@@ -97,7 +101,9 @@ export function Spaces() {
   }, []);
 
   useEffect(() => {
-    void loadMe().then(setMe);
+    // Not just loading: somebody who put their name in before any of this
+    // existed gets a key here, without having to do anything about it.
+    void ensureSigningKey().then(setMe);
     return watchMe(setMe);
   }, []);
 
@@ -459,6 +465,38 @@ function SpaceView({
   const [openEvidence, setOpenEvidence] = useState<string[]>([]);
   const [showMemo, setShowMemo] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [checked, setChecked] = useState<Checked | null>(null);
+  const [prints, setPrints] = useState<Record<string, string>>({});
+
+  // Checking signatures means a trip through WebCrypto per contribution, so it
+  // happens here rather than in the render, and only when the space changes.
+  useEffect(() => {
+    let current = true;
+    void checkSpace(space).then((result) => {
+      if (current) setChecked(result);
+    });
+    return () => {
+      current = false;
+    };
+  }, [space]);
+
+  // A fingerprint is for the one thing software cannot settle: two people
+  // confirming out loud that they are talking about each other.
+  useEffect(() => {
+    let current = true;
+    const keyed = (space.people ?? []).filter((person) => person.key);
+    void Promise.all(
+      keyed.map(async (person) => [person.id, await fingerprint(person.key!)] as const),
+    ).then((pairs) => {
+      if (!current) return;
+      setPrints(Object.fromEntries(pairs.filter(([, print]) => print) as [string, string][]));
+    });
+    return () => {
+      current = false;
+    };
+  }, [space.people]);
+
+  const signing: Signing = { checked, prints };
 
   const held = useMemo(() => marksIn(space, marks), [space, marks]);
   const unused = useMemo(() => unusedIn(space, marks), [space, marks]);
@@ -500,8 +538,14 @@ function SpaceView({
    * The whole space as a file: the question, the passages, the conclusions and
    * the links. Whoever opens it carries on from here — see `core/share`.
    */
-  const shareSpace = (): void => {
-    download(packSpace(space, marks, me), 'application/json', shareFilename(space));
+  const shareSpace = async (): Promise<void> => {
+    const privateKey = me ? await loadSigningKey() : null;
+    // Signed on the way out, and the signed copy kept, so that signing is done
+    // once rather than afresh every time the space is handed on — and so your
+    // own copy can show your own work as checked.
+    const signed = me && privateKey ? await signMine(space, me, privateKey) : space;
+    if (signed !== space) await saveSpace(signed);
+    download(packSpace(signed, marks, me), 'application/json', shareFilename(space));
   };
 
   return (
@@ -528,7 +572,7 @@ function SpaceView({
             {space.question ? 'Rename' : 'Name it, or ask a question'}
           </button>
         )}
-        <button type="button" class="sp-tool" onClick={shareSpace} title="Save this space as a file you can send to anyone">
+        <button type="button" class="sp-tool" onClick={() => void shareSpace()} title="Save this space as a file you can send to anyone">
           Share
         </button>
         </span>
@@ -571,6 +615,16 @@ function SpaceView({
       ) : (
         <h2 class="sp-question-big">{space.question ?? space.name}</h2>
       )}
+      {checked && checked.broken.size > 0 && (
+        <p class="sp-alarm" role="alert">
+          {checked.broken.size === 1
+            ? 'One thing here does not'
+            : `${checked.broken.size} things here do not`}{' '}
+          match the key it was signed with — either the words were changed after it was
+          signed, or it was not written by the person it names. Nothing has been removed;
+          look for <strong>does not check out</strong> below.
+        </p>
+      )}
       <div class="sp-row sp-between sp-headfoot">
         <p class="sp-counts">
           {shared && (
@@ -603,7 +657,11 @@ function SpaceView({
           <h2>Decision</h2>
           <p>{space.decision.body}</p>
           {shared && nameIn(space.people, space.decision.by) && (
-            <p class="sp-by">— {nameIn(space.people, space.decision.by)}</p>
+            <p class="sp-by">
+              — {nameIn(space.people, space.decision.by)}
+              <Proven by={space.decision.by} signing={signing} />
+              <Broken id={DECISION} signing={signing} />
+            </p>
           )}
           <button type="button" class="sp-tool" onClick={() => write(reopen(space))}>
             Reopen
@@ -731,6 +789,7 @@ function SpaceView({
                 mark={mark}
                 space={space}
                 me={me}
+                signing={signing}
                 onRemove={() => write(removeMark(space, mark.id))}
               />
             ))}
@@ -797,7 +856,11 @@ function SpaceView({
                     <>
                       <p class="sp-claim">{finding.claim}</p>
                       {shared && nameIn(space.people, finding.by) && (
-                        <p class="sp-by">— {nameIn(space.people, finding.by)}</p>
+                        <p class="sp-by">
+                          — {nameIn(space.people, finding.by)}
+                          <Proven by={finding.by} signing={signing} />
+                          <Broken id={finding.id} signing={signing} />
+                        </p>
                       )}
                     </>
                   )}
@@ -1116,15 +1179,62 @@ function Picker({ space, marks, me }: { space: Space; marks: Mark[]; me: Person 
  * The thread stays shut until it is asked for. A page where every passage is
  * also an open conversation is a page nobody reads to the bottom.
  */
+/**
+ * What a check of the space's signatures found, passed down to wherever a
+ * name is shown. Null while the check is still running, which on a space of
+ * any ordinary size is one frame.
+ */
+interface Signing {
+  checked: Checked | null;
+  prints: Record<string, string>;
+}
+
+/**
+ * A tick beside a name whose work here all checks out against the key this
+ * copy holds for them. Quiet on purpose: the ordinary case is that everything
+ * is fine, and a page of green ticks teaches people to stop reading them.
+ */
+function Proven({ by, signing }: { by?: string; signing?: Signing }) {
+  if (!by || !signing?.checked?.proven.has(by)) return null;
+  const print = signing.prints[by];
+  return (
+    <span
+      class="sp-proven"
+      title={
+        print
+          ? `Signed with the key you hold for them — ${print}`
+          : 'Signed with the key you hold for them'
+      }
+    >
+      ✓
+    </span>
+  );
+}
+
+/** The loud one, because it is the only case where something is actually wrong. */
+function Broken({ id, signing }: { id: string; signing?: Signing }) {
+  if (!signing?.checked?.broken.has(id)) return null;
+  return (
+    <span
+      class="sp-broken"
+      title="The signature does not match. Either the words changed after it was signed, or whoever signed it was not the person it names."
+    >
+      does not check out
+    </span>
+  );
+}
+
 function Evidence({
   mark,
   space,
   me,
+  signing,
   onRemove,
 }: {
   mark: Mark;
   space?: Space;
   me?: Person | null;
+  signing?: Signing;
   onRemove?: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -1209,6 +1319,8 @@ function Evidence({
                       <div>
                         <strong>{who ? who.name : 'Someone'}</strong>
                         {mine && <span class="sp-mine">you</span>}
+                        <Proven by={comment.by} signing={signing} />
+                        <Broken id={comment.id} signing={signing} />
                         {comment.editedAt && (
                           <span class="sp-edited" title={`Reworded ${new Date(comment.editedAt).toLocaleString()}`}>
                             edited

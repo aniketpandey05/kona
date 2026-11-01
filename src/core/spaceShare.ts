@@ -472,6 +472,7 @@ function cleanSpace(value: unknown, haveMarks: ReadonlySet<string>): Space | nul
             markIds: strings(finding.markIds).filter((id) => keep.has(id)),
             ...(str(finding.by) ? { by: finding.by } : {}),
             createdAt: num(finding.createdAt, Date.now()),
+            ...(str(finding.sig) ? { sig: finding.sig } : {}),
           };
         })
         .filter((finding): finding is Finding => !!finding)
@@ -500,6 +501,7 @@ function cleanSpace(value: unknown, haveMarks: ReadonlySet<string>): Space | nul
             body,
             ...(str(decision?.by) ? { by: decision?.by } : {}),
             decidedAt: num(decision?.decidedAt, createdAt),
+            ...(str(decision?.sig) ? { sig: decision?.sig } : {}),
           },
         }
       : {}),
@@ -519,7 +521,8 @@ function cleanPeople(value: unknown): Person[] {
     const name = str(raw?.name);
     if (!id || !name || seen.has(id)) continue;
     seen.add(id);
-    out.push({ id, name: name.trim().slice(0, 60) });
+    const key = str(raw?.key);
+    out.push({ id, name: name.trim().slice(0, 60), ...(key ? { key } : {}) });
   }
   return out;
 }
@@ -560,6 +563,7 @@ function cleanComments(value: unknown, keep: ReadonlySet<string>): Comment[] {
       ...(typeof raw?.editedAt === 'number' && Number.isFinite(raw.editedAt)
         ? { editedAt: raw.editedAt }
         : {}),
+      ...(str(raw?.sig) ? { sig: raw?.sig } : {}),
     });
   }
   return out;

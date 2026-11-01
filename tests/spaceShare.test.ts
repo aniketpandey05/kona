@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { makePerson } from '../src/core/people';
+import { makeKeypair } from '../src/core/identity';
+import { makePerson, type Person } from '../src/core/people';
+import { checkSpace, signMine } from '../src/core/spaceSign';
 import { adoptSpace, packSpace, readSharedSpace, shareFilename } from '../src/core/spaceShare';
 import {
   addComment,
@@ -570,3 +572,97 @@ describe('a reply reworded on the other copy', () => {
     expect(taken.space.comments?.[0]?.body).toBe('Not since 24.0.');
   });
 });
+
+describe('a signed space going round', () => {
+  interface Signer {
+    person: Person;
+    privateKey: JsonWebKey;
+  }
+
+  async function signer(name: string, id: string): Promise<Signer> {
+    const pair = (await makeKeypair())!;
+    return { person: { ...makePerson(name, id), key: pair.publicKey }, privateKey: pair.privateKey };
+  }
+
+  const marks = [mark('a1', KEPT), mark('a2', BIND)];
+
+  /** Priya gathers two passages, argues about one, and signs on the way out. */
+  async function sent(priya: Signer) {
+    let space = addMark(createSpace('Docker teardown', 'Safe?'), 'a1', priya.person, 90);
+    space = addMark(space, 'a2', priya.person, 95);
+    space = addComment(space, 'a2', 'This is the one that bit us.', priya.person, 100);
+    space = addFinding(space, 'down keeps named volumes', 'supports', ['a1'], priya.person, 110);
+    const signed = await signMine(space, priya.person, priya.privateKey);
+    return { space: signed, file: packSpace(signed, marks, priya.person) };
+  }
+
+  it('arrives still provably hers', async () => {
+    const priya = await signer('Priya', 'p1');
+    const { file } = await sent(priya);
+    const taken = adoptSpace(readSharedSpace(file), [], []);
+    const checked = await checkSpace(taken.space);
+    expect(checked.broken.size).toBe(0);
+    expect(checked.verified.size).toBe(2);
+    expect([...checked.proven]).toEqual(['p1']);
+  });
+
+  it('is still hers after her reply lands on my copy of the passage', async () => {
+    const priya = await signer('Priya', 'p1');
+    const { file } = await sent(priya);
+    // The passage she commented on, under an id of my own: the merge rewrites
+    // the reply onto my id, and the signature has to survive that.
+    const taken = adoptSpace(readSharedSpace(file), [mark('mine-2', BIND)], []);
+    expect(commentsOn(taken.space, 'mine-2')).toHaveLength(1);
+    const checked = await checkSpace(taken.space);
+    expect(checked.broken.size).toBe(0);
+    expect(checked.verified.size).toBe(2);
+  });
+
+  it('gives a name I already knew the key it has since made', async () => {
+    const priya = await signer('Priya', 'p1');
+    const { file } = await sent(priya);
+    // My copy knows Priya from before any of this existed, with no key.
+    const before = addMark(createSpace('Docker teardown', 'Safe?'), 'a1', makePerson('Priya', 'p1'));
+    const mine = { ...before, origin: originOfFile(file) };
+    const taken = adoptSpace(readSharedSpace(file), marks, [mine]);
+    expect(taken.merged).toBe(true);
+    expect(taken.space.people?.find((person) => person.id === 'p1')?.key).toBe(priya.person.key);
+    expect((await checkSpace(taken.space)).broken.size).toBe(0);
+  });
+
+  it('will not let a second file take over a name I have a key for', async () => {
+    const priya = await signer('Priya', 'p1');
+    const impostor = await signer('Priya', 'p1');
+    const { space: real, file } = await sent(priya);
+    const mine = adoptSpace(readSharedSpace(file), marks, []).space;
+
+    // Same id, same name, different key, and a reply signed with it.
+    let theirs = addComment(real, 'a2', 'Ship it on Friday.', impostor.person, 200);
+    theirs = { ...theirs, people: [impostor.person] };
+    theirs = await signMine(theirs, impostor.person, impostor.privateKey);
+    const back = adoptSpace(readSharedSpace(packSpace(theirs, marks, impostor.person)), marks, [mine]);
+
+    // The key I hold is the one that stays, so the forged reply does not check out.
+    expect(back.space.people?.find((person) => person.id === 'p1')?.key).toBe(priya.person.key);
+    const checked = await checkSpace(back.space);
+    const forged = (back.space.comments ?? []).find((entry) => entry.body === 'Ship it on Friday.');
+    expect(forged).toBeTruthy();
+    expect(checked.broken.has(forged!.id)).toBe(true);
+    expect(checked.proven.has('p1')).toBe(false);
+  });
+
+  it('takes nothing from a key that is not a string', async () => {
+    const priya = await signer('Priya', 'p1');
+    const { file } = await sent(priya);
+    const raw = JSON.parse(file) as { space: { people: { key?: unknown }[] } };
+    raw.space.people[0]!.key = { sneaky: true };
+    const taken = adoptSpace(readSharedSpace(JSON.stringify(raw)), [], []);
+    expect(taken.space.people?.[0]?.key).toBeUndefined();
+  });
+});
+
+/** The origin a file carries, so a test can set up the copy it merges into. */
+function originOfFile(file: string): string {
+  return (JSON.parse(file) as { space: { origin?: string; id: string } }).space.origin ??
+    (JSON.parse(file) as { space: { id: string } }).space.id;
+}

@@ -42,7 +42,8 @@ Mac — and that build is in `apple/`.
 - Every highlight has a copyable link that lands on the exact spot. It is an ordinary URL
   text fragment, so it works for people who don't have Kona, and on a phone.
 - Filter by tag as well as by site, and search covers tags too. Once you have spaces, filter by which space holds a highlight, and — in a space that has been round to a colleague and back — by who found it.
-- Change a highlight'''s note and tags from the library, not only from the page it came from.
+- Change a highlight's note and tags from the library, not only from the page it came from.
+- Put your name to your work and your computer makes a signing key. Everything you write in a shared space is signed with it, and a space coming back is checked against the key you already hold for that person — so nobody can write a reply in your name, and anything whose words moved after it was signed is flagged rather than hidden. It proves the sender is the same person as last time; it does not prove who they are in the world, which is what an account would add.
 - Export what you're looking at as Markdown — one section per chat, with your notes, tags and a link back — which drops straight into Obsidian or Notion.
 - Export a backup file of everything and import it on another computer.
 - Light, dark or match-your-system, chosen in the library and used everywhere, including the panel inside chats.

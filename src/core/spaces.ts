@@ -26,6 +26,12 @@ export interface Finding {
   /** Who concluded it, as a person id in the space's own `people`. */
   by?: string;
   createdAt: number;
+  /**
+   * Proof that the person named in `by` really wrote this. Added when the
+   * space is handed over, because that is the only moment it matters, and
+   * absent on anything written before there was a key to sign with.
+   */
+  sig?: string;
 }
 
 export interface Decision {
@@ -33,6 +39,12 @@ export interface Decision {
   /** Who settled it. */
   by?: string;
   decidedAt: number;
+  /**
+   * Proof that the person named in `by` really wrote this. Added when the
+   * space is handed over, because that is the only moment it matters, and
+   * absent on anything written before there was a key to sign with.
+   */
+  sig?: string;
 }
 
 /**
@@ -57,6 +69,12 @@ export interface Comment {
    * rewriting what you said is the one edit that would actually mislead.
    */
   editedAt?: number;
+  /**
+   * Proof that the person named in `by` really wrote this. Added when the
+   * space is handed over, because that is the only moment it matters, and
+   * absent on anything written before there was a key to sign with.
+   */
+  sig?: string;
 }
 
 export interface Space {
@@ -315,7 +333,12 @@ export function editComment(space: Space, commentId: string, body: string, now =
     space,
     {
       comments: space.comments.map((entry) =>
-        entry.id === commentId ? { ...entry, body: text, editedAt: now } : entry,
+        // The signature was over the old wording, so it is no longer true of
+        // this reply. It is dropped here and made again when the space is
+        // next handed over.
+        entry.id === commentId
+          ? { ...entry, body: text, editedAt: now, sig: undefined }
+          : entry,
       ),
     },
     now,
