@@ -12,12 +12,14 @@
  * that, and everywhere it says no the backup file is still the way across.
  */
 
-import { SYNC_FILE, type Folder } from './sync';
+import { EVERYTHING, SYNC_FILE, type Folder, type Scope } from './sync';
 
 /** A directory handle is a live object, so it cannot live in JSON storage. */
 const DB_NAME = 'kona-folder';
 const STORE = 'handle';
 const KEY = 'sync';
+/** What the folder is allowed to carry, kept beside the handle it belongs to. */
+const SCOPE_KEY = 'scope';
 
 declare global {
   interface Window {
@@ -66,6 +68,25 @@ async function remember(handle: FileSystemDirectoryHandle): Promise<void> {
 
 export async function forgetFolder(): Promise<void> {
   await withStore('readwrite', (store) => store.delete(KEY));
+  await withStore('readwrite', (store) => store.delete(SCOPE_KEY));
+}
+
+/**
+ * What this folder carries. Everything, unless somebody has said otherwise —
+ * but a folder is only ever created through the picker, and the picker asks.
+ */
+export async function savedScope(): Promise<Scope> {
+  try {
+    const scope = await withStore<Scope | undefined>('readonly', (store) => store.get(SCOPE_KEY));
+    if (scope?.kind === 'spaces' && Array.isArray(scope.origins)) return scope;
+    return EVERYTHING;
+  } catch {
+    return EVERYTHING;
+  }
+}
+
+export async function setScope(scope: Scope): Promise<void> {
+  await withStore('readwrite', (store) => store.put(scope, SCOPE_KEY));
 }
 
 async function stored(): Promise<FileSystemDirectoryHandle | null> {

@@ -111,10 +111,18 @@ export function Plans() {
           request to do it; it writes a file, and something you already trust carries it.
         </p>
         <p>
+          A folder you share decides who can read what is in it, so Kona asks which kind it
+          is before it writes anything. A folder of your own carries everything. A folder
+          you share carries only the spaces you tick and only the passages those spaces
+          cite — the rest of your library is never written there at all.
+        </p>
+        <p>
           It is a stand-in for Pro's sync rather than the same thing, and the difference is
           the work: you arrange the folder, you keep the sync client running, and you only
           get it where the folder picker exists. Pro is that job done for you, on every
-          device including the ones a folder cannot reach.
+          device including the ones a folder cannot reach. And ticking a space is as far as
+          permissions go here — who may write, and taking access back from one person
+          rather than un-sharing the whole folder, is Team's, and needs a server.
         </p>
         <p>
           What that is not. It goes as fast as your sync client does, which is seconds

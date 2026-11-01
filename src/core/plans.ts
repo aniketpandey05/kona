@@ -76,7 +76,7 @@ export const PLANS: readonly Plan[] = [
     included: [
       'Everything in Pro',
       'A space that updates as people type, not as a sync client catches up',
-      'Permissions, and taking access away again',
+      'Who may read and who may write, set per person and taken back when you need to',
       'Names your organisation vouches for, rather than ones you took on trust the first time',
       "Search that runs over everyone's highlights, not only your own",
       'Admin console and seats',

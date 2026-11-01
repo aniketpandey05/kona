@@ -25,7 +25,7 @@ import {
   watchMe,
   watchSpaces,
 } from '../../core/store';
-import { addMark as addToSpace, createSpace, whoFound, type Space } from '../../core/spaces';
+import { addMark as addToSpace, createSpace, originOf, whoFound, type Space } from '../../core/spaces';
 import { addTags, countTags, removeTag, sameTag } from '../../core/tags';
 import { applyTheme, loadTheme, saveTheme, watchTheme, type Theme } from '../../core/theme';
 import { KonaMark } from '../../ui/KonaMark';
@@ -345,7 +345,7 @@ export function Library() {
           <button class="lib-tool" onClick={() => void exportBackup()} disabled={total === 0}>
             Export backup
           </button>
-          <FolderSync />
+          <FolderSync spaces={spaces} />
           <button class="lib-tool" onClick={() => fileInput.current?.click()}>
             Import backup
           </button>
@@ -592,24 +592,14 @@ function spacesHolding(spaces: Space[], markId: string): Space[] {
  * is going and when it last went — which is all anybody wants from sync until
  * it stops working, and then it is the only thing they want.
  */
-function FolderSync() {
-  const { state, connect, reconnect, disconnect, now } = useFolderSync();
+function FolderSync({ spaces }: { spaces: Space[] }) {
+  const { state, connect, reconnect, disconnect, now, carry } = useFolderSync();
+  const [asking, setAsking] = useState(false);
+  const [choosing, setChoosing] = useState(false);
 
   // Nothing to offer on a browser without the folder picker, and a disabled
   // button explaining itself would be worse than no button.
   if (state.kind === 'unsupported') return null;
-
-  if (state.kind === 'off') {
-    return (
-      <button
-        class="lib-tool"
-        onClick={() => void connect()}
-        title="Keep this library in step with another computer, through a folder your machine already syncs"
-      >
-        Sync through a folder
-      </button>
-    );
-  }
 
   if (state.kind === 'needs-permission') {
     return (
@@ -619,23 +609,114 @@ function FolderSync() {
     );
   }
 
+  if (state.kind === 'off') {
+    return (
+      <>
+        <button class="lib-tool" onClick={() => setAsking(!asking)} aria-expanded={asking}>
+          Sync through a folder
+        </button>
+        {asking && (
+          <div class="lib-folder">
+            <p class="lib-folder-why">
+              Kona writes one file into a folder your computer already keeps in sync — Drive,
+              Dropbox, iCloud, OneDrive, Syncthing. It makes no network request of its own.
+              Which folder you pick decides who can read what is in it, so it asks first.
+            </p>
+            <button
+              class="lib-folder-pick"
+              onClick={() => {
+                setAsking(false);
+                void connect({ kind: 'everything' });
+              }}
+            >
+              A folder of my own
+              <small>Everything, kept in step between my own computers.</small>
+            </button>
+            <button
+              class="lib-folder-pick"
+              onClick={() => {
+                setAsking(false);
+                setChoosing(true);
+                void connect({ kind: 'spaces', origins: [] });
+              }}
+            >
+              A folder I share with people
+              <small>
+                Only the spaces I choose, and only the passages those spaces cite. Nothing else
+                in this library is written there.
+              </small>
+            </button>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  const sharing = state.scope.kind === 'spaces' ? state.scope.origins : null;
+  const shared = new Set(sharing ?? []);
+
+  const toggle = (origin: string) => {
+    const next = new Set(shared);
+    if (next.has(origin)) next.delete(origin);
+    else next.add(origin);
+    void carry({ kind: 'spaces', origins: [...next] });
+  };
+
   return (
-    <span class="lib-sync">
-      <button
-        class="lib-tool"
-        onClick={() => void now()}
-        disabled={state.busy}
-        title={`Syncing through ${state.name}`}
-      >
-        {state.busy ? 'Syncing…' : state.trouble ? 'Sync failed' : 'In sync'}
-      </button>
-      <span class={state.trouble ? 'lib-sync-bad' : 'lib-sync-where'}>
-        {state.trouble ?? state.name}
+    <>
+      <span class="lib-sync">
+        <button
+          class="lib-tool"
+          onClick={() => void now()}
+          disabled={state.busy}
+          title={state.trouble ?? `Syncing through ${state.name}`}
+        >
+          {state.busy ? 'Syncing…' : state.trouble ? 'Sync failed' : 'In sync'}
+        </button>
+        <span class={state.trouble ? 'lib-sync-bad' : 'lib-sync-where'}>
+          {state.trouble ?? state.name}
+        </span>
+        {sharing && (
+          <button class="lib-tool" onClick={() => setChoosing(!choosing)} aria-expanded={choosing}>
+            {sharing.length === 0
+              ? 'Nothing shared yet'
+              : `${sharing.length} ${sharing.length === 1 ? 'space' : 'spaces'} shared`}
+          </button>
+        )}
+        <button class="lib-tool" onClick={() => void disconnect()}>
+          Stop
+        </button>
       </span>
-      <button class="lib-tool" onClick={() => void disconnect()}>
-        Stop
-      </button>
-    </span>
+
+      {sharing && choosing && (
+        <div class="lib-folder">
+          <p class="lib-folder-why">
+            Everyone you share <strong>{state.name}</strong> with can read these spaces and the
+            passages they cite. Nothing else from this library goes in.
+          </p>
+          {spaces.length === 0 ? (
+            <p class="lib-empty">No spaces to share yet.</p>
+          ) : (
+            spaces.map((space) => (
+              <label key={space.id} class="lib-folder-space">
+                <input
+                  type="checkbox"
+                  checked={shared.has(originOf(space))}
+                  onChange={() => toggle(originOf(space))}
+                />
+                <span>
+                  {space.name}
+                  <small>
+                    {space.markIds.length}{' '}
+                    {space.markIds.length === 1 ? 'highlight' : 'highlights'}
+                  </small>
+                </span>
+              </label>
+            ))
+          )}
+        </div>
+      )}
+    </>
   );
 }
 

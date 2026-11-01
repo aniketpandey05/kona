@@ -20,11 +20,19 @@
  *   file to send and replies arriving on their own. That is most of Team's
  *   shared space.
  *
+ * Which makes what goes into the folder the whole safety question, because
+ * everybody it is shared with can read all of it. So a folder has a **scope**:
+ * a folder of your own carries everything, and a folder you share carries only
+ * the spaces you put in it, and only the passages those spaces actually cite.
+ * Nothing else of yours is written there, ever. Without a server to hold a
+ * permission, that is the one that matters — what somebody else can see.
+ *
  * What it does not do, stated here so nobody has to find out: it is as fast as
  * the sync client is, which is seconds rather than instant; there is no
- * presence and no cursors; and because a shared folder is readable by whoever
- * it is shared with, **the private signing key never goes in it**. Identity
- * moves only through a backup you make deliberately for yourself.
+ * presence and no cursors; taking access away again is the sharing folder's
+ * job and not Kona's; and because a shared folder is readable by whoever it is
+ * shared with, **the private signing key never goes in it**. Identity moves
+ * only through a backup you make deliberately for yourself.
  *
  * It also never deletes. A highlight or a reply removed on one side comes back
  * from the other, exactly as the handover merge behaves, because two copies
@@ -57,6 +65,17 @@ export interface SyncStore {
   saveMark(mark: Mark): Promise<void>;
   saveSpace(space: Space): Promise<void>;
 }
+
+/**
+ * What this folder is allowed to carry.
+ *
+ * `everything` is a folder of your own, keeping one of your machines in step
+ * with another. `spaces` is a folder you share: only these spaces go into it,
+ * and only the passages they cite go with them.
+ */
+export type Scope = { kind: 'everything' } | { kind: 'spaces'; origins: readonly string[] };
+
+export const EVERYTHING: Scope = { kind: 'everything' };
 
 export interface Synced {
   /** Highlights that were not here before. */
@@ -107,6 +126,7 @@ function signature(marks: readonly Mark[], spaces: readonly Space[]): string {
 export async function syncOnce(
   folder: Folder,
   store: SyncStore,
+  scope: Scope = EVERYTHING,
   now = Date.now(),
 ): Promise<Synced> {
   const text = await folder.read();
@@ -151,18 +171,60 @@ export async function syncOnce(
     }
   }
 
-  const marks = await store.marks();
-  const spaces = await store.spaces();
-  const ours = signature(marks, spaces);
+  const publish = await toPublish(store, scope, incoming);
+  const ours = signature(publish.marks, publish.spaces);
   const theirs = incoming ? signature(incoming.marks, incoming.spaces) : null;
 
   if (ours !== theirs) {
     // Never the identity: the same folder may be one somebody shares with a
     // colleague, and a signing key is not a thing to leave lying in it.
-    await folder.write(createBackup(marks, spaces));
+    await folder.write(createBackup(publish.marks, publish.spaces));
     found.wrote = true;
   }
   return found;
+}
+
+/**
+ * Exactly what this pass should leave in the folder.
+ *
+ * Whatever is already in the file stays, because dropping a space on the
+ * grounds that this machine is not sharing it would delete somebody else's
+ * work. On top of that goes whatever the scope says this machine contributes.
+ * Both sides work the same answer out from the same inputs, which is what
+ * lets them agree and stop writing.
+ */
+async function toPublish(
+  store: SyncStore,
+  scope: Scope,
+  incoming: { marks: readonly Mark[]; spaces: readonly Space[] } | null,
+): Promise<{ marks: Mark[]; spaces: Space[] }> {
+  const here = await store.marks();
+  const spaces = await store.spaces();
+  if (scope.kind === 'everything') return { marks: here, spaces };
+
+  const wanted = new Set(scope.origins);
+  const keep = new Map<string, Space>();
+  // The file's spaces first and mine second, so a space both sides hold ends
+  // up being the merged copy this pass has just saved.
+  for (const space of incoming?.spaces ?? []) keep.set(originOf(space), space);
+  for (const space of spaces) {
+    const origin = originOf(space);
+    if (wanted.has(origin) || keep.has(origin)) keep.set(origin, space);
+  }
+
+  // Only the passages those spaces cite. The rest of the library is nobody
+  // else's business, and this is the line that keeps it that way.
+  const cited = new Set<string>();
+  for (const space of keep.values()) for (const id of space.markIds) cited.add(id);
+  const byId = new Map(here.map((mark) => [mark.id, mark]));
+  const fromFile = new Map((incoming?.marks ?? []).map((mark) => [mark.id, mark]));
+  const marks: Mark[] = [];
+  for (const id of cited) {
+    const mark = byId.get(id) ?? fromFile.get(id);
+    if (mark) marks.push(mark);
+  }
+
+  return { marks, spaces: [...keep.values()] };
 }
 
 /** Whether a pass actually changed anything on this side. */

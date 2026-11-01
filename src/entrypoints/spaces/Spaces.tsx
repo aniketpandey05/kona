@@ -1131,7 +1131,7 @@ function FolderSync() {
       <button
         type="button"
         class="sp-tool"
-        onClick={() => void connect()}
+        onClick={() => void connect({ kind: 'everything' })}
         title="Share a folder with somebody and a space in it stays in step with them, with no file to send"
       >
         Sync

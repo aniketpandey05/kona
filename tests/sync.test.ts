@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { makePerson } from '../src/core/people';
 import { addComment, addFinding, addMark, createSpace, type Space } from '../src/core/spaces';
-import { changedHere, syncOnce, type Folder, type SyncStore } from '../src/core/sync';
+import { changedHere, syncOnce, type Folder, type Scope, type SyncStore } from '../src/core/sync';
 import type { Mark } from '../src/core/types';
 
 const mark = (id: string, snapshot: string, updatedAt = 100): Mark =>
@@ -232,5 +232,123 @@ describe('what a shared folder must never carry', () => {
     const two = side();
     await syncOnce(disk.folder, two.store);
     expect(two.held.spaces[0]?.markIds).toEqual(['a']);
+  });
+});
+
+describe('a folder shared with somebody', () => {
+  const priya = makePerson('Priya', 'p1');
+  const sam = makePerson('Sam', 's1');
+
+  const work = mark('w1', 'A rehearsed cutover is the only kind worth doing');
+  const alsoWork = mark('w2', 'Take a base backup before the cutover begins');
+  const privateOne = mark('x1', 'My doctor said to cut down on coffee');
+  const alsoPrivate = mark('x2', 'Offer letter: start date is the 14th');
+
+  function workspace(): Space {
+    let space = createSpace('Postgres 17 upgrade', 'Can we upgrade without downtime?');
+    space = { ...space, id: 'sp', origin: 'sp' };
+    space = addMark(space, 'w1', priya, 100);
+    return addMark(space, 'w2', priya, 110);
+  }
+
+  function privateSpace(): Space {
+    const space = { ...createSpace('Things to sort out'), id: 'mine', origin: 'mine' };
+    return addMark(space, 'x1', priya, 120);
+  }
+
+  const shared: Scope = { kind: 'spaces', origins: ['sp'] };
+
+  it('carries the space it was told to carry', async () => {
+    const disk = folder();
+    const one = side([work, alsoWork, privateOne], [workspace()]);
+    await syncOnce(disk.folder, one.store, shared);
+
+    const file = JSON.parse(disk.contents!) as { marks: Mark[]; spaces: Space[] };
+    expect(file.spaces.map((space) => space.name)).toEqual(['Postgres 17 upgrade']);
+    expect(file.marks.map((entry) => entry.id).sort()).toEqual(['w1', 'w2']);
+  });
+
+  it('never writes a highlight that space does not cite', async () => {
+    const disk = folder();
+    const one = side([work, alsoWork, privateOne, alsoPrivate], [workspace(), privateSpace()]);
+    await syncOnce(disk.folder, one.store, shared);
+
+    // The thing somebody you shared a folder with must never be able to read.
+    expect(disk.contents).not.toContain('coffee');
+    expect(disk.contents).not.toContain('Offer letter');
+    expect(disk.contents).not.toContain('Things to sort out');
+  });
+
+  it('keeps it that way once the other side has written too', async () => {
+    const disk = folder();
+    const one = side([work, alsoWork, privateOne], [workspace()]);
+    const two = side([mark('y1', 'Something only Sam has kept')], []);
+
+    await syncOnce(disk.folder, one.store, shared);
+    // Sam takes the space, replies in it, and puts it back.
+    await syncOnce(disk.folder, two.store, shared);
+    const theirs = two.held.spaces[0]!;
+    await two.store.saveSpace(addComment(theirs, 'w1', 'Agreed, twice.', sam, 200));
+    await syncOnce(disk.folder, two.store, shared);
+    await syncOnce(disk.folder, one.store, shared);
+
+    expect(disk.contents).not.toContain('coffee');
+    expect(disk.contents).not.toContain('Something only Sam has kept');
+    const bodies = (one.held.spaces[0]?.comments ?? []).map((entry) => entry.body);
+    expect(bodies).toEqual(['Agreed, twice.']);
+  });
+
+  it('does not drop a space somebody else put in the folder', async () => {
+    const disk = folder();
+    const one = side([work, alsoWork], [workspace()]);
+    const two = side([mark('z1', 'Their evidence')], [
+      { ...createSpace('Their question', 'What about Redis?'), id: 'theirs', origin: 'theirs', markIds: ['z1'] },
+    ]);
+
+    await syncOnce(disk.folder, two.store, { kind: 'spaces', origins: ['theirs'] });
+    // Priya shares only her own space, and must not delete Sam's by doing so.
+    await syncOnce(disk.folder, one.store, shared);
+
+    const file = JSON.parse(disk.contents!) as { spaces: Space[] };
+    expect(file.spaces.map((space) => space.name).sort()).toEqual([
+      'Postgres 17 upgrade',
+      'Their question',
+    ]);
+  });
+
+  it('settles, rather than writing on every pass', async () => {
+    const disk = folder();
+    const one = side([work, alsoWork, privateOne], [workspace()]);
+    const two = side([], []);
+
+    await syncOnce(disk.folder, one.store, shared);
+    await syncOnce(disk.folder, two.store, shared);
+    await syncOnce(disk.folder, one.store, shared);
+    const settled = disk.writes;
+
+    await syncOnce(disk.folder, one.store, shared);
+    await syncOnce(disk.folder, two.store, shared);
+    expect(disk.writes).toBe(settled);
+  });
+
+  it('gives the other side the evidence, so the space is readable', async () => {
+    const disk = folder();
+    const one = side([work, alsoWork, privateOne], [workspace()]);
+    const two = side([], []);
+
+    await syncOnce(disk.folder, one.store, shared);
+    await syncOnce(disk.folder, two.store, shared);
+
+    expect(two.held.marks.map((entry) => entry.id).sort()).toEqual(['w1', 'w2']);
+    expect(two.held.spaces[0]?.question).toBe('Can we upgrade without downtime?');
+  });
+
+  it('carries nothing at all when no space has been chosen', async () => {
+    const disk = folder();
+    const one = side([work, privateOne], [workspace()]);
+    await syncOnce(disk.folder, one.store, { kind: 'spaces', origins: [] });
+    const file = JSON.parse(disk.contents!) as { marks: Mark[]; spaces: Space[] };
+    expect(file.spaces ?? []).toEqual([]);
+    expect(file.marks).toEqual([]);
   });
 });
