@@ -22,7 +22,7 @@
 
 All of the code is ours. **[FILL: name]** writes it. There are no outside contributors and
 no non-founder work in the repository — the full history is public at
-<https://github.com/aniketpandey05/kona>, 60 commits over five weeks.
+<https://github.com/aniketpandey05/kona>, 97 commits over six and a half weeks.
 
 We build with Claude Code (Claude Opus) and review every change by hand. The test suite
 exists because of it rather than in spite of it: the core logic is deliberately free of the
@@ -127,13 +127,28 @@ constraint, if there is one — YC would rather know now.]**
 
 The individual product works and is in daily use by its authors.
 
-- Version 1.1.0. Builds for Chrome, Edge and Brave (MV3), for Firefox, and for Safari on
+- Version 1.2.0. Builds for Chrome, Edge and Brave (MV3), for Firefox, and for Safari on
   iPhone, iPad and Mac from the same source.
 - An installable Android web app, live, because Chrome on Android has no extensions.
-- ~5,600 lines of TypeScript in the extension and phone app, another ~3,600 in the Team
-  demo, 126 tests across 15 files, 71 commits since 17 September 2026.
+- A desktop app for Windows, macOS and Linux, because an extension cannot sync while the
+  browser is shut and we did not want that to be the product's limit.
+- ~12,400 lines of TypeScript across the extension, the phone app and the desktop app,
+  another ~3,700 in the Team demo, and ~3,600 of tests — 325 of them across 23 files.
+  97 commits since 17 September 2026.
 - Highlighting, notes, tags, one cross-site library, full-text search from inside any page,
   Markdown export, backup and restore, deep links to the exact sentence, light/dark.
+- Search that ranks by meaning as well as by word, with the meanings learned from the
+  user's own library rather than from a model: BM25F over five weighted fields, fused with
+  a thesaurus built from which words they keep together. 1.3ms a query over 2,000
+  highlights, and no model to ship, host or send anything to.
+- Sync with no server of ours. Kona writes one file into a folder the machine already
+  keeps in step — Drive, Dropbox, iCloud, OneDrive, Syncthing — so the sync is something
+  the user already trusts and pays for, and we make no network request at all. A folder of
+  your own keeps your own machines in step; a folder you share keeps a space in step with
+  a colleague, and carries **only** the spaces you tick and the passages those spaces cite.
+- Everything you write in a shared space is signed with a key made on your device, and
+  checked on the way back in against the key already held for you — so nobody can write a
+  reply in your name, and words that moved after signing are flagged rather than hidden.
 - Spaces: a question, its evidence, findings, open questions, a decision, and a cited
   write-up — all on your own highlights, stored on your own computer.
 
@@ -164,8 +179,8 @@ listing copy and permission justifications are already written.]**
 
 **11. How long have each of you been working on this? How much of that has been full-time?**
 
-**[FILL.]** The first commit is 17 September 2026, so the code is five weeks old as of this
-application. Be exact and do not inflate: say how many hours a week, and say if it has been
+**[FILL.]** The first commit is 17 September 2026, so the code is six and a half weeks old
+as of this application. Be exact and do not inflate: say how many hours a week, and say if it has been
 alongside a job or studies. YC reads "two weeks full-time" as a fact, and "six months,
 on and off" as a different fact — neither is disqualifying, and a wrong number that comes
 out in the interview is.
@@ -173,15 +188,18 @@ out in the interview is.
 **12. What tech stack are you using? Include AI models and AI coding tools you use.**
 
 TypeScript throughout. Preact for the UI, rendered inside a shadow root so we never touch
-the host page's styles. WXT for the MV3 extension build, Vite for the phone app, Vitest with
-happy-dom for tests.
+the host page's styles. WXT for the MV3 extension build, Vite for the phone app, Electron
+for the desktop app, Vitest with happy-dom for tests. One `src/core` with no DOM in it is
+shared by all of them, which is why a fifth platform cost a day rather than a quarter.
 
 Two choices worth calling out. We paint highlights with the **CSS Custom Highlight API**,
 which draws them without inserting any nodes into the page — the reason we can highlight a
 live-streaming AI reply without breaking the site. And every highlight is persisted as a
 quote plus its surrounding context, so re-anchoring is text-based and survives the DOM
-changing underneath it. Storage is `chrome.storage.local`; links are standard URL text
-fragments.
+changing underneath it. Storage is `chrome.storage.local` in the extension and IndexedDB in the
+apps; links are standard URL text fragments. Signing is WebCrypto ECDSA P-256 with
+trust-on-first-use, the same model as `known_hosts` — a key you already hold is never
+replaced, so a name arriving a second time either checks out or is flagged.
 
 The product contains no AI model today. Planned: embeddings for search over a user's own
 highlights, which is why client-side encryption is a design constraint for us and not an
@@ -208,7 +226,7 @@ and has no analytics by design, so we have no telemetry to quote and never will 
 tier — the only usage signal we can honestly report is people we have spoken to.
 
 > Note the second version is an acceptable answer *once*. It is not an acceptable answer
-> for a product that is five weeks old and already builds on four platforms. Twenty real
+> for a product that is six weeks old and already builds on five platforms. Twenty real
 > installs and three quotes from strangers would do more for this application than any
 > rewrite of any other answer here.
 
@@ -239,8 +257,8 @@ inside my own chat histories. The answer I needed existed in a conversation from
 weeks ago and I could not find it, so I rebuilt it from scratch. That happened enough times
 that I wrote the tool.]**
 
-**Why us:** **[FILL — your actual relevant background. If it is "I shipped this on four
-platforms in five weeks, on Windows, including a Safari extension I cannot even test
+**Why us:** **[FILL — your actual relevant background. If it is "I shipped this on five
+platforms in six weeks, on Windows, including a Safari extension I cannot even test
 locally," that is a real answer about execution speed and it is evidenced by the repo.]**
 
 **How we know others need it:** **[FILL — this must be people, not reasoning. Who have you
@@ -286,9 +304,9 @@ paid adds the *shared* layer.
 
 | | Price | What it adds |
 |---|---|---|
-| Free | $0 forever | Everything Kona does today, local only, no account |
-| Pro | $7 / mo | Sync across your own devices, search whose meaning half comes from a model rather than your own library |
-| Team | $14 / user / mo | Live shared spaces, search across everyone's highlights, permissions, Slack and Notion sync, admin console |
+| Free | $0 forever | Everything Kona does today, local only, no account — spaces, signed contributions, and sync through a folder you already keep in step |
+| Pro | $7 / mo | Sync with nothing to arrange and on the devices a folder cannot reach, search whose meaning half comes from a model rather than your own library |
+| Team | $14 / user / mo | Live shared spaces, permissions you can take back from one person, names your organisation vouches for, search across everyone's highlights, admin console and seats |
 | Enterprise | from $25 / user / mo, annual, 50-seat minimum | SSO and SCIM, audit log and export, retention and legal hold, EU data residency, DPA, SLA, self-host option |
 
 Self-serve runs on Stripe Checkout and Billing, so cards never touch our servers and we stay
@@ -367,8 +385,8 @@ take, no slides.
 >
 > It is a browser extension that lets you highlight anything in a ChatGPT, Claude or Gemini
 > conversation, or on any web page, and takes you back to the exact sentence later.
-> Everything stays on your own computer. I shipped it on Chrome, Firefox, Safari and
-> Android in five weeks.
+> Everything stays on your own computer. I shipped it on Chrome, Firefox, Safari, Android
+> and as a desktop app for Windows, macOS and Linux, in six weeks.
 >
 > What I want to build is the team version: all the passages a company's people kept from
 > AI, in one searchable place. Companies have given everyone an AI seat and have no idea
@@ -439,5 +457,5 @@ So you are not surprised by them in an interview:
   the carve-out reserves the hosted workspace and nothing else, so an engineer installing
   it at work is entirely in the clear. The costs are real: some procurement teams flag
   non-OSI licences, and some developers will not contribute under one.
-- **One person, five weeks.** If you are solo, Q2 is where you address it directly rather
+- **One person, six weeks.** If you are solo, Q2 is where you address it directly rather
   than hoping it goes unnoticed.
