@@ -454,13 +454,11 @@ So you are not surprised by them in an interview:
   private beta, which `docs/enterprise.md` §9 lays out.
 - **"Why won't OpenAI build this?"** You will be asked. The answer is the cross-vendor
   argument in Q18.5, and it is a good one. Rehearse it.
-- **The licence is BSL, not open source**, and the free grant is narrow: one person, one
-  device, the extension or the phone app. Reading, building and evaluating it stay free
-  for anyone, including inside a company; production use past that line needs a licence.
-  Be ready to say why in one sentence — the grant draws the same line as the price list,
-  because the previous one gave away everything we now charge for. The costs are real:
-  some procurement teams flag non-OSI licences, an engineer can no longer just install it
-  at work, and pull requests are closed because selling commercial exceptions means
-  owning the copyright.
+- **There is no licence: Kona is all rights reserved.** The repository is public to be
+  read, and that is all it grants. Be ready for the obvious follow-up — if nobody may
+  build it, how does anyone try it? The answer has to be distributed builds with terms
+  attached, and that is not done yet. Name the costs before they are pointed out: no
+  evaluation path inside a company, nothing an enterprise security review can be pointed
+  at, and releases up to 1.1.0 are AGPL for ever and cannot be called back.
 - **One person, six weeks.** If you are solo, Q2 is where you address it directly rather
   than hoping it goes unnoticed.

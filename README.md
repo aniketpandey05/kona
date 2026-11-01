@@ -349,6 +349,10 @@ looks exactly like a broken demo and is not one.
 | The Team demo — the paid tier, on the same core | `team/` |
 | The landing page, and the root of the published site | `site/` |
 | Wrapping the Safari build in the app Apple requires around it | `apple/` |
+
+The built extension bundles Preact, which is MIT. Its notice travels inside the package
+as `THIRD-PARTY-NOTICES.txt`, which is what that licence asks for. Nothing else Kona
+depends on ends up in the shipped code; the rest is build tooling.
 | Page logic: selection, navigation, jumping, storage | `src/content/controller.ts` |
 | Panel, toolbar and note card (Preact, in a shadow root) | `src/ui/` |
 | Library page, spaces page, plans page, welcome page, toolbar popup, background script | `src/entrypoints/` |
@@ -369,62 +373,6 @@ npm run zip:safari   # the extension resources, for the App Store Connect upload
 answers, so the submission form can be filled in from one place. The privacy policy is
 served at <https://aniketpandey05.github.io/kona/privacy.html>.
 
-## Issues, and why there are no pull requests
+---
 
-**Kona is not taking code contributions.** It is source-available, not open source, and
-selling commercial exceptions means owning the copyright outright — one outside commit
-without a contributor agreement ends that permanently. So pull requests will be closed
-unread rather than left to go stale, which is the politer of the two.
-
-Issues are genuinely wanted, especially **a site that has changed its markup**, because
-that is the one thing guaranteed to break. Say which site and paste a sentence that would
-not highlight; that is enough to fix it. Each site is a single file in `src/adapters/`
-answering the same few questions — where the messages are, which are yours, where a
-message's text lives, and whether a reply is still being written.
-
-```bash
-npm install
-npm test          # the suite, which runs without a browser
-npm run compile   # type check
-npm run dev       # Chrome with the extension loaded, rebuilding on save
-npm run dev:app   # the phone app on localhost:5179
-```
-
-Anything that changes behaviour should bring a test with it. The core is deliberately
-free of the DOM so that is cheap to do.
-
-## License
-
-Business Source License 1.1 — see [LICENSE](LICENSE).
-
-Read it, change it, build it and evaluate it, anywhere, including inside a company —
-that much BSL permits on its own. What the Additional Use Grant adds free of charge is
-production use **as one person, on one device at a time, through the extension or the
-phone app**.
-
-Beyond that line a commercial licence is needed: use by or for an organisation, the
-desktop app, keeping two devices in step, sharing anything with another person, or
-offering Kona as a hosted service. That line is the same one the pricing draws — Free is
-one device, Pro is your devices, Team is other people — so the licence and the price list
-say the same thing.
-
-On **2030-10-28** this converts automatically to AGPL-3.0-or-later, and the carve-out
-goes away. Any version also converts on its own fourth birthday, whichever comes first.
-
-Releases up to and including **1.1.0 were AGPL-3.0-or-later** and stay that way; nothing
-about this changes what was already published under those terms.
-
-BSL is not an OSI-approved open source licence, and this README should not call it one.
-It is source-available: the code is all here to read, build and modify.
-
-The extension and the phone app stay free for one person on one device, run entirely on
-your own computer, and that is not a trial.
-
-Sync and shared spaces are built and working today, ahead of any way to pay for them.
-They are beyond the free grant as written above, which is deliberate: it is where the
-line falls once the paid tiers exist, said now rather than sprung later.
-
-The built extension bundles Preact, which is MIT and so freely combinable with this.
-Its notice travels inside the package as `THIRD-PARTY-NOTICES.txt`, which is what its
-licence asks for. Nothing else Kona depends on ends up in the shipped code; the rest is
-build tooling.
+© 2026 Aniket Pandey. All rights reserved.

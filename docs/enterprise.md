@@ -248,51 +248,40 @@ What a 200-person company's security review will ask, and the answer we want to 
   third-party penetration test, a published vulnerability disclosure policy. ISO 27001
   only when a deal requires it.
 
-## 8. Licensing — decided 2026-10-28
+## 8. Licensing — all rights reserved, 2026-11-02
 
-Everything in this repository is **Business Source License 1.1**. It converts to
-AGPL-3.0-or-later on 2030-10-28, and each version converts on its own fourth birthday
-whichever comes first.
+**There is no licence.** The `LICENSE` file has been removed and Kona is
+© 2026 Aniket Pandey, all rights reserved. No permission to use, copy, modify or
+distribute it is granted to anybody, and `package.json` says `UNLICENSED`. The
+repository stays public so the code can be read, which grants nothing further.
 
-**Revised 2026-11-02.** The Additional Use Grant used to permit any use, commercially and
-at any organisation size, reserving only the hosted service. That gave away everything
-the pricing now charges for. It permits production use as one individual, on one device,
-through the extension or the phone app; the desktop app, sync, sharing and organisational
-use all need a commercial licence. Non-production use — reading, building, modifying and
-evaluating, including inside a company — is untouched, which is what keeps evaluation
-legal and the funnel open.
+This replaces two earlier positions in quick succession — BSL with a wide commercial
+grant, then BSL with a grant narrowed to one person on one device. The reason for ending
+up here is that we are not taking contributions, so the main thing a licence was buying
+no longer applies.
 
-The reasoning, and what still has to be watched:
+What it costs, written down so it is not rediscovered:
 
-1. **The grant has to match the price list, and once it did not.** Reserving only the
-   hosted service was right when the hosted workspace was the only thing being sold. It
-   stopped being right the moment sync and shared spaces shipped locally: a fifty-person
-   company could run all of it for ever, legally, for nothing. The grant now draws the
-   same line the pricing does. The cost is real — an engineer installing Kona at work is
-   no longer covered for production use, only for evaluation — and that is the trade
-   being made on purpose.
-2. **The server is covered by the same carve-out**, so it no longer has to be separately
-   proprietary. If that changes, the rule stands: never ship the server under a licence
-   that lets a customer self-host it for free.
-3. **BSL is not open source**, and nothing we publish should say it is. It is
-   source-available. The landing page, the store listing and the application have all
-   been reworded already.
-4. **Contributions are closed rather than CLA'd.** Selling commercial exceptions and
-   setting Change Dates both require owning the copyright outright, and one person holds
-   every commit. A CLA would preserve that; refusing pull requests preserves it with no
-   paperwork and no contributor left waiting on a document. The README says so plainly.
-   Revisit when there is somebody to sign one.
-5. **Releases up to 1.1.0 remain AGPL-3.0-or-later.** A licence already granted cannot be
-   withdrawn — not by deleting a file, not by narrowing a grant, and not because nobody
-   has forked yet. Anyone who took a copy under those terms keeps them, including the
-   right to run 1.1.0 across a company for ever. The practical exposure is small because
-   1.1.0 predates sync, spaces-by-folder and the desktop app, but it is not zero and it
-   is not reversible.
-
-6. **BSL cannot stay closed.** The Change Date can be at most four years out and the
-   Change License must be GPL-compatible — that is what BSL *is*. If Kona is never to
-   become open source, BSL is the wrong instrument and the replacement is a lawyer's job,
-   not an edit to this file.
+1. **Nobody may build it, including to try it.** BSL's non-production allowance was what
+   kept evaluating Kona inside a company legal, and it is gone. The landing page still
+   tells people to clone and run three commands, and four of its five platforms have no
+   other way in. Either the page moves to distributing builds, or the invitation is
+   withdrawn — it cannot stay as it is.
+2. **Distributing a build is itself a grant.** A download button needs terms saying what
+   the person may do with what they downloaded, however short. All rights reserved and a
+   public download contradict each other, and nothing resolves that until there is a
+   download.
+3. **Releases up to 1.1.0 remain AGPL-3.0-or-later.** A licence already granted cannot be
+   withdrawn — not by narrowing a grant, and not by deleting a file. Anyone holding
+   1.1.0 keeps every AGPL right in it, including running it across a company for ever and
+   redistributing it. That is now permanent and is the one thing here no future decision
+   undoes. 1.1.0 predates sync, folder-shared spaces and the desktop app, which is the
+   only reason it is small.
+4. **No Change Date any more.** BSL would have converted to AGPL in 2030 whether we liked
+   it or not. Nothing converts now; it stays closed until somebody decides otherwise.
+5. **Something will be needed before anyone else is paid to work on it**, and before an
+   enterprise security review that asks what terms the software is under — "none" is an
+   answer that fails that review. That is a lawyer's job rather than an edit to this file.
 
 ## 9. Build order
 
