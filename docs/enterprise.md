@@ -250,31 +250,49 @@ What a 200-person company's security review will ask, and the answer we want to 
 
 ## 8. Licensing — decided 2026-10-28
 
-Everything in this repository is **Business Source License 1.1**. Any use is permitted,
-commercial use included, with one carve-out: you may not offer Kona to third parties as a
-hosted or managed service. It converts to AGPL-3.0-or-later on 2030-10-28, and each
-version converts on its own fourth birthday whichever comes first.
+Everything in this repository is **Business Source License 1.1**. It converts to
+AGPL-3.0-or-later on 2030-10-28, and each version converts on its own fourth birthday
+whichever comes first.
+
+**Revised 2026-11-02.** The Additional Use Grant used to permit any use, commercially and
+at any organisation size, reserving only the hosted service. That gave away everything
+the pricing now charges for. It permits production use as one individual, on one device,
+through the extension or the phone app; the desktop app, sync, sharing and organisational
+use all need a commercial licence. Non-production use — reading, building, modifying and
+evaluating, including inside a company — is untouched, which is what keeps evaluation
+legal and the funnel open.
 
 The reasoning, and what still has to be watched:
 
-1. **The carve-out is the whole point.** The client is a browser extension that stores
-   everything locally and makes no network requests; there is little in it worth
-   defending. The thing worth defending is the hosted workspace, and BSL reserves exactly
-   that and nothing else. An engineer installing Kona at work — our actual user — is
-   fully in the clear, which a non-commercial licence would not have allowed.
+1. **The grant has to match the price list, and once it did not.** Reserving only the
+   hosted service was right when the hosted workspace was the only thing being sold. It
+   stopped being right the moment sync and shared spaces shipped locally: a fifty-person
+   company could run all of it for ever, legally, for nothing. The grant now draws the
+   same line the pricing does. The cost is real — an engineer installing Kona at work is
+   no longer covered for production use, only for evaluation — and that is the trade
+   being made on purpose.
 2. **The server is covered by the same carve-out**, so it no longer has to be separately
    proprietary. If that changes, the rule stands: never ship the server under a licence
    that lets a customer self-host it for free.
 3. **BSL is not open source**, and nothing we publish should say it is. It is
    source-available. The landing page, the store listing and the application have all
    been reworded already.
-4. **A CLA is now more necessary, not less.** Selling commercial exceptions and setting
-   Change Dates both require owning the copyright outright. Today one person holds all
-   60 commits. The first outside contribution without a CLA ends that permanently.
+4. **Contributions are closed rather than CLA'd.** Selling commercial exceptions and
+   setting Change Dates both require owning the copyright outright, and one person holds
+   every commit. A CLA would preserve that; refusing pull requests preserves it with no
+   paperwork and no contributor left waiting on a document. The README says so plainly.
+   Revisit when there is somebody to sign one.
 5. **Releases up to 1.1.0 remain AGPL-3.0-or-later.** A licence already granted cannot be
-   withdrawn — not by deleting a file, and not because nobody has forked yet. Anyone who
-   took a copy under those terms keeps them. The repository had 0 forks when this changed,
-   so the practical exposure is nil, but the principle is worth not misremembering.
+   withdrawn — not by deleting a file, not by narrowing a grant, and not because nobody
+   has forked yet. Anyone who took a copy under those terms keeps them, including the
+   right to run 1.1.0 across a company for ever. The practical exposure is small because
+   1.1.0 predates sync, spaces-by-folder and the desktop app, but it is not zero and it
+   is not reversible.
+
+6. **BSL cannot stay closed.** The Change Date can be at most four years out and the
+   Change License must be GPL-compatible — that is what BSL *is*. If Kona is never to
+   become open source, BSL is the wrong instrument and the replacement is a lawyer's job,
+   not an edit to this file.
 
 ## 9. Build order
 

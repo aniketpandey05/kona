@@ -369,15 +369,18 @@ npm run zip:safari   # the extension resources, for the App Store Connect upload
 answers, so the submission form can be filled in from one place. The privacy policy is
 served at <https://aniketpandey05.github.io/kona/privacy.html>.
 
-## Contributing
+## Issues, and why there are no pull requests
 
-Issues and pull requests are welcome.
+**Kona is not taking code contributions.** It is source-available, not open source, and
+selling commercial exceptions means owning the copyright outright — one outside commit
+without a contributor agreement ends that permanently. So pull requests will be closed
+unread rather than left to go stale, which is the politer of the two.
 
-The most useful thing anyone can fix is a site that has changed its markup, because that
-is the one thing guaranteed to break. Each site is a single file in `src/adapters/`
+Issues are genuinely wanted, especially **a site that has changed its markup**, because
+that is the one thing guaranteed to break. Say which site and paste a sentence that would
+not highlight; that is enough to fix it. Each site is a single file in `src/adapters/`
 answering the same few questions — where the messages are, which are yours, where a
-message's text lives, and whether a reply is still being written. Nothing outside that
-file should need touching.
+message's text lives, and whether a reply is still being written.
 
 ```bash
 npm install
@@ -394,10 +397,16 @@ free of the DOM so that is cheap to do.
 
 Business Source License 1.1 — see [LICENSE](LICENSE).
 
-Read it, change it, build it, share it, and use it for anything you like — at home, at
-work, or across a company of any size. The single carve-out: you may not offer Kona to
-other people as a hosted or managed service. That is the one thing reserved, because it
-is the thing we intend to sell.
+Read it, change it, build it and evaluate it, anywhere, including inside a company —
+that much BSL permits on its own. What the Additional Use Grant adds free of charge is
+production use **as one person, on one device at a time, through the extension or the
+phone app**.
+
+Beyond that line a commercial licence is needed: use by or for an organisation, the
+desktop app, keeping two devices in step, sharing anything with another person, or
+offering Kona as a hosted service. That line is the same one the pricing draws — Free is
+one device, Pro is your devices, Team is other people — so the licence and the price list
+say the same thing.
 
 On **2030-10-28** this converts automatically to AGPL-3.0-or-later, and the carve-out
 goes away. Any version also converts on its own fourth birthday, whichever comes first.
@@ -408,10 +417,12 @@ about this changes what was already published under those terms.
 BSL is not an OSI-approved open source licence, and this README should not call it one.
 It is source-available: the code is all here to read, build and modify.
 
-The extension and the phone app are free, run entirely on your own computer, and will
-stay that way. A hosted workspace for teams — shared highlights alongside your private
-ones — is planned separately, and that will be paid. It is a separate service; nothing
-moves out of the free version into it.
+The extension and the phone app stay free for one person on one device, run entirely on
+your own computer, and that is not a trial.
+
+Sync and shared spaces are built and working today, ahead of any way to pay for them.
+They are beyond the free grant as written above, which is deliberate: it is where the
+line falls once the paid tiers exist, said now rather than sprung later.
 
 The built extension bundles Preact, which is MIT and so freely combinable with this.
 Its notice travels inside the package as `THIRD-PARTY-NOTICES.txt`, which is what its

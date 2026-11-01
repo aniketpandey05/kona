@@ -2,16 +2,28 @@ Business Source License 1.1 — Parameters for Kona
 
 Licensor:             Aniket Pandey
 
-Licensed Work:        Kona — the browser extension, the phone app, and the
-                      Team workspace in this repository.
+Licensed Work:        Kona — the browser extension, the phone app, the
+                      desktop app, and the Team workspace in this repository.
                       The Licensed Work is © 2026 Aniket Pandey.
 
-Additional Use Grant: You may use the Licensed Work for any purpose,
-                      including commercially and within an organisation of
-                      any size, provided that you do not offer the Licensed
-                      Work to third parties as a hosted or managed service
-                      which gives those third parties access to a substantial
-                      portion of its features or functionality.
+Additional Use Grant: You may use the Licensed Work in production free of
+                      charge as one individual, on one device at a time,
+                      through the browser extension or the phone app, for
+                      your own highlights. Moving to a replacement device
+                      with a backup file is part of this grant.
+
+                      This grant does not extend to, and a separate
+                      commercial licence from the Licensor is required for:
+                      use by or on behalf of an organisation; the desktop
+                      app; keeping more than one device in step with another;
+                      sharing a space, a highlight or a library with any
+                      other person; and offering the Licensed Work to third
+                      parties as a hosted or managed service.
+
+                      Non-production use — reading it, building it, modifying
+                      it, and evaluating it, including inside an organisation
+                      — is already permitted by the licence below and is not
+                      narrowed by this grant.
 
 Change Date:          2030-10-28
 

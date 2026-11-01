@@ -454,11 +454,13 @@ So you are not surprised by them in an interview:
   private beta, which `docs/enterprise.md` §9 lays out.
 - **"Why won't OpenAI build this?"** You will be asked. The answer is the cross-vendor
   argument in Q18.5, and it is a good one. Rehearse it.
-- **The licence is BSL, not open source.** Source-available, with one carve-out: nobody
-  may run Kona as a hosted service. It converts to AGPL in 2030. Be ready to say why in
-  one sentence — the client is a local-only extension with little worth defending, and
-  the carve-out reserves the hosted workspace and nothing else, so an engineer installing
-  it at work is entirely in the clear. The costs are real: some procurement teams flag
-  non-OSI licences, and some developers will not contribute under one.
+- **The licence is BSL, not open source**, and the free grant is narrow: one person, one
+  device, the extension or the phone app. Reading, building and evaluating it stay free
+  for anyone, including inside a company; production use past that line needs a licence.
+  Be ready to say why in one sentence — the grant draws the same line as the price list,
+  because the previous one gave away everything we now charge for. The costs are real:
+  some procurement teams flag non-OSI licences, an engineer can no longer just install it
+  at work, and pull requests are closed because selling commercial exceptions means
+  owning the copyright.
 - **One person, six weeks.** If you are solo, Q2 is where you address it directly rather
   than hoping it goes unnoticed.
