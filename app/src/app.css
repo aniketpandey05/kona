@@ -8,6 +8,7 @@
   --hover: rgba(16, 24, 40, 0.04);
   --accent: #ea580c;
   --danger: #dc2626;
+  --ok: #15803d;
   color-scheme: light;
 }
 
@@ -22,6 +23,7 @@
     --hover: rgba(255, 255, 255, 0.06);
     --accent: #fb923c;
     --danger: #f87171;
+    --ok: #4ade80;
     color-scheme: dark;
   }
 }
@@ -36,6 +38,7 @@
   --hover: rgba(255, 255, 255, 0.06);
   --accent: #fb923c;
   --danger: #f87171;
+  --ok: #4ade80;
   color-scheme: dark;
 }
 
@@ -610,4 +613,395 @@ input:focus-visible {
   color: var(--muted);
   border: 1px solid var(--border);
   border-radius: 999px;
+}
+
+/* Only drawn when a word nobody typed actually pulled a result in. */
+.app-also {
+  margin: 8px 2px 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* ── Spaces ─────────────────────────────────────────────────────────────────
+ * A space on a phone is the same thing as on a desktop, shown one section at
+ * a time. Everything here is full-bleed and stacked: there is no second
+ * column to put anything in.
+ */
+
+.app-crumbs {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 4px 0 12px;
+}
+
+.app-h2 {
+  margin: 0 0 6px;
+  font-size: 21px;
+  line-height: 1.25;
+}
+
+.app-h3 {
+  margin: 22px 0 8px;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.app-lede {
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.app-space-list {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-space {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 13px 14px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.app-space-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.app-space-q {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.app-space-counts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.app-status {
+  flex: none;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  background: var(--hover);
+  color: var(--muted);
+}
+
+.app-status-settled {
+  color: var(--ok);
+}
+
+.app-status-open {
+  color: var(--accent);
+}
+
+/* Faces overlap, because a row of them is a count you can read at a glance. */
+.app-faces {
+  display: inline-flex;
+}
+
+.app-faces > * + * {
+  margin-left: -6px;
+}
+
+.app-av {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  border: 1.5px solid var(--card);
+}
+
+.app-av-sm {
+  width: 20px;
+  height: 20px;
+  font-size: 9px;
+}
+
+.app-space-new {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0 4px;
+}
+
+.app-space-new input,
+.app-space-new select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 15px; /* Under 16px and iOS zooms the page on focus. */
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+/* A file input is invisible, so its label has to behave like the button it is. */
+.app-file {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.app-decision {
+  margin: 14px 0 4px;
+  padding: 13px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--ok);
+  border-radius: 12px;
+}
+
+.app-decision h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.app-decision p {
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+
+.app-by {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.app-proven {
+  margin-left: 4px;
+  color: var(--ok);
+  font-weight: 700;
+}
+
+.app-broken {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--danger) 7%, transparent);
+  color: var(--danger);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.app-alarm {
+  margin: 0 0 12px;
+  padding: 10px 13px;
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  color: var(--danger);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.app-findings,
+.app-questions,
+.app-evidence,
+.app-candidates,
+.app-comments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-finding {
+  padding: 11px 13px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: 12px;
+}
+
+.app-finding p {
+  margin: 4px 0 6px;
+  line-height: 1.45;
+}
+
+.app-finding-supports {
+  border-left-color: color-mix(in srgb, var(--ok) 60%, transparent);
+}
+
+.app-finding-contradicts {
+  border-left-color: color-mix(in srgb, var(--danger) 60%, transparent);
+}
+
+.app-stance {
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.app-questions li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 13px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  line-height: 1.4;
+}
+
+.app-ev {
+  padding: 11px 13px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.app-ev-settled {
+  opacity: 0.78;
+}
+
+.app-ev-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+.app-ev-text {
+  margin: 6px 0 4px;
+  line-height: 1.45;
+}
+
+.app-ev-meta {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.app-thread {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-comments li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.app-comments strong {
+  font-size: 13px;
+}
+
+.app-comments p {
+  margin: 2px 0 0;
+  line-height: 1.45;
+}
+
+.app-mine,
+.app-edited {
+  margin-left: 5px;
+  font-size: 10.5px;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.app-mine {
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--hover);
+  /* The full foreground, because muted on this pill cannot carry ten-pixel type. */
+  color: var(--fg);
+}
+
+.app-picker {
+  margin: 10px 0;
+  padding: 11px 12px;
+  background: var(--hover);
+  border-radius: 12px;
+}
+
+.app-picker input {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 15px;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.app-candidates button {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  text-align: left;
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.app-memo {
+  margin: 12px 0;
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.app-memo pre {
+  margin: 0 0 10px;
+  max-height: 50vh;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.app-space-foot {
+  margin: 26px 0 8px;
 }

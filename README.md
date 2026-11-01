@@ -85,6 +85,13 @@ tags, filter by either, search everything later, and **Open original** takes you
 using a URL text fragment, which every modern browser understands without anything
 installed.
 
+Spaces are here too, and are the same thing they are on a desktop: a question, the
+highlights that bear on it, what you concluded, and a write-up citing the exact sentence
+behind every claim. A space can be handed over as a file and taken back with the other
+person in it, replies and all, and what you write is signed with a key this phone makes.
+A backup carries the spaces and your name as well as the highlights, so moving to a new
+phone brings the lot.
+
 ```bash
 npm run dev:app     # http://localhost:5179
 npm run build:app   # a static site in .output/site/app

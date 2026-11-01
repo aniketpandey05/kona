@@ -3,14 +3,31 @@ import { createBackup, readBackup } from '../../src/core/backup';
 import { linkToMark } from '../../src/core/link';
 import { UI_COLORS } from '../../src/core/painter';
 import { toMarkdown } from '../../src/core/markdown';
-import { searchMarks } from '../../src/core/search';
+import { prime, searchLibrary } from '../../src/core/search';
 import { countTags, sameTag, addTags, removeTag } from '../../src/core/tags';
 import type { Theme } from '../../src/core/theme';
 import type { HighlightColor, Mark } from '../../src/core/types';
 import { KonaMark } from '../../src/ui/KonaMark';
+import type { Person } from '../../src/core/people';
+import { addMark as addToSpace, createSpace, type Space } from '../../src/core/spaces';
+import { SpacesList, SpaceView } from './Spaces';
 import { firstUrl, markFromShare, planShare, readShare } from './share';
 import { applyTheme, loadTheme, saveTheme } from './theme';
-import { importMarks, loadAll, remove, save, watch } from './storage';
+import {
+  ensureSigningKey,
+  identityForBackup,
+  importMarks,
+  importSpaces,
+  loadAll,
+  loadMe,
+  loadSpaces,
+  remove,
+  restoreIdentity,
+  save,
+  saveMe,
+  saveSpace,
+  watch,
+} from './storage';
 
 const UNDO_MS = 6000;
 
@@ -58,8 +75,17 @@ export function App() {
   const [theme, setTheme] = useState<Theme>('system');
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingLink, setPendingLink] = useState<{ url: string; orphans: Mark[] } | null>(null);
+  const [spaces, setSpaces] = useState<Space[]>([]);
+  const [me, setMe] = useState<Person | null>(null);
+  const [naming, setNaming] = useState(false);
+  const [route, setRoute] = useState(location.hash);
+  const [filing, setFiling] = useState<Mark | null>(null);
 
-  const refresh = () => void loadAll().then(setMarks);
+  const refresh = () => {
+    void loadAll().then(setMarks);
+    void loadSpaces().then(setSpaces);
+    setMe(loadMe());
+  };
 
   useEffect(() => {
     // A share arrives as a normal page load with the text in the query string.
@@ -84,8 +110,29 @@ export function App() {
     const stored = loadTheme();
     setTheme(stored);
     applyTheme(stored);
+    // Not just loading: anybody who put their name in before signing existed
+    // gets a key here, without having to do anything about it.
+    void ensureSigningKey().then(setMe);
     return watch(refresh);
   }, []);
+
+  // The whole app is one page, so a space is a fragment rather than a route.
+  useEffect(() => {
+    const read = () => setRoute(location.hash);
+    addEventListener('hashchange', read);
+    return () => removeEventListener('hashchange', read);
+  }, []);
+
+  useEffect(() => {
+    if (!marks?.length) return;
+    const warm = () => prime(marks);
+    if (typeof requestIdleCallback === 'function') {
+      const handle = requestIdleCallback(warm, { timeout: 2000 });
+      return () => cancelIdleCallback(handle);
+    }
+    const timer = window.setTimeout(warm, 200);
+    return () => window.clearTimeout(timer);
+  }, [marks]);
 
   useEffect(() => {
     if (!notice) return;
@@ -102,12 +149,21 @@ export function App() {
     return [...counts.entries()].sort((a, b) => b[1] - a[1]);
   }, [marks]);
 
+  // Searched before being filtered, and always against the same list. The
+  // index is kept for as long as the array it was built from, so searching a
+  // list rebuilt on every keystroke would rebuild the index on every keystroke
+  // too — which on a phone is the one place you would feel it.
+  const found = useMemo(
+    () => (query.trim() ? searchLibrary(marks ?? [], query) : null),
+    [marks, query],
+  );
+
   const shown = useMemo(() => {
-    let list = marks ?? [];
+    let list = found ? found.marks : (marks ?? []);
     if (colour) list = list.filter((mark) => mark.color === colour);
     if (tag) list = list.filter((mark) => mark.tags?.some((each) => sameTag(each, tag)));
-    return query ? searchMarks(list, query) : list;
-  }, [marks, query, tag, colour]);
+    return list;
+  }, [found, marks, tag, colour]);
 
   const groups = useMemo(() => groupByPage(shown), [shown]);
 
@@ -139,13 +195,68 @@ export function App() {
     input.value = '';
     if (!file) return;
     try {
-      const { added, updated } = await importMarks(readBackup(await file.text()).marks);
-      setNotice(added || updated ? `Imported ${added} new, ${updated} updated.` : 'Everything was already here.');
+      const backup = readBackup(await file.text());
+      const { added, updated } = await importMarks(backup.marks);
+      // Highlights first, so a space restored beside them finds the passages
+      // it cites already here.
+      const restored = await importSpaces(backup.spaces);
+      const who = backup.identity ? restoreIdentity(backup.identity) : null;
+
+      const parts = [];
+      if (added) parts.push(`${added} new`);
+      if (updated) parts.push(`${updated} updated`);
+      if (restored.added) parts.push(`${restored.added} space${restored.added === 1 ? '' : 's'}`);
+      if (who) parts.push(`and you are ${who.name} again`);
+      setNotice(parts.length ? `Imported ${parts.join(', ')}.` : 'Everything was already here.');
       refresh();
     } catch (error) {
       setNotice(error instanceof Error ? error.message : 'That file could not be imported.');
     }
   };
+
+  const say = (message: string) => setNotice(message);
+
+  const goto = (hash: string): void => {
+    if (hash) location.hash = hash;
+    else history.replaceState(null, '', location.pathname);
+    setRoute(hash);
+  };
+
+  if (route.startsWith('#/spaces')) {
+    const id = route.startsWith('#/spaces/') ? route.slice('#/spaces/'.length) : '';
+    const space = spaces.find((entry) => entry.id === id);
+    return (
+      <main class="app">
+        <header class="app-top">
+          <KonaMark size={26} />
+          <h1>Kona</h1>
+        </header>
+        {notice && (
+          <p class="app-notice" role="status">
+            {notice}
+          </p>
+        )}
+        {space ? (
+          <SpaceView
+            space={space}
+            marks={marks ?? []}
+            me={me}
+            onBack={() => goto('#/spaces')}
+            say={say}
+          />
+        ) : (
+          <SpacesList
+            spaces={spaces}
+            marks={marks ?? []}
+            me={me}
+            onOpen={(opened) => goto(`#/spaces/${opened}`)}
+            onBack={() => goto('')}
+            say={say}
+          />
+        )}
+      </main>
+    );
+  }
 
   return (
     <main class="app">
@@ -170,6 +281,13 @@ export function App() {
         spellcheck={false}
         onInput={(event) => setQuery(event.currentTarget.value)}
       />
+
+      {found && found.alsoMatched.length > 0 && (
+        <p class="app-also">
+          Also matched {found.alsoMatched.join(' · ')} — words your own highlights keep
+          beside what you typed.
+        </p>
+      )}
 
       {colours.length > 1 && (
         <div class="app-tags" role="group" aria-label="Filter by colour">
@@ -378,6 +496,58 @@ export function App() {
               ))}
             </div>
 
+            <span class="app-label">Spaces</span>
+            <button
+              class="app-row-action"
+              onClick={() => {
+                setMenuOpen(false);
+                location.hash = '#/spaces';
+              }}
+            >
+              Spaces
+              <small>
+                {spaces.length === 0
+                  ? 'a question, its evidence, and the write-up that comes out'
+                  : `${spaces.length} ${spaces.length === 1 ? 'space' : 'spaces'}`}
+              </small>
+            </button>
+
+            <span class="app-label">You</span>
+            {naming ? (
+              <form
+                class="app-space-new"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  const field = (event.currentTarget as HTMLFormElement).elements.namedItem(
+                    'name',
+                  ) as HTMLInputElement;
+                  void saveMe(field.value).then((person) => {
+                    setMe(person);
+                    setNaming(false);
+                  });
+                }}
+              >
+                <input name="name" type="text" placeholder="Your name" defaultValue={me?.name ?? ''} autofocus />
+                <div class="app-row">
+                  <button type="submit" class="app-save">
+                    Save
+                  </button>
+                  <button type="button" class="app-tool" onClick={() => setNaming(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <button class="app-row-action" onClick={() => setNaming(true)}>
+                {me ? me.name : 'Add your name'}
+                <small>
+                  {me
+                    ? 'signs what you write in a space you hand over'
+                    : 'so your work has your name on it when you share a space'}
+                </small>
+              </button>
+            )}
+
             <span class="app-label">Your highlights</span>
             <button
               class="app-row-action"
@@ -394,12 +564,20 @@ export function App() {
               class="app-row-action"
               disabled={!marks?.length}
               onClick={() => {
-                download(createBackup(marks ?? []), 'application/json', 'json');
+                // Spaces and who you are, not just the highlights: this file is
+                // the only way any of it reaches another device.
+                const identity = identityForBackup();
+                download(createBackup(marks ?? [], spaces, identity), 'application/json', 'json');
                 setMenuOpen(false);
+                setNotice(
+                  identity?.signingKey
+                    ? 'Backed up, signing key included — keep it somewhere private.'
+                    : 'Backed up.',
+                );
               }}
             >
               Back up
-              <small>a file you can keep or move to another phone</small>
+              <small>highlights, spaces and your name, in one file</small>
             </button>
             <button
               class="app-row-action"
@@ -409,7 +587,7 @@ export function App() {
               }}
             >
               Restore
-              <small>add highlights from a backup file</small>
+              <small>add highlights and spaces from a backup file</small>
             </button>
           </div>
         </div>
@@ -421,7 +599,57 @@ export function App() {
           onClose={() => setEditing(null)}
           onChange={(patch) => void update(editing, patch)}
           onDelete={() => void drop(editing)}
+          onFile={() => {
+            setFiling(editing);
+            setEditing(null);
+          }}
         />
+      )}
+
+      {filing && (
+        <div class="app-backdrop" onClick={() => setFiling(null)}>
+          <div class="app-sheet" onClick={(event) => event.stopPropagation()}>
+            <span class="app-label">Put this in a space</span>
+            <blockquote class="app-quote">{filing.snapshot || filing.url}</blockquote>
+            {spaces
+              .filter((space) => !space.markIds.includes(filing.id))
+              .map((space) => (
+                <button
+                  key={space.id}
+                  class="app-row-action"
+                  onClick={() => {
+                    void saveSpace(addToSpace(space, filing.id, me)).then(() => {
+                      setNotice(`Added to ${space.name}.`);
+                      setFiling(null);
+                    });
+                  }}
+                >
+                  {space.name}
+                  {space.question && <small>{space.question}</small>}
+                </button>
+              ))}
+            <form
+              class="app-space-new"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const field = (event.currentTarget as HTMLFormElement).elements.namedItem(
+                  'space',
+                ) as HTMLInputElement;
+                if (!field.value.trim()) return;
+                const space = addToSpace(createSpace(field.value), filing.id, me);
+                void saveSpace(space).then(() => {
+                  setNotice(`Added to ${space.name}.`);
+                  setFiling(null);
+                });
+              }}
+            >
+              <input name="space" type="text" placeholder="Or name a new space" />
+              <button type="submit" class="app-save">
+                Create and add
+              </button>
+            </form>
+          </div>
+        </div>
       )}
     </main>
   );
@@ -432,11 +660,14 @@ function Sheet({
   onClose,
   onChange,
   onDelete,
+  onFile,
 }: {
   mark: Mark;
   onClose: () => void;
   onChange: (patch: Partial<Mark>) => void;
   onDelete: () => void;
+  /** Hands this highlight to the space chooser, which replaces this sheet. */
+  onFile: () => void;
 }) {
   const noteRef = useRef<HTMLTextAreaElement>(null);
   const tagRef = useRef<HTMLInputElement>(null);
@@ -592,6 +823,9 @@ function Sheet({
         <div class="app-sheet-actions">
           <button class="app-danger" onClick={onDelete}>
             Delete
+          </button>
+          <button class="app-tool" onClick={onFile}>
+            Add to space
           </button>
           {mark.url && (
             <a class="app-open" href={linkToMark(mark)} target="_blank" rel="noreferrer">
