@@ -62,8 +62,11 @@ Mac — and that build is in `apple/`.
 | Any web page, with a note | The library |
 |---|---|
 | ![Highlighting a blog post](docs/screenshots/web-page.png) | ![All highlights in one searchable list](docs/screenshots/library.png) |
+| **The desktop app** | **The folder it keeps in step** |
+| ![Kona running as a desktop app](docs/screenshots/desktop.png) | ![Sync, and choosing what a shared folder carries](docs/screenshots/desktop-sync.png) |
 
-*Screenshots use a sample conversation and a sample article.*
+*Screenshots use a sample conversation and a sample article.* The desktop pair is captured
+from the real app against a real folder by `node scripts/desktop-shot.mjs`.
 
 ## Install
 
