@@ -20,10 +20,12 @@ import {
   removeSpace,
   saveMe,
   saveSpace,
+  syncStore,
   watchAllMarks,
   watchMe,
   watchSpaces,
 } from '../../core/store';
+import { browserFolders } from '../../core/folder';
 import {
   addComment,
   addFinding,
@@ -1122,7 +1124,7 @@ function SpaceView({
  * goes back next pass.
  */
 function FolderSync() {
-  const { state, connect, reconnect, disconnect, now } = useFolderSync();
+  const { state, connect, reconnect, disconnect, now } = useFolderSync(browserFolders, syncStore);
 
   if (state.kind === 'unsupported') return null;
 

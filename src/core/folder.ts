@@ -12,7 +12,16 @@
  * that, and everywhere it says no the backup file is still the way across.
  */
 
-import { EVERYTHING, SYNC_FILE, type Folder, type Scope } from './sync';
+import {
+  EVERYTHING,
+  SYNC_FILE,
+  type Chosen,
+  type Folder,
+  type FolderSource,
+  type Scope,
+} from './sync';
+
+export type { Chosen };
 
 /** A directory handle is a live object, so it cannot live in JSON storage. */
 const DB_NAME = 'kona-folder';
@@ -99,12 +108,6 @@ async function stored(): Promise<FileSystemDirectoryHandle | null> {
   }
 }
 
-export interface Chosen {
-  /** What to call it on screen — the folder's own name. */
-  name: string;
-  folder: Folder;
-}
-
 type Permissible = FileSystemDirectoryHandle & {
   queryPermission?: (options: { mode: 'readwrite' }) => Promise<PermissionState>;
   requestPermission?: (options: { mode: 'readwrite' }) => Promise<PermissionState>;
@@ -182,3 +185,15 @@ export async function folderReady(): Promise<boolean> {
   const handle = await stored();
   return handle ? allowed(handle, false) : false;
 }
+
+/** All of the above, as the one thing the sync UI asks for a folder. */
+export const browserFolders: FolderSource = {
+  canPick: canPickFolder,
+  pick: pickFolder,
+  saved: savedFolder,
+  savedName: savedFolderName,
+  ready: folderReady,
+  forget: forgetFolder,
+  scope: savedScope,
+  setScope,
+};

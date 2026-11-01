@@ -48,7 +48,8 @@ Mac — and that build is in `apple/`.
 - Export a backup file of everything — highlights, spaces and your name — and import it on another computer.
 - Or point Kona at a folder your machine already syncs (Drive, Dropbox, iCloud, OneDrive, Syncthing) and it keeps the library there. Your own folder keeps your own computers in step; a folder you share with somebody keeps a space in step with them, with no file to send and their replies arriving on their own. Kona makes no network request to do it — it writes a file, and something you already trust carries it.
 - Which folder it is decides who can read what, so Kona asks before writing anything. A folder of your own carries everything. **A folder you share carries only the spaces you tick, and only the passages those spaces cite** — nothing else in your library is written there.
-- Keeping that folder in step on its own needs a folder picker, which only desktop Chrome, Edge and Brave have. Everywhere else — Firefox, Safari, the phone app — **Sync through a file** does the same pass by hand: open the file out of the folder, and Kona hands back the one to put where you found it. Same file, same merge, same choice of what goes in it, so a team is not split by somebody's browser.
+- Keeping that folder in step from inside a browser needs a folder picker, which only desktop Chrome, Edge and Brave have. Everywhere else — Firefox, Safari, the phone app — **Sync through a file** does the same pass by hand: open the file out of the folder, and Kona hands back the one to put where you found it. Same file, same merge, same choice of what goes in it, so a team is not split by somebody's browser.
+- Or run **[the desktop app](#the-desktop-app)**, where a folder is a path rather than a permission. It keeps the folder in step on its own, on Windows, macOS and Linux alike, and it goes on doing it with the window shut.
 - Light, dark or match-your-system, chosen in the library and used everywhere, including the panel inside chats.
 
 **When pages change**
@@ -146,6 +147,45 @@ Every Safari extension ships inside an app, built with Xcode and signed, so this
 one part of Kona that needs a Mac and a paid developer account.
 [`apple/README.md`](apple/README.md) covers all of it, including which parts have not
 been run on a Mac yet.
+
+## The desktop app
+
+```bash
+npm run build:desktop
+npm run start:desktop
+```
+
+Kona in a window of its own, on Windows, macOS and Linux. It exists for one reason: a
+web page only runs while you are looking at it. The extension can only sync while a Kona
+tab is open, because Manifest V3 stops a background page after a few seconds of quiet,
+and the phone app syncs when you tap it. Neither is wrong, and neither is *my highlights
+are on both my machines without my thinking about it*.
+
+This is. Closing the window hides it to the tray instead of quitting, and the renderer
+keeps running while it is hidden, so the folder stays in step while you are doing
+something else. Start it with `--hidden` — which is what a launch-at-login entry should
+do — and it syncs without ever showing a window at all.
+
+The other half is that a folder here is a **path**, not a handle behind a permission.
+There is no picker to be missing, so Firefox and Safari are no different from Chrome, and
+nothing has to be granted again after a restart. The same engine, the same merge and the
+same choice of what the folder carries as everywhere else — `src/core` is shared, and the
+window renders the same UI as the phone app.
+
+What it is not:
+
+- **It is a peer on the folder, not a bridge into your browser.** It keeps its own
+  library and meets your extension in the shared folder, the same way another computer
+  would. On Chrome, Edge or Brave your extension is in that folder too and the loop is
+  closed; on Firefox and Safari the extension still does its hop by hand.
+- **There are no installers yet.** It builds and runs from source, as above. Packaging
+  and signing for three platforms is real work and none of it is done.
+- **It does not reach a phone.** iOS and Android do not run this, and that is the gap
+  Pro's sync is for.
+
+`node scripts/desktop-check.mjs` launches the real app against a real folder with no
+window shown, takes the sync file away, and checks it comes back with the highlights in
+it — the claim that only running the thing can check.
 
 ## Spaces
 
@@ -263,6 +303,9 @@ npm run dev:site  # the landing page on localhost:5181
 npm test          # unit tests for anchoring, ordering, search and backups
 npm run compile   # type check
 npm run build     # production build in .output/chrome-mv3
+
+npm run build:desktop  # the Electron app into .output/desktop
+npm run start:desktop  # run it
 ```
 
 The published site is one GitHub Pages deploy with three things in it: the landing page at
@@ -295,6 +338,7 @@ looks exactly like a broken demo and is not one.
 | Handing a space to someone, and fitting one that arrives into your library | `src/core/spaceShare.ts` |
 | What Kona costs — the copy the extension and the site both use | `src/core/plans.ts` |
 | The Android web app — shares `src/core` with the extension | `app/` |
+| The desktop app — the same UI, with a folder that is a path | `desktop/` |
 | The Team demo — the paid tier, on the same core | `team/` |
 | The landing page, and the root of the published site | `site/` |
 | Wrapping the Safari build in the app Apple requires around it | `apple/` |

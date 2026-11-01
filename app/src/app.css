@@ -1024,3 +1024,14 @@ input:focus-visible {
   padding: 7px 2px;
   font-size: 14px;
 }
+
+/* Why a folder is a privacy decision, said before one is picked. */
+.app-scope-why {
+  margin: 2px 0 8px;
+  padding: 10px 12px;
+  background: var(--hover);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}

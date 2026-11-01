@@ -10,7 +10,15 @@ import type { HighlightColor, Mark } from '../../src/core/types';
 import { KonaMark } from '../../src/ui/KonaMark';
 import type { Person } from '../../src/core/people';
 import { addMark as addToSpace, createSpace, originOf, type Space } from '../../src/core/spaces';
-import { EVERYTHING, SYNC_FILE, syncByHand, type Scope } from '../../src/core/sync';
+import { browserFolders } from '../../src/core/folder';
+import {
+  EVERYTHING,
+  SYNC_FILE,
+  syncByHand,
+  type FolderSource,
+  type Scope,
+} from '../../src/core/sync';
+import { useFolderSync, type FolderSyncControls } from '../../src/ui/useFolderSync';
 import { SpacesList, SpaceView } from './Spaces';
 import { firstUrl, markFromShare, planShare, readShare } from './share';
 import { applyTheme, loadTheme, saveTheme } from './theme';
@@ -67,7 +75,156 @@ const THEMES: Array<{ value: Theme; label: string; glyph: string }> = [
   { value: 'dark', label: 'Dark', glyph: '☾' },
 ];
 
-export function App() {
+/**
+ * Which spaces a shared folder or file carries.
+ *
+ * The same list whether the folder keeps itself in step or is being worked by
+ * hand, because it is the same decision, and the only one that matters when
+ * there is no server holding a permission: everyone the folder is shared with
+ * can read all of it, so what goes in is the whole of the privacy story.
+ */
+function ScopeRows({
+  spaces,
+  shared,
+  onChange,
+}: {
+  spaces: Space[];
+  shared: ReadonlySet<string> | null;
+  onChange: (scope: Scope) => void;
+}) {
+  return (
+    <div class="app-scope">
+      <label class="app-scope-row">
+        <input
+          type="checkbox"
+          checked={!shared}
+          onChange={() => onChange(shared ? EVERYTHING : { kind: 'spaces', origins: [] })}
+        />
+        <span>Everything</span>
+      </label>
+      {shared &&
+        spaces.map((space) => (
+          <label key={space.id} class="app-scope-row">
+            <input
+              type="checkbox"
+              checked={shared.has(originOf(space))}
+              onChange={() => {
+                const next = new Set(shared);
+                const origin = originOf(space);
+                if (next.has(origin)) next.delete(origin);
+                else next.add(origin);
+                onChange({ kind: 'spaces', origins: [...next] });
+              }}
+            />
+            <span>{space.name}</span>
+          </label>
+        ))}
+    </div>
+  );
+}
+
+/**
+ * Sync that looks after itself, where the platform will allow it.
+ *
+ * On a desktop that is always, because a folder is a path. In a browser it is
+ * desktop Chromium only, and everywhere else the menu offers the same file by
+ * hand instead — which is the same engine and the same merge, two taps short
+ * of this.
+ */
+function AutoSync({ sync, spaces }: { sync: FolderSyncControls; spaces: Space[] }) {
+  const [choosing, setChoosing] = useState(false);
+  const { state } = sync;
+
+  // The caller offers the by-hand file in this case instead of this component,
+  // and saying so here is what lets the rest of it read the state plainly.
+  if (state.kind === 'unsupported') return null;
+
+  if (state.kind === 'needs-permission') {
+    return (
+      <button class="app-row-action" onClick={() => void sync.reconnect()}>
+        Reconnect {state.name}
+        <small>the folder is still there; the permission to write to it has lapsed</small>
+      </button>
+    );
+  }
+
+  if (state.kind === 'off') {
+    return (
+      <>
+        <p class="app-scope-why">
+          Kona writes one file into a folder your computer already keeps in sync — Drive,
+          Dropbox, iCloud, OneDrive, Syncthing. It makes no network request of its own. Which
+          folder you pick decides who can read what is in it, so it asks first.
+        </p>
+        <button class="app-row-action" onClick={() => void sync.connect(EVERYTHING)}>
+          A folder of my own
+          <small>everything, kept in step between my own computers</small>
+        </button>
+        <button
+          class="app-row-action"
+          onClick={() => {
+            setChoosing(true);
+            void sync.connect({ kind: 'spaces', origins: [] });
+          }}
+        >
+          A folder I share with people
+          <small>only the spaces I tick, and only the passages those spaces cite</small>
+        </button>
+      </>
+    );
+  }
+
+  const shared = state.scope.kind === 'spaces' ? new Set(state.scope.origins) : null;
+
+  return (
+    <>
+      <button class="app-row-action" onClick={() => void sync.now()} disabled={state.busy}>
+        {state.busy ? `Syncing ${state.name}…` : `Sync ${state.name} now`}
+        <small>
+          {state.trouble ??
+            (state.at
+              ? `in step as of ${new Date(state.at).toLocaleTimeString()}`
+              : 'checking every few seconds')}
+        </small>
+      </button>
+      <button class="app-row-action" onClick={() => setChoosing(!choosing)}>
+        {shared
+          ? `Sharing ${shared.size} ${shared.size === 1 ? 'space' : 'spaces'}`
+          : 'Sharing everything'}
+        <small>
+          {shared
+            ? 'only these spaces and the passages they cite go in the folder'
+            : 'for a folder only you see — change it to share one with people'}
+        </small>
+      </button>
+      {choosing && (
+        <ScopeRows spaces={spaces} shared={shared} onChange={(wanted) => void sync.carry(wanted)} />
+      )}
+      <button class="app-row-action" onClick={() => void sync.disconnect()}>
+        Stop syncing {state.name}
+        <small>nothing is deleted — the file stays in the folder, as it is</small>
+      </button>
+    </>
+  );
+}
+
+/**
+ * The library, wherever it is being looked at.
+ *
+ * Two arguments, and both of them are the difference between a phone and a
+ * desktop. `folders` is where a sync folder comes from: in a browser that is
+ * the File System Access API, which Chrome on Android does not offer, so the
+ * phone gets the by-hand file instead. In the desktop app it is a path, so the
+ * same UI picks a folder and keeps it in step on its own. `syncOnDemand` is
+ * the desktop tray asking for a pass without the window being open.
+ */
+export function App({
+  folders = browserFolders,
+  syncOnDemand,
+}: {
+  folders?: FolderSource;
+  syncOnDemand?: (run: () => void) => void;
+} = {}) {
   const [marks, setMarks] = useState<Mark[] | null>(null);
   const [query, setQuery] = useState('');
   const [tag, setTag] = useState<string | null>(null);
@@ -87,6 +244,7 @@ export function App() {
   const [scope, setScopeState] = useState<Scope>(EVERYTHING);
   const [sharing, setSharing] = useState(false);
   const syncInput = useRef<HTMLInputElement>(null);
+  const sync = useFolderSync(folders, syncStore);
 
   const refresh = () => {
     void loadAll().then(setMarks);
@@ -223,6 +381,14 @@ export function App() {
       setNotice(error instanceof Error ? error.message : 'That file could not be read.');
     }
   };
+
+  // Registered once, reading the pass through a ref, because the handler the
+  // tray holds cannot be swapped out after the fact.
+  const passNow = useRef(sync.now);
+  passNow.current = sync.now;
+  useEffect(() => {
+    syncOnDemand?.(() => void passNow.current());
+  }, [syncOnDemand]);
 
   const shared = scope.kind === 'spaces' ? new Set(scope.origins) : null;
 
@@ -540,56 +706,40 @@ export function App() {
             </div>
 
             <span class="app-label">Sync</span>
-            <button
-              class="app-row-action"
-              onClick={() => {
-                setMenuOpen(false);
-                syncInput.current?.click();
-              }}
-            >
-              Sync through a file
-              <small>
-                open it from a folder this phone already syncs, and put the new one back
-              </small>
-            </button>
-            <button class="app-row-action" onClick={() => setSharing(!sharing)}>
-              {shared ? `Sharing ${shared.size} ${shared.size === 1 ? 'space' : 'spaces'}` : 'Sharing everything'}
-              <small>
-                {shared
-                  ? 'only these spaces and the passages they cite go in the file'
-                  : 'for a file only you see — change it to share with people'}
-              </small>
-            </button>
-            {sharing && (
-              <div class="app-scope">
-                <label class="app-scope-row">
-                  <input
-                    type="checkbox"
-                    checked={!shared}
-                    onChange={() =>
-                      changeScope(shared ? EVERYTHING : { kind: 'spaces', origins: [] })
-                    }
+            {sync.state.kind === 'unsupported' ? (
+              <>
+                <button
+                  class="app-row-action"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    syncInput.current?.click();
+                  }}
+                >
+                  Sync through a file
+                  <small>
+                    open it from a folder this phone already syncs, and put the new one back
+                  </small>
+                </button>
+                <button class="app-row-action" onClick={() => setSharing(!sharing)}>
+                  {shared
+                    ? `Sharing ${shared.size} ${shared.size === 1 ? 'space' : 'spaces'}`
+                    : 'Sharing everything'}
+                  <small>
+                    {shared
+                      ? 'only these spaces and the passages they cite go in the file'
+                      : 'for a file only you see — change it to share with people'}
+                  </small>
+                </button>
+                {sharing && (
+                  <ScopeRows
+                    spaces={spaces}
+                    shared={shared}
+                    onChange={(wanted) => changeScope(wanted)}
                   />
-                  <span>Everything</span>
-                </label>
-                {shared &&
-                  spaces.map((space) => (
-                    <label key={space.id} class="app-scope-row">
-                      <input
-                        type="checkbox"
-                        checked={shared.has(originOf(space))}
-                        onChange={() => {
-                          const next = new Set(shared);
-                          const origin = originOf(space);
-                          if (next.has(origin)) next.delete(origin);
-                          else next.add(origin);
-                          changeScope({ kind: 'spaces', origins: [...next] });
-                        }}
-                      />
-                      <span>{space.name}</span>
-                    </label>
-                  ))}
-              </div>
+                )}
+              </>
+            ) : (
+              <AutoSync sync={sync} spaces={spaces} />
             )}
 
             <span class="app-label">Spaces</span>

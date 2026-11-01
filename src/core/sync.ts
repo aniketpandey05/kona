@@ -58,6 +58,43 @@ export interface Folder {
   write(text: string): Promise<void>;
 }
 
+/** A folder somebody has chosen, and what to call it on screen. */
+export interface Chosen {
+  /** The folder's own name, which is how the person recognises it. */
+  name: string;
+  folder: Folder;
+}
+
+/**
+ * Where a folder comes from, and how it is remembered between runs.
+ *
+ * A browser and a desktop app answer this completely differently — one has a
+ * directory handle and a permission that expires, the other has a path and no
+ * permission at all — and neither answer belongs in the engine. So the engine
+ * takes one of these and asks it, which is also what lets the same sync UI
+ * run in the extension, the phone app and the desktop app without three
+ * copies of it.
+ */
+export interface FolderSource {
+  /** Whether this platform can hold a folder at all. */
+  canPick(): boolean;
+  /** Ask for one. In a browser this must come from a click. */
+  pick(): Promise<Chosen | null>;
+  /**
+   * The folder from last time, if it is still ours to write to. `ask` is for
+   * the case where the person has just clicked, since a browser will not
+   * re-grant permission on its own.
+   */
+  saved(ask?: boolean): Promise<Chosen | null>;
+  /** What we remember calling it, whether or not it can be written to yet. */
+  savedName(): Promise<string | null>;
+  /** Whether the saved folder can be written to right now without asking. */
+  ready(): Promise<boolean>;
+  forget(): Promise<void>;
+  scope(): Promise<Scope>;
+  setScope(scope: Scope): Promise<void>;
+}
+
 /** What the engine is allowed to do to the library it is syncing. */
 export interface SyncStore {
   marks(): Promise<Mark[]>;

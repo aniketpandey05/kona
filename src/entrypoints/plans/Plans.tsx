@@ -117,29 +117,38 @@ export function Plans() {
           cite — the rest of your library is never written there at all.
         </p>
         <p>
-          Keeping the folder in step by itself needs a folder picker, which only Chrome,
-          Edge and Brave on a desktop have. Everywhere else — Firefox, Safari, the phone —
-          the same file can be worked by hand: open it out of the folder and Kona hands
-          back the one to put where you found it. Two taps rather than none, on the same
-          file, so nobody is shut out of a workspace by their browser.
+          Keeping the folder in step from inside a browser needs a folder picker, which
+          only Chrome, Edge and Brave on a desktop have. Everywhere else — Firefox, Safari,
+          the phone — the same file can be worked by hand: open it out of the folder and
+          Kona hands back the one to put where you found it. Two taps rather than none, on
+          the same file, so nobody is shut out of a workspace by their browser.
+        </p>
+        <p>
+          Or run the desktop app, where a folder is a path rather than a permission: no
+          picker to be missing, nothing to grant again after a restart, and the same on
+          Windows, macOS and Linux. Its window closes to the tray instead of quitting, so
+          it goes on keeping the folder in step while you are doing something else — which
+          is the one thing an extension cannot do at all, because Manifest V3 stops a
+          background page after a few seconds of quiet.
         </p>
         <p>
           It is a stand-in for Pro's sync rather than the same thing, and the difference is
-          the work: you arrange the folder, you keep the sync client running, and on half
-          the browsers you do the round trip yourself. Pro is that job done for you, on
-          every device. And ticking a space is as far as permissions go here — who may
-          write, and taking access back from one person rather than un-sharing the whole
-          folder, is Team's, and needs a server.
+          the work: you arrange the folder, you keep the sync client running, and you
+          either install the app or do the round trip yourself. Pro is that job done for
+          you, on every device — including the phone in your pocket, which neither a folder
+          nor a desktop app reaches. And ticking a space is as far as permissions go here —
+          who may write, and taking access back from one person rather than un-sharing the
+          whole folder, is Team's, and needs a server.
         </p>
         <p>
           What that is not. It goes as fast as your sync client does, which is seconds
-          rather than as-you-type. It needs the folder picker, so it is Chrome, Edge and
-          Brave on a desktop and not a phone. There are no permissions: anybody who can
-          read the folder can read the space, and there is no taking that back. And a key
-          proves somebody is the same person as last time, not who they are in the world —
-          the first time a name reaches you, you take it on trust. Removing those four is
-          what Team is for; that needs a server, and the server is not built. There is a
-          working demo of the shape of it.
+          rather than as-you-type. Keeping itself in step takes either the folder picker or
+          the desktop app, so on a phone it is the file by hand. There are no permissions:
+          anybody who can read the folder can read the space, and there is no taking that
+          back. And a key proves somebody is the same person as last time, not who they are
+          in the world — the first time a name reaches you, you take it on trust. Removing
+          those four is what Team is for; that needs a server, and the server is not built.
+          There is a working demo of the shape of it.
         </p>
         <div class="pl-row">
           <a class="pl-primary" href={TEAM_DEMO_URL} target="_blank" rel="noreferrer noopener">

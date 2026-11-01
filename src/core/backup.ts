@@ -1,8 +1,9 @@
 /**
  * Everything you have, in one file you can move.
  *
- * There is no sync, so this is the only way to get from one computer to the
- * next, which makes what it leaves out as important as what it holds. It used
+ * It is the way across that needs nothing arranged first — no folder, no sync
+ * client, no second machine already running — which makes what it leaves out
+ * as important as what it holds. It used
  * to hold only highlights — so a backup restored on a new machine arrived with
  * every passage you had ever kept and none of the questions you had been
  * asking, none of what you concluded, and none of the discussion. That is

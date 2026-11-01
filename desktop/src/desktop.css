@@ -1,0 +1,68 @@
+/*
+ * What is different about a window.
+ *
+ * Very little, on purpose. The library is the same list of highlights whether
+ * it is on a phone or a monitor, and it already centres itself in a column
+ * that reads well at any width. What a native window needs is the handful of
+ * things a web page cannot assume: that it is not a document to be selected
+ * and dragged about, that it has no address bar to fall back on, and that the
+ * page itself never scrolls behind the app.
+ */
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  /* A window is furniture, not text: dragging the UI around is never meant. */
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
+/* Except the part that is text. Highlights are for reading and quoting. */
+.app-quote,
+.app-note,
+.app-snippet,
+input,
+textarea,
+[contenteditable] {
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: auto;
+}
+
+/* The scroll lives in the list, so the window chrome stays put. */
+.app-shell {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* No rubber-banding the whole app on a trackpad. */
+* {
+  overscroll-behavior: none;
+}
+
+/*
+ * A sheet that slid up from the bottom edge of a phone is the wrong shape for
+ * a window: on a wide one it stretches a column of settings across the whole
+ * screen, and being pinned to the bottom means the last row is always cut off
+ * by the edge. Centred, held to a readable width and given room above and
+ * below, the same markup reads as a dialog.
+ */
+.app-backdrop {
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+}
+
+.app-sheet {
+  width: min(560px, 100%);
+  max-height: min(680px, calc(100vh - 56px));
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  animation: none;
+}

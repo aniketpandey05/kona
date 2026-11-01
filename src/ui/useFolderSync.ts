@@ -1,26 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import {
-  canPickFolder,
-  folderReady,
-  forgetFolder,
-  pickFolder,
-  savedFolder,
-  savedFolderName,
-  savedScope,
-  setScope,
+  changedHere,
+  EVERYTHING,
+  syncOnce,
   type Chosen,
-} from '../core/folder';
-import { syncStore } from '../core/store';
-import { changedHere, EVERYTHING, syncOnce, type Scope } from '../core/sync';
+  type FolderSource,
+  type Scope,
+  type SyncStore,
+} from '../core/sync';
 
 /**
- * Keeping this page in step with the folder, for as long as it is open.
+ * Keeping a library in step with the folder, for as long as this is running.
  *
- * It runs while a Kona page is open and not otherwise. A service worker that
- * woke up to sync would be the better answer and Manifest V3 does not really
- * allow one — they are stopped after a few seconds of quiet — so rather than
- * pretend, this syncs when you are looking at your highlights, which is when
- * it matters and when you would notice it had not.
+ * In the extension that means while a Kona page is open and not otherwise. A
+ * service worker that woke up to sync would be the better answer and
+ * Manifest V3 does not really allow one — they are stopped after a few
+ * seconds of quiet — so rather than pretend, this syncs when you are looking
+ * at your highlights, which is when it matters and when you would notice it
+ * had not.
+ *
+ * The desktop app is the same hook with nothing taken away: its window can be
+ * shut to the tray and the renderer keeps running, so there the sync really is
+ * always on. Which folder and which library it works on are both arguments,
+ * because that is the entire difference between the three places this runs.
  */
 
 /** Often enough to feel live, seldom enough to be invisible on a laptop. */
@@ -40,16 +42,23 @@ export type SyncState =
       scope: Scope;
     };
 
-export function useFolderSync(): {
+/** Everything the sync controls need, so one can be handed to a component. */
+export interface FolderSyncControls {
   state: SyncState;
+  /** Pick a folder, having first settled what it may carry. */
   connect: (scope: Scope) => Promise<void>;
+  /** Ask again for a permission that has lapsed. Browsers only. */
   reconnect: () => Promise<void>;
   disconnect: () => Promise<void>;
+  /** One pass, now. */
   now: () => Promise<void>;
+  /** Change what the folder carries, and act on it. */
   carry: (scope: Scope) => Promise<void>;
-} {
+}
+
+export function useFolderSync(folders: FolderSource, store: SyncStore): FolderSyncControls {
   const [state, setState] = useState<SyncState>(
-    canPickFolder() ? { kind: 'off' } : { kind: 'unsupported' },
+    folders.canPick() ? { kind: 'off' } : { kind: 'unsupported' },
   );
   const chosen = useRef<Chosen | null>(null);
   const scope = useRef<Scope>(EVERYTHING);
@@ -63,7 +72,7 @@ export function useFolderSync(): {
     running.current = true;
     setState((current) => (current.kind === 'on' ? { ...current, busy: true } : current));
     try {
-      await syncOnce(folder.folder, syncStore, scope.current);
+      await syncOnce(folder.folder, store, scope.current);
       setState({
         kind: 'on',
         name: folder.name,
@@ -84,21 +93,21 @@ export function useFolderSync(): {
     } finally {
       running.current = false;
     }
-  }, []);
+  }, [store]);
 
   // Pick the folder back up on load, but never ask for permission without a
   // click — the browser refuses, and a silent refusal reads as a bug.
   useEffect(() => {
-    if (!canPickFolder()) return;
+    if (!folders.canPick()) return;
     void (async () => {
-      const name = await savedFolderName();
+      const name = await folders.savedName();
       if (!name) return;
-      if (!(await folderReady())) {
+      if (!(await folders.ready())) {
         setState({ kind: 'needs-permission', name });
         return;
       }
-      scope.current = await savedScope();
-      chosen.current = await savedFolder();
+      scope.current = await folders.scope();
+      chosen.current = await folders.saved();
       if (chosen.current) {
         setState({
           kind: 'on',
@@ -111,7 +120,7 @@ export function useFolderSync(): {
         await pass();
       }
     })();
-  }, [pass]);
+  }, [folders, pass]);
 
   useEffect(() => {
     if (state.kind !== 'on') return;
@@ -124,20 +133,20 @@ export function useFolderSync(): {
       // The scope is settled before the folder is touched, so there is no
       // moment where a folder exists and nobody has said what may go in it.
       scope.current = wanted;
-      await setScope(wanted);
-      const folder = await pickFolder();
+      await folders.setScope(wanted);
+      const folder = await folders.pick();
       if (!folder) return;
       chosen.current = folder;
       setState({ kind: 'on', name: folder.name, at: null, busy: false, trouble: null, scope: wanted });
       await pass();
     },
-    [pass],
+    [folders, pass],
   );
 
   const reconnect = useCallback(async () => {
-    const folder = await savedFolder(true);
+    const folder = await folders.saved(true);
     if (!folder) return;
-    scope.current = await savedScope();
+    scope.current = await folders.scope();
     chosen.current = folder;
     setState({
       kind: 'on',
@@ -148,23 +157,23 @@ export function useFolderSync(): {
       scope: scope.current,
     });
     await pass();
-  }, [pass]);
+  }, [folders, pass]);
 
   const carry = useCallback(
     async (wanted: Scope) => {
       scope.current = wanted;
-      await setScope(wanted);
+      await folders.setScope(wanted);
       setState((current) => (current.kind === 'on' ? { ...current, scope: wanted } : current));
       await pass();
     },
-    [pass],
+    [folders, pass],
   );
 
   const disconnect = useCallback(async () => {
     chosen.current = null;
-    await forgetFolder();
+    await folders.forget();
     setState({ kind: 'off' });
-  }, []);
+  }, [folders]);
 
   return { state, connect, reconnect, disconnect, now: pass, carry };
 }

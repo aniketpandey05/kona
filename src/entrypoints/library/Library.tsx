@@ -30,7 +30,7 @@ import { addTags, countTags, removeTag, sameTag } from '../../core/tags';
 import { applyTheme, loadTheme, saveTheme, watchTheme, type Theme } from '../../core/theme';
 import { KonaMark } from '../../ui/KonaMark';
 import { useFolderSync } from '../../ui/useFolderSync';
-import { savedScope, setScope } from '../../core/folder';
+import { browserFolders, savedScope, setScope } from '../../core/folder';
 import { syncStore } from '../../core/store';
 import { EVERYTHING, SYNC_FILE, syncByHand, type Scope } from '../../core/sync';
 import type { Mark } from '../../core/types';
@@ -748,7 +748,10 @@ function ByHandSync({ spaces }: { spaces: Space[] }) {
 }
 
 function FolderSync({ spaces }: { spaces: Space[] }) {
-  const { state, connect, reconnect, disconnect, now, carry } = useFolderSync();
+  const { state, connect, reconnect, disconnect, now, carry } = useFolderSync(
+    browserFolders,
+    syncStore,
+  );
   const [asking, setAsking] = useState(false);
   const [choosing, setChoosing] = useState(false);
 
