@@ -118,8 +118,8 @@ distribution engine and the reason anyone trusts us with the paid one.
 | Discussion on a highlight, merged on the way back | yes | yes | yes | yes |
 | Who found what and who concluded what | yes | yes | yes | yes |
 | Contributions signed with a key, checked on the way in | yes | yes | yes | yes |
-| Two machines in step through a folder they already sync | yes | yes | yes | yes |
-| Sync with no folder to arrange, and where a folder cannot reach | | yes | yes | yes |
+| Sync across your own devices | | yes | yes | yes |
+| Sync with nothing to arrange, and where a folder cannot reach | | yes | yes | yes |
 | Hybrid search, meaning learned from your own library | yes | yes | yes | yes |
 | Meaning from a model rather than your own corpus | | yes | yes | yes |
 | Search across everyone's highlights | | | yes | yes |

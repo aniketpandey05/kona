@@ -102,13 +102,19 @@ export function Plans() {
           than hiding it.
         </p>
         <p>
-          There is a second way, for when passing a file about gets old. Point Kona at a
-          folder your computer already keeps in sync — Drive, Dropbox, iCloud, OneDrive,
-          Syncthing, any of them — and it keeps the library there. Your own folder keeps
-          your own machines in step. A folder you share with somebody keeps a space in step
-          with them, with no file to send and their replies arriving on their own. Kona
-          makes no network request to do it; it writes a file, and something you already
-          trust carries it.
+          There is a second way, for when passing a file about gets old, and it is free
+          today because the paid one is not built. Point Kona at a folder your computer
+          already keeps in sync — Drive, Dropbox, iCloud, OneDrive, Syncthing, any of them
+          — and it keeps the library there. Your own folder keeps your own machines in
+          step. A folder you share with somebody keeps a space in step with them, with no
+          file to send and their replies arriving on their own. Kona makes no network
+          request to do it; it writes a file, and something you already trust carries it.
+        </p>
+        <p>
+          It is a stand-in for Pro's sync rather than the same thing, and the difference is
+          the work: you arrange the folder, you keep the sync client running, and you only
+          get it where the folder picker exists. Pro is that job done for you, on every
+          device including the ones a folder cannot reach.
         </p>
         <p>
           What that is not. It goes as fast as your sync client does, which is seconds

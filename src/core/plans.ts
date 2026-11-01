@@ -47,7 +47,6 @@ export const PLANS: readonly Plan[] = [
       'Discussion on a highlight, carried in the file and merged both ways',
       'Who found what and who concluded what, named in the write-up',
       'Everything you write in a space is signed, so a copy coming back is provably theirs',
-      'Computers — and colleagues — kept in step through a folder you already sync',
       'Markdown export and backups',
       'Nothing leaves your computer',
     ],
@@ -61,7 +60,9 @@ export const PLANS: readonly Plan[] = [
     pitch: 'The same thing, on all of your own devices.',
     included: [
       'Everything in Free',
-      'Sync with no folder to arrange, and on a phone, Safari or Firefox, where a folder cannot reach',
+      'Sync across your own devices',
+      'Nothing to arrange: no folder to pick, no sync client of your own to keep running',
+      'On a phone, in Safari and in Firefox, where a folder cannot reach',
       'Meaning from a model too, so it knows words you have never kept together',
     ],
     built: false,
