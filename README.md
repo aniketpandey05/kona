@@ -17,7 +17,7 @@ Mac — and that build is in `apple/`.
 
 > **Status:** early prototype, not in the Chrome Web Store yet. Install it yourself with the steps below.
 
-![The side panel listing highlights in a chat](docs/screenshots/chat-panel.jpg)
+![The side panel listing highlights in a chat](docs/screenshots/chat-panel.png)
 
 ## What it does
 
@@ -57,11 +57,7 @@ Mac — and that build is in `apple/`.
 
 | Any web page, with a note | The library |
 |---|---|
-| ![Highlighting a blog post](docs/screenshots/web-page.jpg) | ![All highlights in one searchable list](docs/screenshots/library.jpg) |
-
-The same library in light mode:
-
-![The library in light mode](docs/screenshots/library-light.jpg)
+| ![Highlighting a blog post](docs/screenshots/web-page.png) | ![All highlights in one searchable list](docs/screenshots/library.png) |
 
 *Screenshots use a sample conversation and a sample article.*
 
@@ -157,7 +153,7 @@ citing the highlights it rests on. Mark the ones that cut against it, because ev
 that all nods along is usually evidence that stopped looking. Keep a list of what is
 still unknown. Record the decision when there is one.
 
-![A space: the question, the decision, two findings and the evidence under them](docs/screenshots/spaces.jpg)
+![A space: the question, the decision it reached, and the evidence under it, each piece signed by whoever found it](docs/screenshots/space.png)
 
 *A space built from the sample conversations, with one finding's evidence open.*
 

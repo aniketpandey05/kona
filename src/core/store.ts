@@ -1,4 +1,5 @@
 import { browser, storage } from '#imports';
+import type { Identity } from './backup';
 import { makeKeypair } from './identity';
 import { makePerson, type Person } from './people';
 import type { Space } from './spaces';
@@ -145,6 +146,26 @@ export function removeSpace(id: string): Promise<void> {
   });
 }
 
+/**
+ * Spaces out of a backup, added where this computer has not got one already.
+ *
+ * Adding rather than overwriting, for the same reason the merge adds rather
+ * than overwrites: a restore is somebody recovering work, and the one
+ * unrecoverable mistake would be writing over a space they have been using
+ * here with an older copy of it.
+ */
+export function importSpaces(
+  incoming: readonly Space[],
+): Promise<{ added: number; kept: number }> {
+  return serialized(async () => {
+    const spaces = (await storage.getItem<Space[]>(SPACES_KEY)) ?? [];
+    const have = new Set(spaces.map((space) => space.id));
+    const fresh = incoming.filter((space) => !have.has(space.id));
+    if (fresh.length > 0) await storage.setItem(SPACES_KEY, [...spaces, ...fresh]);
+    return { added: fresh.length, kept: incoming.length - fresh.length };
+  });
+}
+
 /** Keeps another tab's view of the spaces in step with this one. */
 export function watchSpaces(onChange: (spaces: Space[]) => void): () => void {
   return storage.watch<Space[]>(SPACES_KEY, (spaces) =>
@@ -212,6 +233,30 @@ async function withKey(me: Person | null): Promise<Person | null> {
   await storage.setItem(SIGNING_KEY, pair.privateKey);
   await storage.setItem(ME_KEY, keyed);
   return keyed;
+}
+
+/**
+ * You, as a backup should carry you: the person and the key that signs as
+ * them. Only ever written into a file you are making for yourself.
+ */
+export async function identityForBackup(): Promise<Identity | null> {
+  const me = await loadMe();
+  if (!me) return null;
+  const signingKey = await loadSigningKey();
+  return { me, ...(signingKey ? { signingKey } : {}) };
+}
+
+/**
+ * Who you were, taken from a backup — but only onto a computer that does not
+ * already know who it belongs to. Nothing here silently replaces an identity
+ * somebody is using, and a restore onto a machine already in use simply keeps
+ * the one it has.
+ */
+export async function restoreIdentity(identity: Identity): Promise<Person | null> {
+  if (await loadMe()) return null;
+  await storage.setItem(ME_KEY, identity.me);
+  if (identity.signingKey) await storage.setItem(SIGNING_KEY, identity.signingKey);
+  return identity.me;
 }
 
 export function watchMe(onChange: (me: Person | null) => void): () => void {

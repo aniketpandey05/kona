@@ -449,7 +449,13 @@ function isLinkable(url: string): boolean {
   }
 }
 
-function cleanSpace(value: unknown, haveMarks: ReadonlySet<string>): Space | null {
+/**
+ * A space rebuilt field by field from whatever a file claims, keeping nothing
+ * it did not have to. Exported because a backup is just as untrusted as a
+ * space somebody sent, and deserves exactly this and not a second, laxer copy
+ * of it.
+ */
+export function cleanSpace(value: unknown, haveMarks: ReadonlySet<string>): Space | null {
   const raw = value as Partial<Space> | null;
   if (!raw || typeof raw.name !== 'string') return null;
 

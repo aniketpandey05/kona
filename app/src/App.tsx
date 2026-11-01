@@ -139,7 +139,7 @@ export function App() {
     input.value = '';
     if (!file) return;
     try {
-      const { added, updated } = await importMarks(readBackup(await file.text()));
+      const { added, updated } = await importMarks(readBackup(await file.text()).marks);
       setNotice(added || updated ? `Imported ${added} new, ${updated} updated.` : 'Everything was already here.');
       refresh();
     } catch (error) {

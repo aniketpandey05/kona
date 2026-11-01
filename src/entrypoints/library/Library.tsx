@@ -11,11 +11,14 @@ import { prime, searchLibrary } from '../../core/search';
 import { siteLabel } from '../../core/sites';
 import type { Person } from '../../core/people';
 import {
+  identityForBackup,
   importMarks,
+  importSpaces,
   loadAllMarks,
   loadMe,
   loadSpaces,
   removeMark,
+  restoreIdentity,
   saveSpace,
   upsertMark,
   watchAllMarks,
@@ -180,9 +183,18 @@ export function Library() {
     URL.revokeObjectURL(link.href);
   };
 
-  const exportBackup = () => {
-    download(createBackup(all), 'application/json', 'json');
-    setMessage(`Saved a backup of ${total} highlight${total === 1 ? '' : 's'}.`);
+  const exportBackup = async () => {
+    // Spaces and who you are, not just the highlights: with no sync, this
+    // file is the only way any of it reaches another computer.
+    const identity = await identityForBackup();
+    download(createBackup(all, spaces, identity), 'application/json', 'json');
+    const parts = [`${total} highlight${total === 1 ? '' : 's'}`];
+    if (spaces.length) parts.push(`${spaces.length} space${spaces.length === 1 ? '' : 's'}`);
+    setMessage(
+      identity?.signingKey
+        ? `Saved a backup of ${parts.join(' and ')}, and your signing key — keep it somewhere private.`
+        : `Saved a backup of ${parts.join(' and ')}.`,
+    );
   };
 
   const exportMarkdown = () => {
@@ -196,11 +208,23 @@ export function Library() {
     input.value = ''; // so the same file can be picked again
     if (!file) return;
     try {
-      const { added, updated } = await importMarks(readBackup(await file.text()));
+      const backup = readBackup(await file.text());
+      const { added, updated } = await importMarks(backup.marks);
+      // Highlights first, so a space restored beside them finds the passages
+      // it cites already here.
+      const restoredSpaces = await importSpaces(backup.spaces);
+      const name = backup.identity ? await restoreIdentity(backup.identity) : null;
+
       const parts = [];
       if (added) parts.push(`added ${added} highlight${added === 1 ? '' : 's'}`);
       if (updated) parts.push(`updated ${updated}`);
-      setMessage(parts.length ? `Imported: ${parts.join(', ')}.` : 'Everything in that file was already here.');
+      if (restoredSpaces.added) {
+        parts.push(`${restoredSpaces.added} space${restoredSpaces.added === 1 ? '' : 's'}`);
+      }
+      if (name) parts.push(`and you are ${name.name} again`);
+      setMessage(
+        parts.length ? `Imported: ${parts.join(', ')}.` : 'Everything in that file was already here.',
+      );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'That file could not be imported.');
     }
@@ -317,7 +341,7 @@ export function Library() {
           <button class="lib-tool" onClick={exportMarkdown} disabled={shown === 0}>
             Export Markdown
           </button>
-          <button class="lib-tool" onClick={exportBackup} disabled={total === 0}>
+          <button class="lib-tool" onClick={() => void exportBackup()} disabled={total === 0}>
             Export backup
           </button>
           <button class="lib-tool" onClick={() => fileInput.current?.click()}>
