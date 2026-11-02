@@ -178,18 +178,52 @@ settled is out of the way below.
 This is the organising idea of a shared space. A space's job is to tell you
 what still needs you.
 
-### Discussion marker
+### Raising a question (a ping)
 
-A count on a highlight that has a thread, so you can see from the list which
-passages are being argued about.
+**Somebody is unsure about a passage and wants everyone to look at it.**
 
-Two different things get confused here, and only one of them can be shared:
+It is one action with three effects: the thread goes to *asking*, the highlight
+is marked as having a question on it, and everyone else in the space is told.
 
-- **How many replies** — the same for everybody, lives in the space, syncs
-  with it.
-- **How many are new since you last looked** — different for every person.
-  **This must stay on your own device and never travel with the space**, since
-  a space is merged between people and your unread is not mine.
+This is what makes *asking* work. A state nobody notices is not a state, and
+raising a question is the deliberate act that puts a thread into it — rather
+than hoping a teammate spots that a reply ended in a question mark.
+
+A ping is not a separate kind of thing to store. It is a comment marked as a
+question, which is why answering it and settling the thread put it away again.
+
+**Two parts, and only one of them is shared:**
+
+- **That a question was raised** — a fact about the space. Everybody sees it,
+  it travels with the space, and it stays until the thread is settled.
+- **Whether *you* have seen it yet** — yours alone. **This never travels with
+  the space.** Spaces merge between people, and one person's unread is not
+  another's; share it and everybody inherits everybody else's.
+
+**What "told" can mean today:** nothing is pushed anywhere. A space reaches
+other people by a shared folder or a handed-over file, so a raised question
+arrives when their copy next syncs — which may be seconds on a desktop
+watching a folder, or whenever they next open it. Real notifications need the
+server that Team is waiting on. Until then a ping is a strong mark inside the
+space, not an alert on somebody's phone, and the interface should not pretend
+otherwise.
+
+### Poll
+
+**A quick way to ask "does everyone agree?" without ten replies saying yes.**
+
+Put on a finding, a decision, or a highlight somebody has questioned. Anyone in
+the space can start one, anyone can answer, and the tally is visible.
+
+**A poll records agreement. It never acts on its own.** Nothing is removed,
+settled or decided because a vote came out a certain way. That one rule is
+what keeps it small: with no automatic consequence there is no need for a
+quorum, a tie-break, a rule about who may vote, or an expiry — the things that
+turn asking a question into a governance system.
+
+So "four of five agree" is something the team knows, and then a person decides.
+It also earns its keep in the write-up: a finding four people agreed with reads
+differently from one nobody answered.
 
 ### Finding
 
