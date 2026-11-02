@@ -127,6 +127,42 @@ something and not before.
 
 ---
 
+### 1f. Voting on whether a highlight stays
+
+Proposed: the team votes or polls on whether a thread or highlight should
+remain in the space.
+
+- **(a) No voting. Reactions instead**, on comments and findings — one tap to
+  agree without writing "agreed".
+- **(b) Voting, but on findings**, not highlights: *do we agree with this
+  conclusion?*
+- **(c) Voting on highlights**, as proposed.
+
+*Recommendation:* (a) now, (b) later if it is still wanted, never (c).
+
+Voting on whether a quote stays optimises the wrong thing. Taking a highlight
+out of a space is cheap and undoable — it stays in its owner's library either
+way — so it would mean building quorum, ties, who may vote and when it expires
+for a decision any one person can make and reverse in a click. In a team small
+enough to share a space, that is ceremony standing in for a sentence.
+
+The real need underneath it is registering agreement without writing a comment,
+and a reaction is nearly all of that for almost none of the machinery. If
+voting is ever genuinely wanted, a finding is the place for it: a conclusion
+three people agreed with reads differently in the write-up from one nobody
+answered.
+
+**Decided:** _______
+
+---
+
+### 1g. Note: everything in 1f and the thread states is Team tier
+
+Team is frozen, so this is designed now and built later. It is written down
+while the thinking is fresh, not queued for building.
+
+---
+
 ### 2. What does the in-page panel look like?
 
 `src/ui/App.tsx`, 766 lines, is the smallest and least considered of the four

@@ -141,12 +141,55 @@ and deciding together. **Team tier.**
 Only here do these appear at all, in the data and on the screen:
 
 - who gathered which highlight
-- comment threads on a passage
-- marking a thread settled
+- threads on a passage
 - the people in the space, and their signatures
 
 A solo user never sees any of it. That is not a gate bolted over a shared
 feature; it is that none of it means anything with one person.
+
+### Thread
+
+The discussion hanging off one highlight, inside one space. The same passage
+gathered under two questions has two separate threads, because the argument
+about it in one is not the argument about it in the other.
+
+A thread is in one of three states, and **the state decides how much room it
+takes up**:
+
+| State | What it means | How it looks |
+| --- | --- | --- |
+| **Talking** | People have said things. Nobody is waiting on anybody. | Shown as it is. |
+| **Asking** | Somebody asked something and it has not been answered. The team owes a reply. | Stays open, and appears in the space's attention list. |
+| **Settled** | Done with. | Collapsed to one line — who settled it and how many replies. Click to read it. |
+
+Today only *settled* and *not settled* exist. **Asking** is the missing one,
+and it is the one that does the work, because it is the difference between
+"there is discussion here" and "something is waiting for you".
+
+### Attention list
+
+What a shared space shows at the top: **everything still waiting on somebody.**
+
+It holds the space's own open questions and every thread in the *asking*
+state, together, because they are the same kind of thing — a question attached
+to a passage is an open question that happens to have a passage. Everything
+settled is out of the way below.
+
+This is the organising idea of a shared space. A space's job is to tell you
+what still needs you.
+
+### Discussion marker
+
+A count on a highlight that has a thread, so you can see from the list which
+passages are being argued about.
+
+Two different things get confused here, and only one of them can be shared:
+
+- **How many replies** — the same for everybody, lives in the space, syncs
+  with it.
+- **How many are new since you last looked** — different for every person.
+  **This must stay on your own device and never travel with the space**, since
+  a space is merged between people and your unread is not mine.
 
 ### Finding
 
