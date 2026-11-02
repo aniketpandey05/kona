@@ -240,6 +240,9 @@ export function Library() {
         <div class="lib-top">
           <KonaMark size={26} />
           <h1>Your highlights</h1>
+          <a class="lib-go" href={browser.runtime.getURL('/spaces.html')}>
+            Spaces
+          </a>
           <div class="lib-theme" role="group" aria-label="Appearance">
             {THEMES.map(({ value, label, icon: Icon }) => (
               <button
@@ -339,9 +342,6 @@ export function Library() {
                 ? `${shown} of ${total} highlights`
                 : `${total} highlights`}
           </p>
-          <a class="lib-tool" href={browser.runtime.getURL('/spaces.html')}>
-            Spaces
-          </a>
           <button class="lib-tool" onClick={exportMarkdown} disabled={shown === 0}>
             Export Markdown
           </button>

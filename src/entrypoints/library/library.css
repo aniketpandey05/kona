@@ -69,6 +69,29 @@ body {
   flex: none;
 }
 
+/* The other place the popup's Open leads. It sat in the row of exports,
+   which made a space look like a file format. */
+.lib-go {
+  flex: none;
+  padding: 7px 13px;
+  font-size: 14px;
+  font-weight: 580;
+  color: var(--lib-fg);
+  text-decoration: none;
+  background: var(--lib-card);
+  border: 1px solid var(--lib-border);
+  border-radius: 9px;
+}
+
+.lib-go:hover {
+  background: var(--lib-hover);
+}
+
+.lib-go:focus-visible {
+  outline: 2px solid var(--lib-accent);
+  outline-offset: 2px;
+}
+
 .lib-top h1 {
   flex: 1;
   margin: 0;

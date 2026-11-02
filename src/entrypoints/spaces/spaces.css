@@ -654,6 +654,20 @@ a:focus-visible {
 }
 
 @media (max-width: 560px) {
+  /* The title and the nav cannot share a line this narrow: the links wrap
+     around the heading and land on a second row beside it, which is how the
+     page looked when it was opened in a window the size of the popup. */
+  .sp-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .sp-top .sp-row {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
   .sp-question-big {
     font-size: 21px;
     max-width: none;

@@ -159,22 +159,24 @@ export function Popup() {
         </section>
       )}
 
+      {/*
+        One way in, and it has to go through the background. A plain <a> here
+        navigates the popup itself, which is a 380px window: the Spaces page
+        loaded into it with its nav stacked on top of itself and the whole
+        thing scrolling. `open-library` opens a real tab, or focuses the one
+        already open, and the library is where both highlights and spaces are.
+      */}
       <section class="pop-open">
-        <h2>Open</h2>
-        <div class="pop-links">
-          <button
-            class="pop-library"
-            onClick={() => {
-              void send({ type: 'open-library' });
-              window.close();
-            }}
-          >
-            All highlights
-          </button>
-          <a class="pop-library" href={browser.runtime.getURL('/spaces.html')}>
-            Spaces
-          </a>
-        </div>
+        <button
+          class="pop-library"
+          onClick={() => {
+            void send({ type: 'open-library' });
+            window.close();
+          }}
+        >
+          Open
+        </button>
+        <p class="pop-hint pop-open-hint">Your highlights and your spaces, in a tab.</p>
       </section>
     </main>
   );

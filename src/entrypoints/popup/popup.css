@@ -201,21 +201,20 @@ input:focus-visible + .pop-switch {
   color: var(--pop-fg);
 }
 
-/* Two places to go, given the same weight: the library is where most people
-   are heading, but a space is not a footnote to it. */
 .pop-open {
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1px solid var(--pop-border);
 }
 
-.pop-links {
-  display: flex;
-  gap: 8px;
+.pop-open-hint {
+  margin: 8px 0 0;
+  text-align: center;
 }
 
 .pop-library {
-  flex: 1 1 0;
+  display: block;
+  width: 100%;
   margin-top: 0;
   padding: 8px;
   font: inherit;
@@ -230,20 +229,6 @@ input:focus-visible + .pop-switch {
 
 .pop-library:hover {
   opacity: 0.88;
-}
-
-a.pop-library {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  padding-left: 14px;
-  padding-right: 14px;
-}
-
-a.pop-library:focus-visible {
-  outline: 2px solid var(--pop-accent);
-  outline-offset: 2px;
 }
 
 button:focus-visible,
