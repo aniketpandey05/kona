@@ -68,18 +68,47 @@ Mac — and that build is in `apple/`.
 *Screenshots use a sample conversation and a sample article.* The desktop pair is captured
 from the real app against a real folder by `node scripts/desktop-shot.mjs`.
 
-## Install
+## Download
 
-Requires Node.js 20 or newer.
+Kona is not in the Chrome Web Store or on addons.mozilla.org yet, so the builds come from
+the [releases page](https://github.com/aniketpandey05/kona/releases). Pick the one for
+your browser, unzip it somewhere you will not delete by accident, and load it.
 
-```bash
-npm install
-npm run build
-```
+**Chrome, Edge, Brave** — `kona-1.2.0-chrome.zip`
 
-Then open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked** and choose `.output/chrome-mv3`. Works in Chrome, Edge and Brave.
+1. Unzip it.
+2. Open `chrome://extensions` and turn on **Developer mode**, top right.
+3. Click **Load unpacked** and choose the unzipped folder.
 
-Open a chat on chatgpt.com, claude.ai or gemini.google.com and select some text. For any other site, click the Kona button in the toolbar and switch that site on; Chrome will ask you to allow it.
+The folder has to stay where it is: Chrome loads it from that path on every start, so
+moving or deleting it uninstalls Kona. Developer mode is only needed because the
+extension is not in the store yet.
+
+**Firefox** — `kona-1.2.0-firefox.zip`
+
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on** and choose the `manifest.json` inside the unzipped
+   folder.
+
+Firefox drops temporary add-ons when it quits, so this needs doing again each session
+until the add-on is signed.
+
+**Android** — nothing to download. Chrome on Android has no extensions, so Kona is an
+installable web app: open **<https://aniketpandey05.github.io/kona/app/>** and use
+Chrome's *Add to Home screen*. [More about the phone app](#on-a-phone-android).
+
+**iPhone, iPad, Mac** — not distributed yet. Safari extensions have to ship inside a
+signed app built on a Mac; [`apple/README.md`](apple/README.md) covers what that takes.
+
+**Windows, macOS, Linux** — the desktop app is not distributed yet either. There are no
+signed installers, and an unsigned one is worse than none: Windows SmartScreen warns and
+macOS Gatekeeper refuses. [What it does](#the-desktop-app).
+
+### Once it is loaded
+
+Open a chat on chatgpt.com, claude.ai or gemini.google.com and select some text. For any
+other site, click the Kona button in the toolbar and switch that site on; the browser
+will ask you to allow it.
 
 ## On a phone (Android)
 
@@ -350,9 +379,9 @@ looks exactly like a broken demo and is not one.
 | The landing page, and the root of the published site | `site/` |
 | Wrapping the Safari build in the app Apple requires around it | `apple/` |
 
-The built extension bundles Preact, which is MIT. Its notice travels inside the package
-as `THIRD-PARTY-NOTICES.txt`, which is what that licence asks for. Nothing else Kona
-depends on ends up in the shipped code; the rest is build tooling.
+The built extension bundles Preact; its notice ships inside the package as
+`THIRD-PARTY-NOTICES.txt`. Nothing else Kona depends on ends up in the shipped code; the
+rest is build tooling.
 | Page logic: selection, navigation, jumping, storage | `src/content/controller.ts` |
 | Panel, toolbar and note card (Preact, in a shadow root) | `src/ui/` |
 | Library page, spaces page, plans page, welcome page, toolbar popup, background script | `src/entrypoints/` |
