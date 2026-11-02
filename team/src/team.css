@@ -300,6 +300,13 @@ label input[type='text'] {
   color: var(--fg);
 }
 
+/* What the screen is, under what it is counting. The mechanics used to live
+   only inside panels further down, which the thirty-second path never reaches. */
+.view-how {
+  max-width: 62ch;
+  margin-top: 6px;
+}
+
 /* ---- shared bits ---- */
 
 .view-top {

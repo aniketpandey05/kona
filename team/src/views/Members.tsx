@@ -38,6 +38,12 @@ export function Members({
           <p class="subtle">
             {seats} seats in use · billed for {billed} · ${billed * 14}/month
           </p>
+          <p class="subtle view-how">
+            A seat is billed only once somebody accepts, so an invitation sitting
+            unopened costs nothing. Invite or remove anyone here and the two numbers
+            above come apart; putting them back is one call to Stripe, which prorates
+            the difference.
+          </p>
         </div>
       </div>
 

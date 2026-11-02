@@ -139,6 +139,11 @@ export function Space({
           ) : (
             <p class="subtle">{space.purpose}</p>
           )}
+          <p class="subtle view-how">
+            Gather highlights under the question, draw findings out of them, and the
+            write-up assembles itself: every claim carries the passages it rests on, and
+            every passage links to the sentence it came from.
+          </p>
           <p class="subtle">
             {space.memberIds.length} people · {held.length} highlights
             {space.findings.length > 0 &&

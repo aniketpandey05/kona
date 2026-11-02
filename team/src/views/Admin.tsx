@@ -45,6 +45,12 @@ export function Admin({
         <div>
           <h1>Admin</h1>
           <p class="subtle">Workspace Meridian · ws_meridian</p>
+          <p class="subtle view-how">
+            The three things a security review asks for: what is being paid for, what
+            the client is trusting while it cannot reach us, and a record of every change
+            anybody made. The token below is the interesting one, because it is why an
+            outage at Stripe or at us cannot lock a paying team out of their own work.
+          </p>
         </div>
       </div>
 

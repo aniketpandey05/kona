@@ -103,6 +103,12 @@ export function Workspace({
                 : `${mine.length} highlights, on this computer only`
               : `${team.length} shared by ${allMembers().filter((m) => m.seatActive).length} people`}
           </p>
+          <p class="subtle view-how">
+            Nothing you keep is shared until you put it in a space, so this is two
+            libraries rather than one with permissions on it. Search runs over both at
+            once, which is the thing a team cannot do today: your colleagues' highlights
+            are in their own browsers where nobody can look.
+          </p>
         </div>
         <button
           type="button"

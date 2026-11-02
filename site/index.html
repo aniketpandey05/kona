@@ -523,5 +523,25 @@ npm run start:desktop</code></pre>
         <a href="./team/">Team demo</a>
       </nav>
     </footer>
+    <script>
+      // A browser scrolls to a closed <details> and leaves it closed, so the
+      // "How to build it" buttons looked like dead links: they moved the page
+      // and nothing opened. Chrome 133 expands a fragment inside a details on
+      // its own, but the id is on the element itself and Firefox and Safari do
+      // not do it at all, so this is four lines rather than a wait.
+      (function () {
+        var steps = document.getElementById('steps');
+        if (!steps) return;
+        var open = function () {
+          steps.open = true;
+        };
+        if (location.hash === '#steps') open();
+        window.addEventListener('hashchange', function () {
+          if (location.hash === '#steps') open();
+        });
+        var links = document.querySelectorAll('a[href="#steps"]');
+        for (var i = 0; i < links.length; i++) links[i].addEventListener('click', open);
+      })();
+    </script>
   </body>
 </html>
