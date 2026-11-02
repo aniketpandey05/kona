@@ -21,8 +21,8 @@ export function Pricing({
         <div>
           <h1>Plans</h1>
           <p class="subtle">
-            The free version is complete and stays that way. Paid adds the shared layer on
-            top of it; nothing is ever taken out of Free to sell back.
+            The line is how far a copy of Kona reaches. Free is one device and never
+            expires; Pro is all of your devices; Team is other people in your spaces.
           </p>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { PLANS } from '../../src/core/plans';
 import type { PlanId } from './types';
 
 /**
@@ -61,68 +62,31 @@ export interface Tier {
   action: 'current' | 'upgrade' | 'contact' | 'none';
 }
 
-export const TIERS: Tier[] = [
-  {
-    id: 'free',
-    name: 'Free',
-    price: '$0',
-    cadence: 'forever',
-    pitch: 'Everything Kona does today, on your own computer, with no account.',
-    features: [
-      'Unlimited highlights, notes and tags',
-      'One searchable library across every site',
-      'Links back to the exact sentence',
-      'Markdown export and backups',
-      'Nothing leaves your computer',
-    ],
-    action: 'none',
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: '$7',
-    cadence: 'per month',
-    pitch: 'The same thing, on all of your own devices.',
-    features: [
-      'Everything in Free',
-      'Sync across your own devices',
-      'Meaning from a model too, so it knows words you have never kept together',
-      'Private spaces of your own to organise them',
-    ],
-    action: 'none',
-  },
-  {
-    id: 'team',
-    name: 'Team',
-    price: '$14',
-    cadence: 'per user / month',
-    pitch: 'Where your team works on a question together.',
-    features: [
-      'Everything in Pro',
-      'Shared spaces: a question, its evidence, and what was decided',
-      'Write-ups where every claim cites the exact sentence',
-      'Comments on any highlight',
-      "Search that runs over everyone's highlights, not only your own",
-      'Slack, Notion and Obsidian sync',
-      'Admin console and seat management',
-    ],
-    action: 'upgrade',
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: 'from $25',
-    cadence: 'per user / month, annual',
-    pitch: 'For a security review that has to pass.',
-    features: [
-      'Everything in Team',
-      'SSO (SAML / OIDC) and SCIM provisioning',
-      'Audit log with export',
-      'Your own search index, inside your residency region',
-      'Retention policy and legal hold',
-      'EU or US data residency, DPA, SLA',
-      'Self-hosted or VPC deployment',
-    ],
-    action: 'contact',
-  },
-];
+/**
+ * What each tier is, taken from the one place that says so.
+ *
+ * This used to be a fourth hand-written copy of the price list, beside
+ * `src/core/plans.ts`, the landing page and the extension's own Plans page.
+ * It drifted, as a fourth copy does: it was still selling Slack and Notion
+ * sync and still telling people nothing is ever taken out of Free, after
+ * both had stopped being true. Somebody clicking Pricing and then Try the
+ * demo saw two different products.
+ *
+ * All the demo adds is which button each tier gets.
+ */
+const ACTION: Record<string, Tier['action']> = {
+  free: 'none',
+  pro: 'none',
+  team: 'upgrade',
+  enterprise: 'contact',
+};
+
+export const TIERS: Tier[] = PLANS.map((plan) => ({
+  id: plan.id,
+  name: plan.name,
+  price: plan.price,
+  cadence: plan.per,
+  pitch: plan.pitch,
+  features: [...plan.included],
+  action: ACTION[plan.id] ?? 'none',
+}));

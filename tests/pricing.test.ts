@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { PLANS } from '../src/core/plans';
+import { TIERS } from '../team/src/billing';
 
 /**
  * The landing page and the extension both quote the prices, and they have
@@ -61,6 +62,18 @@ describe('the price of the product, in both places it is written down', () => {
       (match) => match[1],
     );
     expect(headings).toEqual(PLANS.map((plan) => plan.name));
+  });
+
+  it('the Team demo sells the same tiers as everywhere else', () => {
+    // It held a fourth hand-written copy and drifted: still selling Slack and
+    // Notion sync long after that stopped being what Team was. It derives from
+    // PLANS now, and this fails if anybody writes one out by hand again.
+    expect(TIERS.map((tier) => tier.name)).toEqual(PLANS.map((plan) => plan.name));
+    for (const [index, tier] of TIERS.entries()) {
+      expect(tier.features).toEqual([...(PLANS[index]?.included ?? [])]);
+      expect(tier.price).toBe(PLANS[index]?.price);
+      expect(tier.pitch).toBe(PLANS[index]?.pitch);
+    }
   });
 
   it('nothing anywhere still sells Kona as being for one person only', () => {
