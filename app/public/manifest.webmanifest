@@ -3,7 +3,7 @@
   "short_name": "Kona",
   "description": "Keep the passages worth keeping, and your notes on them.",
   "start_url": "./",
-  "scope": "./",
+  "scope": "../",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#191a1c",

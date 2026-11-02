@@ -37,6 +37,20 @@
       content="https://aniketpandey05.github.io/kona/screenshots/chat-panel.jpg"
     />
     <link rel="icon" href="./app/icon/48.png" />
+    <link rel="manifest" href="./app/manifest.webmanifest" />
+    <script>
+      // An installed Kona has to open Kona, not the page that sells it.
+      //
+      // Installing from here uses the manifest above, whose start_url is the
+      // app, so that path is already right. "Add to Home screen" is not an
+      // install: it keeps whatever URL was open, so anyone who used it on this
+      // page got the landing page as their app, which is what this is for. If
+      // this document is the one running standalone, it is that shortcut, and
+      // the app is one directory down. Nothing happens in an ordinary tab.
+      if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+        location.replace('./app/');
+      }
+    </script>
     <link rel="stylesheet" href="./src/site.css" />
   </head>
   <body>

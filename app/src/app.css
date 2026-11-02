@@ -423,6 +423,12 @@ body {
   cursor: pointer;
 }
 
+/* The same row, as a link off to the site. */
+.app-row-link {
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
 .app-row-action small {
   font-size: 13px;
   color: var(--muted);

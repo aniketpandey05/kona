@@ -838,6 +838,25 @@ export function App({
               Restore
               <small>add highlights and spaces from a backup file</small>
             </button>
+
+            <span class="app-label">About</span>
+            {/*
+              The page that explains Kona belongs behind a link, not in front of
+              the library. It opens in a browser tab rather than in here: the
+              manifest's scope covers the whole site so that installing from
+              that page installs this app, and the cost of that is that it would
+              otherwise load inside this window with no way back out.
+            */}
+            <a
+              class="app-row-action app-row-link"
+              href="../"
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setMenuOpen(false)}
+            >
+              What Kona is
+              <small>the plans, the extension and the desktop app, in a browser tab</small>
+            </a>
           </div>
         </div>
       )}
