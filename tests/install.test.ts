@@ -42,18 +42,22 @@ describe('the manifest', () => {
   });
 });
 
-/** The landing page's first script, run with the globals it reaches for. */
-function runRedirect(standalone: boolean) {
+/** The landing page's first script, as source. */
+function redirectSource(): string {
   const source = [...page.matchAll(/<script>([\s\S]*?)<\/script>/g)]
-    .map((match) => match[1])
+    .map((match) => match[1] ?? '')
     .find((body) => body.includes('display-mode'));
   expect(source, 'the landing page has no display-mode script').toBeTruthy();
+  return source ?? '';
+}
 
+/** That script, run with the globals it reaches for. */
+function runRedirect(standalone: boolean, onHomeScreen = false) {
   const replace = vi.fn();
   const fakeWindow = { matchMedia: vi.fn(() => ({ matches: standalone })) };
-  new Function('window', 'navigator', 'location', source as string)(
+  new Function('window', 'navigator', 'location', redirectSource())(
     fakeWindow,
-    { standalone: false },
+    { standalone: onHomeScreen },
     { replace },
   );
   return { replace, matchMedia: fakeWindow.matchMedia };
@@ -73,15 +77,6 @@ describe('the landing page', () => {
   it('also catches an iPhone home-screen shortcut', () => {
     // iOS has no display-mode for a shortcut made before iOS 16.4, which is
     // exactly the case this is here for, so the non-standard flag is checked too.
-    const source = [...page.matchAll(/<script>([\s\S]*?)<\/script>/g)]
-      .map((match) => match[1])
-      .find((body) => body.includes('display-mode')) as string;
-    const replace = vi.fn();
-    new Function('window', 'navigator', 'location', source)(
-      { matchMedia: () => ({ matches: false }) },
-      { standalone: true },
-      { replace },
-    );
-    expect(replace).toHaveBeenCalledWith('./app/');
+    expect(runRedirect(false, true).replace).toHaveBeenCalledWith('./app/');
   });
 });

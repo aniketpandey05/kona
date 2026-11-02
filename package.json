@@ -41,6 +41,7 @@
     "wxt": "^0.21.3"
   },
   "dependencies": {
+    "approx-string-match": "2.0.1",
     "preact": "^10.29.8"
   },
   "license": "UNLICENSED",

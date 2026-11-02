@@ -83,4 +83,26 @@ describe('resolveMarks', () => {
     document.getElementById('a1')!.id = 'regenerated';
     expect(resolveOnly(mark).hit?.message.messageId).toBe('regenerated');
   });
+
+  it('places a highlight whose wording was edited under it', () => {
+    // The approximate pass is what makes this one work, and it is only
+    // reached because every message failed the exact passes first.
+    const mark = markOn(messageAt(3), 'docker compose down in the project folder');
+    document.getElementById('a2')!.innerHTML =
+      '<p>Run <code>docker compose stop</code> in the project folder.</p>';
+    const { hit, missing } = resolveOnly(mark);
+    expect(missing).toEqual([]);
+    expect(hit?.message.messageId).toBe('a2');
+    expect(hit?.range.toString()).toContain('docker compose stop');
+  });
+
+  it('still prefers an exact match on a later message to a near one here', () => {
+    // Both messages end the same way, and the one the mark was made on now
+    // holds a near miss. The passage itself is still further down, untouched,
+    // and that is where the highlight belongs.
+    const mark = markOn(messageAt(3), 'docker compose down');
+    document.getElementById('a2')!.innerHTML = '<p>Run <code>docker compose stop</code>.</p>';
+    document.getElementById('a1')!.innerHTML = '<p>Run <code>docker compose down</code>.</p>';
+    expect(resolveOnly(mark).hit?.message.messageId).toBe('a1');
+  });
 });

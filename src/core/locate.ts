@@ -1,6 +1,6 @@
 import type { MessageRef } from '../adapters/types';
 import { fingerprint } from './fingerprint';
-import { resolveQuote } from './quote';
+import { resolveQuote, type TextQuote } from './quote';
 import { buildTextIndex, rangeFromSpan, type TextIndex } from './textIndex';
 import type { Mark, MessageAnchor } from './types';
 
@@ -71,9 +71,31 @@ function resolveMark(
     .filter((m) => m !== byId && m.role === anchor.role)
     .sort((a, b) => Math.abs(a.index - anchor.index) - Math.abs(b.index - anchor.index))
     .slice(0, MAX_FALLBACK_CANDIDATES);
-  for (const message of byId ? [byId, ...nearby] : nearby) {
+  const candidates = byId ? [byId, ...nearby] : nearby;
+
+  // Every candidate is asked for the passage exactly before any of them is
+  // asked for something close to it. Both orders find the same highlights,
+  // but this one does not pay for approximate matching on a page where the
+  // passage is sitting there unchanged, which is nearly every page. It also
+  // keeps an exact match on the fiftieth candidate ahead of a near miss on
+  // the first, which is the right way round.
+  const quote = mark.quote;
+  return (
+    place(mark, quote, candidates, indexOf, false) ??
+    place(mark, quote, candidates, indexOf, true)
+  );
+}
+
+function place(
+  mark: Mark,
+  quote: TextQuote,
+  candidates: MessageRef[],
+  indexOf: (message: MessageRef) => TextIndex,
+  approximate: boolean,
+): ResolvedMark | null {
+  for (const message of candidates) {
     const index = indexOf(message);
-    const span = resolveQuote(index.text, mark.quote);
+    const span = resolveQuote(index.text, quote, { approximate });
     const range = span && rangeFromSpan(index, span);
     if (range) return { mark, message, range };
   }
