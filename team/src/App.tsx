@@ -74,38 +74,38 @@ function Intro({ onClose }: { onClose: () => void }) {
       </button>
       <h2>This is a demo of the paid tier.</h2>
       <p>
-        The company, the people and every highlight in it are invented. There is no
-        sign-up, nothing is charged, and the checkout is a stand-in that walks the same
-        steps a real one would.
+        The company, the people and every highlight in it are invented. Nothing is
+        charged and no account is made. Everything Team does is switched on, so you can
+        go straight at it.
       </p>
       <p class="intro-path">
-        <strong>Thirty seconds:</strong> upgrade, open <strong>Spaces</strong>, pick the
-        Postgres one, and press <strong>Write it up</strong>.
+        <strong>Thirty seconds:</strong> open <strong>Spaces</strong>, pick the Postgres
+        one, and press <strong>Write it up</strong>.
       </p>
       <div class="intro-actions">
-        <a
+        <button
+          type="button"
           class="primary"
+          onClick={() => {
+            grantTeam(Math.max(1, activeSeats()));
+            log('demo.started', 'Granted Team without going through checkout');
+            rememberIntro();
+            onClose();
+            go('#/spaces');
+          }}
+        >
+          Show me Team
+        </button>
+        <a
+          class="action"
           href="#/plans"
           onClick={() => {
             rememberIntro();
             onClose();
           }}
         >
-          Start
+          See the pricing and checkout
         </a>
-        <button
-          type="button"
-          class="action"
-          onClick={() => {
-            grantTeam(Math.max(1, activeSeats()));
-            log('demo.skipped_checkout', 'Granted Team without going through checkout');
-            rememberIntro();
-            onClose();
-            go('#/spaces');
-          }}
-        >
-          Skip the checkout
-        </button>
       </div>
     </aside>
   );

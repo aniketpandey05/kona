@@ -8,7 +8,7 @@ import type { Theme } from '../../core/theme';
  * The plans, inside the extension.
  *
  * There is nothing to buy here and the page does not pretend otherwise: Free
- * is marked as the one you are on, and everything else says it is not built.
+ * is marked as the one you are on, and everything else says it is coming.
  * The reason to show it anyway is that people are entitled to know where a
  * free tool is going before they put their reading into it, particularly this
  * one, where the answer is that what you have keeps working on its own.
@@ -47,7 +47,7 @@ export function Plans() {
                 {current ? (
                   <span class="pl-badge">You are here</span>
                 ) : (
-                  <span class="pl-badge pl-badge-soon">Not built yet</span>
+                  <span class="pl-badge pl-badge-soon">Coming soon</span>
                 )}
               </div>
               <p class="pl-price">
