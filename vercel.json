@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build:web",
+  "installCommand": "ELECTRON_SKIP_BINARY_DOWNLOAD=1 npm ci",
   "outputDirectory": ".output/site",
   "framework": null,
   "build": {
