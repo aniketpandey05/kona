@@ -262,7 +262,7 @@ export function Space({
 
             {space.findings.length === 0 ? (
               <p class="subtle">
-                Nothing yet, which is fine, the write-up already has the highlights this
+                Nothing yet. That is fine; the write-up already has the highlights this
                 space holds. Add a conclusion when the team has one and it goes on top,
                 citing the highlights it rests on.
               </p>
@@ -532,8 +532,8 @@ export function Space({
           <>
             <p class="subtle">
               {spare.length} {spare.length === 1 ? 'highlight is' : 'highlights are'} in this
-              space without a conclusion resting on {spare.length === 1 ? 'it' : 'them'} yet,
-              which is fine, they are in the write-up either way.
+              space without a conclusion resting on {spare.length === 1 ? 'it' : 'them'} yet.
+              That is fine; they are in the write-up either way.
             </p>
             {showSpare && (
               <ul class="evidence-list evidence-open">

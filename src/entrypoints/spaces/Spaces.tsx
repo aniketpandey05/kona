@@ -811,7 +811,7 @@ function SpaceView({
 
         {space.findings.length === 0 ? (
           <p class="sp-muted">
-            Nothing yet, which is fine, the write-up already has your highlights. Add a
+            Nothing yet. That is fine; the write-up already has your highlights. Add a
             conclusion when you have one and it goes on top, with the highlights it rests
             on cited under it.
           </p>

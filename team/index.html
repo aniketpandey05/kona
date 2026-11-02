@@ -9,6 +9,10 @@
       content="A demo of Kona's paid tier: a team's highlights from AI chats in one shared, searchable workspace."
     />
     <meta name="robots" content="noindex" />
+    <!-- The phone app ships the icons and builds next door, so the deployed
+         site has one set of them. Without this the browser asks for
+         /team/favicon.ico and gets a 404 in everybody's console. -->
+    <link rel="icon" href="../app/icon/48.png" />
     <title>Kona for Teams: the demo</title>
   </head>
   <body>
