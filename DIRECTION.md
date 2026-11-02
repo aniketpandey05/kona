@@ -1,257 +1,237 @@
-# Kona: what to cut, what to build, and what to charge for
+# Kona: the plan
 
-Written 3 November 2026, after you asked for a rethink rather than more features.
+Last changed 3 November 2026. Aiming at the next YC batch, so there is time to
+build properly rather than demonstrate.
 
-**First, the deadline.** YC Winter 2027 closes 8:00pm PT on 2 November, which is
-9:30am IST on 3 November. That is now, or it has just gone. Nothing in this
-document can reach that application. Submit `YC-ANSWERS.md` with what is built
-and do not touch the product for it. Everything below is about the months after.
+This replaces the first version of this document, which argued a tier split that
+has since been decided the other way. Decisions that are made are written here
+as decisions, not options.
 
 ---
 
-## 1. Where the effort went, and where the value is
+## 1. What Kona is, in one line
 
-I counted the lines in `src/core`, which is the part that is actually Kona
-rather than a screen on top of it.
+You highlight a passage anywhere you read, and you can find it again and land on
+the exact words. Everything else in the repository serves that or should be
+questioned.
 
-| What it does | Files | Lines | Share of core |
-| --- | --- | --- | --- |
-| Collaboration: spaces, sharing, signing, memos, people | `spaceShare` `spaces` `spaceSign` `memo` `identity` `people` | **1,655** | **39%** |
-| Search | `retrieve` `tokens` `search` | 762 | 18% |
-| Sync | `sync` `folder` | 511 | 12% |
-| **The core loop: highlight, store, go back to the words** | `locate` `quote` `painter` `link` `textIndex` | **473** | **11%** |
+## 2. Where the effort went
 
-Add the screens and it gets starker. `Spaces.tsx` is 1,487 lines, the largest
-source file in the repository. The collaboration layer is about **3,100 lines**
-in total.
+Counted in `src/core`, which is the part that is actually Kona:
 
-So: the thing you described to me as the whole point of Kona, "highlight, store
-it, and when you click that highlight it leads to the same location on that
-page", is **11% of the core**. The feature nobody has asked for yet, which your
-own tier plan puts behind the most expensive and hardest-to-sell plan, is
-**39%** and the biggest file you have written.
+| What it does | Lines | Share |
+| --- | --- | --- |
+| Collaboration: spaces, sharing, signing, memos, people | **1,655** | **39%** |
+| Search | 762 | 18% |
+| Sync | 511 | 12% |
+| **The core loop: highlight, store, return to the words** | **473** | **11%** |
 
-That is what "we are undermining the potential" looks like when you count it.
-You did not build the wrong things badly. You built the far thing well and left
-the near thing thin.
+With the screens added, collaboration is about 3,100 lines and `Spaces.tsx` at
+1,487 is the largest source file in the repository. The thing the product is
+*for* was 11% of the core and the thing nobody has asked for yet was 39%.
 
-## 2. The core loop has two real bugs
+That is the imbalance to correct. Not by deleting the 39%, but by stopping work
+on it and moving the attention to the 11%.
 
-Both are in the 11%, and both break the exact promise you named.
+## 3. The core loop: fixed as of today
 
-**A highlight dies if one character of the page changes.** `resolveQuote` in
-`src/core/quote.ts` finds your passage with `text.indexOf(quote.exact)` — an
-exact match. It retries with whitespace collapsed, and that is the whole of its
-tolerance. Fix a typo, update a figure, change "colour" to "color", and the
-highlight is gone. Every serious annotation tool solves this with approximate
-matching; yours does not have any.
+Both defects found in the first pass are repaired and tested.
 
-**Tracking parameters split your library.** `getConversationId` in
-`src/adapters/web.ts` builds the page identity as
-`origin + pathname + search`. So these are three different pages to Kona:
+**A highlight used to die when one character of the page changed.**
+`resolveQuote` matched with `indexOf` and nothing else, so a corrected typo or a
+changed figure lost the passage for good. There is now a third pass using
+[`approx-string-match`](https://www.npmjs.com/package/approx-string-match)
+(MIT, by the author of Hypothesis's own anchoring), allowing a passage to differ
+by up to an eighth of its length. It is off by default and `locate.ts` asks every
+candidate for the passage exactly before asking any of them for something close,
+so an unchanged page never pays for it.
 
-```
-example.com/article
-example.com/article?utm_source=twitter
-example.com/article?fbclid=abc123
-```
+**Tracking parameters used to hide a page's highlights.** Page identity was
+`origin + pathname + search`, so `/article`, `/article?utm_source=twitter` and
+`/article?fbclid=abc` were three different pages. Arrive from a search result and
+your highlights were not there. A named list of tracking parameters is now
+stripped — never a plain word like `ref`, which is a branch on GitHub — and
+what remains is sorted. Highlights already saved under the old rule are merged
+onto the right page when the extension updates.
 
-Highlight something after clicking a link from Twitter, come back from a Google
-result, and your highlights are not there. On the open web most inbound links
-carry a parameter, so this fires constantly. The query string genuinely matters
-on some pages (`?page=2`, `?q=`), so the fix is a known-tracking-parameter strip
-rather than dropping `search` altogether.
+366 tests pass.
 
-These two are days of work, not weeks, and until they are fixed nothing else
-about Kona matters, because the one thing it promises will keep quietly failing.
+## 4. The tiers — decided
 
-## 3. The open-source question, answered
-
-You are right that tools exist. You are wrong about which part they replace.
-
-**They replace one function.** [`dom-anchor-text-quote`](https://npmjs.com/package/dom-anchor-text-quote)
-is MIT and does approximate quote matching with `diff-match-patch`. Hypothesis,
-who wrote it, [moved toward `approx-string-match`](https://github.com/hypothesis/client/issues/189)
-because it is much faster when there is no good match — which is the common case,
-since most pages you load hold none of your highlights.
-[Apache Annotator](https://annotator.apache.org/docs) is Apache 2.0 and implements
-the same W3C Text Quote Selector.
-
-Any of these drops straight into `resolveQuote` and fixes bug A. That is a
-strict upgrade and you should take it. MIT and Apache-2.0 both bundle fine into
-a closed, paid product as long as you keep the attribution file you already have.
-**Avoid anything AGPL** — you have gone all-rights-reserved and intend to charge,
-and AGPL would force you to publish your source.
-
-**They do not replace Kona.** Hypothesis and Annotator are server-plus-sidebar
-products for annotating public documents in public. None of them touches AI chat
-transcripts, which is your actual wedge, and none is local-only.
-
-**You do not need their storage.** You think open source can help you "store with
-metadata". It cannot help, because you already have that and it is better than
-what they offer: IndexedDB, a working sync engine, and — I checked — **zero
-network calls anywhere in the product**, with `preact` as your only runtime
-dependency. Adding a storage library would be a downgrade. The one thing worth
-borrowing is the W3C Web Annotation **data model as a format**, so highlights are
-portable and you can import somebody's Hypothesis library. That is a schema
-decision, not a dependency.
-
-Also worth knowing: `src/core/link.ts` already uses native
-[text fragments](https://developer.mozilla.org/en-US/docs/Web/URI/Fragment/Text_fragments)
-(`#:~:text=`), handles whole-word
-trimming and addresses long passages by first and last words. That is the modern
-answer and it is already right. Do not let anyone talk you into a library for it.
-
-## 4. The tier plan, and the one thing that breaks it
-
-Here is what you asked for:
-
-- **Free** — extension, highlights, BM25, max 5 spaces, no sync
-- **Pro** — sync across all your devices, hybrid search
-- **Team** — spaces, a way to communicate, hybrid search
-
-Your instinct is right: free is too generous. Your lever is wrong.
-
-**The problem: there is no server, so none of it is enforceable, and Pro does not
-exist.** Kona is entirely local. No accounts, no API, no network calls at all.
-That means:
-
-- A 5-space cap is a client-side `if` in code that ships to the user's machine.
-- "No sync" cannot be enforced either: free users sync today through a folder
-  *they* own, which costs you nothing to allow and nothing to block.
-- **"Sync across all devices" — the whole of Pro — is not built.** What exists is
-  a shared folder and a hand-passed file. Selling real sync means building a
-  server, accounts, storage and a privacy policy that is no longer "nothing leaves
-  your computer". That is the single biggest decision in your message and it is
-  weeks of work, not a toggle.
-- Hybrid search is **already built, already free, and costs you nothing to run**.
-  Gating it means deleting working code out of the free tier.
-
-And there is a promise in the way. `SHIPPED_AHEAD` in `src/core/plans.ts` is
-printed in the extension and on the landing page today:
-
-> Sync and shared spaces are built and working today, ahead of any billing. They
-> are where the line will fall when Pro and Team exist, not something switched
-> off now, and nothing you have already made stops working.
-
-Capping free to 5 spaces breaks that sentence. With zero users that is cheap to
-change — but change it deliberately, now, not quietly later.
-
-### What I would charge for instead
-
-Gate on **what costs you money to run**, not on what you can switch off. Same
-three tiers, same spirit, but each line is defensible and enforceable:
+Decided by the author, against my first recommendation, and the reasoning holds:
+a free tier that does everything leaves no reason to ever upgrade, and the line
+is far cheaper to draw now, with no users, than to claw back later. **No code is
+being deleted. The terms are being changed before anyone relies on them.**
 
 | | Free | Pro | Team |
 | --- | --- | --- | --- |
-| Extension, phone app, unlimited highlights | ✓ | ✓ | ✓ |
-| Unlimited local spaces | ✓ | ✓ | ✓ |
-| Search: BM25 + the thesaurus learned from your library | ✓ | ✓ | ✓ |
-| Sync through a folder you own | ✓ | ✓ | ✓ |
-| **Hosted sync, no folder to wire up** | — | ✓ | ✓ |
-| **Real semantic search (embeddings)** | — | ✓ | ✓ |
-| iOS app | — | ✓ | ✓ |
-| Shared spaces, threads, permissions, audit log | — | — | ✓ |
+| The extension, unlimited highlights, notes, tags | ✓ | ✓ | ✓ |
+| Search by word (BM25) | ✓ | ✓ | ✓ |
+| Links that land on the exact sentence | ✓ | ✓ | ✓ |
+| Spaces | up to 5 | unlimited | unlimited |
+| **Sync across your devices** | — | ✓ | ✓ |
+| **Hybrid search (word + meaning)** | — | ✓ | ✓ |
+| Shared spaces, discussion, who-found-what | — | — | ✓ |
 
-Two things to notice. **Hosted sync is the product.** It is what people will pay
-for, it is what costs you money, and the server holds the data so it enforces
-itself. And **"hybrid search" splits honestly**: what you have now is BM25 plus a
-co-occurrence thesaurus, which is clever and local and free; *real* embeddings
-need a model download or a server, so they are genuinely Pro. You get the
-boundary you wanted without taking anything back.
+One consequence to plan around. **Even the free cap needs an account.** To know
+that someone may have a sixth space you must know who they are and what they
+have paid, so identity and entitlements are the first thing built, not the last.
+The Team demo already models the right shape: a short-lived signed entitlement
+the client caches and trusts until it expires, so neither Stripe nor our own API
+being down can lock a paying user out of their own highlights. Build the real one
+that way.
 
-This keeps the free tier as your best marketing — it is genuinely excellent and
-costs you nothing — while the paid line falls exactly where your costs start.
+**`SHIPPED_AHEAD` in `src/core/plans.ts` now contradicts this.** It promises in
+the extension and on the landing page that sync and spaces are not something
+switched off later. That sentence has to be rewritten before the gates ship, not
+after. It is the one piece of honest-copy debt this decision creates, and it is
+cheap to pay today.
 
-**I think the cap-and-gate version is a mistake, but it is your business, not
-mine. If you still want it, say so and I will build it that way.**
+Also still owed: the monthly/annual toggle on the pricing section, in the style
+ChatGPT uses. Do it after the tier copy is rewritten, or we will be writing the
+fourth copy of the wrong prices. `tests/pricing.test.ts` fails if the site drifts
+from `plans.ts`; keep it that way.
 
-### The subscription toggle
+## 5. App versus extension
 
-Yes, do the ChatGPT-style monthly/annual toggle on the pricing section. It is
-half a day. But do it *after* the tiers are settled, or we will write the
-fourth copy of the wrong prices. Right now there are already three copies in
-sync (`plans.ts`, `site/index.html`, `team/src/billing.ts`) and
-`tests/pricing.test.ts` fails if they drift — keep that.
+This is worth settling properly, because the answer decides what gets built next
+and what stops being built at all.
 
-## 5. Payments
+**Only the extension can highlight.** Everything else is a way of reading the
+library back. That is not a limitation to engineer around; it is the shape of the
+platform.
 
-Stripe, on the web, and **do not** put subscriptions inside the iOS app.
+| Surface | Can highlight | Reads the library | Why it exists |
+| --- | --- | --- | --- |
+| Chrome / Edge extension | ✓ | ✓ | **the product** |
+| Firefox extension | ✓ | ✓ | same, without a folder picker |
+| Safari extension, Mac | ✓ | ✓ | same |
+| **Safari extension, iPhone and iPad** | ✓ | ✓ | **the iPhone answer — not built** |
+| Phone app (PWA) | share only | ✓ | **the Android answer**: Chrome on Android has no extensions |
+| Desktop app (Electron) | ✗ | ✓ | closes the folder-picker gap |
 
-Apple's standard in-app subscription rate is 30% in year one and 15% after.
-Linking out to your own checkout is much cheaper, and the rules just moved:
+Two things fall out of this table.
 
-- **US** — external purchase links currently carry **no** Apple commission, after
-  the 2025 Epic injunction. On 13 August 2026 Apple
-  [filed a proposal](https://www.macrumors.com/2026/08/13/app-store-fees-apple-link-outs/)
-  for 15% standard / 10% subscription renewals / 5% Small Business. It is pending
-  court approval.
-- **EU** — under terms effective 1 October 2026, web link-outs are
-  [15%, or 10% for reduced-rate developers](https://blog.funnelfox.com/apple-app-store-fees-2026-eu-dma/).
-
-These figures come from vendor blogs and secondary reporting, and they disagree
-with each other. **Check Apple's own developer terms before you set a price.**
-
-The practical shape: people subscribe on kona's website with Stripe. The
-extension, desktop app and iOS app all read the same entitlement. Your Team demo
-already models this correctly — a short-lived signed entitlement that the client
-trusts until it expires, so Stripe being down cannot lock a paying user out.
-Build the real one the same way.
-
-## 6. iOS
-
-**Build a Safari Web Extension, not a separate native app.** You are already
-most of the way there: `npm run build:safari` exists, `wxt.config.ts` sets
+**The iOS Safari extension is the biggest missing surface, and it is nearly
+free.** `npm run build:safari` exists, `wxt.config.ts` already sets
 `strict_min_version: 17.2`, and `apple/package.sh` is written. Safari on iOS has
-supported web extensions since iOS 15, so the same content script that
-highlights on desktop highlights on your iPhone. A native app would be a second
-codebase doing the same job worse.
+supported web extensions since iOS 15, so the same content script that highlights
+on a desktop highlights on an iPhone. You have an iPhone and an iPad to test on.
+This is the highest-value thing on the list after accounts.
 
-The phone app (PWA) stays as it is: it is the library in your pocket, and the
-install bug you hit is fixed as of this commit.
+**The desktop app is on a path to redundancy, and the sync decision is what puts
+it there.** Electron exists because Firefox and Safari cannot pick a sync folder,
+so people on those browsers had no way to keep devices in step. Hosted sync
+closes that same gap for everyone, on every browser, with nothing to download.
+The moment Pro ships, the desktop app's reason for existing is gone. **Freeze it**
+where it is, like Team: do not delete, do not invest.
 
-**One warning about your friend's account.** Publishing Kona under someone
-else's Apple Developer account means the App Store listing, the subscription
-revenue and the legal relationship with Apple are all theirs, not yours. If Kona
-becomes a company, untangling that is painful, and Apple does not transfer apps
-between accounts freely. Use it to *test* on your iPhone and iPad by all means.
-Before you ship a paid app, get your own account — an Organization account if
-there is a company, which needs a D-U-N-S number and takes a few weeks. Start
-that early.
+And a nicer consequence: the surface map makes your tier split more coherent than
+I first credited it. **Free is one surface. Pro is every surface, kept in step.**
+That is a line a person can hold in their head, which is worth more than a line
+that is merely fair.
 
-## 7. What I would cut
+## 6. UI
 
-**Stop building Team.** Not delete — it is a good demo and a good YC slide, and
-`#/tour` sells it well. But it is 3,100 lines serving zero users, it needs the
-same server Pro needs, and selling to teams means a sales motion you do not have.
-Freeze it where it is.
+The honest diagnosis is not that the design is bad. It is that **the same screen
+is drawn four times, independently.**
 
-**Cut from the free tier's marketing, not its features.** The free tier
-currently lists eight bullets including spaces and semantic search, which makes
-Pro look like nothing. Keep the features, lead with two lines: *highlight
-anything, find it again, never leaves your machine.* Let Pro be the one with the
-long list.
+| File | Lines | Shared components |
+| --- | --- | --- |
+| `src/entrypoints/spaces/Spaces.tsx` | 1,487 | ~1 |
+| `app/src/App.tsx` (phone and desktop) | 1,171 | ~2 |
+| `src/entrypoints/library/Library.tsx` | 1,025 | ~2 |
+| `src/ui/App.tsx` (the in-page panel) | 766 | 0 |
+
+Four lists of highlights, 4,449 lines, essentially no shared code. That is why
+they do not look like one product, and it is why Spaces felt unusable: it is the
+biggest of the four and got the least attention.
+
+Three decisions:
+
+**One list, four mounts.** You have already proved the pattern works —
+`app/src/App.tsx` serves both the phone and the desktop from one component, with
+the difference passed in as a `folders` prop. Do that again for the extension's
+library and the in-page panel. Every hour spent here pays four times.
+
+**The in-page panel is the face of the product.** It is where a user actually
+spends time, and it is the smallest and least considered of the four. It should
+be the best thing you own, not the thinnest.
+
+**Shrink Spaces rather than redesign it.** 1,487 lines for a feature that now
+sits behind the top tier is the wrong investment. A space is a question, its
+highlights, and the write-up. Build that and stop.
+
+The principle to measure against: *capture in one gesture, retrieve in one
+search*. A screen that is neither gets secondary effort, and Spaces is a screen
+that is neither.
+
+## 7. Open source: where it helps
+
+You want to lean on it more, and you should — but on the parts that are solved
+problems, never on the parts that are the product. Nobody else can tell you what
+a space is or how the panel should feel. Plenty of people have already solved
+approximate string matching.
+
+**Already right, do not touch.** `painter.ts` uses the CSS Custom Highlight API,
+so nothing is inserted into the page's DOM and a site's re-render cannot break a
+highlight. `link.ts` uses native text fragments. Both are the modern answer
+already.
+
+**Taken today.** `approx-string-match`, MIT — fuzzy anchoring, section 3.
+
+**Worth taking next:**
+
+- **[`@mozilla/readability`](https://www.npmjs.com/package/@mozilla/readability)**,
+  Apache-2.0, 0.6.0 — the article extractor behind Firefox Reader Mode. It would
+  replace the selector guess in `src/adapters/web.ts`
+  (`'main, article, [role="main"], #content, .post, body'`), which is crude and
+  decides what counts as the page's text — and therefore how reliably a highlight
+  anchors on a messy site.
+- **[`@huggingface/transformers`](https://www.npmjs.com/package/@huggingface/transformers)**,
+  Apache-2.0, 4.3.2, with `all-MiniLM-L6-v2` (also Apache-2.0) — **this is how
+  paid hybrid search stays private.** Embeddings normally mean a server, which
+  would end "nothing leaves your computer". This runs the model on the device, in
+  WASM or WebGPU; a published benchmark put one embedding at about 507ms on WASM
+  and 46ms on WebGPU. So Pro can have real semantic search *and* keep the privacy
+  claim, which no competitor with a server can say.
+- **[`dexie`](https://www.npmjs.com/package/dexie)**, Apache-2.0 — later. The
+  comment at the top of `store.ts` already says IndexedDB is where this goes when
+  the library gets slow. This is what makes that move small.
+
+All three are Apache-2.0, which bundles into a closed paid product as long as the
+attribution file you already generate keeps listing them. **Nothing AGPL** — it
+would force you to publish your source.
 
 ## 8. Build order
 
-1. **Fix the two core-loop bugs.** Fuzzy matching via `dom-anchor-text-quote` or
-   `approx-string-match`; strip tracking parameters from the page identity. Days.
-2. **Settle the tiers** using section 4, update all three copies, then add the
-   monthly/annual toggle. Days.
-3. **Ship the Safari extension** to your own devices and beat on it. You have an
-   iPhone and an iPad; use them before the App Store sees it. Weeks.
-4. **Build the server**: accounts, hosted sync, Stripe, signed entitlements. This
-   is the real work and the only thing that makes Pro exist. Weeks to months.
-5. **Then** reconsider Team, with users to ask.
+1. ~~Fix the core loop~~ — done, section 3.
+2. **Accounts and entitlements.** Everything else depends on it, including the
+   free cap. Signed, short-lived, cached by the client.
+3. **Rewrite the tier copy**, `SHIPPED_AHEAD` included, then the pricing toggle.
+4. **Hosted sync.** This is Pro, and the real work.
+5. **Stripe**, on the web. Not inside the iOS app: Apple's own rate is 30% in
+   year one. Link out instead — currently no US commission after the 2025 Epic
+   injunction, though Apple has
+   [proposed 15/10/5%](https://www.macrumors.com/2026/08/13/app-store-fees-apple-link-outs/)
+   pending court approval, and the EU charges
+   [15% or 10%](https://blog.funnelfox.com/apple-app-store-fees-2026-eu-dma/) on
+   link-outs as of 1 October 2026. These figures are from vendor blogs and
+   disagree with each other — read Apple's own terms before setting a price.
+6. **The iOS Safari extension**, tested hard on your own devices.
+7. **Local embeddings** for Pro's hybrid search.
+8. **One list component**, four mounts.
+9. Reconsider Team, with users to ask.
 
-## 9. What I need you to decide
+Frozen, not deleted: the Electron desktop app, and Team.
 
-1. **Tiers** — my version in section 4 (gate on server cost), or yours (cap free
-   at 5 spaces, no sync)?
-2. **The promise** — `SHIPPED_AHEAD` says nothing gets switched off. Do we change
-   that sentence now, while nobody is relying on it?
-3. **Hosted sync** — are you committing to running a server? Everything in Pro
-   depends on it, and it ends "nothing leaves your computer" as a blanket claim.
-4. **Apple account** — your own, or your friend's for now with a plan to move?
+## 9. Still open
 
-Answer 1 and 3 and I can start on the build order tomorrow.
+- **Apple account.** Publishing under your friend's account means the listing,
+  the revenue and the legal relationship with Apple are theirs. Fine for testing
+  on your iPhone and iPad. Before a paid app ships, get your own — an
+  Organization account needs a D-U-N-S number and takes weeks, so start early.
+- **Sync host.** Where does hosted sync run, and what is the privacy claim once
+  it does? "Nothing leaves your computer" becomes "nothing leaves your computer
+  unless you turn sync on", and that sentence needs writing carefully because it
+  is the thing people like most about Kona.
