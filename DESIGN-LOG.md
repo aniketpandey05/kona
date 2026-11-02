@@ -39,19 +39,30 @@ cheap, need no server, and make what already exists better.
 
 ---
 
-### 1. What is a space, minimally?
+### 1. What is a space, for one person?
 
-`Spaces.tsx` is 1,487 lines, the largest file in the repository, for a feature
-that now sits behind the top tier. Something has to go.
+A space holds a name, a question, its highlights, findings, open questions and
+a decision — and then people, who gathered which highlight, comment threads,
+and which threads are finished. **The last four mean nothing until somebody
+else is in the space**, and the screen shows them to everybody regardless.
 
-- **(a) A question, its highlights, and the write-up.** Nothing else. Cut
-  findings, unknowns, decisions, threads, signing from the free and Pro view.
-- **(b) Keep it all, hide the advanced parts** behind a disclosure.
-- **(c) Keep as is**, and accept the size.
+The weight is not in the fields. `spaces.ts` is 462 lines; the collaboration
+around it — `spaceShare.ts` (604), `spaceSign.ts` (172), `people.ts` (113) —
+is 889, and the screen is 1,487.
 
-*Recommendation:* (a). The write-up that cites itself is the striking part and
-it only needs the question and the highlights. Everything else was built for a
-team that does not exist yet, and it is what makes the screen unusable.
+- **(a) Show the collaborative parts only once a space has actually been
+  shared.** Alone, a space is: question, highlights, findings, write-up.
+  People, credits and threads appear when there is somebody else in it.
+  Nothing is deleted.
+- **(b) Also cut findings, open questions and decisions**, leaving question,
+  highlights and write-up.
+- **(c) Keep as it is.**
+
+*Recommendation:* (a). This file first said (b), written before reading the
+type properly. That was wrong: findings are what the write-up is built from —
+each claim carries the passages it rests on — so cutting them leaves the memo
+as a list of quotes, which is the weakest version of the best feature. The
+clutter is not the fields. It is showing one person the machinery of a team.
 
 **Decided:** _______
 
@@ -179,9 +190,10 @@ a much smaller panel, and a share sheet that the desktop does not have.
 
 ---
 
-## Debt this plan creates
+## Loose ends
 
-One thing that must be done before any gate ships, so it does not get
-forgotten: **`SHIPPED_AHEAD` in `src/core/plans.ts` currently promises, in the
-extension and on the landing page, that sync and spaces will not be switched
-off later.** The tier decision contradicts it. Rewrite that sentence first.
+**`SHIPPED_AHEAD` in `src/core/plans.ts`** promises, in the extension's Plans
+page and on the landing page, that sync and spaces will not be switched off
+later. The tier decision contradicts it. Nobody but the author uses Kona, so
+nobody is relying on that promise and it is not urgent: fold it into decision 8
+when the tier copy is rewritten, rather than treating it as its own job.
