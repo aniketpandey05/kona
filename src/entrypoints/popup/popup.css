@@ -201,14 +201,22 @@ input:focus-visible + .pop-switch {
   color: var(--pop-fg);
 }
 
+/* Two places to go, given the same weight: the library is where most people
+   are heading, but a space is not a footnote to it. */
+.pop-open {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--pop-border);
+}
+
 .pop-links {
   display: flex;
   gap: 8px;
 }
 
 .pop-library {
-  flex: 1;
-  margin-top: 10px;
+  flex: 1 1 0;
+  margin-top: 0;
   padding: 8px;
   font: inherit;
   font-weight: 600;
@@ -222,14 +230,6 @@ input:focus-visible + .pop-switch {
 
 .pop-library:hover {
   opacity: 0.88;
-}
-
-/* The Spaces link sits beside the main action, not level with it. */
-.pop-secondary {
-  flex: 0 0 auto;
-  color: var(--pop-fg);
-  background: none;
-  border: 1px solid var(--pop-border);
 }
 
 a.pop-library {

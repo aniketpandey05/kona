@@ -91,10 +91,13 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* It used to stop at 58ch while the cards below ran the full 676, so the page
+   looked like two columns that had failed to line up. Prose this wide wants to
+   be short, which the copy now is. */
 .sp-lede {
-  max-width: 58ch;
-  margin: -8px 0 26px;
+  margin: -8px 0 24px;
   color: var(--sp-muted);
+  font-size: 14.5px;
 }
 
 .sp-muted {

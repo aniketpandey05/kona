@@ -347,9 +347,9 @@ function SpaceList({
     <>
       <p class="sp-lede">
         A space is one question and the highlights that answer it. Gather a few and you have
-        a write-up, every passage quoted, each with a link that lands on the exact sentence.
-        Conclude something and it goes on top, citing what it rests on. A space is also a
-        file you can hand to anyone, and take back with their work in it.
+        a write-up: every passage quoted, every claim citing what it rests on, and links
+        that land on the exact sentence. It is also a file you can hand to anyone, and take
+        back with their work in it.
       </p>
 
       {adding ? (
