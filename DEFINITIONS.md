@@ -72,15 +72,57 @@ from a space, which is organised by what you want to find out.
 
 ### Space
 
-**A workspace for researching one topic across many links.**
+**A grouping of highlights, from any number of pages, about one topic.**
 
-It points at highlights, gathered from any number of pages, carrying any tags.
-It does not hold them; they stay in the library.
+That is the whole of it. A space is for researching amoebas by marking things
+across five different articles and having all five in one place.
 
-A space is not a folder and not a tag. A folder is where a thing is kept, and a
-highlight is already kept in the library. A tag is a label on one highlight. A
-space is a piece of *work* with a topic and, eventually, something to show for
-it.
+Why it needs to exist, in one line: **the library is organised by page, so
+highlights about one topic read across five pages sit in five places. A space
+is where they sit in one.**
+
+What "grouping" means exactly, because this is the part everything else rests
+on:
+
+- The space **points at** highlights. The highlight stays in the library and
+  stays one highlight. Nothing is copied and nothing is moved.
+- Everything comes with it: its link, its note, its tags, its colour. A
+  highlight in a space is not a reduced version of itself.
+- **Clicking it in a space does exactly what clicking it in the library does**
+  — it opens the page and lands on the exact words.
+- Change its note while in a space and the note is changed, full stop, because
+  there is only ever the one highlight.
+- Removing it from a space removes it from the space. It is still in the
+  library. Only deleting deletes.
+- One highlight can be in several spaces at once.
+
+### What a space has of its own
+
+Beyond the highlights it points at:
+
+| | |
+| --- | --- |
+| **Topic** | What it is called. The only required thing. |
+| **Question** | What it is trying to settle, if it is trying to settle anything. Optional. |
+| **Note** | Anything else worth saying about the space that is not the topic. Optional. |
+| **Labels** | Its own short labels, working like tags do on a highlight, for pulling related spaces together. Optional. |
+| **Created** | The day it was made. |
+| **Active** | Whether this is the space being worked in right now. See below. |
+| **Position** | Where it sits in your list. Spaces are reordered by hand, the way highlights already are. |
+| **Findings, open questions, decision** | Optional, and drawn only once they hold something. |
+
+### Active space
+
+**The one space you are working in now.** While a space is active, a new
+highlight goes into it as well as into the library, with nothing to file by
+hand.
+
+Researching one topic means marking twenty things across five pages, and
+filing each one separately is twenty interruptions in the middle of reading.
+Setting the topic once is one.
+
+One space is active at a time, and none being active is normal — then
+highlights go to the library only, as they do today.
 
 ### Solo space
 

@@ -60,21 +60,29 @@ Four things follow that are not decided yet.
 
 ---
 
-### 1a. Can a space be the thing you highlight *into*?
+### 1a. Can a space be the thing you highlight *into*? — settled
 
-The most important one. If a space is a topic researched across many links,
-then the gesture that matters is **highlighting straight into the topic**, not
-filing afterwards. Today a highlight is made, and then separately put in a
-space; that is a filing cabinet. An **active space** — you set one, and
-everything you highlight lands there until you unset it — turns the same data
-into a research session, which is what "experimental workspace" actually means
-in use.
+**Yes. One space can be active, and highlights go into it until it is not.**
 
-*Recommendation:* build it. It is the difference between spaces being a feature
-and spaces being how the product is used. It is also small: a stored id, a
-control in the panel, and one line in the save path.
+Researching a topic means marking twenty passages across five pages, and
+filing each one by hand is twenty interruptions in the middle of reading.
+Setting the topic once is one.
 
-**Decided:** _______
+One active space at a time; none active is normal and behaves as today. The
+work is a stored id, a control in the panel, and one line where a highlight is
+saved.
+
+---
+
+### 1e. Spaces are reordered by hand, and carry their own details
+
+Settled along with the definition, and recorded here because it is work rather
+than a question: a space has a position in your list that you set yourself,
+the way highlights already do (`order.ts`), and it carries a created date, its
+own note, its own labels, and whether it is active.
+
+Nothing in `src/core/spaces.ts` holds a position, a note, labels or an active
+flag yet. `createdAt` is already there.
 
 ---
 
