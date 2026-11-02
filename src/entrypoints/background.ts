@@ -1,5 +1,6 @@
 import { browser, defineBackground } from '#imports';
 import type { PendingJump, RuntimeMessage } from '../core/messages';
+import { mergeDuplicatePages } from '../core/store';
 import type { Mark } from '../core/types';
 
 const LIBRARY_PAGE = '/library.html';
@@ -34,6 +35,12 @@ export default defineBackground(() => {
     // A fresh install lands on a page explaining what just appeared in the toolbar.
     if (details.reason === 'install') {
       void browser.tabs.create({ url: browser.runtime.getURL(WELCOME_PAGE) });
+    }
+    // Page identity stopped counting tracking parameters, so highlights saved
+    // under `?utm_source=...` belong somewhere else now. Nothing was lost when
+    // the rule changed, but it stays unreachable until this has run.
+    if (details.reason === 'update') {
+      void mergeDuplicatePages();
     }
   });
   browser.runtime.onStartup.addListener(() => void syncWebSites());

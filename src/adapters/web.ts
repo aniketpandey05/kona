@@ -1,3 +1,4 @@
+import { pageId } from '../core/pageUrl';
 import type { SiteAdapter } from './types';
 
 // An ordinary web page has no messages, so the whole article counts as one block of text.
@@ -7,9 +8,10 @@ export const webAdapter: SiteAdapter = {
   site: 'web',
   conversationNoun: 'page',
 
-  // One page, one set of highlights. The query string can change what a page shows, so keep it.
+  // One page, one set of highlights. The query string can change what a page
+  // shows, so it is kept, minus the parts that only say where you came from.
   getConversationId(url) {
-    return `${url.origin}${url.pathname}${url.search}`;
+    return pageId(url);
   },
 
   getConversationTitle() {

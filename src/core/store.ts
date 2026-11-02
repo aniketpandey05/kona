@@ -2,6 +2,7 @@ import { browser, storage } from '#imports';
 import type { Identity } from './backup';
 import { makeKeypair } from './identity';
 import type { SyncStore } from './sync';
+import { pageId } from './pageUrl';
 import { makePerson, type Person } from './people';
 import type { Space } from './spaces';
 import type { Mark, SiteId } from './types';
@@ -31,6 +32,52 @@ export async function loadAllMarks(): Promise<Mark[]> {
   return Object.entries(everything)
     .filter(([key]) => key.startsWith(MARKS_PREFIX))
     .flatMap(([, value]) => (Array.isArray(value) ? (value as Mark[]) : []));
+}
+
+/**
+ * Brings together highlights that were filed under the same page twice.
+ *
+ * Page identity used to include the whole query string, so arriving at an
+ * article from Twitter and from a search result filed highlights under two
+ * different keys, and neither of them under the plain URL. Those highlights
+ * were never lost, only unreachable. This walks what is already saved, works
+ * out where each key belongs now, and moves it, keeping whichever copy of a
+ * highlight was edited last. It is safe to run more than once: a key that is
+ * already canonical is left alone.
+ *
+ * Only `web` keys can move. The chat adapters build an id out of the path.
+ */
+export function mergeDuplicatePages(): Promise<number> {
+  return serialized(async () => {
+    const everything = await browser.storage.local.get(null);
+    let moved = 0;
+
+    for (const [key, value] of Object.entries(everything)) {
+      if (!key.startsWith(`${MARKS_PREFIX}web:`) || !Array.isArray(value)) continue;
+      const was = key.slice(`${MARKS_PREFIX}web:`.length);
+
+      let now: string;
+      try {
+        now = pageId(new URL(was));
+      } catch {
+        // Not a URL, so nothing can be said about where it should live.
+        continue;
+      }
+      if (now === was) continue;
+
+      const merged = new Map((await loadMarks('web', now)).map((m) => [m.id, m]));
+      for (const mark of value as Mark[]) {
+        const current = merged.get(mark.id);
+        if (!current || (mark.updatedAt ?? 0) > (current.updatedAt ?? 0)) {
+          merged.set(mark.id, { ...mark, conversationId: now });
+        }
+      }
+      await storage.setItem(marksKey('web', now), [...merged.values()]);
+      await storage.removeItem(marksKey('web', was));
+      moved++;
+    }
+    return moved;
+  });
 }
 
 export function upsertMark(mark: Mark): Promise<void> {
