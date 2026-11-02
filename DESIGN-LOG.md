@@ -27,6 +27,7 @@ settled. This file is the queue.
 | Payments | Stripe on the web. Not Apple's in-app purchase: their rate is 30% in year one |
 | iOS | A Safari Web Extension, not a separate native app |
 | Open source | Use it where the problem is solved (matching, article extraction, embeddings). Never for what a space is or how the panel feels. Apache-2.0 and MIT only, nothing AGPL |
+| What a space is | A workspace for researching one topic across many links. Alone: gather and conclude. With a team: discuss and decide. The collaborative parts appear only once it is shared |
 | Desktop app | Frozen. Its only job was the folder-picker gap, which hosted sync closes |
 | Team | Frozen. Good demo, no users, needs the same server Pro needs |
 
@@ -39,30 +40,89 @@ cheap, need no server, and make what already exists better.
 
 ---
 
-### 1. What is a space, for one person?
+### 1. What a space is — settled
 
-A space holds a name, a question, its highlights, findings, open questions and
-a decision — and then people, who gathered which highlight, comment threads,
-and which threads are finished. **The last four mean nothing until somebody
-else is in the space**, and the screen shows them to everybody regardless.
+**A workspace for researching one topic across many links.** Alone it is for
+gathering and concluding; with a team it is for discussing and deciding. The
+team parts — people, who gathered which highlight, comment threads, settling a
+thread — appear only once the space has actually been shared. Nothing is
+deleted to achieve that.
 
-The weight is not in the fields. `spaces.ts` is 462 lines; the collaboration
-around it — `spaceShare.ts` (604), `spaceSign.ts` (172), `people.ts` (113) —
-is 889, and the screen is 1,487.
+This is the second idea in the product and it earns its place: **the library is
+organised by where you read, a space by what you are trying to find out.**
+That is why a space is not a folder and not a tag.
 
-- **(a) Show the collaborative parts only once a space has actually been
-  shared.** Alone, a space is: question, highlights, findings, write-up.
-  People, credits and threads appear when there is somebody else in it.
-  Nothing is deleted.
-- **(b) Also cut findings, open questions and decisions**, leaving question,
-  highlights and write-up.
-- **(c) Keep as it is.**
+It also makes the free cap mean something. Five spaces is five topics at a
+time, which is a real limit rather than an arbitrary one, and running out of
+topics is a sensible moment to be asked for money.
 
-*Recommendation:* (a). This file first said (b), written before reading the
-type properly. That was wrong: findings are what the write-up is built from —
-each claim carries the passages it rests on — so cutting them leaves the memo
-as a list of quotes, which is the weakest version of the best feature. The
-clutter is not the fields. It is showing one person the machinery of a team.
+Four things follow that are not decided yet.
+
+---
+
+### 1a. Can a space be the thing you highlight *into*?
+
+The most important one. If a space is a topic researched across many links,
+then the gesture that matters is **highlighting straight into the topic**, not
+filing afterwards. Today a highlight is made, and then separately put in a
+space; that is a filing cabinet. An **active space** — you set one, and
+everything you highlight lands there until you unset it — turns the same data
+into a research session, which is what "experimental workspace" actually means
+in use.
+
+*Recommendation:* build it. It is the difference between spaces being a feature
+and spaces being how the product is used. It is also small: a stored id, a
+control in the panel, and one line in the save path.
+
+**Decided:** _______
+
+---
+
+### 1b. What happens to a space when the research is finished?
+
+Spaces accumulate. A finished piece of research is worth keeping, so a cap of
+five is reached quickly — and it would be reached fastest by the people using
+Kona most, which is the wrong group to punish.
+
+- **(a) Archive.** Five live spaces. Archiving frees a slot. An archived space
+  stays readable for ever but takes no new highlights until it is brought back
+  and something else is archived.
+- **(b) Five total**, delete to make room.
+- **(c) Five total, no archive**, and accept that heavy users hit it hardest.
+
+*Recommendation:* (a). It keeps the promise that Kona never takes your work,
+and the cap still bites, because an archived space cannot be worked in. (b)
+asks people to delete their own research to carry on, which is the one thing
+the product exists not to do.
+
+**Decided:** _______
+
+---
+
+### 1c. Spaces and tags both organise by topic. One of them is redundant.
+
+Tags are per-highlight labels, up to twelve, used to filter the library. A
+space is a topic. Having both is two answers to one question, and users will
+feel it even if they cannot name it.
+
+*Recommendation:* keep both, with a line between them that can be stated:
+**a tag is a label you filter by; a space is a tag that produces a document.**
+If a topic never produces a write-up, it should have been a tag. That test also
+says what a space is *for*, which stops it drifting back into being a folder.
+
+**Decided:** _______
+
+---
+
+### 1d. What does an unfinished space look like?
+
+"Experimental" has to mean nothing is required. A space holding a question and
+twelve highlights, with no findings and no decision, is a perfectly good space
+and should look complete — not like a form somebody abandoned. Empty
+*Findings*, *Open questions* and *Decision* sections currently nag.
+
+*Recommendation:* render nothing that is empty. A section appears the first
+time it holds something.
 
 **Decided:** _______
 
