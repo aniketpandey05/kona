@@ -11,8 +11,8 @@ once and nobody has to guess later why it is the way it is.
 A decision is finished when it has an answer here, in a sentence anyone could
 act on. Until then it is open and nothing gets built on top of it.
 
-Read `DIRECTION.md` first; it holds the reasoning behind what is already
-settled. This file is the queue.
+Three documents, one job each: `DIRECTION.md` is why, `DEFINITIONS.md` is what
+every word means, and this is what is still undecided.
 
 ---
 
@@ -78,53 +78,44 @@ control in the panel, and one line in the save path.
 
 ---
 
-### 1b. What happens to a space when the research is finished?
+### 1b. What happens to a space when the research is finished? — settled
 
-Spaces accumulate. A finished piece of research is worth keeping, so a cap of
-five is reached quickly — and it would be reached fastest by the people using
-Kona most, which is the wrong group to punish.
+**A hard five on Free. Archiving is a Team feature.**
 
-- **(a) Archive.** Five live spaces. Archiving frees a slot. An archived space
-  stays readable for ever but takes no new highlights until it is brought back
-  and something else is archived.
-- **(b) Five total**, delete to make room.
-- **(c) Five total, no archive**, and accept that heavy users hit it hardest.
+Against my recommendation, and the reasoning is the author's: archiving would
+turn the cap into a formality, and a free tier that gives way at every limit
+leaves nobody a reason to pay. Running out of spaces is supposed to be felt.
 
-*Recommendation:* (a). It keeps the promise that Kona never takes your work,
-and the cap still bites, because an archived space cannot be worked in. (b)
-asks people to delete their own research to carry on, which is the one thing
-the product exists not to do.
-
-**Decided:** _______
+Nothing is deleted or hidden when the cap is reached; a sixth space simply
+cannot be made. Delete one, or pay.
 
 ---
 
-### 1c. Spaces and tags both organise by topic. One of them is redundant.
+### 1c. Tags and spaces — settled, and the question was wrong
 
-Tags are per-highlight labels, up to twelve, used to filter the library. A
-space is a topic. Having both is two answers to one question, and users will
-feel it even if they cannot name it.
+**They are independent features and do not compete.** The premise that one of
+them was redundant was mine and it was wrong.
 
-*Recommendation:* keep both, with a line between them that can be stated:
-**a tag is a label you filter by; a space is a tag that produces a document.**
-If a topic never produces a write-up, it should have been a tag. That test also
-says what a space is *for*, which stops it drifting back into being a folder.
+A tag is a property of a highlight, like its colour. A space points at
+highlights gathered from many pages, and those highlights carry whatever tags
+they carry. A space can hold highlights with a dozen different tags; a tag can
+appear in a dozen spaces and in none. Neither implies the other.
 
-**Decided:** _______
+So no line has to be drawn between them, and the earlier formula — *a space is
+a tag that produces a document* — is struck out. It made a space sound like a
+heavier tag, which is not what it is.
 
 ---
 
-### 1d. What does an unfinished space look like?
+### 1d. What does an unfinished space look like? — settled
 
-"Experimental" has to mean nothing is required. A space holding a question and
-twelve highlights, with no findings and no decision, is a perfectly good space
-and should look complete — not like a form somebody abandoned. Empty
-*Findings*, *Open questions* and *Decision* sections currently nag.
+**Nothing in a space is required, and nothing empty is drawn.**
 
-*Recommendation:* render nothing that is empty. A section appears the first
-time it holds something.
-
-**Decided:** _______
+This follows from what a solo space is for: searching different things, putting
+them in, and worrying about it later. A space holding a question and twelve
+highlights, with no findings and no decision, is finished. A *Findings*,
+*Open questions* or *Decision* section appears the first time it holds
+something and not before.
 
 ---
 
