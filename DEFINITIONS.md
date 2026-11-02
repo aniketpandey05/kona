@@ -253,10 +253,42 @@ to pay rather than a hardship.
 
 ## Surfaces
 
+### The rule that decides all of this
+
+The question is not *app or extension*. It is: **can Kona's code run inside the
+page you are reading?** Everything else follows from the answer.
+
+| | Runs inside the page you are reading? |
+| --- | --- |
+| **Extension** | Yes — inside any page, in the browser you already use. |
+| **A native app with a browser built into it** | Only inside pages you browse *in Kona*. |
+| **A web app** | **Never.** |
+
+The last one is not a gap to engineer around. A web page cannot reach into
+another site's page: cross-origin frames are sealed by the browser, and most
+sites refuse to be framed at all. No amount of work changes it.
+
+**So the app cannot highlight, and the extension is the only thing that can.**
+
+### Where Kona can highlight
+
+| | |
+| --- | --- |
+| Chrome, Edge, desktop | Extension |
+| Firefox, desktop | Extension |
+| Safari, Mac | Extension |
+| **Safari, iPhone and iPad** | Extension — shipped through the App Store, because Apple requires every Safari extension to live inside an app |
+| **Firefox, Android** | Extension |
+| Chrome, Android | **Not possible.** Chrome on Android has no extensions, for anyone |
+
+On iPhone the distinction disappears: the extension *is* the app, because that
+is the only way Apple allows one to be installed. "Kona has an iOS app" and
+"Kona has a Safari extension" are the same sentence.
+
 ### Extension
 
-Kona in a browser. **The only surface that can highlight.** Chrome, Edge,
-Firefox, Safari on a Mac, and Safari on an iPhone or iPad.
+Kona inside a browser. **The tool you highlight with**, and the only part of
+Kona that can be.
 
 ### Panel
 
@@ -264,23 +296,23 @@ The strip Kona shows inside the page you are reading. It is about *this page*.
 It is where a person spends most of their time and should be the best-made
 thing in the product.
 
-### Phone app
+### App
 
-Kona as an installable web app. It cannot highlight — Chrome on Android has no
-extensions — so it is a reader for the library, plus capture by sharing a link
-to it. **The Android answer.**
+Kona outside a browser: on a phone, or on a computer. **It is where you look at
+what you have gathered** — read, search, organise into spaces, and keep
+everything in step. It never highlights.
 
-### Desktop app
+It also captures, but only by being handed something: share a link or a passage
+to Kona from anywhere, and it is kept. That is capture without being inside
+the page, and it is as far as an app can go.
 
-Kona as a program on a computer. It cannot highlight either, and hosted sync
-removes the reason it was built. **Not part of where Kona is going.**
+The app is the only Kona available where no extension can run, which today is
+Chrome on Android.
 
 ### Device
 
-One browser profile, or one installation of the phone or desktop app. What
-"one device" and "all your devices" are counted in.
-
----
+One browser profile, or one installation of the app. What "one device" and
+"all your devices" are counted in.
 
 ## Money
 

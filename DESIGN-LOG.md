@@ -28,6 +28,7 @@ every word means, and this is what is still undecided.
 | iOS | A Safari Web Extension, not a separate native app |
 | Open source | Use it where the problem is solved (matching, article extraction, embeddings). Never for what a space is or how the panel feels. Apache-2.0 and MIT only, nothing AGPL |
 | What a space is | A workspace for researching one topic across many links. Alone: gather and conclude. With a team: discuss and decide. The collaborative parts appear only once it is shared |
+| Extension or app | Neither replaces the other. The extension is the only thing that can highlight, because only it runs inside the page you are reading. The app is where you look at what you gathered |
 | Desktop app | Frozen. Its only job was the folder-picker gap, which hosted sync closes |
 | Team | Frozen. Good demo, no users, needs the same server Pro needs |
 
@@ -267,6 +268,25 @@ copy of record and `tests/pricing.test.ts` fails if the site drifts from it.
 
 The Safari extension is the same code, but the surface is not: no right-click,
 a much smaller panel, and a share sheet that the desktop does not have.
+
+**Decided:** _______
+
+---
+
+### 1h. Firefox on Android is an open door
+
+Chrome on Android has no extensions and never has, which is why the phone app
+exists. **Firefox on Android does** — over six thousand of them as of April
+2026 — and Kona already builds for Firefox, with a gecko id and a minimum
+version set in `wxt.config.ts`.
+
+So there may be a way to highlight on an Android phone after all, for anyone
+willing to read in Firefox. Whether that is worth the testing, and whether
+Android users will change browser for it, is not obvious and is not decided.
+
+*Recommendation:* try the existing Firefox build on an Android phone before
+deciding anything. It may already work, in which case the question is only
+whether to say so out loud.
 
 **Decided:** _______
 
