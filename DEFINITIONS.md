@@ -8,6 +8,10 @@ means slightly different things to whoever is typing at the time. Anything
 built from here on uses these words with these meanings, and if a meaning turns
 out to be wrong, it is changed **here** first.
 
+**It describes Kona finished, in the present tense.** Whether a thing is built
+is not a question about what it means, and the answer would be out of date
+within a week. `DESIGN-LOG.md` keeps that.
+
 The three documents: `DIRECTION.md` is why, this is what, `DESIGN-LOG.md` is
 what is still undecided.
 
@@ -54,10 +58,6 @@ result and arriving from a link are the same page.
 What counts as tracking is a named list, not a guess: `utm_*`, `fbclid`,
 `gclid` and the rest. A plain word like `ref` is never stripped, because a site
 may mean something by it.
-
-> **Naming debt:** the code calls this a `conversationId`, on ordinary web
-> pages as well as AI chats, because chats came first. The word is wrong for
-> most of what Kona now covers. Renaming is cheap and has not been done.
 
 ### Library
 
@@ -121,8 +121,8 @@ Researching one topic means marking twenty things across five pages, and
 filing each one separately is twenty interruptions in the middle of reading.
 Setting the topic once is one.
 
-One space is active at a time, and none being active is normal — then
-highlights go to the library only, as they do today.
+One space is active at a time, and none being active is normal — highlights
+then go to the library only.
 
 ### Solo space
 
@@ -162,9 +162,8 @@ takes up**:
 | **Asking** | Somebody asked something and it has not been answered. The team owes a reply. | Stays open, and appears in the space's attention list. |
 | **Settled** | Done with. | Collapsed to one line — who settled it and how many replies. Click to read it. |
 
-Today only *settled* and *not settled* exist. **Asking** is the missing one,
-and it is the one that does the work, because it is the difference between
-"there is discussion here" and "something is waiting for you".
+**Asking** is the one that does the work. It is the difference between "there
+is discussion here" and "something is waiting for you".
 
 ### Attention list
 
@@ -199,14 +198,6 @@ question, which is why answering it and settling the thread put it away again.
 - **Whether *you* have seen it yet** — yours alone. **This never travels with
   the space.** Spaces merge between people, and one person's unread is not
   another's; share it and everybody inherits everybody else's.
-
-**What "told" can mean today:** nothing is pushed anywhere. A space reaches
-other people by a shared folder or a handed-over file, so a raised question
-arrives when their copy next syncs — which may be seconds on a desktop
-watching a folder, or whenever they next open it. Real notifications need the
-server that Team is waiting on. Until then a ping is a strong mark inside the
-space, not an alert on somebody's phone, and the interface should not pretend
-otherwise.
 
 ### Poll
 
@@ -281,9 +272,8 @@ to it. **The Android answer.**
 
 ### Desktop app
 
-Kona as a program on a computer. It cannot highlight either. It exists only
-because Firefox and Safari cannot pick a sync folder. **Frozen**, because
-hosted sync closes that gap for everyone with nothing to download.
+Kona as a program on a computer. It cannot highlight either, and hosted sync
+removes the reason it was built. **Not part of where Kona is going.**
 
 ### Device
 
@@ -312,18 +302,21 @@ together, and archiving.
 ### Sync
 
 Your library on more than one device, kept in step without you wiring anything
-up. **Paid.** What exists today — a folder you own, or a file you carry — is
-not this.
+up. **Paid.**
+
+Syncing through a folder you own, or a file you carry between machines, is a
+different thing and is not this.
 
 ### Hybrid search
 
 Searching by meaning as well as by word.
 
-Today's search is by word (BM25) plus a thesaurus Kona learns from your own
-library. Hybrid search is that plus real embeddings, which is a genuine
-capability and not a switch thrown on something that already works.
+Search by word is BM25 plus a thesaurus Kona learns from your own library, and
+every tier has it. Hybrid search adds real embeddings on top: a different
+capability, not the same one with a gate in front of it.
 
 ### Account
 
-Not yet defined. See decision 5 in `DESIGN-LOG.md`. Everything paid depends on
-it, including the free cap, because you cannot cap what you cannot identify.
+**Open.** The one word in here without a meaning: see decision 5 in
+`DESIGN-LOG.md`. Everything paid rests on it, the free cap included, because
+you cannot cap what you cannot identify.

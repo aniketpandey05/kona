@@ -272,6 +272,28 @@ a much smaller panel, and a share sheet that the desktop does not have.
 
 ---
 
+## Where the code is behind the definitions
+
+`DEFINITIONS.md` describes Kona finished. This is the distance between that and
+what is written, kept here so the definitions do not have to carry it.
+
+| Defined | What exists |
+| --- | --- |
+| **Active space** | Nothing. No active id, no control, no hook in the save path. |
+| **Thread states** | Settled and not-settled. *Asking* does not exist, and it is the one that does the work. |
+| **Raising a question (ping)** | Nothing. Comments exist, but none can be marked a question. |
+| **Poll** | Nothing. |
+| **Seen / unseen** | Nothing, and when it is built it must stay off the shared space. |
+| **Telling everyone** | A space travels by shared folder or handed-over file, so a ping lands when the other copy next syncs. Real push needs the server. |
+| **Space has a note, labels, a position** | Only `createdAt`. Reordering by hand exists for highlights (`order.ts`) and not for spaces. |
+| **Attention list** | Nothing. `openQuestions` exists as a plain list and is not joined to anything. |
+| **Page** | Correct as of today: tracking parameters are stripped and old highlights migrate. |
+| **Highlight survives an edited page** | Correct as of today. |
+
+**Naming:** the code calls a page a `conversationId`, on ordinary web pages as
+well as AI chats, because the chat sites came first. The word is wrong for most
+of what Kona now covers, and renaming is cheapest before more is built on it.
+
 ## Loose ends
 
 **`SHIPPED_AHEAD` in `src/core/plans.ts`** promises, in the extension's Plans
