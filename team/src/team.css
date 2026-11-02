@@ -1470,3 +1470,64 @@ h2 .locked-badge {
   font-size: 13px;
   color: var(--muted);
 }
+
+/* ---- the tour: what Team does, before anybody has to go looking ---- */
+
+.tour-go {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 0 0 26px;
+}
+
+.tour-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 14px;
+}
+
+.tour-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 18px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.tour-card h3 {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 640;
+}
+
+.tour-what {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 560;
+}
+
+.tour-card .subtle {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+/* Pushed down so a row of cards lines its links up however long each is. */
+.tour-card .action {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.tour-heading {
+  margin: 34px 0 6px;
+  font-size: 17px;
+  font-weight: 640;
+}
+
+.tour-why {
+  max-width: 68ch;
+  margin: 0 0 16px;
+}

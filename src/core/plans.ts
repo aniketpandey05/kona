@@ -114,5 +114,5 @@ export const PLANS: readonly Plan[] = [
   },
 ];
 
-export const TEAM_DEMO_URL = 'https://aniketpandey05.github.io/kona/team/';
+export const TEAM_DEMO_URL = 'https://aniketpandey05.github.io/kona/team/#/tour';
 export const PRICING_URL = 'https://aniketpandey05.github.io/kona/#pricing';

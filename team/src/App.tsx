@@ -7,9 +7,18 @@ import { Members } from './views/Members';
 import { Pricing } from './views/Pricing';
 import { Space } from './views/Space';
 import { Spaces } from './views/Spaces';
+import { Tour } from './views/Tour';
 import { Workspace } from './views/Workspace';
 
-type RouteName = 'workspace' | 'spaces' | 'space' | 'members' | 'admin' | 'plans' | 'checkout';
+type RouteName =
+  | 'tour'
+  | 'workspace'
+  | 'spaces'
+  | 'space'
+  | 'members'
+  | 'admin'
+  | 'plans'
+  | 'checkout';
 
 interface Route {
   name: RouteName;
@@ -25,6 +34,8 @@ function currentRoute(): Route {
     return { name: 'space', id: decodeURIComponent(hash.slice(SPACE_PREFIX.length)) };
   }
   switch (hash) {
+    case '#/tour':
+      return { name: 'tour' };
     case '#/spaces':
       return { name: 'spaces' };
     case '#/members':
@@ -197,7 +208,20 @@ export function App() {
       </header>
 
       <main>
-        {showIntro && !onTeam && route.name !== 'checkout' && <Intro onClose={closeIntro} />}
+        {showIntro && !onTeam && route.name !== 'checkout' && route.name !== 'tour' && (
+          <Intro onClose={closeIntro} />
+        )}
+
+        {route.name === 'tour' && (
+          <Tour
+            onStart={() => {
+              grantTeam(Math.max(1, activeSeats()));
+              log('demo.started', 'Granted Team from the tour');
+              rememberIntro();
+              go('#/spaces');
+            }}
+          />
+        )}
 
         {route.name === 'workspace' && (
           <Workspace entitlement={entitlement} onUpgrade={() => go('#/plans')} />

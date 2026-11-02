@@ -1035,3 +1035,63 @@ input:focus-visible {
   font-size: 13px;
   line-height: 1.5;
 }
+
+/* Getting onto the home screen, offered rather than buried in a browser menu. */
+.app-install {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+}
+
+.app-install-what {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-install-what strong {
+  font-size: 14.5px;
+  font-weight: 620;
+}
+
+.app-install-what small {
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.app-install-go {
+  flex: none;
+  min-height: 38px;
+  padding: 0 15px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 620;
+  color: #fff;
+  background: var(--accent);
+  border: 0;
+  border-radius: 10px;
+}
+
+.app-install-no {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  font-size: 15px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+}
+
+.app-install-no:hover {
+  background: var(--hover);
+}

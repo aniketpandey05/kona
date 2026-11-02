@@ -19,6 +19,7 @@ import {
   type Scope,
 } from '../../src/core/sync';
 import { useFolderSync, type FolderSyncControls } from '../../src/ui/useFolderSync';
+import { Install } from './Install';
 import { SpacesList, SpaceView } from './Spaces';
 import { firstUrl, markFromShare, planShare, readShare } from './share';
 import { applyTheme, loadTheme, saveTheme } from './theme';
@@ -478,6 +479,8 @@ export function App({
         <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={(e) => void onImport(e)} />
         <input ref={syncInput} type="file" accept="application/json,.json" hidden onChange={(e) => void onSyncFile(e)} />
       </header>
+
+      <Install />
 
       <input
         class="app-search"
