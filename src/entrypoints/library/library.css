@@ -494,7 +494,7 @@ input:focus-visible {
 .lib-filing {
   /* flex-basis, not width: this row is a flex container, and a width would
      lose to the basis the other children already have. border-box with it,
-     because a basis of 100% is the content box — without this the padding is
+     because a basis of 100% is the content box, without this the padding is
      added on top and the panel hangs off the side of the row it is in. */
   box-sizing: border-box;
   flex: 1 0 100%;

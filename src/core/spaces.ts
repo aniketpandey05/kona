@@ -11,7 +11,7 @@ import type { Mark } from './types';
  * reason the notes outlive the reading.
  *
  * Everything here is pure and free of the DOM, so it can be tested without a
- * browser — the same bargain the rest of `core` makes.
+ * browser, the same bargain the rest of `core` makes.
  */
 
 /** Where a claim sits relative to the question. Marking the ones that disagree is the point. */
@@ -174,7 +174,7 @@ export function addMark(
 /**
  * Taking a highlight back out. Any finding resting on it keeps the id, so the
  * space can say it is short a source rather than quietly presenting a thinner
- * claim as though nothing had changed — see `sourcesFor`.
+ * claim as though nothing had changed, see `sourcesFor`.
  */
 export function removeMark(space: Space, markId: string, now = Date.now()): Space {
   if (!space.markIds.includes(markId)) return space;
@@ -290,7 +290,7 @@ export function reopen(space: Space, now = Date.now()): Space {
  * This is the part of working together that a file can actually carry. Nobody
  * is typing at the same moment as anybody else, but you can disagree with a
  * passage where the passage is, send the space back, and have the reply arrive
- * underneath — which is most of what a comment thread is for, and a great deal
+ * underneath, which is most of what a comment thread is for, and a great deal
  * better than the argument happening in a chat window where the quote is a
  * screenshot.
  */
@@ -412,7 +412,7 @@ export function whoFound(spaces: readonly Space[]): Map<string, Person[]> {
 }
 
 /**
- * Whether this space has been worked on by more than one person — which is the
+ * Whether this space has been worked on by more than one person, which is the
  * only thing that decides whether the page says "I" or "we", and whether there
  * is any point showing a name against anything.
  */
@@ -449,7 +449,7 @@ export function marksIn(space: Space, marks: readonly Mark[]): Mark[] {
   return marks.filter((mark) => inSpace.has(mark.id)).sort((a, b) => b.createdAt - a.createdAt);
 }
 
-/** Gathered here but not yet behind any finding — what there is left to draw a conclusion from. */
+/** Gathered here but not yet behind any finding, what there is left to draw a conclusion from. */
 export function unusedIn(space: Space, marks: readonly Mark[]): Mark[] {
   const cited = new Set(space.findings.flatMap((finding) => finding.markIds));
   return marksIn(space, marks).filter((mark) => !cited.has(mark.id));

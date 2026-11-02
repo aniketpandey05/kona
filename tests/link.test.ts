@@ -100,7 +100,7 @@ describe('text that came from a share sheet', () => {
   });
 
   // Every rule above only ever shortens the needle, and a fragment matches any
-  // substring — so cleaning can make a match more likely but never less.
+  // substring, so cleaning can make a match more likely but never less.
   it('leaves an already-clean quote untouched', () => {
     expect(fragmentOf('the quick brown fox')).toBe('the quick brown fox');
   });

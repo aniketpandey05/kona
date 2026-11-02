@@ -9,7 +9,7 @@ import './desktop.css';
  *
  * Nothing is forked here. The whole desktop app is this file's two arguments:
  * folders that are paths rather than expiring handles, and the tray's "sync
- * now". Everything else — the library, the search, the spaces, the signing —
+ * now". Everything else, the library, the search, the spaces, the signing,
  * is the code the extension and the phone already run.
  */
 render(<App folders={diskFolders} syncOnDemand={onSyncNow} />, document.getElementById('app')!);

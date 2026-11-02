@@ -21,7 +21,7 @@ export interface Mark {
   url: string;
   /**
    * Where in a conversation this was marked. Absent for anything captured
-   * outside a page we were running in — a quote shared from a phone has no
+   * outside a page we were running in, a quote shared from a phone has no
    * message to anchor to, only its own text.
    */
   message?: MessageAnchor;

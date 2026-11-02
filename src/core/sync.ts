@@ -3,7 +3,7 @@
  *
  * Sync normally means a server: ours, holding your highlights, with an
  * account on each end. That is what Pro and Team were written down as, and it
- * is the part of both that would undo the thing Kona promises — that nothing
+ * is the part of both that would undo the thing Kona promises; that nothing
  * leaves your computer.
  *
  * It does not have to mean that. Nearly everybody already runs a sync client:
@@ -25,7 +25,7 @@
  * a folder of your own carries everything, and a folder you share carries only
  * the spaces you put in it, and only the passages those spaces actually cite.
  * Nothing else of yours is written there, ever. Without a server to hold a
- * permission, that is the one that matters — what somebody else can see.
+ * permission, that is the one that matters, what somebody else can see.
  *
  * What it does not do, stated here so nobody has to find out: it is as fast as
  * the sync client is, which is seconds rather than instant; there is no
@@ -68,9 +68,9 @@ export interface Chosen {
 /**
  * Where a folder comes from, and how it is remembered between runs.
  *
- * A browser and a desktop app answer this completely differently — one has a
+ * A browser and a desktop app answer this completely differently, one has a
  * directory handle and a permission that expires, the other has a path and no
- * permission at all — and neither answer belongs in the engine. So the engine
+ * permission at all, and neither answer belongs in the engine. So the engine
  * takes one of these and asks it, which is also what lets the same sync UI
  * run in the extension, the phone app and the desktop app without three
  * copies of it.
@@ -137,7 +137,7 @@ const nothing = (): Synced => ({
 
 /**
  * What a library amounts to, for the purpose of deciding whether it has
- * changed. Ids with the time each was last touched, in a fixed order — small,
+ * changed. Ids with the time each was last touched, in a fixed order, small,
  * cheap, and the same on both sides for the same content.
  *
  * Comparing the whole file would not work: it carries the moment it was
@@ -157,7 +157,7 @@ function signature(marks: readonly Mark[], spaces: readonly Space[]): string {
  * One pass: take whatever the folder has, and leave it whatever we have.
  *
  * Both sides run this against the same file, so both converge on the union of
- * the two — and once they agree, neither writes, which is what stops them
+ * the two, and once they agree, neither writes, which is what stops them
  * talking past each other forever.
  */
 export async function syncOnce(
@@ -284,7 +284,7 @@ export interface ByHand {
  *
  * `showDirectoryPicker` is desktop Chromium and nothing else: Firefox and
  * Safari have not shipped it, and Chrome on Android does not offer it. That is
- * a platform fact and no amount of work here changes it — but it only stops
+ * a platform fact and no amount of work here changes it, but it only stops
  * the *automatic* part. The file in the folder is an ordinary file, so anyone
  * can open it, take what is in it, and be handed back the version to put
  * where they got it.

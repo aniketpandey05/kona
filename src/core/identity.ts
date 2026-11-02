@@ -19,8 +19,8 @@
  *   they said in passing, or send you a space claiming to be them.
  * - It does **not** prove who they are in the world. The first time a name
  *   arrives you take it on trust, exactly as you do when a new machine's key
- *   first appears in `known_hosts`. An account proves the other thing — that
- *   this is the Sam your employer says it is — and that still needs a server.
+ *   first appears in `known_hosts`. An account proves the other thing; that
+ *   this is the Sam your employer says it is, and that still needs a server.
  *
  * ECDSA on P-256 because it is in every browser that can run Kona, and
  * because the keys and signatures are small enough to sit inside a JSON file
@@ -132,7 +132,7 @@ export async function fingerprint(publicKey: string): Promise<string | null> {
  * Signing a structure means agreeing on how to write it down, and the only
  * requirement is that both sides write it identically. A separator that
  * cannot occur in any of the parts is what stops two different contributions
- * sharing a signature — without it, a reply of "a" on mark "bc" and one of
+ * sharing a signature, without it, a reply of "a" on mark "bc" and one of
  * "ab" on mark "c" would sign the same bytes.
  */
 export function canonical(parts: ReadonlyArray<string | number | undefined>): string {

@@ -20,7 +20,7 @@
 /** Said wherever a paid tier lists something that already works. */
 export const SHIPPED_AHEAD =
   'Sync and shared spaces are built and working today, ahead of any billing. ' +
-  'They are where the line will fall when Pro and Team exist — not something ' +
+  'They are where the line will fall when Pro and Team exist, not something ' +
   'switched off now, and nothing you have already made stops working.';
 
 export type PlanId = 'free' | 'pro' | 'team' | 'enterprise';
@@ -48,7 +48,7 @@ export const PLANS: readonly Plan[] = [
     per: 'forever, on one device',
     pitch: 'Everything Kona does, on the device you read on, with no account.',
     included: [
-      'Highlight anything you read — papers, docs, Stack Overflow, AI chats',
+      'Highlight anything you read, papers, docs, Stack Overflow, AI chats',
       'Unlimited highlights, notes and tags',
       'One searchable library across every site',
       'Search by meaning as well as by word, learned from your own library',
@@ -68,7 +68,7 @@ export const PLANS: readonly Plan[] = [
     included: [
       'Everything in Free',
       'Sync across your own devices, through a folder you already keep in step',
-      'Every surface on one library — the extension, the phone app and the desktop app',
+      'Every surface on one library, the extension, the phone app and the desktop app',
       'The desktop app, which keeps that folder in step with its window shut',
       'Or nothing to arrange at all: no folder to pick, no sync client of your own to run',
       'On a phone, and inside Safari and Firefox, where neither a folder nor an app reaches',

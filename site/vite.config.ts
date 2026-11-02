@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
-// The landing page. Plain HTML and CSS — there is no state on it, so there is
+// The landing page. Plain HTML and CSS; there is no state on it, so there is
 // no reason to ship a framework to render it.
 //
 // This is the root of the published site: the phone app builds into ./app and
@@ -19,5 +19,10 @@ export default defineConfig({
     // silently. `build:web` clears it once, before all three run.
     emptyOutDir: false,
   },
+  // Without this the dev server falls back to index.html for any path it does
+  // not have, so /team/ and /app/ quietly serve the landing page again instead
+  // of 404ing. That reads exactly like a broken demo button and is not one.
+  // `npm run preview:web` serves the built bundle, which really has all three.
+  appType: 'mpa',
   server: { port: 5181, strictPort: true },
 });

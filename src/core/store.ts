@@ -118,7 +118,7 @@ export function watchAllMarks(onChange: () => void): () => void {
 // ---- spaces ----
 
 // There are a handful of spaces, not thousands, so one array under one key is
-// enough — and it keeps a space's parts from ever being written out of step.
+// enough, and it keeps a space's parts from ever being written out of step.
 const SPACES_KEY = 'local:spaces' as const;
 
 export async function loadSpaces(): Promise<Space[]> {
@@ -209,7 +209,7 @@ export async function loadMe(): Promise<Person | null> {
 
 /**
  * Setting or changing your name. The id is made once and kept, so a space you
- * sent out still recognises your work when it comes back — renaming yourself
+ * sent out still recognises your work when it comes back, renaming yourself
  * relabels it rather than splitting it in two.
  */
 export async function saveMe(name: string): Promise<Person | null> {
@@ -260,7 +260,7 @@ export async function identityForBackup(): Promise<Identity | null> {
 }
 
 /**
- * Who you were, taken from a backup — but only onto a computer that does not
+ * Who you were, taken from a backup, but only onto a computer that does not
  * already know who it belongs to. Nothing here silently replaces an identity
  * somebody is using, and a restore onto a machine already in use simply keeps
  * the one it has.

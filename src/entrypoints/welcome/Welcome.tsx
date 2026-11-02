@@ -41,7 +41,7 @@ export function Welcome() {
         <li>
           <h2>Select some text, anywhere you read</h2>
           <p>
-            Select a sentence and a small row of colours appears — pick one. You can also
+            Select a sentence and a small row of colours appears, pick one. You can also
             right-click a selection and choose <strong>Highlight with Kona</strong>.
           </p>
           <p>
@@ -53,8 +53,8 @@ export function Welcome() {
                 </a>
               </>
             ))}{' '}
-            work the moment you install it. For anything else — a paper, documentation,
-            Stack Overflow, a news article — click the Kona button in the toolbar while you
+            work the moment you install it. For anything else, a paper, documentation,
+            Stack Overflow, a news article, click the Kona button in the toolbar while you
             are on the site and switch it on. Chrome will ask you to allow it, and the same
             switch turns a site back off later, the chat sites included.
           </p>
@@ -69,7 +69,7 @@ export function Welcome() {
         <li>
           <h2>Find it again</h2>
           <p>
-            A panel on the right lists this page's highlights in the order you made them — drag the
+            A panel on the right lists this page's highlights in the order you made them, drag the
             grip to reorder, click one to jump to it. Everything you have ever saved lives in your
             library, searchable and filterable.
           </p>
@@ -81,7 +81,7 @@ export function Welcome() {
           <h2>Work something out in a space</h2>
           <p>
             A space is one question and the highlights that answer it. Gather a few and you
-            already have a write-up — each passage quoted, with a link under it that lands on
+            already have a write-up, each passage quoted, with a link under it that lands on
             the exact sentence, so anyone can check it without having Kona. Write down what
             you concluded and that goes on top, citing the highlights it rests on.
           </p>

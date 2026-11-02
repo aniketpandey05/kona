@@ -3,7 +3,7 @@ import type { PlanId } from './types';
 /**
  * Checkout, as far as a demo can take it.
  *
- * With a Stripe payment link configured this really does hand off to Stripe —
+ * With a Stripe payment link configured this really does hand off to Stripe,
  * put a test-mode link in `VITE_STRIPE_PAYMENT_LINK` and the Upgrade button
  * leaves for Stripe's hosted page, which is the whole point of Checkout: card
  * details never touch us, so we stay in PCI SAQ-A scope.

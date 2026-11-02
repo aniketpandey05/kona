@@ -153,7 +153,7 @@ export function Workspace({
               {hiddenCount} highlights from {colleagues} teammates are not here.
             </strong>
             <p>
-              Your colleagues are keeping the same kind of thing you are — in their own
+              Your colleagues are keeping the same kind of thing you are, in their own
               browsers, where nobody else can search it. Team puts them in one place.
             </p>
           </div>
@@ -258,7 +258,7 @@ export function Workspace({
           Everything here is private to you. <strong>Share with the team</strong> on any
           card puts it in a space, where the people in that space can read it and reply;{' '}
           <strong>Make private</strong> takes it straight back. The highlight itself never
-          moves — only who can see it changes.
+          moves, only who can see it changes.
         </p>
       )}
     </section>

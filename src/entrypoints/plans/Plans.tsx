@@ -10,7 +10,7 @@ import type { Theme } from '../../core/theme';
  * There is nothing to buy here and the page does not pretend otherwise: Free
  * is marked as the one you are on, and everything else says it is not built.
  * The reason to show it anyway is that people are entitled to know where a
- * free tool is going before they put their reading into it — particularly this
+ * free tool is going before they put their reading into it, particularly this
  * one, where the answer is that what you have keeps working on its own.
  */
 export function Plans() {
@@ -69,7 +69,7 @@ export function Plans() {
         <p>
           Searching your library does two things at once. It ranks the passages that use
           the words you typed, and it looks for the ones that say the same thing in
-          different words — so a search for <strong>downtime</strong> also finds the
+          different words, so a search for <strong>downtime</strong> also finds the
           passage that only ever says <strong>cutover</strong>. When a word nobody typed
           earns a result its place, the search tells you which word it was.
         </p>
@@ -90,7 +90,7 @@ export function Plans() {
           A space is a file you can hand over: open one, press <strong>Share</strong>, and
           send it. Whoever opens it gets your question, your passages, what you concluded and
           a link under each that lands on the exact sentence. They can reply to a passage
-          where the passage is, conclude something of their own, and send it back — and it
+          where the passage is, conclude something of their own, and send it back, and it
           merges into the space you already have rather than arriving beside it, with both
           sides of the argument under the highlight and a name against every part. It needs
           no account on either side, and it is in the free plan.
@@ -99,15 +99,15 @@ export function Plans() {
           A name in a space is not just typed, either. Your computer makes a key the first
           time you put your name in, everything you write in a space is signed with it, and
           the other side checks it against the key it already holds for you. So nobody can
-          write a reply in your name, or quietly change the words in one you wrote — and if
+          write a reply in your name, or quietly change the words in one you wrote, and if
           they try, the space says <strong>does not check out</strong> against it rather
           than hiding it.
         </p>
         <p>
           There is a second way, for when passing a file about gets old, and it is free
           today because the paid one is not built. Point Kona at a folder your computer
-          already keeps in sync — Drive, Dropbox, iCloud, OneDrive, Syncthing, any of them
-          — and it keeps the library there. Your own folder keeps your own machines in
+          already keeps in sync, Drive, Dropbox, iCloud, OneDrive, Syncthing, any of them
+         , and it keeps the library there. Your own folder keeps your own machines in
           step. A folder you share with somebody keeps a space in step with them, with no
           file to send and their replies arriving on their own. Kona makes no network
           request to do it; it writes a file, and something you already trust carries it.
@@ -116,12 +116,12 @@ export function Plans() {
           A folder you share decides who can read what is in it, so Kona asks which kind it
           is before it writes anything. A folder of your own carries everything. A folder
           you share carries only the spaces you tick and only the passages those spaces
-          cite — the rest of your library is never written there at all.
+          cite, the rest of your library is never written there at all.
         </p>
         <p>
           Keeping the folder in step from inside a browser needs a folder picker, which
-          only Chrome, Edge and Brave on a desktop have. Everywhere else — Firefox, Safari,
-          the phone — the same file can be worked by hand: open it out of the folder and
+          only Chrome, Edge and Brave on a desktop have. Everywhere else, Firefox, Safari,
+          the phone, the same file can be worked by hand: open it out of the folder and
           Kona hands back the one to put where you found it. Two taps rather than none, on
           the same file, so nobody is shut out of a workspace by their browser.
         </p>
@@ -129,7 +129,7 @@ export function Plans() {
           Or run the desktop app, where a folder is a path rather than a permission: no
           picker to be missing, nothing to grant again after a restart, and the same on
           Windows, macOS and Linux. Its window closes to the tray instead of quitting, so
-          it goes on keeping the folder in step while you are doing something else — which
+          it goes on keeping the folder in step while you are doing something else, which
           is the one thing an extension cannot do at all, because Manifest V3 stops a
           background page after a few seconds of quiet.
         </p>
@@ -137,8 +137,8 @@ export function Plans() {
           It is a stand-in for Pro's sync rather than the same thing, and the difference is
           the work: you arrange the folder, you keep the sync client running, and you
           either install the app or do the round trip yourself. Pro is that job done for
-          you, on every device — including the phone in your pocket, which neither a folder
-          nor a desktop app reaches. And ticking a space is as far as permissions go here —
+          you, on every device, including the phone in your pocket, which neither a folder
+          nor a desktop app reaches. And ticking a space is as far as permissions go here,
           who may write, and taking access back from one person rather than un-sharing the
           whole folder, is Team's, and needs a server.
         </p>
@@ -148,7 +148,7 @@ export function Plans() {
           the desktop app, so on a phone it is the file by hand. There are no permissions:
           anybody who can read the folder can read the space, and there is no taking that
           back. And a key proves somebody is the same person as last time, not who they are
-          in the world — the first time a name reaches you, you take it on trust. Removing
+          in the world, the first time a name reaches you, you take it on trust. Removing
           those four is what Team is for; that needs a server, and the server is not built.
           There is a working demo of the shape of it.
         </p>

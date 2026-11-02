@@ -1,10 +1,10 @@
-# Y Combinator — Winter 2027 application
+# Y Combinator: Winter 2027 application
 
 > **Deadline: Monday 2 November 2026, 8:00pm PT.** Decision by 11 December. Batch runs
-> January–March 2027, in person in San Francisco. Apply at <https://apply.ycombinator.com>.
+> January-March 2027, in person in San Francisco. Apply at <https://apply.ycombinator.com>.
 >
 > Everything below is a draft to paste in and edit. Anything marked **[FILL]** is a fact
-> only you can supply — do not submit with a placeholder left in, and do not let me guess
+> only you can supply, do not submit with a placeholder left in, and do not let me guess
 > one for you. The business model this leans on is spec'd in
 > [`docs/enterprise.md`](docs/enterprise.md).
 >
@@ -17,11 +17,11 @@
 
 **1. Who writes code, or does other technical work on your product? Was any of it done by a non-founder?**
 
-> **[FILL — names.]** All of it was written by the founders; no contractors, no agency, no
+> **[FILL, names.]** All of it was written by the founders; no contractors, no agency, no
 > non-founder contributions. Draft continues:
 
 All of the code is ours. **[FILL: name]** writes it. There are no outside contributors and
-no non-founder work in the repository — the full history is public at
+no non-founder work in the repository, the full history is public at
 <https://github.com/aniketpandey05/kona>, 97 commits over six and a half weeks.
 
 We build with Claude Code (Claude Opus) and review every change by hand. The test suite
@@ -31,7 +31,7 @@ re-anchoring, ordering, search, links and backups.
 
 **2. Are you looking for a cofounder?**
 
-> **[FILL — Yes / No.]** If you are applying solo, answer honestly and say what you are
+> **[FILL, Yes / No.]** If you are applying solo, answer honestly and say what you are
 > looking for. YC funds solo founders every batch; a solo founder who pretends the question
 > is irrelevant reads worse than one who addresses it. If you are applying solo, add one
 > line: what you are *not* good at, and who you want next.
@@ -46,7 +46,7 @@ Kona
 
 **4. Describe what your company does in 50 characters or less.**
 
-Pick one — all four fit, with the count:
+Pick one, all four fit, with the count:
 
 | Option | Chars |
 |---|---|
@@ -58,7 +58,7 @@ Pick one — all four fit, with the count:
 | Shared memory for everything your team reads | 44 |
 | Highlight anything; keep what your team learns | 46 |
 
-Recommended: **Shared memory for everything your team reads** — it names the buyer (team)
+Recommended: **Shared memory for everything your team reads**; it names the buyer (team)
 and the job (memory) without tying the company to one source of reading.
 
 **5. Company URL, if any**
@@ -71,18 +71,18 @@ It goes live on the next push to `main`. Check it has deployed before you submit
 
 - Extension source and install instructions: <https://github.com/aniketpandey05/kona>
 - Phone app, live: <https://aniketpandey05.github.io/kona/app/>
-- The paid tier, as a working demo: <https://aniketpandey05.github.io/kona/team/> — opens
+- The paid tier, as a working demo: <https://aniketpandey05.github.io/kona/team/>, opens
   on the free plan, upgrades through checkout, and the workspace fills with the team's
   highlights. No server and no real payment behind it, and it says so on screen.
-- Chrome Web Store: **[FILL — submit this week; listing copy is already written in
+- Chrome Web Store: **[FILL, submit this week; listing copy is already written in
   `CHROMEWEBSTORE.md`]**
 
 **7. What is your company going to make?**
 
 Kona turns the passages people highlight into a team's shared memory.
 
-Today Kona is a browser extension. You select text on any page you read — a paper,
-documentation, Stack Overflow, or a ChatGPT, Claude or Gemini conversation — pick a
+Today Kona is a browser extension. You select text on any page you read, a paper,
+documentation, Stack Overflow, or a ChatGPT, Claude or Gemini conversation, pick a
 colour, add a note and a tag, and it joins one searchable library. Every highlight keeps a link that lands on the exact sentence it came
 from, and because that link is an ordinary URL text fragment it works for someone who has
 never installed Kona. Highlights survive the page being re-rendered, a reply being
@@ -92,7 +92,7 @@ words around it rather than by a DOM id.
 What we are building next is the shared layer, and the unit is a **space**: one question a
 team is trying to settle, the evidence gathered under it, what is still unknown, and the
 decision that came out. Each finding names the highlights it rests on, so a space writes
-itself up as a memo in which every claim cites the exact sentence it came from — and those
+itself up as a memo in which every claim cites the exact sentence it came from, and those
 citations work for a reader who has never installed Kona.
 
 It is not an AI tool with a web feature bolted on. The same highlighting works on a paper,
@@ -107,17 +107,17 @@ forever. The shared one is what we charge for.
 
 **8. Where do you live now, and where would the company be based after YC?**
 
-**[FILL — current city.]** After YC: San Francisco.
+**[FILL, current city.]** After YC: San Francisco.
 
 **9. Explain your decision regarding location.**
 
-> Draft, assuming you are willing to relocate. If you are not, say so plainly — YC W27 is
+> Draft, assuming you are willing to relocate. If you are not, say so plainly, YC W27 is
 > in person in SF and this answer decides whether the rest gets read.
 
 We will move to San Francisco for the batch and stay. Our buyers are the people rolling out
-AI seats inside 50–500 person companies, and the highest concentration of them in the world
+AI seats inside 50-500 person companies, and the highest concentration of them in the world
 is within a few miles of each other there. **[FILL: add one line on any visa or relocation
-constraint, if there is one — YC would rather know now.]**
+constraint, if there is one, YC would rather know now.]**
 
 ---
 
@@ -133,7 +133,7 @@ The individual product works and is in daily use by its authors.
 - A desktop app for Windows, macOS and Linux, because an extension cannot sync while the
   browser is shut and we did not want that to be the product's limit.
 - ~12,400 lines of TypeScript across the extension, the phone app and the desktop app,
-  another ~3,700 in the Team demo, and ~3,600 of tests — 325 of them across 23 files.
+  another ~3,700 in the Team demo, and ~3,600 of tests, 325 of them across 23 files.
   97 commits since 17 September 2026.
 - Highlighting, notes, tags, one cross-site library, full-text search from inside any page,
   Markdown export, backup and restore, deep links to the exact sentence, light/dark.
@@ -142,26 +142,26 @@ The individual product works and is in daily use by its authors.
   a thesaurus built from which words they keep together. 1.3ms a query over 2,000
   highlights, and no model to ship, host or send anything to.
 - Sync with no server of ours. Kona writes one file into a folder the machine already
-  keeps in step — Drive, Dropbox, iCloud, OneDrive, Syncthing — so the sync is something
+  keeps in step, Drive, Dropbox, iCloud, OneDrive, Syncthing, so the sync is something
   the user already trusts and pays for, and we make no network request at all. A folder of
   your own keeps your own machines in step; a folder you share keeps a space in step with
   a colleague, and carries **only** the spaces you tick and the passages those spaces cite.
 - Everything you write in a shared space is signed with a key made on your device, and
-  checked on the way back in against the key already held for you — so nobody can write a
+  checked on the way back in against the key already held for you, so nobody can write a
   reply in your name, and words that moved after signing are flagged rather than hidden.
 - Spaces: a question, its evidence, findings, open questions, a decision, and a cited
-  write-up — all on your own highlights, stored on your own computer.
+  write-up, all on your own highlights, stored on your own computer.
 
 **Spaces ship in the extension, on your real highlights.** A space is one question, the
 highlights that bear on it, the findings you draw out of them, what is still unknown, and
 the decision. Press "Write it up" and it produces a memo: the question as the title, each
 claim carrying numbered citations, and a source list where every citation is a link that
-lands on the exact sentence — checkable in one click by somebody who has never installed
+lands on the exact sentence, checkable in one click by somebody who has never installed
 Kona. Take a highlight back out and any claim resting on it is marked as short a source
 rather than quietly standing on less.
 
 This matters for how we are building the business. Spaces are the core of what we intend
-to charge for, and the single-player version of them is finished and useful on its own —
+to charge for, and the single-player version of them is finished and useful on its own,
 a literature review, a migration, a decision somebody will ask you to justify. What the
 paid tier adds is *other people* in the same space, and that is the part that honestly
 needs a server.
@@ -169,12 +169,12 @@ needs a server.
 That multiplayer version runs as a demo at `/team/`: the free view, checkout, a shared
 workspace, spaces with comments and hybrid search, seats that move the billed quantity,
 and an audit log. No server behind it and no real payment, which it says on screen. What
-is real in it is the shape of the decisions — seats billed on accepted invitations only,
+is real in it is the shape of the decisions, seats billed on accepted invitations only,
 and an entitlement token the client caches so neither Stripe nor our own API going down
 can lock a paying customer out of their own highlights. Roughly six weeks to a private
 beta; `docs/enterprise.md` has the architecture and the order.
 
-Not yet in the Chrome Web Store. **[FILL — update this if you submit before Monday; the
+Not yet in the Chrome Web Store. **[FILL, update this if you submit before Monday; the
 listing copy and permission justifications are already written.]**
 
 **11. How long have each of you been working on this? How much of that has been full-time?**
@@ -182,7 +182,7 @@ listing copy and permission justifications are already written.]**
 **[FILL.]** The first commit is 17 September 2026, so the code is six and a half weeks old
 as of this application. Be exact and do not inflate: say how many hours a week, and say if it has been
 alongside a job or studies. YC reads "two weeks full-time" as a fact, and "six months,
-on and off" as a different fact — neither is disqualifying, and a wrong number that comes
+on and off" as a different fact, neither is disqualifying, and a wrong number that comes
 out in the interview is.
 
 **12. What tech stack are you using? Include AI models and AI coding tools you use.**
@@ -193,17 +193,17 @@ for the desktop app, Vitest with happy-dom for tests. One `src/core` with no DOM
 shared by all of them, which is why a fifth platform cost a day rather than a quarter.
 
 Two choices worth calling out. We paint highlights with the **CSS Custom Highlight API**,
-which draws them without inserting any nodes into the page — the reason we can highlight a
+which draws them without inserting any nodes into the page, the reason we can highlight a
 live-streaming AI reply without breaking the site. And every highlight is persisted as a
 quote plus its surrounding context, so re-anchoring is text-based and survives the DOM
 changing underneath it. Storage is `chrome.storage.local` in the extension and IndexedDB in the
 apps; links are standard URL text fragments. Signing is WebCrypto ECDSA P-256 with
-trust-on-first-use, the same model as `known_hosts` — a key you already hold is never
+trust-on-first-use, the same model as `known_hosts`, a key you already hold is never
 replaced, so a name arriving a second time either checks out or is flagged.
 
 The product contains no AI model today. Planned: embeddings for search over a user's own
 highlights, which is why client-side encryption is a design constraint for us and not an
-afterthought — see `docs/enterprise.md` §7.
+afterthought, see `docs/enterprise.md` §7.
 
 For building it: Claude Code with Claude Opus, reviewed by hand. For the team layer:
 Postgres, a small API, Stripe Billing for self-serve, SAML/OIDC and SCIM for enterprise.
@@ -223,7 +223,7 @@ talked to **[FILL: N]** of them; the thing we hear most is **[FILL: the actual q
 Not yet beyond us. It is not in the Chrome Web Store, so installing means building from
 source, and we have not pushed it to anyone. Worth knowing: Kona makes no network requests
 and has no analytics by design, so we have no telemetry to quote and never will for the free
-tier — the only usage signal we can honestly report is people we have spoken to.
+tier, the only usage signal we can honestly report is people we have spoken to.
 
 > Note the second version is an acceptable answer *once*. It is not an acceptable answer
 > for a product that is six weeks old and already builds on five platforms. Twenty real
@@ -236,11 +236,11 @@ No.
 
 **15. If you are applying with the same idea as a previous batch, did anything change?**
 
-**[FILL — N/A if this is your first application.]**
+**[FILL, N/A if this is your first application.]**
 
 **16. If you have already participated or committed to participate in an incubator…**
 
-**[FILL — N/A if none.]**
+**[FILL, N/A if none.]**
 
 ---
 
@@ -252,22 +252,22 @@ No.
 > works is three short paragraphs: *what happened to you*, *why you specifically*, *what
 > you saw in other people*. A draft skeleton:
 
-**What happened:** **[FILL — the real version. Something close to: I kept losing work
+**What happened:** **[FILL, the real version. Something close to: I kept losing work
 inside my own chat histories. The answer I needed existed in a conversation from three
 weeks ago and I could not find it, so I rebuilt it from scratch. That happened enough times
 that I wrote the tool.]**
 
-**Why us:** **[FILL — your actual relevant background. If it is "I shipped this on five
+**Why us:** **[FILL, your actual relevant background. If it is "I shipped this on five
 platforms in six weeks, on Windows, including a Safari extension I cannot even test
 locally," that is a real answer about execution speed and it is evidenced by the repo.]**
 
-**How we know others need it:** **[FILL — this must be people, not reasoning. Who have you
+**How we know others need it:** **[FILL; this must be people, not reasoning. Who have you
 asked? What did they say? If the answer is nobody yet, spend two of the next five days
 fixing that; it is also the answer to Q13.]**
 
 **18. Who are your competitors? What do you understand about your business that they don't?**
 
-Web highlighters — Glasp, Weava, Hypothes.is — and read-later tools like Readwise Reader
+Web highlighters, Glasp, Weava, Hypothes.is, and read-later tools like Readwise Reader
 and MyMind. The general-purpose answer, Notion or Confluence, where someone is supposed to
 stop and write it up. And the chat vendors' own saved-chat and project features.
 
@@ -279,17 +279,17 @@ Four things we think we understand better:
    work inside chats at all. Nobody building "highlight the web" has a reason to do that
    work, and it is where all the new reading actually happens.
 2. **A folder is the wrong unit.** Everyone shipping a team version of this ships shared
-   folders, and folders are write-only — things go in and nobody returns. Teams do not have
+   folders, and folders are write-only, things go in and nobody returns. Teams do not have
    a filing problem, they have a question problem: the same thing gets worked out three
    times by three people who never find out. We share a question with its evidence, which
    can be unfinished, which is what makes it worth opening again on Monday.
 3. **Capture less, not more.** The emerging enterprise pitch is to log every AI
    conversation. That is a compliance project with a security review attached. We keep only
-   the spans a human deliberately saved — a far smaller data surface, far easier to get
+   the spans a human deliberately saved, a far smaller data surface, far easier to get
    approved, and more useful per byte.
 4. **A shared highlight works without our product.** Every one is a plain URL text
    fragment, so sending it to a colleague who has never heard of us lands them on the exact
-   sentence. Sharing is distribution rather than a dead end behind a login — and it is why
+   sentence. Sharing is distribution rather than a dead end behind a login, and it is why
    our write-ups can be checked by someone outside the company.
 5. **No chat vendor will build this.** A real team uses ChatGPT *and* Claude *and* Gemini.
    None of those three will ever build the shared layer that spans the other two. The
@@ -297,17 +297,17 @@ Four things we think we understand better:
 
 **19. How do or will you make money? How much could you make?**
 
-The line is how far it reaches. **Free is one device** — everything Kona does, on the
+The line is how far it reaches. **Free is one device**; everything Kona does, on the
 one you read on, forever, with no account. That is our distribution and the reason anyone
 trusts us with the paid one. **Pro is your devices**, the same library on all of them.
 **Team is other people in it.**
 
-Two parts of that — sync, and sharing a space — are built and running today, ahead of
+Two parts of that, sync, and sharing a space, are built and running today, ahead of
 any billing, which we say on the pricing page rather than leave to be discovered.
 
 | | Price | What it adds |
 |---|---|---|
-| Free | $0 forever | Everything Kona does on one device, local only, no account — highlights, the library, search, spaces and their write-ups, exports |
+| Free | $0 forever | Everything Kona does on one device, local only, no account, highlights, the library, search, spaces and their write-ups, exports |
 | Pro | $7 / mo | The same library on every device: sync through a folder you already have, the desktop app that keeps it in step, or nothing to arrange at all; and meaning from a model |
 | Team | $14 / user / mo | Other people in your spaces: handing one over and taking it back, the discussion that comes with it, signed attribution, then live updates, permissions you can take back, vouched names, search across everyone's highlights, admin and seats |
 | Enterprise | from $25 / user / mo, annual, 50-seat minimum | SSO and SCIM, audit log and export, retention and legal hold, EU data residency, DPA, SLA, self-host option |
@@ -323,13 +323,13 @@ Gemini for Workspace and Claude for Work sit alongside it. Taking a conservative
 enterprise AI seats by 2027 at Team pricing of $168/seat/year: 1% of those seats is $34M
 ARR, 5% is $168M. Enterprise seats and the research and consulting firms, who will pay more
 per seat than anyone, sit on top. And because Kona works on any page rather than only on
-chats, the research segment — consultancies, equity research, academics writing a thesis
-or a literature review — does not depend on AI seat growth at all. The number that matters
+chats, the research segment, consultancies, equity research, academics writing a thesis
+or a literature review, does not depend on AI seat growth at all. The number that matters
 in the next three months is the first ten paying teams, not that table.
 
 **20. If you had any other ideas you considered applying with, please list them.**
 
-**[FILL — or leave blank. If Kona is the only thing you want to work on, saying exactly
+**[FILL, or leave blank. If Kona is the only thing you want to work on, saying exactly
 that is a fine answer and a better signal than a list.]**
 
 ---
@@ -338,17 +338,17 @@ that is a fine answer and a better signal than a list.]**
 
 **21. Have you formed ANY legal entity yet?**
 
-**[FILL.]** If the answer is no, that is normal and not a problem — YC standardises
+**[FILL.]** If the answer is no, that is normal and not a problem, YC standardises
 everyone onto a Delaware C-corp after acceptance, and incorporating early can create work to
 undo. Do not incorporate this week just to answer this question.
 
 **22. Have you taken any investment yet?**
 
-**[FILL — presumably No.]**
+**[FILL, presumably No.]**
 
 **23. Are you currently fundraising?**
 
-**[FILL — presumably No.]**
+**[FILL, presumably No.]**
 
 ---
 
@@ -356,7 +356,7 @@ undo. Do not incorporate this week just to answer this question.
 
 **24. What convinced you to apply to Y Combinator?**
 
-**[FILL — the real reason, in two or three sentences. Specifics beat enthusiasm: a
+**[FILL, the real reason, in two or three sentences. Specifics beat enthusiasm: a
 particular YC company whose path resembles yours, a specific thing you want from the batch.
 "I want to be forced to talk to users every week" is a good answer. Mention any YC event
 you have actually attended, and nothing you have not.]**
@@ -377,13 +377,13 @@ Winter 2027.
 
 ## The 1-minute founder video
 
-YC asks for a short video of the founders. It is not judged on production — it is judged on
+YC asks for a short video of the founders. It is not judged on production; it is judged on
 whether you seem like someone to spend three months with. Phone camera, good light, one
 take, no slides.
 
 > **[FILL: name]**, **[FILL: role]**. **[FILL: one line of background.]**
 >
-> I built Kona because I kept losing my own work inside AI chat histories — **[FILL: the
+> I built Kona because I kept losing my own work inside AI chat histories, **[FILL: the
 > real, specific instance. Name the thing you lost.]**
 >
 > It is a browser extension that lets you highlight anything in a ChatGPT, Claude or Gemini
@@ -402,21 +402,21 @@ else.
 
 ## The demo video
 
-Under three minutes, screen recording, your voice over it. No intro slide, no logo — start
+Under three minutes, screen recording, your voice over it. No intro slide, no logo, start
 inside a chat.
 
 | Time | What is on screen | What you say |
 |---|---|---|
-| 0:00–0:15 | A long, real ChatGPT conversation. Scroll it. | "This is a conversation where I worked out something useful. Three weeks from now I will not be able to find it." |
-| 0:15–0:45 | Select a passage, pick a colour, add a note, add a tag. | "I highlight the part that mattered, and I can put a note on it." |
-| 0:45–1:10 | Open the side panel. Hover entries, click one to jump. Regenerate a reply, show the highlight survive. | "The panel lists everything on this page. And it holds when the chat changes under it — that is the hard part." |
-| 1:10–1:40 | `Alt+Shift+F` from inside a different site, search, jump across chats. | "I can search everything I have ever highlighted without leaving the page I am on." |
-| 1:40–2:10 | The library. Filter by site and tag. Copy a highlight link, paste it into a fresh browser with no extension. | "Every highlight has a link that lands on the exact sentence — and it works for someone who does not have Kona." |
-| 2:10–2:25 | Markdown export, then the phone app. | "Export into Obsidian or Notion. And the same thing on a phone." |
-| 2:25–2:40 | The Team demo on the free plan. Point at the banner. | "That is the free version, and it stays free forever. But ten highlights my colleagues kept are not in it, because they are sitting in their own browsers where nobody can search them." |
-| 2:40–2:48 | Click Upgrade, set the seats, pay. | "So the shared layer is what we charge for." |
-| 2:48–2:54 | Open the Postgres space: question, findings, the two sources agreeing. | "And what a team shares is a question — with the evidence under it, and what is still unknown." |
-| 2:54–3:00 | Press "Write it up". Click a citation. | "Which writes itself up. Every claim links to the exact sentence it came from." |
+| 0:00-0:15 | A long, real ChatGPT conversation. Scroll it. | "This is a conversation where I worked out something useful. Three weeks from now I will not be able to find it." |
+| 0:15-0:45 | Select a passage, pick a colour, add a note, add a tag. | "I highlight the part that mattered, and I can put a note on it." |
+| 0:45-1:10 | Open the side panel. Hover entries, click one to jump. Regenerate a reply, show the highlight survive. | "The panel lists everything on this page. And it holds when the chat changes under it; that is the hard part." |
+| 1:10-1:40 | `Alt+Shift+F` from inside a different site, search, jump across chats. | "I can search everything I have ever highlighted without leaving the page I am on." |
+| 1:40-2:10 | The library. Filter by site and tag. Copy a highlight link, paste it into a fresh browser with no extension. | "Every highlight has a link that lands on the exact sentence, and it works for someone who does not have Kona." |
+| 2:10-2:25 | Markdown export, then the phone app. | "Export into Obsidian or Notion. And the same thing on a phone." |
+| 2:25-2:40 | The Team demo on the free plan. Point at the banner. | "That is the free version, and it stays free forever. But ten highlights my colleagues kept are not in it, because they are sitting in their own browsers where nobody can search them." |
+| 2:40-2:48 | Click Upgrade, set the seats, pay. | "So the shared layer is what we charge for." |
+| 2:48-2:54 | Open the Postgres space: question, findings, the two sources agreeing. | "And what a team shares is a question, with the evidence under it, and what is still unknown." |
+| 2:54-3:00 | Press "Write it up". Click a citation. | "Which writes itself up. Every claim links to the exact sentence it came from." |
 
 Record the regeneration shot first; it is the one that proves the engineering and the one
 most likely to need retakes.
@@ -428,15 +428,15 @@ most likely to need retakes.
 Ranked by effect on the application, not by effort.
 
 1. **Get real users and talk to them.** Twenty installs and three verbatim quotes changes
-   Q13, Q17 and the interview. Post it where people who live in AI chats already are —
+   Q13, Q17 and the interview. Post it where people who live in AI chats already are,
    Hacker News Show HN, r/ChatGPT, r/ObsidianMD, the Claude and ChatGPT Discords, X. This
    is worth more than everything else on this list combined.
 2. **Submit to the Chrome Web Store.** Review takes days, but "submitted, in review" is a
    materially better answer than "build it from source," and `CHROMEWEBSTORE.md` means the
    form is already filled in. Do it first, today, so the clock runs while you do the rest.
-3. ~~**A landing page.**~~ Done — it is the root of the published site, with the pricing
+3. ~~**A landing page.**~~ Done; it is the root of the published site, with the pricing
    table on it. Push to `main` and confirm it deployed before you answer Q5.
-4. **Fill every [FILL] above.** Several are two-minute answers. Q11 and Q17 are not — give
+4. **Fill every [FILL] above.** Several are two-minute answers. Q11 and Q17 are not, give
    them real thought.
 5. **Record both videos.** One evening. Do not script them word for word; know the beats.
 6. **Submit on Sunday, not Monday.** The form takes edits after submission, and the
@@ -448,14 +448,14 @@ So you are not surprised by them in an interview:
 
 - **No users yet.** The biggest one. Fixable this week; see above.
 - **The paid product is a demo, not a product.** No server, no real payment, no customer.
-  Say so before you are asked — showing a demo and letting someone assume it ships is the
+  Say so before you are asked, showing a demo and letting someone assume it ships is the
   one thing here that would genuinely damage you. What you can say instead: the shape is
   decided, it runs on the same core as the real extension, and it is about six weeks to a
   private beta, which `docs/enterprise.md` §9 lays out.
 - **"Why won't OpenAI build this?"** You will be asked. The answer is the cross-vendor
   argument in Q18.5, and it is a good one. Rehearse it.
 - **There is no licence: Kona is all rights reserved.** The repository is public to be
-  read, and that is all it grants. Be ready for the obvious follow-up — if nobody may
+  read, and that is all it grants. Be ready for the obvious follow-up, if nobody may
   build it, how does anyone try it? The answer has to be distributed builds with terms
   attached, and that is not done yet. Name the costs before they are pointed out: no
   evaluation path inside a company, nothing an enterprise security review can be pointed

@@ -285,7 +285,7 @@ describe('a space coming back with someone else’s work in it', () => {
     expect(back.space.openQuestions).toEqual(['What about bind mounts?']);
   });
 
-  it('does not delete what they took out — the merge only ever adds', () => {
+  it('does not delete what they took out, the merge only ever adds', () => {
     // They removed the highlight the whole space rests on. On their copy that
     // is their business; on mine it would be an import deleting my work.
     const { mine, back } = roundTrip((space) => removeMark(space, 'a1'));

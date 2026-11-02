@@ -2,13 +2,13 @@
  * Proves the desktop app actually syncs, by running it.
  *
  * Not a unit test: the engine and the disk adapter have those. This is the
- * claim that only launching the real thing can check — that a window nobody
+ * claim that only launching the real thing can check; that a window nobody
  * has opened, on a library in a real Chromium profile, keeps a real folder on
  * a real disk in step on its own.
  *
  * It works by taking the file away. The app reads the folder, takes the
  * highlight into its library, and then agrees with the file and leaves it
- * alone. Delete it and the next pass has to put it back out of the library —
+ * alone. Delete it and the next pass has to put it back out of the library,
  * which it can only do if the import, the storage and the write all worked.
  *
  *   node scripts/desktop-check.mjs

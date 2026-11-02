@@ -2,8 +2,8 @@
  * Photographs the desktop app, at the size a store listing wants.
  *
  * `screenshots.mjs` drives headless Chrome against the harness, which cannot
- * reach this: the desktop app is Electron, and the thing worth showing — a
- * folder being kept in step — only exists once the app has read one. So this
+ * reach this: the desktop app is Electron, and the thing worth showing, a
+ * folder being kept in step, only exists once the app has read one. So this
  * seeds a real folder, launches the real app against a throwaway profile, and
  * photographs the window over the debugging protocol.
  *

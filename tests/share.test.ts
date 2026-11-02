@@ -51,7 +51,7 @@ describe('markFromShare', () => {
   });
 
   // What a share sheet hands over is rarely clean, and this text is not just
-  // matched against the page — it is what the library shows and what Markdown
+  // matched against the page; it is what the library shows and what Markdown
   // export writes out.
   it('tidies the quote marks and ellipsis an app wrapped around the selection', () => {
     const mark = markFromShare({

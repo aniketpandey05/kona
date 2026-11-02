@@ -70,14 +70,14 @@ export const MEMBERS: Member[] = [
     role: 'member',
     initials: 'NB',
     hue: 48,
-    // Invited, not accepted — holds no seat, so it is not billed.
+    // Invited, not accepted, holds no seat, so it is not billed.
     seatActive: false,
   },
 ];
 
 /**
  * Five spaces: three asking a question, two that are only shelves. The
- * difference is the point — a shelf is where good things are kept, a question
+ * difference is the point, a shelf is where good things are kept, a question
  * is something a team is trying to settle, and both are the same object.
  */
 export const SPACES: Space[] = [
@@ -91,7 +91,7 @@ export const SPACES: Space[] = [
       {
         id: 'f-pg-1',
         claim:
-          'Link mode is much faster and uses far less disk, but a failure part-way through leaves the old cluster unusable as well — so it is only safe behind a verified backup.',
+          'Link mode is much faster and uses far less disk, but a failure part-way through leaves the old cluster unusable as well, so it is only safe behind a verified backup.',
         stance: 'supports',
         markIds: ['k-01', 'k-06'],
         authorId: 'm-tom',
@@ -133,7 +133,7 @@ export const SPACES: Space[] = [
       {
         id: 'f-pr-2',
         claim:
-          'Per-seat pricing fails when the people who get the value are not the people who hold a seat — which is exactly our case, because one person highlighting benefits everyone reading.',
+          'Per-seat pricing fails when the people who get the value are not the people who hold a seat, which is exactly our case, because one person highlighting benefits everyone reading.',
         stance: 'contradicts',
         markIds: ['k-13'],
         authorId: 'm-lena',
@@ -217,7 +217,7 @@ export const MARKS: TeamMark[] = [
       suffix: '. The safer order is',
       start: 94,
     },
-    note: 'This is the bit that changed the plan — we were going to use --link with no backup step.',
+    note: 'This is the bit that changed the plan; we were going to use --link with no backup step.',
     tags: ['postgres', 'migration', 'gotcha'],
     createdAt: ago(9, 3),
     updatedAt: ago(9, 3),
@@ -318,7 +318,7 @@ export const MARKS: TeamMark[] = [
     spaceId: 's-pg17',
     site: 'web',
     conversationId: 'doc-pg-upgrade',
-    conversationTitle: 'pg_upgrade — PostgreSQL Documentation',
+    conversationTitle: 'pg_upgrade, PostgreSQL Documentation',
     url: 'https://www.postgresql.org/docs/17/pgupgrade.html',
     label: 'postgresql.org',
     color: 'blue',
@@ -377,7 +377,7 @@ export const MARKS: TeamMark[] = [
     spaceId: 's-onboard',
     site: 'web',
     conversationId: 'doc-runbook',
-    conversationTitle: 'On-call runbook — internal wiki',
+    conversationTitle: 'On-call runbook, internal wiki',
     url: 'https://wiki.meridian.example/oncall/runbook',
     label: 'wiki.meridian.example',
     color: 'pink',
@@ -433,7 +433,7 @@ export const MARKS: TeamMark[] = [
     color: 'yellow',
     snapshot:
       'A partial index is only usable when the planner can prove the query predicate implies the index predicate. A date range expressed against now() cannot be proven at plan time, so the index is skipped.',
-    note: 'Not shared yet — this is why the dashboard query was slow.',
+    note: 'Not shared yet; this is why the dashboard query was slow.',
     tags: ['postgres', 'performance'],
     createdAt: ago(0, 11),
     updatedAt: ago(0, 11),
@@ -465,7 +465,7 @@ export const MARKS: TeamMark[] = [
     label: 'Gemini',
     color: 'pink',
     snapshot:
-      'Just-in-time provisioning creates accounts but never removes them. If offboarding matters — and for a security questionnaire it always does — you need SCIM deprovisioning, not only SSO.',
+      'Just-in-time provisioning creates accounts but never removes them. If offboarding matters, and for a security questionnaire it always does; you need SCIM deprovisioning, not only SSO.',
     note: 'Private for now. Answers the question every security review asks.',
     tags: ['scim', 'enterprise'],
     createdAt: ago(0, 2),
@@ -542,7 +542,7 @@ export const AUDIT: AuditEvent[] = [
     at: ago(3, 5),
     actorId: 'm-sarah',
     action: 'space.created',
-    detail: 'Created "AI policy evidence" — restricted to 2 members',
+    detail: 'Created "AI policy evidence", restricted to 2 members',
   },
   {
     id: 'a-6',

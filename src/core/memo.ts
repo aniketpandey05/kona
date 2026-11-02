@@ -126,7 +126,7 @@ export function memoMarkdown(memo: Memo): string {
       const gone = line.withdrawn
         ? ` _(${line.withdrawn} source${line.withdrawn > 1 ? 's' : ''} no longer here)_`
         : '';
-      const by = line.by ? ` — ${line.by}` : '';
+      const by = line.by ? ` (${line.by})` : '';
       out.push(
         `- ${line.contradicts ? 'Against: ' : ''}${line.claim} ${marks}${gone}${by}`.trimEnd(),
       );
@@ -152,7 +152,7 @@ export function memoMarkdown(memo: Memo): string {
   if (memo.citations.length > 0) {
     out.push('## Sources', '');
     for (const citation of memo.citations) {
-      const where = `${siteLabel(citation.mark)} — ${citation.mark.conversationTitle}`;
+      const where = `${siteLabel(citation.mark)}, ${citation.mark.conversationTitle}`;
       // Still cite it when there is no link to give: saying where a passage came
       // from is worth something on its own.
       out.push(citation.href ? `[^${citation.n}]: ${where}. <${citation.href}>` : `[^${citation.n}]: ${where}.`);

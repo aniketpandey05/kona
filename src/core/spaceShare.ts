@@ -16,7 +16,7 @@ import type { HighlightColor, Mark, SiteId } from './types';
  *
  * That turns out to cover most of how research actually moves between people.
  * You work a question for a day, send the space to whoever has to act on it,
- * and they open it with your evidence already gathered — then add a passage,
+ * and they open it with your evidence already gathered, then add a passage,
  * argue with a conclusion, and send it back. Nobody has to be online at the
  * same time, nothing leaves the two machines, and the write-up it produces is
  * checkable by a third person who has never installed anything.
@@ -37,7 +37,7 @@ export interface SharedSpace {
   exportedAt: number;
   /**
    * Whoever pressed Share, as a person id in `space.people`. It is how the
-   * other side can say who sent this back. Asserted and not verified — see
+   * other side can say who sent this back. Asserted and not verified, see
    * `core/people`.
    */
   by?: string;
@@ -83,7 +83,7 @@ export interface Adopted {
 const newId = (): string => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
 /**
- * Only the highlights this space holds — never the whole library. Sharing one
+ * Only the highlights this space holds, never the whole library. Sharing one
  * question's evidence should not hand over everything else you have read.
  */
 export function packSpace(space: Space, marks: readonly Mark[], me: Person | null = null): string {
@@ -157,7 +157,7 @@ export function readSharedSpace(text: string): IncomingSpace {
  * Fitting an incoming space into a library that already has its own ids.
  *
  * Two people who highlight the same sentence end up with different ids for it,
- * so highlights are matched on what they actually are — the passage, in the
+ * so highlights are matched on what they actually are, the passage, in the
  * conversation it came from. A match means the local copy is kept and the
  * incoming one is thrown away, because the note on it is the reader's own work
  * and should not be overwritten by a visitor. The one exception: if the local
@@ -456,7 +456,7 @@ function cleanMark(value: unknown): Mark | null {
   };
 }
 
-/** The context either side of a passage is what re-anchors it, so it is kept — as strings. */
+/** The context either side of a passage is what re-anchors it, so it is kept, as strings. */
 function cleanQuote(value: unknown): TextQuote | null {
   const raw = value as Partial<TextQuote> | null;
   if (!raw || typeof raw.exact !== 'string' || !raw.exact) return null;

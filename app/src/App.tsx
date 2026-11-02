@@ -47,7 +47,7 @@ const COLOURS = Object.keys(UI_COLORS) as HighlightColor[];
 
 /**
  * Captures from an app arrive with no link, and the fix is always the same
- * link — the one public share URL for the conversation they all came from.
+ * link, the one public share URL for the conversation they all came from.
  * Remembering the last one turns "paste it again" into one tap.
  */
 const LAST_LINK = 'kona:last-link';
@@ -128,7 +128,7 @@ function ScopeRows({
  *
  * On a desktop that is always, because a folder is a path. In a browser it is
  * desktop Chromium only, and everywhere else the menu offers the same file by
- * hand instead — which is the same engine and the same merge, two taps short
+ * hand instead, which is the same engine and the same merge, two taps short
  * of this.
  */
 function AutoSync({ sync, spaces }: { sync: FolderSyncControls; spaces: Space[] }) {
@@ -152,7 +152,7 @@ function AutoSync({ sync, spaces }: { sync: FolderSyncControls; spaces: Space[] 
     return (
       <>
         <p class="app-scope-why">
-          Kona writes one file into a folder your computer already keeps in sync — Drive,
+          Kona writes one file into a folder your computer already keeps in sync, Drive,
           Dropbox, iCloud, OneDrive, Syncthing. It makes no network request of its own. Which
           folder you pick decides who can read what is in it, so it asks first.
         </p>
@@ -194,7 +194,7 @@ function AutoSync({ sync, spaces }: { sync: FolderSyncControls; spaces: Space[] 
         <small>
           {shared
             ? 'only these spaces and the passages they cite go in the folder'
-            : 'for a folder only you see — change it to share one with people'}
+            : 'for a folder only you see, change it to share one with people'}
         </small>
       </button>
       {choosing && (
@@ -202,7 +202,7 @@ function AutoSync({ sync, spaces }: { sync: FolderSyncControls; spaces: Space[] 
       )}
       <button class="app-row-action" onClick={() => void sync.disconnect()}>
         Stop syncing {state.name}
-        <small>nothing is deleted — the file stays in the folder, as it is</small>
+        <small>nothing is deleted, the file stays in the folder, as it is</small>
       </button>
     </>
   );
@@ -318,7 +318,7 @@ export function App({
   // Searched before being filtered, and always against the same list. The
   // index is kept for as long as the array it was built from, so searching a
   // list rebuilt on every keystroke would rebuild the index on every keystroke
-  // too — which on a phone is the one place you would feel it.
+  // too, which on a phone is the one place you would feel it.
   const found = useMemo(
     () => (query.trim() ? searchLibrary(marks ?? [], query) : null),
     [marks, query],
@@ -493,7 +493,7 @@ export function App({
 
       {found && found.alsoMatched.length > 0 && (
         <p class="app-also">
-          Also matched {found.alsoMatched.join(' · ')} — words your own highlights keep
+          Also matched {found.alsoMatched.join(' · ')}, words your own highlights keep
           beside what you typed.
         </p>
       )}
@@ -727,7 +727,7 @@ export function App({
                   <small>
                     {shared
                       ? 'only these spaces and the passages they cite go in the file'
-                      : 'for a file only you see — change it to share with people'}
+                      : 'for a file only you see, change it to share with people'}
                   </small>
                 </button>
                 {sharing && (
@@ -817,7 +817,7 @@ export function App({
                 setMenuOpen(false);
                 setNotice(
                   identity?.signingKey
-                    ? 'Backed up, signing key included — keep it somewhere private.'
+                    ? 'Backed up, signing key included, keep it somewhere private.'
                     : 'Backed up.',
                 );
               }}
@@ -928,8 +928,8 @@ function Sheet({
 
         {/* The link is the whole of whether this can ever come back, so show the
             real one rather than a tidied host. A wrong link and a missing one
-            look identical once a site has swallowed it — Gemini answers a share
-            id it cannot resolve with its home page and says nothing — so it has
+            look identical once a site has swallowed it, Gemini answers a share
+            id it cannot resolve with its home page and says nothing, so it has
             to be readable, and fixable, without exporting the whole library. */}
         <div class="app-source app-source-missing">
           {mark.url ? (
@@ -1120,8 +1120,8 @@ function hostOf(url: string): string {
 }
 
 /**
- * Clipboard writes get refused often enough — a denied permission, an older
- * webview, a page that is not the foreground tab — that a button which quietly
+ * Clipboard writes get refused often enough, a denied permission, an older
+ * webview, a page that is not the foreground tab; that a button which quietly
  * does nothing is worse than no button. Try the modern call, fall back to a
  * selection copy, and say which happened rather than swallowing it.
  */

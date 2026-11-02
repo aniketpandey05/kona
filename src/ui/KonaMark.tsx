@@ -2,8 +2,8 @@ import type { JSX } from 'preact';
 
 /**
  * Kona's mark: a stag's head folded out of paper, on a page whose corner has
- * been turned up. Origami is the right register for this product — the whole
- * thing is about folding a page so you can come back to it — so the animal is
+ * been turned up. Origami is the right register for this product, the whole
+ * thing is about folding a page so you can come back to it, so the animal is
  * built from creases rather than drawn in outline.
  *
  * The PNGs in src/public/icon are rasterised from this same geometry, so a
@@ -12,11 +12,11 @@ import type { JSX } from 'preact';
 
 /**
  * The left half of the head, in a 0-100 box so the proportions stay readable;
- * the right half is mirrored from it. The facets tile — every edge is shared
- * with its neighbour — so a seam is drawn once rather than twice over itself.
+ * the right half is mirrored from it. The facets tile, every edge is shared
+ * with its neighbour, so a seam is drawn once rather than twice over itself.
  */
 const LEFT_FACETS = [
-  '38,46 50,42 50,66 34,62', // upper face — wide at the brow so the skull has shape
+  '38,46 50,42 50,66 34,62', // upper face, wide at the brow so the skull has shape
   '34,62 50,66 50,86 42,80', // lower face
   '42,80 50,86 50,99', // muzzle
   '36.6,52 16,51 14,58 34.6,61', // ear, out to the side so it never reads as more antler
@@ -39,7 +39,7 @@ const FACETS = [...LEFT_FACETS, ...LEFT_FACETS.map(mirror)];
 
 export function KonaMark({ size = 20 }: { size?: number }): JSX.Element {
   // Creases need pixels to live in. Below roughly 40px a stroke this fine either
-  // disappears or, inked enough to survive, closes the facets up — so the same
+  // disappears or, inked enough to survive, closes the facets up, so the same
   // shape is filled instead. Smaller again and the antlers go entirely.
   const outlined = size >= 40;
   const stag = size >= 20;

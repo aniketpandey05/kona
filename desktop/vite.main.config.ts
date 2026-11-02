@@ -11,7 +11,7 @@ const here = (path: string) => fileURLToPath(new URL(path, import.meta.url));
  * plain and well-trodden this way, and neither file is big enough for the
  * module format to be interesting. `.cjs` because the repo is `type: module`.
  *
- * Bundled rather than hand-written so these can import from `src/core` — the
+ * Bundled rather than hand-written so these can import from `src/core`, the
  * sync file name and the scope type come from the same place the extension
  * gets them, which is the point of having a core at all.
  */

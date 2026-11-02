@@ -180,7 +180,7 @@ describe('the write-up', () => {
     expect(text).toContain('Go in January, behind a verified backup.');
     expect(text).toContain('How long on 1.4TB?');
     // Every source gets a footnote carrying a link that lands on the passage.
-    expect(text).toContain('[^1]: example.com — A page. <https://example.com/page#:~:text=');
+    expect(text).toContain('[^1]: example.com, A page. <https://example.com/page#:~:text=');
   });
 
   // The thing that makes a space worth opening: you get a document out of it before
@@ -203,7 +203,7 @@ describe('the write-up', () => {
     expect(text).toContain('> But it is destructive');
     // Each passage still names where it came from and carries its footnote.
     expect(text).toContain('— example.com[^1]');
-    expect(text).toContain('[^2]: example.com — A page. <https://example.com/page#:~:text=');
+    expect(text).toContain('[^2]: example.com, A page. <https://example.com/page#:~:text=');
   });
 
   it('carries the note you wrote on a highlight into the passage', () => {
@@ -345,7 +345,7 @@ describe('a write-up more than one person worked on', () => {
     expect(out).toContain('## What we decided');
     expect(out).toContain('## What we concluded');
     expect(out).toContain('## What we kept');
-    expect(out).toContain('— Sam');
+    expect(out).toContain('(Sam)');
     expect(out).toContain('found by Priya');
   });
 
@@ -356,7 +356,7 @@ describe('a write-up more than one person worked on', () => {
     expect(memo.shared).toBe(false);
     expect(memo.lines[0]?.by).toBeUndefined();
     expect(memoMarkdown(memo)).toContain('## What I concluded');
-    expect(memoMarkdown(memo)).not.toContain('— Priya');
+    expect(memoMarkdown(memo)).not.toContain('(Priya)');
   });
 });
 

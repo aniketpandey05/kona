@@ -9,8 +9,8 @@ const PER_SEAT = 14;
 /**
  * The stand-in for Stripe Checkout, used when no payment link is configured so
  * the demo runs with no account and no keys. It follows the same steps a real
- * checkout does — line item, seat quantity, card, then a webhook that grants
- * the entitlement — and says plainly that nothing is charged.
+ * checkout does, line item, seat quantity, card, then a webhook that grants
+ * the entitlement, and says plainly that nothing is charged.
  */
 export function Checkout({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
   const [seats, setSeats] = useState(Math.max(1, activeSeats()));
@@ -23,7 +23,7 @@ export function Checkout({ onDone, onCancel }: { onDone: () => void; onCancel: (
     // The pause stands in for the round trip and the webhook that follows it.
     setTimeout(() => {
       grantTeam(seats);
-      log('checkout.completed', `checkout.session.completed — Team, ${seats} seats`);
+      log('checkout.completed', `checkout.session.completed, Team, ${seats} seats`);
       log('billing.entitlement_issued', `Entitlement issued for ${seats} seats, expires in 24h`);
       setState('done');
     }, 900);

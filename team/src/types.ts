@@ -28,7 +28,7 @@ export interface Comment {
 
 /**
  * A highlight as it appears in a shared workspace. Everything that makes a
- * highlight — the quote, the context, the link back — is the extension's
+ * highlight, the quote, the context, the link back, is the extension's
  * `Mark`, unchanged; sharing only adds who made it and where it was put.
  */
 export interface TeamMark extends Mark {
@@ -79,7 +79,7 @@ export interface Decision {
 /**
  * A shared space: the unit a team actually works in.
  *
- * With a `question` it is a piece of research — evidence gathered under
+ * With a `question` it is a piece of research, evidence gathered under
  * something the team is trying to settle, the things still unknown, and
  * eventually the decision that came out of it. Without one it is a shelf, like
  * a prompt library, where keeping the good ones together is the whole job.
@@ -109,7 +109,7 @@ export interface AuditEvent {
 /**
  * What the client is allowed to do. In the real product this arrives as a
  * short-lived signed token the client caches, so a billing outage never locks
- * a paying customer out of their own highlights — see docs/enterprise.md §6.
+ * a paying customer out of their own highlights, see docs/enterprise.md §6.
  */
 export interface Entitlement {
   plan: PlanId;

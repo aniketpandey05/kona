@@ -9,7 +9,7 @@
  * **What is signed, and what is deliberately not.** A contribution is signed
  * over the parts its author wrote: the words, who they are, and when. It is
  * *not* signed over which highlight it hangs off, because that is the one
- * thing the file does not carry intact — adopting a space rewrites every mark
+ * thing the file does not carry intact, adopting a space rewrites every mark
  * id onto the ids this copy already uses for the same passages, and a
  * signature over a rewritten id would break on every honest import.
  *

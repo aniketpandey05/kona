@@ -120,7 +120,7 @@ export const ADOPTION_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 /**
  * What to do with an incoming share. Kept apart from the component because the
- * interesting case — a link arriving on its own — is a decision, not a render.
+ * interesting case, a link arriving on its own, is a decision, not a render.
  */
 export type SharePlan =
   /** Nothing worth keeping arrived. */

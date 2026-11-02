@@ -3,7 +3,7 @@
  *
  * Deliberately a handful of verbs and no paths. The renderer cannot name a
  * file, so the worst a mistake in the UI can do is read or write the one file
- * in the folder the person chose — and `contextIsolation` means the page
+ * in the folder the person chose, and `contextIsolation` means the page
  * cannot reach past this to Node either.
  */
 

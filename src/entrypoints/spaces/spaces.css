@@ -1,6 +1,6 @@
 /* The same palette as the library, so the two pages feel like one product.
    The layout is not the same: the library is a list, and a space is a
-   document — one question with an argument under it. It is set like one. */
+   document, one question with an argument under it. It is set like one. */
 :root {
   --sp-bg: #f7f7f8;
   --sp-card: #ffffff;
@@ -731,7 +731,7 @@ a:focus-visible {
 
 /* ---- people ---- */
 
-/* An avatar is decorative — the name is always next to it — so it is hidden
+/* An avatar is decorative, the name is always next to it, so it is hidden
    from the accessibility tree and only has to be legible. 28% lightness is
    what keeps white initials above 5:1 at every hue. */
 .sp-av {

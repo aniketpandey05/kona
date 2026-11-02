@@ -1,10 +1,10 @@
 /**
  * Everything you have, in one file you can move.
  *
- * It is the way across that needs nothing arranged first — no folder, no sync
- * client, no second machine already running — which makes what it leaves out
+ * It is the way across that needs nothing arranged first, no folder, no sync
+ * client, no second machine already running, which makes what it leaves out
  * as important as what it holds. It used
- * to hold only highlights — so a backup restored on a new machine arrived with
+ * to hold only highlights, so a backup restored on a new machine arrived with
  * every passage you had ever kept and none of the questions you had been
  * asking, none of what you concluded, and none of the discussion. That is
  * silent loss of the part that took the most work, and the reason this file
@@ -13,7 +13,7 @@
  * It also carries who you are, signing key and all, which deserves saying out
  * loud: a backup is as private as everything in it, and this makes it as
  * private as your key. Kona keeps the key out of anything that goes to
- * somebody else — a shared space never contains it. A backup is the one file
+ * somebody else, a shared space never contains it. A backup is the one file
  * that is meant to come back to you, so the alternative is worse: restore
  * without it and you arrive as a stranger whose own past conclusions no
  * longer check out against the name on them.

@@ -56,7 +56,7 @@ export const diskFolders: FolderSource = {
     return (await bridge()?.savedFolder())?.name ?? null;
   },
 
-  // A path is a path. If one has been chosen, it can be written to — and if it
+  // A path is a path. If one has been chosen, it can be written to, and if it
   // cannot, because the drive is unplugged or the sync client is mid-flight,
   // the pass itself says so rather than this guessing in advance.
   async ready() {

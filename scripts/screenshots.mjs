@@ -2,7 +2,7 @@
  * Captures the store screenshots at exactly 1280×800.
  *
  * The Chrome Web Store takes 1280×800 or 640×400 and rejects anything else,
- * so these are captured at the size rather than resized afterwards — a
+ * so these are captured at the size rather than resized afterwards, a
  * screenshot scaled up to fit is obvious, and it is the first thing anyone
  * sees of the product.
  *
@@ -105,5 +105,5 @@ for (const [name, from] of PAD) {
 
 function report(name, out) {
   const size = existsSync(out) ? statSync(out).size : 0;
-  console.log(size ? `${name} — ${(size / 1024).toFixed(0)} kB` : `${name} — FAILED`);
+  console.log(size ? `${name}, ${(size / 1024).toFixed(0)} kB` : `${name}, FAILED`);
 }

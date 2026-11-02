@@ -92,8 +92,8 @@ export function buildIndex(marks: readonly Mark[]): Index {
 /**
  * Indexing a few thousand highlights takes long enough to feel it, and a
  * search box asks on every keystroke, so an index is kept for as long as the
- * list it was built from is alive. A new list — highlights added, deleted,
- * reloaded — is a new index, with no stale entry to invalidate.
+ * list it was built from is alive. A new list, highlights added, deleted,
+ * reloaded, is a new index, with no stale entry to invalidate.
  */
 const cached = new WeakMap<readonly Mark[], Index>();
 
@@ -149,8 +149,8 @@ function termScore(index: Index, term: string, doc: number): number {
 /**
  * Words that keep company with this one in your own library.
  *
- * Measured with the Dice coefficient — twice the passages holding both, over
- * the passages holding either — which asks the useful question: of the times I
+ * Measured with the Dice coefficient, twice the passages holding both, over
+ * the passages holding either, which asks the useful question: of the times I
  * see one of these words, how often is the other one there too. A word that is
  * everywhere is dropped before the counting starts, because something that
  * turns up beside everything is beside nothing.
@@ -288,7 +288,7 @@ function candidates(index: Index, query: QueryWord[], withMeaning: boolean): num
 /**
  * Ranks the highlights that answer every word of the query, best first.
  *
- * Every word has to be answered by something — an exact match, a prefix of
+ * Every word has to be answered by something, an exact match, a prefix of
  * what is still being typed, or, with `withMeaning`, a word the library puts
  * beside it. A highlight that only covers half of what you asked for is not a
  * worse answer, it is a different question, so it does not appear at all.

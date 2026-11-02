@@ -20,7 +20,7 @@ const TRAILING_QUOTES = /["'‘’“”«»]+$/;
 const TRAILING_ELLIPSIS = /\s*(?:\.\.\.|…)$/;
 
 /**
- * Tidies a passage that arrived from somewhere else — a phone's share sheet,
+ * Tidies a passage that arrived from somewhere else, a phone's share sheet,
  * most of all, where the text is rarely byte-identical to the page it came
  * from. It carries invisible characters, non-breaking spaces, the quotation
  * marks an app wrapped around the selection, and the ellipsis a truncating one

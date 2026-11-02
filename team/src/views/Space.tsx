@@ -76,7 +76,7 @@ export function Space({
     return (
       <Locked
         title="Shared spaces"
-        body="A space is one question a team is working on together — the evidence gathered under it, what is still unknown, and what was decided. It needs a shared workspace to live in."
+        body="A space is one question a team is working on together, the evidence gathered under it, what is still unknown, and what was decided. It needs a shared workspace to live in."
         onUpgrade={onUpgrade}
       />
     );
@@ -181,7 +181,7 @@ export function Space({
             </div>
             <p class="subtle">
               Every passage and every claim carries a link that lands on the exact sentence
-              it came from — so whoever reads this can check it without having Kona.
+              it came from, so whoever reads this can check it without having Kona.
             </p>
 
             <h3 class="memo-title">{memo.title}</h3>
@@ -243,7 +243,7 @@ export function Space({
             <ol class="memo-sources">
               {memo.citations.map((citation) => (
                 <li key={citation.n} id={`cite-${citation.n}`}>
-                  {siteLabel(citation.mark)} — {citation.mark.conversationTitle}.{' '}
+                  {siteLabel(citation.mark)}, {citation.mark.conversationTitle}.{' '}
                   <a href={citation.href} target="_blank" rel="noreferrer noopener">
                     the exact sentence
                   </a>
@@ -262,7 +262,7 @@ export function Space({
 
             {space.findings.length === 0 ? (
               <p class="subtle">
-                Nothing yet, which is fine — the write-up already has the highlights this
+                Nothing yet, which is fine, the write-up already has the highlights this
                 space holds. Add a conclusion when the team has one and it goes on top,
                 citing the highlights it rests on.
               </p>
@@ -532,7 +532,7 @@ export function Space({
           <>
             <p class="subtle">
               {spare.length} {spare.length === 1 ? 'highlight is' : 'highlights are'} in this
-              space without a conclusion resting on {spare.length === 1 ? 'it' : 'them'} yet —
+              space without a conclusion resting on {spare.length === 1 ? 'it' : 'them'} yet,
               which is fine, they are in the write-up either way.
             </p>
             {showSpare && (

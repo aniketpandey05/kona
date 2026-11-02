@@ -4,7 +4,7 @@ import { expect, it, vi } from 'vitest';
  * Safari does not ship the same extension APIs everywhere. There is no
  * right-click on an iPhone, so there is no `contextMenus` at all, and no
  * windows to bring forward either. The background script has to come up and
- * keep working without them — which is the one thing that cannot be tried from
+ * keep working without them, which is the one thing that cannot be tried from
  * a desktop, so it is tried here instead, against a browser missing both.
  */
 

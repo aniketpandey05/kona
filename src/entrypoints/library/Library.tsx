@@ -119,7 +119,7 @@ export function Library() {
 
   // Who found what, gathered from every space at once. A space you have never
   // handed to anyone credits only you, so there is one name and nothing worth
-  // filtering by — the chips appear when a second person does.
+  // filtering by, the chips appear when a second person does.
   const credits = useMemo(() => whoFound(spaces), [spaces]);
   const people = useMemo(() => {
     const seen = new Map<string, Person>();
@@ -196,7 +196,7 @@ export function Library() {
     if (spaces.length) parts.push(`${spaces.length} space${spaces.length === 1 ? '' : 's'}`);
     setMessage(
       identity?.signingKey
-        ? `Saved a backup of ${parts.join(' and ')}, and your signing key — keep it somewhere private.`
+        ? `Saved a backup of ${parts.join(' and ')}, and your signing key, keep it somewhere private.`
         : `Saved a backup of ${parts.join(' and ')}.`,
     );
   };
@@ -273,7 +273,7 @@ export function Library() {
                 <em>{word}</em>
               </span>
             ))}{' '}
-            — words your own highlights keep beside what you typed.
+           , words your own highlights keep beside what you typed.
           </p>
         )}
         {sites.length > 1 && (
@@ -379,8 +379,8 @@ export function Library() {
 
       {marks !== null && total === 0 && (
         <p class="lib-empty">
-          Nothing saved yet. Select some text anywhere you read — a paper, documentation,
-          a chat — and pick a colour. ChatGPT, Claude and Gemini work straight away; switch
+          Nothing saved yet. Select some text anywhere you read, a paper, documentation,
+          a chat, and pick a colour. ChatGPT, Claude and Gemini work straight away; switch
           on any other site from the Kona button in the toolbar.
         </p>
       )}
@@ -407,7 +407,7 @@ export function Library() {
                     {mark.note && <span class="lib-note">{mark.note}</span>}
                     {found.byMeaning.has(mark.id) && (
                       <span class="lib-why">
-                        Found by meaning — it uses none of your words
+                        Found by meaning; it uses none of your words
                       </span>
                     )}
                     {spacesHolding(spaces, mark.id).length > 0 && (
@@ -592,7 +592,7 @@ function spacesHolding(spaces: Space[], markId: string): Space[] {
  * Sync, as much of it as there is to say.
  *
  * Off, this is one more tool in the row. On, it is a line that says where it
- * is going and when it last went — which is all anybody wants from sync until
+ * is going and when it last went, which is all anybody wants from sync until
  * it stops working, and then it is the only thing they want.
  */
 /**
@@ -644,7 +644,7 @@ function ScopePanel({
  *
  * Open the file out of the folder your machine already syncs, and Kona takes
  * what is in it and hands back the version to put where you found it. Two
- * taps rather than none — and the same file the automatic side maintains, so
+ * taps rather than none, and the same file the automatic side maintains, so
  * a team is not split by somebody's choice of browser.
  */
 function ByHandSync({ spaces }: { spaces: Space[] }) {
@@ -719,8 +719,8 @@ function ByHandSync({ spaces }: { spaces: Space[] }) {
       {choosing && (
         <div class="lib-folder">
           <p class="lib-folder-why">
-            This browser has no folder picker — Firefox, Safari and Chrome on Android do not
-            offer one — so Kona cannot keep the folder in step by itself. Open the file from
+            This browser has no folder picker, Firefox, Safari and Chrome on Android do not
+            offer one, so Kona cannot keep the folder in step by itself. Open the file from
             it and Kona will hand you back the one to put where you found it.
           </p>
           <label class="lib-folder-space">
@@ -775,7 +775,7 @@ function FolderSync({ spaces }: { spaces: Space[] }) {
         {asking && (
           <div class="lib-folder">
             <p class="lib-folder-why">
-              Kona writes one file into a folder your computer already keeps in sync — Drive,
+              Kona writes one file into a folder your computer already keeps in sync, Drive,
               Dropbox, iCloud, OneDrive, Syncthing. It makes no network request of its own.
               Which folder you pick decides who can read what is in it, so it asks first.
             </p>
@@ -857,7 +857,7 @@ function FolderSync({ spaces }: { spaces: Space[] }) {
  *
  * The note is where a highlight stops being a quote and starts being yours,
  * and until now the only place to write one was the panel on the page it came
- * from — which is no use at all a week later, in the one view that holds
+ * from, which is no use at all a week later, in the one view that holds
  * everything. The phone could already do this; the library could not.
  */
 function EditMark({ mark, onClose }: { mark: Mark; onClose: (saved: boolean) => void }) {
@@ -869,7 +869,7 @@ function EditMark({ mark, onClose }: { mark: Mark; onClose: (saved: boolean) => 
     const written = note.trim();
     const next: Mark = { ...mark, updatedAt: Date.now() };
     // Deleted rather than set to undefined: these are optional, and a key
-    // holding nothing is not the same as a key that is not there — it would
+    // holding nothing is not the same as a key that is not there; it would
     // travel into a backup file and out the other side.
     if (written) next.note = written;
     else delete next.note;

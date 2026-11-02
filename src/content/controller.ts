@@ -96,7 +96,7 @@ export interface ViewState {
   /**
    * What the thing you are reading is called here. Kona started on AI chats
    * and now runs on anything, so the panel has to stop calling a blog post a
-   * chat — the adapter already knows which it is.
+   * chat, the adapter already knows which it is.
    */
   noun: 'chat' | 'page';
   dark: boolean;
@@ -180,7 +180,7 @@ export class KonaController {
     this.ctx.addEventListener(document, 'mouseup', () => this.ctx.setTimeout(this.captureSelection, 0));
     // A finger sends no mouseup worth waiting for. On a phone the selection is
     // dragged about by handles Safari draws itself, and all the page hears is
-    // selectionchange — so a selection that has stopped changing counts as a
+    // selectionchange, so a selection that has stopped changing counts as a
     // finished one too. A mouse still waits for its button to come up, so
     // nothing opens mid-drag where there is one.
     this.ctx.addEventListener(document, 'selectionchange', this.captureWhenSettled);
@@ -572,7 +572,7 @@ export class KonaController {
   /**
    * How much is kept on this site outside the conversation being looked at.
    * Only worth knowing when there is nothing here, so it is not counted
-   * otherwise — it reads every highlight there is.
+   * otherwise; it reads every highlight there is.
    */
   private async countElsewhere(conversationId: string): Promise<void> {
     if (this.marks.length > 0) {

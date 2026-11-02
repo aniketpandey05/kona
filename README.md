@@ -6,14 +6,14 @@ own computer and nothing is sent anywhere.
 
 The highlights you gather around one question become a **space**: the evidence, what you
 concluded from it, what you still do not know, and a write-up where every passage and
-every claim links back to the exact sentence behind it — checkable by someone who has
+every claim links back to the exact sentence behind it, checkable by someone who has
 never installed Kona. A space is a file you can hand to a colleague and take back with
 their work in it.
 
 There is also a small phone app that keeps text you share to it from any Android app.
 
-On Apple platforms Safari runs the extension itself — on iPhone and iPad as well as on a
-Mac — and that build is in `apple/`.
+On Apple platforms Safari runs the extension itself, on iPhone and iPad as well as on a
+Mac, and that build is in `apple/`.
 
 > **Status:** early prototype, not in the Chrome Web Store yet. Install it yourself with the steps below.
 
@@ -23,7 +23,7 @@ Mac — and that build is in `apple/`.
 
 **While you read**
 - Select text in any message on **ChatGPT**, **Claude** or **Gemini** and pick a colour.
-- Or right-click the selection and choose **Highlight with Kona** — handy on sites whose own selection popup covers ours.
+- Or right-click the selection and choose **Highlight with Kona**, handy on sites whose own selection popup covers ours.
 - Switch it on for **any other site** from the toolbar button: blogs, docs, Stack Overflow, GitHub.
 - Switch any site **off** from the same button, the chat sites included. Everything disappears on that site and selections are ignored, while your highlights stay saved and return when you switch it back on. "Forget" an added site to hand its permission back to Chrome as well.
 - Add a note to any highlight with the ✎ button, or by clicking highlighted text later. Highlights with notes get a dotted underline.
@@ -37,18 +37,18 @@ Mac — and that build is in `apple/`.
 **Afterwards**
 - `Alt+Shift+F` opens a search box over everything you've saved, right on the page you're reading. Picking a result from another chat opens it there.
 - One library holds every highlight from every site, labelled with where it came from, filterable by site and searchable by text, note, chat name or site.
-- Search finds the passage that says your thing in other words. Alongside the usual keyword ranking it measures which words keep turning up together in *your* highlights, and widens a query along those pairs — so a search for `downtime` turns up the one that only ever says `cutover`. It names the word that did it, and a library too small to have taught it anything claims nothing.
+- Search finds the passage that says your thing in other words. Alongside the usual keyword ranking it measures which words keep turning up together in *your* highlights, and widens a query along those pairs, so a search for `downtime` turns up the one that only ever says `cutover`. It names the word that did it, and a library too small to have taught it anything claims nothing.
 - Clicking a highlight opens that page and scrolls straight to it, re-using the tab if it's already open.
 - Every highlight has a copyable link that lands on the exact spot. It is an ordinary URL
   text fragment, so it works for people who don't have Kona, and on a phone.
-- Filter by tag as well as by site, and search covers tags too. Once you have spaces, filter by which space holds a highlight, and — in a space that has been round to a colleague and back — by who found it.
+- Filter by tag as well as by site, and search covers tags too. Once you have spaces, filter by which space holds a highlight, and, in a space that has been round to a colleague and back, by who found it.
 - Change a highlight's note and tags from the library, not only from the page it came from.
-- Put your name to your work and your computer makes a signing key. Everything you write in a shared space is signed with it, and a space coming back is checked against the key you already hold for that person — so nobody can write a reply in your name, and anything whose words moved after it was signed is flagged rather than hidden. It proves the sender is the same person as last time; it does not prove who they are in the world, which is what an account would add.
-- Export what you're looking at as Markdown — one section per chat, with your notes, tags and a link back — which drops straight into Obsidian or Notion.
-- Export a backup file of everything — highlights, spaces and your name — and import it on another computer.
-- Or point Kona at a folder your machine already syncs (Drive, Dropbox, iCloud, OneDrive, Syncthing) and it keeps the library there. Your own folder keeps your own computers in step; a folder you share with somebody keeps a space in step with them, with no file to send and their replies arriving on their own. Kona makes no network request to do it — it writes a file, and something you already trust carries it.
-- Which folder it is decides who can read what, so Kona asks before writing anything. A folder of your own carries everything. **A folder you share carries only the spaces you tick, and only the passages those spaces cite** — nothing else in your library is written there.
-- Keeping that folder in step from inside a browser needs a folder picker, which only desktop Chrome, Edge and Brave have. Everywhere else — Firefox, Safari, the phone app — **Sync through a file** does the same pass by hand: open the file out of the folder, and Kona hands back the one to put where you found it. Same file, same merge, same choice of what goes in it, so a team is not split by somebody's browser.
+- Put your name to your work and your computer makes a signing key. Everything you write in a shared space is signed with it, and a space coming back is checked against the key you already hold for that person, so nobody can write a reply in your name, and anything whose words moved after it was signed is flagged rather than hidden. It proves the sender is the same person as last time; it does not prove who they are in the world, which is what an account would add.
+- Export what you're looking at as Markdown, one section per chat, with your notes, tags and a link back, which drops straight into Obsidian or Notion.
+- Export a backup file of everything, highlights, spaces and your name, and import it on another computer.
+- Or point Kona at a folder your machine already syncs (Drive, Dropbox, iCloud, OneDrive, Syncthing) and it keeps the library there. Your own folder keeps your own computers in step; a folder you share with somebody keeps a space in step with them, with no file to send and their replies arriving on their own. Kona makes no network request to do it; it writes a file, and something you already trust carries it.
+- Which folder it is decides who can read what, so Kona asks before writing anything. A folder of your own carries everything. **A folder you share carries only the spaces you tick, and only the passages those spaces cite**; nothing else in your library is written there.
+- Keeping that folder in step from inside a browser needs a folder picker, which only desktop Chrome, Edge and Brave have. Everywhere else, Firefox, Safari, the phone app, **Sync through a file** does the same pass by hand: open the file out of the folder, and Kona hands back the one to put where you found it. Same file, same merge, same choice of what goes in it, so a team is not split by somebody's browser.
 - Or run **[the desktop app](#the-desktop-app)**, where a folder is a path rather than a permission. It keeps the folder in step on its own, on Windows, macOS and Linux alike, and it goes on doing it with the window shut.
 - Light, dark or match-your-system, chosen in the library and used everywhere, including the panel inside chats.
 
@@ -74,7 +74,7 @@ Kona is not in the Chrome Web Store or on addons.mozilla.org yet, so the builds 
 the [releases page](https://github.com/aniketpandey05/kona/releases). Pick the one for
 your browser, unzip it somewhere you will not delete by accident, and load it.
 
-**Chrome, Edge, Brave** — `kona-1.2.0-chrome.zip`
+**Chrome, Edge, Brave**, `kona-1.2.0-chrome.zip`
 
 1. Unzip it.
 2. Open `chrome://extensions` and turn on **Developer mode**, top right.
@@ -84,7 +84,7 @@ The folder has to stay where it is: Chrome loads it from that path on every star
 moving or deleting it uninstalls Kona. Developer mode is only needed because the
 extension is not in the store yet.
 
-**Firefox** — `kona-1.2.0-firefox.zip`
+**Firefox**, `kona-1.2.0-firefox.zip`
 
 1. Open `about:debugging#/runtime/this-firefox`.
 2. Click **Load Temporary Add-on** and choose the `manifest.json` inside the unzipped
@@ -93,14 +93,14 @@ extension is not in the store yet.
 Firefox drops temporary add-ons when it quits, so this needs doing again each session
 until the add-on is signed.
 
-**Android** — nothing to download. Chrome on Android has no extensions, so Kona is an
+**Android**; nothing to download. Chrome on Android has no extensions, so Kona is an
 installable web app: open **<https://aniketpandey05.github.io/kona/app/>** and use
 Chrome's *Add to Home screen*. [More about the phone app](#on-a-phone-android).
 
-**iPhone, iPad, Mac** — not distributed yet. Safari extensions have to ship inside a
+**iPhone, iPad, Mac**, not distributed yet. Safari extensions have to ship inside a
 signed app built on a Mac; [`apple/README.md`](apple/README.md) covers what that takes.
 
-**Windows, macOS, Linux** — the desktop app is not distributed yet either. There are no
+**Windows, macOS, Linux**, the desktop app is not distributed yet either. There are no
 signed installers, and an unsigned one is worse than none: Windows SmartScreen warns and
 macOS Gatekeeper refuses. [What it does](#the-desktop-app).
 
@@ -115,7 +115,7 @@ will ask you to allow it.
 Chrome on Android has no extensions, and Google has not said it ever will. So the phone
 version is a small installable web app instead of an extension, in `app/`.
 
-Select text anywhere on the phone — a browser, Reddit, a PDF reader — tap **Share**, pick
+Select text anywhere on the phone, a browser, Reddit, a PDF reader, tap **Share**, pick
 **Kona**, and the passage is kept with its page and title. Give it a colour, a note and
 tags, filter by either, search everything later, and **Open original** takes you back to the exact sentence
 using a URL text fragment, which every modern browser understands without anything
@@ -140,32 +140,32 @@ own window, its own entry in Settings. **Sharing only appears once it is install
 is the step people miss.
 
 Text shared from an app rather than a browser usually arrives without a link, because
-there is nothing to link to — the conversation lives inside the app. Both ChatGPT and
-Gemini can mint a public link for a whole conversation from their own share menu — share
+there is nothing to link to, the conversation lives inside the app. Both ChatGPT and
+Gemini can mint a public link for a whole conversation from their own share menu, share
 that link to Kona as well, and it offers to attach itself to everything kept from that
 conversation at once.
 
 To hand it to someone as a file instead, [Bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap)
 wraps the same site in an APK they can download and sideload. The Play Store takes that
-APK too, for a one-off $25 developer account — though new personal accounts have to run a
+APK too, for a one-off $25 developer account, though new personal accounts have to run a
 closed test with 12 testers for 14 days before they are allowed to publish.
 
 It keeps its own highlights, separate from the desktop ones; nothing syncs between them.
 The backup file is the same format in both, so you can carry highlights across by hand.
 This is the Android path and only that: Safari has never let a web app register as a
-share target, so an iPhone cannot be shared to this way — and does not need to be,
+share target, so an iPhone cannot be shared to this way, and does not need to be,
 because Safari has real extensions.
 
 ## On an iPhone, iPad or Mac (Safari)
 
 Phones are the other way round from what you would expect. Chrome on Android has no
 extensions and Google has not said it ever will; Safari has had them on iPhone and iPad
-since iOS 15. So the Apple version is not a web app at all — it is this extension, built
+since iOS 15. So the Apple version is not a web app at all; it is this extension, built
 from the same source, highlighting inside the page on a phone the way it does on a
 desktop.
 
 ```bash
-npm run build:safari   # .output/safari-mv3 — builds on any OS
+npm run build:safari   # .output/safari-mv3, builds on any OS
 apple/package.sh       # wraps it in the app Apple requires; needs a Mac with Xcode
 ```
 
@@ -195,13 +195,13 @@ are on both my machines without my thinking about it*.
 
 This is. Closing the window hides it to the tray instead of quitting, and the renderer
 keeps running while it is hidden, so the folder stays in step while you are doing
-something else. Start it with `--hidden` — which is what a launch-at-login entry should
-do — and it syncs without ever showing a window at all.
+something else. Start it with `--hidden`, which is what a launch-at-login entry should
+do, and it syncs without ever showing a window at all.
 
 The other half is that a folder here is a **path**, not a handle behind a permission.
 There is no picker to be missing, so Firefox and Safari are no different from Chrome, and
 nothing has to be granted again after a restart. The same engine, the same merge and the
-same choice of what the folder carries as everywhere else — `src/core` is shared, and the
+same choice of what the folder carries as everywhere else, `src/core` is shared, and the
 window renders the same UI as the phone app.
 
 What it is not:
@@ -217,7 +217,7 @@ What it is not:
 
 `node scripts/desktop-check.mjs` launches the real app against a real folder with no
 window shown, takes the sync file away, and checks it comes back with the highlights in
-it — the claim that only running the thing can check.
+it, the claim that only running the thing can check.
 
 ## Spaces
 
@@ -225,8 +225,8 @@ The library keeps everything you ever marked, newest first. A **space** is the o
 you need: one question, the handful of highlights that bear on it, what you concluded from
 them, and what you still do not know.
 
-Open **Spaces** from the library toolbar. Make one for whatever you are working out — a
-migration, a literature review, a decision somebody will ask you to justify — then gather
+Open **Spaces** from the library toolbar. Make one for whatever you are working out, a
+migration, a literature review, a decision somebody will ask you to justify, then gather
 the highlights that bear on it from anywhere in your library.
 
 That is enough. Three passages in a space and **Write it up** already gives you a
@@ -246,7 +246,7 @@ sentence, so whoever reads it can check any claim in one click without having Ko
 it as Markdown or save it as a `.md` file.
 
 Take a highlight back out of a space and any finding resting on it says so rather than
-quietly standing on less — the claim is marked as short a source, in the space and in the
+quietly standing on less, the claim is marked as short a source, in the space and in the
 write-up both. A highlight deleted from the library does the same. Deleting a space leaves
 every highlight where it was.
 
@@ -263,7 +263,7 @@ Fitting an arriving space into a library that has its own ids is the fiddly part
 is handled: highlights are matched on the passage and the conversation it came from, not
 on an id neither side agreed, so the same sentence does not arrive twice. Your own notes
 are never overwritten by a visitor's. A file from somebody else is rebuilt field by field
-rather than trusted — a claim may only cite highlights that came in the same file, and a
+rather than trusted, a claim may only cite highlights that came in the same file, and a
 highlight with an address no link can be built from is dropped.
 
 Two people cannot be in one space at the same moment this way. That is the part that
@@ -271,11 +271,11 @@ needs a server.
 
 ## The paid tier, as a demo
 
-Everything above is free and stays free — spaces and sharing one included. The planned
+Everything above is free and stays free, spaces and sharing one included. The planned
 paid product is the same spaces *live*: everyone in one at once, instead of passing a
 file around. That part needs a server, and it is the part that is not built.
 
-`team/` is a working demo of it — not a product, and not connected to anything. It runs
+`team/` is a working demo of it, not a product, and not connected to anything. It runs
 the same `src/core` the extension does, over an invented company's highlights, and it
 exists so the difference between free and paid can be seen rather than described.
 
@@ -290,7 +290,7 @@ with the whole workspace in them.
 
 What a team works in is a **space**: one question, the evidence gathered under it, what
 is still unknown, and the decision that came out. It writes itself up as a memo where
-every claim cites the exact sentence it came from — and those citations work for someone
+every claim cites the exact sentence it came from, and those citations work for someone
 who has never installed Kona. A space with no question is just a shelf, like a prompt
 library, which is the same object with nothing to settle.
 
@@ -299,7 +299,7 @@ and that nothing in it asks you for a card. `src/core/plans.ts` is the copy of r
 what Kona costs; the landing page mirrors it.
 
 There is also an admin page showing the entitlement token the client would be caching,
-because that is the part of billing worth getting right — a Stripe outage must never lock
+because that is the part of billing worth getting right, a Stripe outage must never lock
 a paying customer out of their own highlights.
 
 Checkout is a local stand-in by default, so the demo runs with no account and no keys, and
@@ -325,7 +325,7 @@ The first two are also listed along the bottom of the panel, and a welcome page 
 
 ## Privacy
 
-Everything is stored in your browser, and the extension makes no network requests of any kind. It asks for access to the three chat sites, plus whichever sites you switch on yourself — nothing else. Your backup file is the only copy that leaves the browser, and only when you export one.
+Everything is stored in your browser, and the extension makes no network requests of any kind. It asks for access to the three chat sites, plus whichever sites you switch on yourself; nothing else. Your backup file is the only copy that leaves the browser, and only when you export one.
 
 ## Development
 
@@ -349,7 +349,7 @@ npm run preview:web   # serves the whole thing on one port, as it will be publis
 ```
 
 `build:web` clears `.output/site` once and then runs the three in order. The individual
-builds do not clear it, because they share that directory — a `build:site` that emptied it
+builds do not clear it, because they share that directory, a `build:site` that emptied it
 would take `/app/` and `/team/` with it, and nothing would say so until a link 404ed.
 
 That same bundle is what `vercel.json` deploys, so the site can be served from Vercel and
@@ -358,12 +358,12 @@ during the build, since the site does not need it and it is 150MB of nothing.
 
 Use `preview:web` rather than the individual dev servers whenever you want to click
 between the three. Each `dev:` server only knows about its own folder, so a link to
-`/team/` from the landing page's dev server falls back to the landing page itself — which
+`/team/` from the landing page's dev server falls back to the landing page itself, which
 looks exactly like a broken demo and is not one.
 
 | Piece | Where |
 |---|---|
-| Site-specific markup — the only part that should break when a site changes | `src/adapters/` |
+| Site-specific markup, the only part that should break when a site changes | `src/adapters/` |
 | Which hostnames count as the same site | `src/core/enabledSites.ts` |
 | Flattening a message's text and mapping offsets to DOM ranges | `src/core/textIndex.ts` |
 | Storing a highlight as quote + surrounding context, and finding it again | `src/core/quote.ts` |
@@ -372,10 +372,10 @@ looks exactly like a broken demo and is not one.
 | Panel order, search, backups, deep links | `src/core/order.ts`, `search.ts`, `backup.ts`, `link.ts` |
 | A question, its evidence, and the write-up that comes out | `src/core/spaces.ts`, `memo.ts` |
 | Handing a space to someone, and fitting one that arrives into your library | `src/core/spaceShare.ts` |
-| What Kona costs — the copy the extension and the site both use | `src/core/plans.ts` |
-| The Android web app — shares `src/core` with the extension | `app/` |
-| The desktop app — the same UI, with a folder that is a path | `desktop/` |
-| The Team demo — the paid tier, on the same core | `team/` |
+| What Kona costs, the copy the extension and the site both use | `src/core/plans.ts` |
+| The Android web app, shares `src/core` with the extension | `app/` |
+| The desktop app, the same UI, with a folder that is a path | `desktop/` |
+| The Team demo, the paid tier, on the same core | `team/` |
 | The landing page, and the root of the published site | `site/` |
 | Wrapping the Safari build in the app Apple requires around it | `apple/` |
 
@@ -388,7 +388,7 @@ rest is build tooling.
 
 ## Fixing a site that broke
 
-When a site changes its layout, the panel shows a warning. The fix is usually a selector change in that site's adapter, for example `src/adapters/chatgpt.ts`. Each adapter answers the same few questions — where the messages are, which are yours, where a message's text lives, and whether a reply is still being written — so nothing outside that file should need touching.
+When a site changes its layout, the panel shows a warning. The fix is usually a selector change in that site's adapter, for example `src/adapters/chatgpt.ts`. Each adapter answers the same few questions, where the messages are, which are yours, where a message's text lives, and whether a reply is still being written, so nothing outside that file should need touching.
 
 ## Releasing
 

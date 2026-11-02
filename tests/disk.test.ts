@@ -83,7 +83,7 @@ describe('a folder that is a real folder', () => {
     await folder.write('two');
     await folder.write('three');
     // The file is written beside its destination and renamed into place, so a
-    // sync client watching the folder never sees a half-written one — and the
+    // sync client watching the folder never sees a half-written one, and the
     // only thing it is ever asked to upload is the file itself.
     expect(await readdir(dir)).toEqual([SYNC_FILE]);
     expect(await folder.read()).toBe('three');

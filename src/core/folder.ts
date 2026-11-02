@@ -2,7 +2,7 @@
  * The folder itself: picking one, remembering it, reading and writing the file.
  *
  * `sync.ts` holds the part worth testing and knows nothing about browsers.
- * This is the part that cannot be tested without one — a directory the person
+ * This is the part that cannot be tested without one, a directory the person
  * chose, a permission they granted, and a handle that has to survive the page
  * being closed.
  *
@@ -81,7 +81,7 @@ export async function forgetFolder(): Promise<void> {
 }
 
 /**
- * What this folder carries. Everything, unless somebody has said otherwise —
+ * What this folder carries. Everything, unless somebody has said otherwise,
  * but a folder is only ever created through the picker, and the picker asks.
  */
 export async function savedScope(): Promise<Scope> {
@@ -115,7 +115,7 @@ type Permissible = FileSystemDirectoryHandle & {
 
 /**
  * Whether we may still write here. A handle outlives the permission that came
- * with it, so this is asked every time rather than assumed — and asking again
+ * with it, so this is asked every time rather than assumed, and asking again
  * needs a click, which is why `ask` is only true when there has been one.
  */
 async function allowed(handle: FileSystemDirectoryHandle, ask: boolean): Promise<boolean> {

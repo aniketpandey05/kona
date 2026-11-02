@@ -41,7 +41,7 @@ describe('the index', () => {
 
   it('keeps a spelling worth showing a person, not the stem', () => {
     const index = buildIndex([mark('1', 'One migration, then the other migrations')]);
-    // The plain form of the two that were actually written — never `migrat`.
+    // The plain form of the two that were actually written, never `migrat`.
     expect(index.surface.get(stem('migrations'))).toBe('migration');
   });
 

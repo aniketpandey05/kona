@@ -193,7 +193,7 @@ export function Admin({
             disabled={!writable}
             onClick={() => {
               markPastDue();
-              log('billing.payment_failed', 'invoice.payment_failed — 14-day grace started');
+              log('billing.payment_failed', 'invoice.payment_failed, 14-day grace started');
             }}
           >
             Simulate a failed payment

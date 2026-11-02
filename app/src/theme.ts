@@ -2,7 +2,7 @@ import type { Theme } from '../../src/core/theme';
 
 /**
  * The same three-way choice the extension's library offers, stored the same
- * way the app stores everything else — on this device. The extension keeps its
+ * way the app stores everything else, on this device. The extension keeps its
  * preference in extension storage, which a web app cannot read, so the two
  * are set independently.
  */

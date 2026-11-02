@@ -13,7 +13,7 @@
 
 /**
  * A word starts with a letter or a digit and may carry the punctuation that
- * programmers write inside words — `pg_upgrade`, `sub-processor`, `c++`,
+ * programmers write inside words, `pg_upgrade`, `sub-processor`, `c++`,
  * `3.11`. The trailing run is then trimmed, because the same characters are
  * usually just sentence punctuation.
  */
@@ -65,14 +65,14 @@ export function words(text: string): string[] {
  * These are *not* dropped from the search itself: a search for "to be or not
  * to be" should still work, and the ranking already discounts a word that
  * turns up everywhere. They are dropped only where the library works out which
- * words belong together, which is the one place they do damage — "the" next to
+ * words belong together, which is the one place they do damage, "the" next to
  * "database" would look like a discovery.
  *
  * The first group is the ordinary machinery of a sentence. The second is
  * vaguer and worth saying out loud: common verbs and placeholder nouns, which
  * a small library will happily correlate with anything. "Plan the cutover to
  * keep the downtime down" is enough for it to decide that `keep` means
- * `downtime`, and it is not wrong about the arithmetic — it is wrong that the
+ * `downtime`, and it is not wrong about the arithmetic; it is wrong that the
  * word is worth offering anyone. Being over-cautious here is cheap, because a
  * word on this list can still be searched for, and still matches exactly. All
  * it can never do is widen somebody else's search.
@@ -148,7 +148,7 @@ function endsDoubleConsonant(word: string): boolean {
   return last > 0 && word[last] === word[last - 1] && !isVowel(word, last);
 }
 
-/** Consonant, vowel, consonant — and not the consonants that behave like vowels. */
+/** Consonant, vowel, consonant, and not the consonants that behave like vowels. */
 function endsCvc(word: string): boolean {
   const last = word.length - 1;
   if (last < 2) return false;
@@ -163,7 +163,7 @@ function endsCvc(word: string): boolean {
 /**
  * `happy` and `happiness` have to meet in the middle, and they meet at `happi`.
  * Run before the suffix lists, because several of them are spelled for a word
- * this has already been through — `-ently` reaches `-entli` by this route.
+ * this has already been through, `-ently` reaches `-entli` by this route.
  */
 function yToI(word: string): string {
   if (word.length > 2 && word.endsWith('y') && hasVowel(word.slice(0, -1))) {
@@ -203,7 +203,7 @@ const ENDINGS = [
  *
  * This is Porter's algorithm, trimmed: the steps that earn their keep on the
  * kind of text people highlight, in the order he put them. The output is not
- * a word and is never shown to anyone — `relates` becomes `relat` — which is
+ * a word and is never shown to anyone, `relates` becomes `relat`, which is
  * why the index keeps the spelling it actually saw alongside the stem.
  */
 export function stem(word: string): string {
@@ -219,8 +219,8 @@ export function stem(word: string): string {
 }
 
 /**
- * Indexing a library stems the same words over and over — a few thousand
- * highlights are a hundred thousand words and a few thousand distinct ones —
+ * Indexing a library stems the same words over and over, a few thousand
+ * highlights are a hundred thousand words and a few thousand distinct ones,
  * and this is most of the cost of building an index, so it is worth keeping.
  */
 const STEMMED = new Map<string, string>();

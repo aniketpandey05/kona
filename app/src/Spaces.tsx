@@ -36,8 +36,8 @@ import { loadSigningKey, removeSpace, saveSpace } from './storage';
 /**
  * Spaces, on a phone.
  *
- * The same model as the extension — the question, the passages that bear on
- * it, what was concluded, and the write-up that falls out — on a screen four
+ * The same model as the extension, the question, the passages that bear on
+ * it, what was concluded, and the write-up that falls out, on a screen four
  * inches wide. What changes is not what a space is but how much of it you see
  * at once: one section at a time, and the thread under a passage stays shut
  * until it is asked for.
@@ -193,7 +193,7 @@ export function SpacesList({
         >
           <input
             type="text"
-            placeholder="Name it — “Postgres 17 upgrade”"
+            placeholder="Name it, “Postgres 17 upgrade”"
             value={name}
             autofocus
             onInput={(event) => setName((event.currentTarget as HTMLInputElement).value)}
@@ -321,7 +321,7 @@ export function SpaceView({
           <p>{space.decision.body}</p>
           {shared && space.decision.by && (
             <p class="app-by">
-              — {nameIn(space.people, space.decision.by)}
+             , {nameIn(space.people, space.decision.by)}
               <Proven by={space.decision.by} checked={checked} />
               <Broken id={DECISION} checked={checked} />
             </p>
@@ -363,7 +363,7 @@ export function SpaceView({
             <p>{finding.claim}</p>
             {shared && finding.by && (
               <p class="app-by">
-                — {nameIn(space.people, finding.by)}
+               , {nameIn(space.people, finding.by)}
                 <Proven by={finding.by} checked={checked} />
                 <Broken id={finding.id} checked={checked} />
               </p>
@@ -472,7 +472,7 @@ export function SpaceView({
               onClick={() => {
                 void navigator.clipboard?.writeText(memoMarkdown(memo)).then(
                   () => say('Write-up copied.'),
-                  () => say('Could not copy — it is on screen to select.'),
+                  () => say('Could not copy; it is on screen to select.'),
                 );
               }}
             >
@@ -675,7 +675,7 @@ function Picker({ space, marks, me }: { space: Space; marks: Mark[]; me: Person 
       />
       {found.alsoMatched.length > 0 && (
         <p class="app-also">
-          Also matched {found.alsoMatched.join(' · ')} — words your own highlights keep beside
+          Also matched {found.alsoMatched.join(' · ')}, words your own highlights keep beside
           what you typed.
         </p>
       )}

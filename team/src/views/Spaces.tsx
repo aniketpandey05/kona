@@ -17,7 +17,7 @@ export function Spaces({
     return (
       <Locked
         title="Shared spaces"
-        body="A space is where a team works on one question together — the evidence under it, what is still unknown, and the decision that came out. On your own there is nobody to share one with."
+        body="A space is where a team works on one question together, the evidence under it, what is still unknown, and the decision that came out. On your own there is nobody to share one with."
         onUpgrade={onUpgrade}
       />
     );
@@ -92,7 +92,7 @@ export function Spaces({
       </div>
 
       <p class="subtle footnote">
-        The point of a space is that it can be unfinished. A folder is write-only — you put
+        The point of a space is that it can be unfinished. A folder is write-only; you put
         something in and never go back. A question with two things still unknown is a reason
         to return, and the thing a team actually shares.
       </p>

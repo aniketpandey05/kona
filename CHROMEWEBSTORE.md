@@ -1,4 +1,4 @@
-# Chrome Web Store Listing — Kona
+# Chrome Web Store listing for Kona
 
 > Last Updated: 2026-10-23 · Version 1.1.0
 
@@ -8,18 +8,18 @@ submission time. Exclude this file from the uploaded ZIP.
 ## Store Listing
 
 **Extension Name**
-Kona — highlight and come back
+Kona, highlight and come back
 
 **Short Description** (132 max)
-Highlight anything you read — pages, docs, AI chats — keep it with your notes and jump
+Highlight anything you read, pages, docs, AI chats, keep it with your notes and jump
 back to the exact spot.
 
 **Detailed Description**
 
 Kona lets you highlight what matters as you read and takes you back to it later.
 
-Switch Kona on for any site — a paper, documentation, Stack Overflow, a blog you keep
-coming back to — select some text and pick a colour. It works inside a ChatGPT, Claude or
+Switch Kona on for any site, a paper, documentation, Stack Overflow, a blog you keep
+coming back to, select some text and pick a colour. It works inside a ChatGPT, Claude or
 Gemini conversation too, which is the hard case. Add a note to any highlight, tag it, and
 it joins one searchable library covering everything you have ever marked.
 
@@ -30,19 +30,19 @@ it even if the original is deleted.
 
 Search finds the passage that says your thing in other words. Alongside ordinary keyword
 ranking, Kona measures which words keep turning up together in your own highlights and
-widens a search along those pairs — so looking for "downtime" can turn up the passage that
+widens a search along those pairs, so looking for "downtime" can turn up the passage that
 only ever says "cutover". It tells you which word did that. Nothing is sent anywhere to
 work it out, and a library too small to have taught it anything claims nothing.
 
 When a handful of highlights turn out to be about one question, put them in a space. A
 space holds the question, the passages that bear on it, what you concluded from them and
-what you still do not know — and writes it up for you, with every claim citing the exact
+what you still do not know, and writes it up for you, with every claim citing the exact
 sentence it rests on.
 
 A space is also a file. Send it to somebody and they get your question, your evidence and
 your conclusions, with a link under each that lands on the exact sentence even without
 Kona installed. They can reply to a passage where the passage is, conclude something of
-their own, and send it back — and it merges into the space you already have rather than
+their own, and send it back, and it merges into the space you already have rather than
 arriving beside it. Everything each person writes is signed with a key made on their own
 computer, so a space coming back is provably from the same person, and anything whose
 words moved after it was signed is flagged rather than hidden.
@@ -59,12 +59,12 @@ Everything is stored on your own computer. Kona makes no network requests of any
 there is no account, no server, and no analytics. It can only see the three chat sites plus
 whichever sites you switch on yourself, and you can switch any of them off again.
 
-Export your highlights as Markdown for Obsidian or Notion, or as a backup file — highlights,
-spaces and all — that you can move to another computer. Or point Kona at a folder your
+Export your highlights as Markdown for Obsidian or Notion, or as a backup file, highlights,
+spaces and all; that you can move to another computer. Or point Kona at a folder your
 machine already keeps in sync and it will keep the library there: your own folder keeps
 your own computers in step, and a folder you share with somebody keeps a space in step
 with them. A shared folder only ever carries the spaces you tick and the passages they
-cite — nothing else in your library is written to it. On browsers without a folder
+cite; nothing else in your library is written to it. On browsers without a folder
 picker the same file can be opened and put back by hand. This still makes no network
 request: Kona writes a file, and the sync client you already use carries it.
 
@@ -76,7 +76,7 @@ Productivity
 **Single Purpose**
 Highlights text on web pages and in AI chats, saves it with the user's notes, and navigates
 back to the highlighted passage. Spaces, write-ups and sharing are all views over those
-same saved highlights — organising and citing what the user has already marked, not a
+same saved highlights, organising and citing what the user has already marked, not a
 second feature.
 
 **Primary Language**
@@ -99,13 +99,13 @@ All five are exactly 1280×800, which is one of the two sizes the store accepts;
 else is rejected. They show the product in use rather than the popup, which is what the
 review team wants to see, and between them they cover a highlight on an ordinary page,
 the panel inside a chat, the library, the spaces list, and a space two people have worked
-in — with the decision signed and checked.
+in, with the decision signed and checked.
 
 `node scripts/screenshots.mjs` regenerates them against a running harness
 (`npm run dev:harness`). Three are captured straight from the page. The other two show
 the product mid-interaction, which a headless run cannot stage, so they are taken by
 hand as `.jpg` and the script only centres them on a 1280×800 background at their own
-scale — stretching an 800-wide capture to 1280 is the first thing anyone would notice.
+scale, stretching an 800-wide capture to 1280 is the first thing anyone would notice.
 The two `.jpg` files are kept as the sources for that step.
 
 ## Permissions Justification
@@ -150,7 +150,7 @@ Data-use disclosures to tick in the dashboard:
 | Collects location | No |
 | Collects web history | No |
 | Collects user activity | No |
-| Collects website content | **No** — page text is read in the page and saved only on the user's own device. Nothing is transmitted. |
+| Collects website content | **No**, page text is read in the page and saved only on the user's own device. Nothing is transmitted. |
 
 Three certifications to accept: data is not sold to third parties; data is not used for any
 purpose unrelated to the single purpose above; data is not used to determine
@@ -169,7 +169,7 @@ creditworthiness or for lending.
 - [ ] $5 one-off developer registration paid
 - [ ] ZIP uploaded from `.output/kona-1.2.0-chrome.zip` (`npm run zip`)
 
-The ZIP produced by `npm run zip` contains only the built extension — no `.git`, no
+The ZIP produced by `npm run zip` contains only the built extension, no `.git`, no
 `node_modules`, no source, and not this file.
 
 ## Version History

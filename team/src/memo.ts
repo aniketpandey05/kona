@@ -5,7 +5,7 @@ import type { Space, TeamMark } from './types';
 /**
  * A space, written out as something you could send someone.
  *
- * It works from the first highlight, the same way the free extension does —
+ * It works from the first highlight, the same way the free extension does,
  * gather three passages and you have a document, and writing down what the
  * team concluded puts it on top with its sources cited. Neither half is the
  * price of the other. (The paid tier doing less than the free one is a bad
@@ -124,7 +124,7 @@ export function memoMarkdown(memo: Memo): string {
   if (memo.citations.length > 0) {
     out.push('## Sources', '');
     for (const citation of memo.citations) {
-      const where = `${siteLabel(citation.mark)} — ${citation.mark.conversationTitle}`;
+      const where = `${siteLabel(citation.mark)}, ${citation.mark.conversationTitle}`;
       out.push(`[^${citation.n}]: ${where}. <${citation.href}>`);
     }
     out.push('');

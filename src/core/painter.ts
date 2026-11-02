@@ -1,7 +1,7 @@
 import type { HighlightColor } from './types';
 
 /**
- * For painting over text, where the words underneath have to stay readable —
+ * For painting over text, where the words underneath have to stay readable,
  * hence the transparency.
  */
 export const HIGHLIGHT_COLORS: Record<HighlightColor, string> = {

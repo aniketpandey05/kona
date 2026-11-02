@@ -3,7 +3,7 @@
  *
  * This is the whole reason the desktop app exists. In a browser a folder is a
  * handle behind a permission that expires, and only Chromium desktop will even
- * offer one — which is why Firefox, Safari and the phone are stuck doing the
+ * offer one, which is why Firefox, Safari and the phone are stuck doing the
  * round trip by hand. Here it is a path. There is no picker to be missing, no
  * permission to lapse, and nothing to re-grant after a restart, so the same
  * sync engine that runs in the extension runs on every operating system
@@ -21,7 +21,7 @@ import { SYNC_FILE, type Folder } from '../../src/core/sync';
  * Writing without ever being half-written.
  *
  * The point of this folder is that a sync client is watching it, and a sync
- * client that reads the file mid-write uploads a truncated one — which the
+ * client that reads the file mid-write uploads a truncated one, which the
  * other side then refuses, and the refusal looks like corruption rather than
  * timing. Writing beside it and renaming into place means the file is only
  * ever the old one or the new one. Rename replaces an existing file on
@@ -50,8 +50,8 @@ export function folderAt(directory: string): Folder {
         return await readFile(file, 'utf8');
       } catch {
         // Not there is the ordinary first state of a folder nobody has put a
-        // space in yet, and a folder that has gone away — an unplugged drive,
-        // a sync client still catching up — is not a reason to lose anything
+        // space in yet, and a folder that has gone away, an unplugged drive,
+        // a sync client still catching up, is not a reason to lose anything
         // here. Either way there is nothing to take.
         return null;
       }

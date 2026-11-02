@@ -4,7 +4,7 @@
  * Keyword search misses the passage that says your thing in other words.
  * Meaning-based search drifts off the thing you actually typed. Running both
  * and fusing the two orderings keeps an exact match at the top while still
- * surfacing the passage that uses none of your words — which is the only
+ * surfacing the passage that uses none of your words, which is the only
  * reason to have a search here rather than Ctrl-F.
  *
  * Both halves are in `retrieve.ts`, along with the honest account of where the
@@ -19,7 +19,7 @@ import type { Mark } from './types';
  * so being near the top of either list counts for a lot and being halfway down
  * both counts for little. 60 is the constant the original paper settled on.
  *
- * It fuses *positions*, not scores, which is the point — the two halves have no
+ * It fuses *positions*, not scores, which is the point, the two halves have no
  * common unit, and inventing one would be arithmetic dressed as judgement.
  */
 const RRF_K = 60;
@@ -48,7 +48,7 @@ export interface Found {
 const NOTHING: Found = { marks: [], alsoMatched: [], byMeaning: new Set(), learned: false };
 
 /**
- * Everything matching the query, best first — and what it took to match.
+ * Everything matching the query, best first, and what it took to match.
  */
 export function searchLibrary(marks: readonly Mark[], query: string): Found {
   if (!query.trim()) return { ...NOTHING, marks: [...marks], learned: marks.length >= ENOUGH_TO_LEARN };

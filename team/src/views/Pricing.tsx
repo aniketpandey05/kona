@@ -22,7 +22,7 @@ export function Pricing({
           <h1>Plans</h1>
           <p class="subtle">
             The free version is complete and stays that way. Paid adds the shared layer on
-            top of it — nothing is ever taken out of Free to sell back.
+            top of it; nothing is ever taken out of Free to sell back.
           </p>
         </div>
       </div>
@@ -50,11 +50,11 @@ export function Pricing({
                 ) : tier.action === 'upgrade' ? (
                   stripeUrl ? (
                     <a class="primary" href={stripeUrl}>
-                      Upgrade — {seats} seats, ${seats * 14}/mo
+                      Upgrade, {seats} seats, ${seats * 14}/mo
                     </a>
                   ) : (
                     <button type="button" class="primary" onClick={onCheckout}>
-                      Upgrade — {seats} seats, ${seats * 14}/mo
+                      Upgrade, {seats} seats, ${seats * 14}/mo
                     </button>
                   )
                 ) : tier.action === 'contact' ? (
@@ -73,7 +73,7 @@ export function Pricing({
       <p class="subtle footnote">
         {stripeConfigured()
           ? 'Upgrade hands off to Stripe Checkout. Card details never touch us, which is what keeps this in PCI SAQ-A scope.'
-          : 'Upgrade walks through a stand-in for Stripe Checkout — the same steps, with nothing charged and no card taken. Wired to a real key, that button hands off to Stripe instead, where card details never touch us, which is what keeps this in PCI SAQ-A scope.'}
+          : 'Upgrade walks through a stand-in for Stripe Checkout, the same steps, with nothing charged and no card taken. Wired to a real key, that button hands off to Stripe instead, where card details never touch us, which is what keeps this in PCI SAQ-A scope.'}
       </p>
     </section>
   );

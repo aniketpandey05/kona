@@ -295,7 +295,7 @@ function SpaceList({
 
   /**
    * Taking in a space somebody sent. The highlights it carries are merged into
-   * the library — anything you already had stays yours — and the space arrives
+   * the library, anything you already had stays yours, and the space arrives
    * with its claims pointing at your copies. See `core/share`.
    */
   const importSpace = async (event: Event): Promise<void> => {
@@ -347,7 +347,7 @@ function SpaceList({
     <>
       <p class="sp-lede">
         A space is one question and the highlights that answer it. Gather a few and you have
-        a write-up — every passage quoted, each with a link that lands on the exact sentence.
+        a write-up, every passage quoted, each with a link that lands on the exact sentence.
         Conclude something and it goes on top, citing what it rests on. A space is also a
         file you can hand to anyone, and take back with their work in it.
       </p>
@@ -363,7 +363,7 @@ function SpaceList({
         >
           <input
             type="text"
-            placeholder="Name it — “Postgres 17 upgrade”"
+            placeholder="Name it, “Postgres 17 upgrade”"
             value={name}
             autofocus
             onInput={(event) => setName((event.currentTarget as HTMLInputElement).value)}
@@ -403,7 +403,7 @@ function SpaceList({
       {spaces.length === 0 ? (
         <p class="sp-empty">
           No spaces yet. Make one for whatever you are trying to work out, then gather the
-          highlights that bear on it — from here, or with the tray button on a highlight in
+          highlights that bear on it, from here, or with the tray button on a highlight in
           the panel while you are still reading.
         </p>
       ) : (
@@ -540,12 +540,12 @@ function SpaceView({
 
   /**
    * The whole space as a file: the question, the passages, the conclusions and
-   * the links. Whoever opens it carries on from here — see `core/share`.
+   * the links. Whoever opens it carries on from here, see `core/share`.
    */
   const shareSpace = async (): Promise<void> => {
     const privateKey = me ? await loadSigningKey() : null;
     // Signed on the way out, and the signed copy kept, so that signing is done
-    // once rather than afresh every time the space is handed on — and so your
+    // once rather than afresh every time the space is handed on, and so your
     // own copy can show your own work as checked.
     const signed = me && privateKey ? await signMine(space, me, privateKey) : space;
     if (signed !== space) await saveSpace(signed);
@@ -624,7 +624,7 @@ function SpaceView({
           {checked.broken.size === 1
             ? 'One thing here does not'
             : `${checked.broken.size} things here do not`}{' '}
-          match the key it was signed with — either the words were changed after it was
+          match the key it was signed with, either the words were changed after it was
           signed, or it was not written by the person it names. Nothing has been removed;
           look for <strong>does not check out</strong> below.
         </p>
@@ -662,7 +662,7 @@ function SpaceView({
           <p>{space.decision.body}</p>
           {shared && nameIn(space.people, space.decision.by) && (
             <p class="sp-by">
-              — {nameIn(space.people, space.decision.by)}
+             , {nameIn(space.people, space.decision.by)}
               <Proven by={space.decision.by} signing={signing} />
               <Broken id={DECISION} signing={signing} />
             </p>
@@ -688,13 +688,13 @@ function SpaceView({
           </div>
           <p class="sp-muted">
             Every passage and every claim carries a link that lands on the exact sentence it
-            came from — so whoever reads this can check it without having Kona.
+            came from, so whoever reads this can check it without having Kona.
           </p>
           <h3 class="sp-memo-title">{memo.title}</h3>
           {memo.decision && (
             <p class="sp-memo-decision">
               {memo.decision}
-              {memo.decidedBy && <span class="sp-by"> — {memo.decidedBy}</span>}
+              {memo.decidedBy && <span class="sp-by">, {memo.decidedBy}</span>}
             </p>
           )}
           {memo.lines.length > 0 && (
@@ -713,7 +713,7 @@ function SpaceView({
                     {line.withdrawn > 0 && (
                       <em class="sp-muted"> ({line.withdrawn} no longer here)</em>
                     )}
-                    {line.by && <span class="sp-by"> — {line.by}</span>}
+                    {line.by && <span class="sp-by">, {line.by}</span>}
                   </li>
                 ))}
               </ul>
@@ -755,7 +755,7 @@ function SpaceView({
               <ol class="sp-memo-sources">
                 {memo.citations.map((citation) => (
                   <li key={citation.n} id={`cite-${citation.n}`}>
-                    {siteLabel(citation.mark)} — {citation.mark.conversationTitle}.{' '}
+                    {siteLabel(citation.mark)}, {citation.mark.conversationTitle}.{' '}
                     {citation.href && (
                       <a href={citation.href} target="_blank" rel="noreferrer noopener">
                         the exact sentence
@@ -782,7 +782,7 @@ function SpaceView({
         {held.length === 0 ? (
           <p class="sp-muted">
             Nothing here yet. Pull in a few highlights with <strong>Gather highlights</strong>{' '}
-            and you have a write-up straight away — every passage quoted, each with a link
+            and you have a write-up straight away, every passage quoted, each with a link
             under it that lands on the exact sentence it came from.
           </p>
         ) : (
@@ -811,7 +811,7 @@ function SpaceView({
 
         {space.findings.length === 0 ? (
           <p class="sp-muted">
-            Nothing yet, which is fine — the write-up already has your highlights. Add a
+            Nothing yet, which is fine, the write-up already has your highlights. Add a
             conclusion when you have one and it goes on top, with the highlights it rests
             on cited under it.
           </p>
@@ -861,7 +861,7 @@ function SpaceView({
                       <p class="sp-claim">{finding.claim}</p>
                       {shared && nameIn(space.people, finding.by) && (
                         <p class="sp-by">
-                          — {nameIn(space.people, finding.by)}
+                         , {nameIn(space.people, finding.by)}
                           <Proven by={finding.by} signing={signing} />
                           <Broken id={finding.id} signing={signing} />
                         </p>
@@ -1119,7 +1119,7 @@ function SpaceView({
  *
  * The same hook the library uses, which means two open pages each run their
  * own pass. They can overlap and one can write over a read the other had not
- * finished — and it comes out right anyway, because the merge only ever adds:
+ * finished, and it comes out right anyway, because the merge only ever adds:
  * whatever a clobbered write dropped is still on the machine it came from and
  * goes back next pass.
  */
@@ -1198,7 +1198,7 @@ function Picker({ space, marks, me }: { space: Space; marks: Mark[]; me: Person 
       />
       {found.alsoMatched.length > 0 && (
         <p class="sp-muted">
-          Also matched {found.alsoMatched.join(' · ')} — words your own highlights keep
+          Also matched {found.alsoMatched.join(' · ')}, words your own highlights keep
           beside what you typed.
         </p>
       )}
@@ -1230,8 +1230,8 @@ function Picker({ space, marks, me }: { space: Space; marks: Mark[]; me: Person 
 }
 
 /**
- * A gathered highlight, and — when it is shown inside its own space rather
- * than under a conclusion — the argument about it.
+ * A gathered highlight, and, when it is shown inside its own space rather
+ * than under a conclusion, the argument about it.
  *
  * The thread stays shut until it is asked for. A page where every passage is
  * also an open conversation is a page nobody reads to the bottom.
@@ -1259,7 +1259,7 @@ function Proven({ by, signing }: { by?: string; signing?: Signing }) {
       class="sp-proven"
       title={
         print
-          ? `Signed with the key you hold for them — ${print}`
+          ? `Signed with the key you hold for them, ${print}`
           : 'Signed with the key you hold for them'
       }
     >

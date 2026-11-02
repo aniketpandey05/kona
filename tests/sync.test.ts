@@ -170,7 +170,7 @@ describe('a space in a shared folder', () => {
   it('merges a reply written on the other side, rather than replacing', async () => {
     const disk = folder();
     const hers = addComment(spaceWith(priya), 'a', 'This is the one that worries me.', priya, 200);
-    const his = addComment(spaceWith(sam), 'a', 'Agreed — rehearse it twice.', sam, 210);
+    const his = addComment(spaceWith(sam), 'a', 'Agreed, rehearse it twice.', sam, 210);
     const one = side(marks, [hers]);
     const two = side(marks, [his]);
 
@@ -180,7 +180,7 @@ describe('a space in a shared folder', () => {
 
     for (const held of [one.held, two.held]) {
       const bodies = (held.spaces[0]?.comments ?? []).map((entry) => entry.body).sort();
-      expect(bodies).toEqual(['Agreed — rehearse it twice.', 'This is the one that worries me.']);
+      expect(bodies).toEqual(['Agreed, rehearse it twice.', 'This is the one that worries me.']);
     }
   });
 

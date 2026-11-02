@@ -18,7 +18,7 @@ describe('toMarkdown', () => {
     const file = toMarkdown([mark({ id: 'a' })], new Date('2026-10-02T00:00:00Z'));
     expect(file).toContain('Exported 2026-10-02');
     expect(file).toContain('## Docker setup help');
-    expect(file).toContain('ChatGPT — [open](https://chatgpt.com/c/c1)');
+    expect(file).toContain('ChatGPT, [open](https://chatgpt.com/c/c1)');
     expect(file).toContain('> docker compose up -d');
   });
 

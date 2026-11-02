@@ -573,7 +573,7 @@ function SearchPalette({ search, controller }: Props & { search: SearchState }) 
         />
         {search.alsoMatched.length > 0 && (
           <p class="k-palette-also">
-            Also matched {search.alsoMatched.join(' · ')} — words your own highlights keep
+            Also matched {search.alsoMatched.join(' · ')}, words your own highlights keep
             beside what you typed.
           </p>
         )}

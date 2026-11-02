@@ -3,7 +3,7 @@ import type { Entitlement, PlanId } from './types';
 /**
  * What the client is allowed to do, and nothing else. The real product issues
  * this as a short-lived token signed by the billing service, which the client
- * caches — so Stripe or the API being down never locks a paying customer out
+ * caches, so Stripe or the API being down never locks a paying customer out
  * of their own highlights (docs/enterprise.md §6).
  *
  * Here it lives in localStorage so the demo survives a reload and can be reset

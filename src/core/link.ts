@@ -8,7 +8,7 @@ import type { Mark } from './types';
  *   https://example.com/page#:~:text=prefix-,exact,-suffix
  *
  * The browser finds the text, scrolls to it and highlights it on its own, so
- * these links work for people who have never installed Kona — and on a phone,
+ * these links work for people who have never installed Kona, and on a phone,
  * where no extension can run. Chrome 80+, Safari 16.1+ and Firefox 131+.
  */
 export function linkToMark(mark: Mark): string {
@@ -33,7 +33,7 @@ export function linkToMark(mark: Mark): string {
 
 /**
  * Text fragments match on rendered text, so the stored context has to be
- * trimmed to whole words — a prefix cut mid-word never matches. Long passages
+ * trimmed to whole words, a prefix cut mid-word never matches. Long passages
  * are addressed by their first and last few words instead of in full, which
  * keeps the URL short and survives small edits in the middle.
  */

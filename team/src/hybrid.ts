@@ -8,17 +8,17 @@ import type { TeamMark } from './types';
  * Keyword search alone misses the highlight that says the thing in other
  * words, and meaning-based search alone drifts off the thing you actually
  * typed. Running both and fusing the two rankings keeps an exact match at the
- * top while still surfacing the one that never uses your words — which is the
+ * top while still surfacing the one that never uses your words, which is the
  * whole reason a team's search has to be better than Ctrl-F.
  *
  * **What is real here.** The first ranking is the extension's own `searchMarks`,
- * unchanged — which has itself grown a meaning half since this demo was
+ * unchanged, which has itself grown a meaning half since this demo was
  * written, one that learns which words keep arriving together in the library it
  * is searching (`src/core/retrieve.ts`). That part is real, and it ships free.
  *
  * What it cannot do is relate two words nobody has ever kept together, and that
  * is the half the paid tiers buy: an embedding of each highlight, from a model
- * that has read more than one person's library — which is also why client-side
+ * that has read more than one person's library, which is also why client-side
  * encryption is a design constraint rather than an afterthought
  * (docs/enterprise.md §7). A demo cannot carry a model, so the list below stands
  * in for it, and it was written for this dataset and no other. The fusion is the
@@ -40,7 +40,7 @@ const CONCEPTS: string[][] = [
 ];
 
 // A word found in the highlight itself counts for more than one found in the
-// chat's name or site — the same weighting the extension's own search uses.
+// chat's name or site, the same weighting the extension's own search uses.
 const FIELD_WEIGHTS = [3, 2, 2, 1, 1];
 
 /** Reciprocal rank fusion. 60 is the constant the original paper settled on. */
@@ -103,7 +103,7 @@ function byMeaning(marks: readonly TeamMark[], words: string[]): TeamMark[] {
 export interface HybridResult {
   marks: TeamMark[];
   /**
-   * Words nobody typed that earned a result its place — shown so a highlight
+   * Words nobody typed that earned a result its place, shown so a highlight
    * that uses none of the query's words does not look like a bug.
    */
   alsoMatched: string[];

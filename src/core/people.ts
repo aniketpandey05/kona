@@ -2,7 +2,7 @@
  * Who did which part.
  *
  * Kona has no accounts and no server, so a person is not a row in a database
- * somewhere — they are a name and a local id that travels inside the space
+ * somewhere; they are a name and a local id that travels inside the space
  * itself. When you hand a space over, the people who worked on it go with it,
  * which is what lets the other side show your name against your conclusion
  * instead of an id it has no way to look up.
@@ -42,7 +42,7 @@ export function initials(name: string): string {
 }
 
 /**
- * A colour from the id, not from the name — so renaming yourself does not
+ * A colour from the id, not from the name, so renaming yourself does not
  * repaint every avatar, and two people called Sam stay told apart.
  */
 export function hueOf(id: string): number {
@@ -58,7 +58,7 @@ export function personIn(people: readonly Person[] | undefined, id: string | und
 
 /**
  * The name to show for a contribution. A space that arrives without its people
- * list, or one written before any of this existed, leaves work unattributed —
+ * list, or one written before any of this existed, leaves work unattributed,
  * which is honest, and better than guessing whose it was.
  */
 export function nameIn(people: readonly Person[] | undefined, id: string | undefined): string | null {
@@ -66,7 +66,7 @@ export function nameIn(people: readonly Person[] | undefined, id: string | undef
 }
 
 /**
- * You, added to the list — or your name brought up to date if it is already
+ * You, added to the list, or your name brought up to date if it is already
  * there. Called by every mutation that records who did something, so there is
  * no way to end up with a `by` that nothing can resolve.
  */
@@ -87,7 +87,7 @@ export function joinPeople(people: readonly Person[] | undefined, me: Person): P
 /**
  * Both lists, mine first.
  *
- * A person I already have is kept exactly as I have them — their name and,
+ * A person I already have is kept exactly as I have them, their name and,
  * more to the point, their key. That is the whole defence against somebody
  * sending a file that claims an id already in my copy: the key I hold wins,
  * so their contributions are checked against the real one and fail.

@@ -6,7 +6,7 @@ const KEY = 'local:disabled-sites';
 
 /**
  * www.example.com and example.com are the same site to a reader, so they have
- * to be the same site to the switch — otherwise turning one off leaves the
+ * to be the same site to the switch, otherwise turning one off leaves the
  * other on, and the popup grows a duplicate row.
  */
 export const siteKey = (hostname: string): string => hostname.replace(/^www\./, '').toLowerCase();

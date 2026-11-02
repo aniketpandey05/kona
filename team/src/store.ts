@@ -3,7 +3,7 @@ import type { AuditEvent, Finding, Member, Space, Stance, TeamMark } from './typ
 
 /**
  * The workspace as the demo can change it: share a highlight into a space, draw
- * a finding out of it, settle a question, invite someone — and watch the audit
+ * a finding out of it, settle a question, invite someone, and watch the audit
  * log and the seat count follow.
  *
  * Deliberately in memory only. A reload puts the seeded workspace back, which
@@ -257,7 +257,7 @@ export function invite(email: string): InviteResult {
 export function activateSeat(id: string): void {
   const member = members.find((entry) => entry.id === id);
   members = members.map((entry) => (entry.id === id ? { ...entry, seatActive: true } : entry));
-  log('seat.activated', `${member?.email ?? id} accepted — seat count updated in Stripe`);
+  log('seat.activated', `${member?.email ?? id} accepted, seat count updated in Stripe`);
 }
 
 export function removeMember(id: string): void {

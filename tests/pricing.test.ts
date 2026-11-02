@@ -5,7 +5,7 @@ import { PLANS } from '../src/core/plans';
 
 /**
  * The landing page and the extension both quote the prices, and they have
- * drifted apart more than once — a tier gaining a line in `plans.ts` that the
+ * drifted apart more than once, a tier gaining a line in `plans.ts` that the
  * site never heard about, or the site still selling something that moved.
  *
  * `plans.ts` is the copy of record. The extension imports it, so it cannot

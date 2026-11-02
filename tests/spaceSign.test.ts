@@ -129,10 +129,10 @@ describe('rewording something you already signed', () => {
     const priya = await signer('Priya', 'p1');
     const space = await hers(priya);
     const id = space.comments![0]!.id;
-    const reworded = editComment(space, id, 'Measured on 13 — rerun asked for.', 300);
+    const reworded = editComment(space, id, 'Measured on 13, rerun asked for.', 300);
     expect(reworded.comments?.[0]?.sig).toBeUndefined();
 
-    // Unsigned, so it is not evidence of anything — but nor is it a forgery.
+    // Unsigned, so it is not evidence of anything, but nor is it a forgery.
     const checked = await checkSpace(reworded);
     expect(checked.broken.size).toBe(0);
   });
@@ -141,7 +141,7 @@ describe('rewording something you already signed', () => {
     const priya = await signer('Priya', 'p1');
     const space = await hers(priya);
     const id = space.comments![0]!.id;
-    const reworded = editComment(space, id, 'Measured on 13 — rerun asked for.', 300);
+    const reworded = editComment(space, id, 'Measured on 13, rerun asked for.', 300);
     const resigned = await signMine(reworded, priya.person, priya.privateKey);
     const checked = await checkSpace(resigned);
     expect(checked.verified.has(id)).toBe(true);

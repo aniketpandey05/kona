@@ -7,7 +7,7 @@ import type { Mark } from '../../src/core/types';
 
 /**
  * The app has no chrome.storage, so highlights live in IndexedDB. One object
- * store keyed by id, with an index on when it was captured — the library is
+ * store keyed by id, with an index on when it was captured, the library is
  * almost always "newest first", and sorting in the database beats sorting a
  * few thousand records in JavaScript every time the list redraws.
  *
@@ -134,7 +134,7 @@ export async function importSpaces(
 
 /*
  * Who you are. Small and read on every render, so localStorage rather than a
- * database round trip — and the private key is kept under its own name, apart
+ * database round trip, and the private key is kept under its own name, apart
  * from the person record, so nothing that walks a space can reach it.
  */
 const ME = 'kona:me';
@@ -232,7 +232,7 @@ export function watch(onChange: () => void): () => void {
 
 /**
  * The library, as the sync engine is allowed to see it. The phone has no
- * folder picker — Chrome on Android does not offer one — so this is only ever
+ * folder picker, Chrome on Android does not offer one, so this is only ever
  * driven by hand, over a file out of a folder the phone already syncs.
  */
 export const syncStore: SyncStore = {

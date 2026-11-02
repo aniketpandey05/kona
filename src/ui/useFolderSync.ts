@@ -14,8 +14,8 @@ import {
  *
  * In the extension that means while a Kona page is open and not otherwise. A
  * service worker that woke up to sync would be the better answer and
- * Manifest V3 does not really allow one — they are stopped after a few
- * seconds of quiet — so rather than pretend, this syncs when you are looking
+ * Manifest V3 does not really allow one; they are stopped after a few
+ * seconds of quiet, so rather than pretend, this syncs when you are looking
  * at your highlights, which is when it matters and when you would notice it
  * had not.
  *
@@ -96,7 +96,7 @@ export function useFolderSync(folders: FolderSource, store: SyncStore): FolderSy
   }, [store]);
 
   // Pick the folder back up on load, but never ask for permission without a
-  // click — the browser refuses, and a silent refusal reads as a bug.
+  // click, the browser refuses, and a silent refusal reads as a bug.
   useEffect(() => {
     if (!folders.canPick()) return;
     void (async () => {

@@ -16,7 +16,7 @@ export function toMarkdown(marks: readonly Mark[], today = new Date()): string {
   for (const group of [...groups.values()].sort((a, b) => newest(b) - newest(a))) {
     const first = group[0]!;
     lines.push(`## ${first.conversationTitle || 'Untitled'}`, '');
-    lines.push(`${siteLabel(first)} — [open](${first.url})`, '');
+    lines.push(`${siteLabel(first)}, [open](${first.url})`, '');
 
     for (const mark of sortByOrder(group)) {
       lines.push(...mark.snapshot.split('\n').map((line) => `> ${line}`), '');

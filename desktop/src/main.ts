@@ -11,13 +11,13 @@
  * keeps running when it is hidden, and `backgroundThrottling` is off so its
  * timer is not slowed down for being out of sight. The folder is a path on
  * disk instead of a handle behind a permission, so there is no picker to be
- * missing and nothing to re-grant after a restart — which is what makes this
+ * missing and nothing to re-grant after a restart, which is what makes this
  * the one place sync is automatic on Windows, macOS and Linux alike.
  *
  * The library stays in the renderer, where it already lives, and so does the
  * sync pass. This process owns exactly two things the renderer cannot have: a
  * native folder picker, and the file. It is deliberately the only code with a
- * path in it — the renderer asks for "the folder" and never names one, so a
+ * path in it, the renderer asks for "the folder" and never names one, so a
  * mistake in the UI cannot reach anywhere else on the disk.
  */
 
@@ -46,8 +46,8 @@ const keep = () => writeJson(settingsFile(), settings);
 /**
  * Started at login, so there is nothing to look at yet.
  *
- * The window is still created and still running — that is the entire point of
- * this app — it just does not come to the front. Opening it from the tray is
+ * The window is still created and still running; that is the entire point of
+ * this app; it just does not come to the front. Opening it from the tray is
  * how you get to it.
  */
 const startHidden = process.argv.includes('--hidden');
@@ -93,7 +93,7 @@ function createWindow(): BrowserWindow {
     if (quitting) return;
     // Not an exit. Someone closing the window means they are done looking at
     // it, not that they want their machines to stop keeping up with each
-    // other — and a sync that stopped the moment you tidied your desktop
+    // other, and a sync that stopped the moment you tidied your desktop
     // would be worse than no sync, because you would not know.
     event.preventDefault();
     created.hide();
@@ -121,7 +121,7 @@ function createTray(): void {
 function refreshTray(): void {
   if (!tray) return;
   const folder = settings.folder;
-  tray.setToolTip(folder ? `Kona — syncing ${basename(folder)}` : 'Kona — no folder yet');
+  tray.setToolTip(folder ? `Kona, syncing ${basename(folder)}` : 'Kona, no folder yet');
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: 'Open Kona', click: show },
