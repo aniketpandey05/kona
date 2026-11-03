@@ -50,6 +50,24 @@ tags, from any number of pages; a highlight keeps its tags whether or not it is
 in a space. Neither one implies the other, and neither is a lesser version of
 the other.
 
+### Palette
+
+**Your highlighting pens.** The colours available when you highlight something
+— four to begin with, and you can make your own with a picker and an opacity
+slider. Kona never refuses a colour you chose.
+
+A colour is named by its hue, so that Kona can refer to it in a list and to a
+screen reader. It is never named by what it means to you. **What a colour means
+is yours**; Kona does not define it, and lets you filter by it.
+
+**Editing a palette changes nothing you have already marked.** Swapping a pen
+in the case does not change the marks on the paper — a highlight keeps the
+colour it was made with. So the colours in use across your library can
+outnumber the ones in the palette, and filtering by colour works on what is in
+use.
+
+Free, and therefore per device, because Free does not sync.
+
 ### Page
 
 One address, with tracking parameters ignored, so that arriving from a search
@@ -61,12 +79,18 @@ may mean something by it.
 
 ### Library
 
-Every highlight you have, from everywhere, in one searchable place.
+**Everything you have kept, in one place.** It is what the extension's button
+opens, and it holds two views of what you keep:
 
-**The library is organised by where you read.** That is the whole distinction
-from a space, which is organised by what you want to find out.
+- **Highlights** — everything you kept, from everywhere, organised by *where
+  you read*.
+- **Spaces** — the same highlights, gathered by *what you want to find out*.
 
-Its default view leaves out anything archived, and that is the only thing
+That is the distinction, and it is between the two views rather than between
+the library and anything outside it. The library is the place; those are the
+two ways in.
+
+The Highlights view leaves out anything archived, and that is the only thing
 archiving changes: an archived highlight is still searchable, still painted on
 its page, and still in every space it was added to.
 

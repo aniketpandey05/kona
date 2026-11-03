@@ -19,6 +19,13 @@ belong to a different space, or resolve on one surface and fail on another.
 Duplicated effort is a cost. Duplicated meaning is a defect, and only the
 second one decides anything in this document.
 
+**What is already built is not a constraint.** The current app was made on a
+whiff, which is why it is being rebuilt from directions rather than patched.
+Nothing here is chosen to keep existing code, and nothing is ruled out for
+contradicting it — the finished UI is expected to look very different from what
+is on GitHub today. Where this document mentions existing files, it is to say
+where the distance is, never to argue from it.
+
 Three documents, one job each: `DIRECTION.md` is why, `DEFINITIONS.md` is what
 every word means, and this is what is still undecided.
 
@@ -502,40 +509,37 @@ where to go in words.
 
 ---
 
-**3f. What is the thing the extension opens, and what is it called?**
+**3f. What is the thing the extension opens, and what is it called? — settled**
 
-The popup's button says "Open" today, under the hint *your highlights and your
-spaces, in a tab*. The panel's says "Library". Two names for one place, and the
-hint exists because neither name covers what is actually there.
+**It says Library**, and the library holds your highlights and your spaces
+both.
 
-The reason is in the definitions. **The library and spaces are siblings, not
-nested** — a library is organised by where you read, a space by what you want
-to find out. So "Library" cannot name a destination holding both, and "my
-highlights" cannot either: it leaves out the half of the product that the free
-cap and the whole Team tier sit on.
+That requires one change, and making it is the whole point of writing this
+down. `DEFINITIONS.md` had the library as *every highlight you have* and drew
+its distinction from a space as a rivalry — siblings, one organised by where
+you read and one by what you want to find out. If the button says Library and
+opens both, that definition makes the word mean two things at once, which is
+the drift this document exists to stop.
 
-- **(a) Name the product.** The button reads **Open Kona**, in the popup and in
-  the panel both. Inside are two sections, *Library* and *Spaces* — the two
-  words the definitions already define precisely.
-- **(b) Name the main thing.** The button reads **My highlights** and opens the
-  library; spaces are one click away in the nav. This is how most products do
-  it: the button names the primary thing rather than taking an inventory.
-- **(c) Name the contrast.** The button reads **Everything**, against a panel
-  that is only ever about here.
+So **the library widens**: it is everything you have kept, and it holds two
+views of it.
 
-*Recommendation:* (a). It invents no new vocabulary, it cannot go wrong as the
-product grows, and it answers the question people actually ask — *where are my
-highlights?* *In Kona.* (b) is a close second and its flaw is real: it hides
-spaces behind a word that excludes them, which is backwards for the thing we
-charge for. (c) is accurate and too vague to be a place anyone can name out
-loud.
+| | |
+| --- | --- |
+| **Highlights** | Everything you kept, organised by *where you read* |
+| **Spaces** | The same highlights gathered by *what you want to find out* |
 
-**And what does it open to?** The rule falls out of 2f, which is settled: the
-panel already shows this page and the active space, so **the link leads where
-the panel cannot** — the library, everything, newest first. One exception: if
-somebody arrived by clicking a single highlight, it opens on that highlight.
+The distinction that 1c drew is intact and is where it belongs — it is between
+the two **views**, not between the library and something outside it. "Library"
+is the place; those are the two ways in.
 
-**Decided:** _______
+**And what does it open to?** The rule from 2f still holds: the panel already
+shows this page and the active space, so **the link leads where the panel
+cannot** — the Highlights view, everything, newest first. One exception: arrive
+by clicking a single highlight and it opens on that highlight.
+
+**Decided:** the button says Library, in the popup and the panel, and the
+library is the place that holds both views.
 
 ---
 
@@ -1108,6 +1112,37 @@ becoming a suggestion.
 
 ---
 
+**10c. Editing and deleting a highlight from the page — settled**
+
+Asked for: being on a page, seeing a highlight you made by mistake, and wanting
+it gone without going anywhere. **Both undo and delete, and they are different
+tools for different moments.**
+
+**Undo is for the second after.** The bar that appears when you highlight
+something — the one that already says which space it went to (2g) — carries
+undo. One tap and what you just made is gone. No dialog: the case this serves
+is a misselection, and a dialog in front of a misselection is an insult.
+
+**Delete is for later.** Click an existing highlight on the page and the panel
+offers delete, with the same undo afterwards that 10b gives the library. The
+rules are 10b's unchanged — gone from the library, from search, from its
+spaces, and no longer painted — and archive sits beside it, never harder to
+reach.
+
+**Edit is the same gesture.** Clicking an existing highlight is also how you
+change its colour or write a note on it. One way in, three things out: edit,
+archive, delete.
+
+**Why this belongs on the page at all.** The panel is about this page (2a), and
+a highlight you regret is almost always one you are looking at. Making somebody
+open the library to undo something they can see in front of them would be the
+product being organised for its own convenience.
+
+**Decided:** undo in the bar for the moment after, and edit, archive and delete
+on any existing highlight from the panel.
+
+---
+
 ### 11. What each tier is, and where limits stop — settled
 
 **Each rung is a different kind of thing, not a bigger number of the same
@@ -1262,65 +1297,59 @@ gets ambient marks; Chrome does not, and is not asked to.
 
 ---
 
-### 12. Colours and palettes — open, and the biggest open thing left
+### 12. Colours and palettes — settled
 
-The spec, recorded from the author: **four palettes**, a palette can be
-**edited**, adding a colour works **the way it does in Paint** (a picker, not a
-fixed list), and a colour's **name follows the colour**.
+**The governing image, and it settles most of this on its own: a palette is a
+set of highlighting pens.** Not a theme, not a colour scheme. The four are the
+pens you start with, and a palette is where you make your own.
 
-Seven things have to be settled before any of it is built. They are in
-dependency order — the first two decide most of the rest.
+**1. One palette, which you add to.** Four pens to begin with. Not four
+palettes — that reading is dropped.
 
-**1. Four palettes, or one palette of four?** The phrasing fits either, and
-they are different products. *Four palettes* means themes: you pick one and
-your whole library wears it. *A palette of four* means four colours available at
-once, which is what the panel mockup actually draws — four swatches in the bar.
-Everything below reads differently depending on the answer, so this is first.
+**2. A colour's meaning is yours.** Kona never defines what a colour means and
+never will, and you can filter by colour. That is the usefulness without a
+taxonomy, and without colour becoming a rival to tags (1c).
 
-**2. Does a colour mean anything?** People will assign meaning whether Kona
-defines it or not — yellow for interesting, red for wrong. The question is
-whether *Kona* knows. If it does, you can filter by it, and colour becomes a
-third axis beside tags and spaces, which 1c was careful to keep apart. If it
-does not, colour is decoration and filtering by it is still possible but means
-nothing to Kona.
+**3. Named by hue.** "Amber", derived from the value. Not named by you — which
+fits the pens: a highlighter has a colour, not a label. The name exists so Kona
+can refer to the colour in a list and to a screen reader, and it must be
+derived deterministically, or two devices name one colour differently and 6 has
+to sync a disagreement.
 
-*Leaning:* colour carries **private** meaning. Kona never defines what a colour
-means, and lets you filter by it. That gets the usefulness without inventing a
-taxonomy, and without colliding with tags.
+**4. A highlight keeps the colour it was made with. Editing a palette changes
+nothing already marked.** The author's call, against my recommendation, and the
+pen image is why I was wrong: **swapping a pen in the case does not change the
+marks already on the paper.** I had argued a highlight should point at a palette
+slot so that editing a palette would repaint the library — which is
+database tidiness reasoning about a product where it would be alarming. Nobody
+wants last year's reading to change colour because they picked a new pen today.
 
-**3. Then is a colour named by its hue or by you?** These pull apart, and the
-spec picks one. *Name follows the colour* gives "Amber", which is honest
-labelling and says nothing. Letting you rename it gives "Disagree", which is
-where the meaning in (2) would actually live. *Leaning:* auto-name from the hue
-as the default, and let it be renamed. The automatic name is what saves you
-from naming things you do not care about.
+Two consequences, worth stating because they follow and are easy to get wrong:
 
-**4. What does a highlight store — a slot or a colour?** This one has a right
-answer. **A palette is a set of slots and a highlight points at a slot.** If a
-highlight stored a hex value, editing a palette would leave every existing
-highlight behind and "edit" would feel broken.
+- **The colours in use across your library can outnumber the palette.** A pen
+  you removed still exists in everything you marked with it.
+- **So filtering by colour works on the colours in use, not on the palette.**
+  The filter is built from what your library contains.
 
-But note the consequence, which needs agreeing rather than discovering:
-pointing at slots means **editing a palette repaints your whole library**. That
-is either the point of palettes or a shock, and which it is depends on (1).
+**5. An opacity slider.** The author's call, and better than my automatic
+tinting: explicit beats clever, and Kona never refuses a colour you chose.
 
-**5. Can a picker make text unreadable?** The real constraint on *Paint-style*
-freedom. Highlights are painted over pages whose backgrounds Kona does not
-control, through the browser's highlight API, so a dark enough pick makes the
-text under it illegible — on a dark page, or in dark mode. Free choice needs
-either a lightness floor, or automatic transparency so the pick becomes a tint
-rather than a fill. *Leaning:* tint automatically, and never refuse a colour.
+*One guardrail worth considering, not settled:* the slider could stop short of
+full opacity, because a highlighter is translucent by nature and a fully opaque
+pick makes the text under it unreadable — a real risk, since highlights are
+painted over pages whose background Kona does not control, and worse in dark
+mode. A ceiling honours the pen image rather than overriding the decision.
 
-**6. What tells two highlights apart for somebody who cannot see the
-difference?** If colour means anything, colour alone cannot be the only
-signal — the name has to be reachable too, in the row and to a screen reader.
-9 already committed to VoiceOver mattering.
+**6. Colour is never the only signal.** The name is reachable in the row and to
+a screen reader, so two highlights are distinguishable by somebody who cannot
+tell the colours apart. 9 already committed to that mattering.
 
-**7. Palettes on Free are per device.** Free has no sync (11), so a palette
-edited on the laptop is not the palette on the phone. Unavoidable, same as the
-caps in 10a, and worth saying out loud rather than letting somebody find it.
+**7. Free.** Making your own pens is not something to charge for. It is
+therefore **per device**, since Free does not sync (11) — a palette edited on
+the laptop is not the palette on the phone, the same way the caps are per
+device (10a).
 
-**Decided:** _______
+**Decided:** all seven above.
 
 ---
 
