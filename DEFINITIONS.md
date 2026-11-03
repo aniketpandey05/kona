@@ -355,12 +355,13 @@ One browser profile, or one installation of the app. What "one device" and
 ### Free
 
 The extension, on one device, with no account. Unlimited highlights, notes and
-tags. Search by word. **Five spaces, a hard five.** No sync.
+tags. Search by word. **Five spaces, a hard five.** Ten highlights archived at
+a time. No sync.
 
 ### Pro
 
-Everything in Free, on every device, kept in step. Unlimited spaces. Hybrid
-search. One person.
+Everything in Free, on every device, kept in step. Unlimited spaces, and
+highlights archived without limit. Hybrid search. One person.
 
 ### Team
 

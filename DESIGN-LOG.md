@@ -29,7 +29,8 @@ every word means, and this is what is still undecided.
 | Decision | Answer |
 | --- | --- |
 | What Kona is | You highlight a passage anywhere you read, and can find it again and land on the exact words |
-| Tiers | Free: extension, unlimited highlights, word search, 5 spaces, 10 archived at a time, no sync. Pro: sync across devices + hybrid search. Team: shared spaces |
+| Tiers | Each rung is a different kind of thing: Free is alone on one device, Pro is alone everywhere in step, Team is with other people |
+| Limits | Only on Free, so the rung is felt: 5 spaces, 10 archived at a time. Pro is unlimited. Highlights are unlimited on every tier |
 | Why the free cap | A free tier that does everything leaves no reason to upgrade. Drawn now, with no users, rather than clawed back later |
 | Where the paid line sits | Free is one surface. Pro is every surface, kept in step |
 | Payments | Stripe on the web. Not Apple's in-app purchase: their rate is 30% in year one |
@@ -1045,6 +1046,77 @@ unsure, delete if sure" holds until the tenth archive. A Free user who is
 unsure, with ten already put away, has only delete in front of them. That is
 the pressure the cap creates, and the three rules in 10a are what keep it from
 becoming a suggestion.
+
+---
+
+### 11. What each tier is, and where limits stop — settled
+
+**Each rung is a different kind of thing, not a bigger number of the same
+thing.**
+
+| | |
+| --- | --- |
+| **Free** | Alone, on one device. |
+| **Pro** | Alone, everywhere, in step. |
+| **Team** | With other people. |
+
+That is the whole ladder, and it decides where limits may appear: **only on
+Free**, where they exist to make the rung bounded so there is a reason to leave
+it. Above Free, a limit would be a second wall charged for once — and the next
+rung is not more of the same, it is other people. So:
+
+**Unlimited spaces on Pro.** Already the case in `DEFINITIONS.md`; it had simply
+never been written here or in the summary table, which is how it came to be
+asked. A space is metadata and syncing one costs nothing worth counting.
+"Unlimited" is also a cleaner thing to sell than a larger number, and a larger
+number would be a wall invented for no reason.
+
+**Unlimited highlights on every tier, Free included.** Highlights are the core
+action; capping them would be capping the product. Worth checking rather than
+asserting, now that sync means storing them: a highlight is a passage, a URL, a
+note and some ids — on the order of a kilobyte. Fifty thousand of them is about
+fifty megabytes, which is nothing. The unlimited claim is affordable, not
+brave.
+
+**The caps that remain are both Free's, and both deliberate:** five spaces (1b)
+and ten highlights archived at a time (10a). Each was drawn so the free tier
+would be felt rather than endless.
+
+**Decided:** the ladder above, and unlimited spaces and highlights on Pro.
+
+---
+
+**11a. Then should archiving a space still be Team-only?**
+
+An inconsistency falls out of the line above, and it has been sitting in the
+documents unnoticed.
+
+1b made archiving a space a **Team** feature, and gave one reason for it:
+archiving would turn the five-space cap into a formality. That reason is
+entirely about Free. **Pro has no space cap for archiving to defeat** — so on
+Pro the stated reason simply does not apply, and `DEFINITIONS.md` currently
+says Team has archiving while Pro does not, for a reason that is not true of
+Pro.
+
+Worse, unlimited spaces makes archiving them *more* useful, not less. Somebody
+with forty spaces wants the finished ones out of the way; that is exactly the
+need decision 10 was written for.
+
+*Recommendation:* **one rule, stated once, which answers every case.** Archive
+is available wherever there is no cap for it to defeat.
+
+| | Highlights | Spaces |
+| --- | --- | --- |
+| **Free** | Ten at a time — the cap is the point | **No** — the hard five must be felt |
+| **Pro** | Unlimited | **Yes** — no cap to defeat |
+| **Team** | Unlimited | **Yes** |
+
+This amends 1b, which was decided against my recommendation and on reasoning I
+accepted. The reasoning is untouched here: the Free cap stays a hard five and
+Free still cannot archive a space. Only the claim that Pro cannot changes, and
+it changes because Pro stopped having a cap.
+
+**Decided:** _______
 
 ---
 
