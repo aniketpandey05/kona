@@ -576,18 +576,62 @@ version where nobody comes back.
 
 ### 5. What is an account?
 
-Nothing beyond here can be built without this. Even the free cap needs it: to
-know somebody may not have a sixth space, Kona has to know who they are.
+*Recommendation, in one line:* **an account is the thing that makes your
+highlights the same on every device you read on, and it is nothing else.**
 
-- **(a) Email and a magic link.** No passwords to store or leak.
+**A correction first, because it changes the answer.** What stood here said the
+free cap needs an account too — that Kona must know who you are to know you may
+not have a sixth space. That was written before 10a, which settled the
+opposite: Free has no sync, so its counts are local and **per device**. The
+five-space cap and the ten-archive cap are both enforced on the machine they
+happen on, by code that needs to know nothing at all about you.
+
+So **Free has no account.** No sign-up, no email, nothing to get past. You
+install the extension, you highlight something, and it is yours. That matters
+more here than in most products, for the reason decision 4 turns on: Kona's
+value is delayed, and the payoff is the return trip. A sign-up form in front of
+a product whose first minute feels like nothing is the fastest way never to be
+used again.
+
+The account then appears at the exact moment it becomes necessary — when you
+want what you kept to be on a second device.
+
+**It is not where your highlights live.** The device is. The account is what
+lets them travel. Sign out and everything stays where it was: the library, the
+spaces, the marks on the pages. Same stance as 6, where the server holds things
+it cannot read. The account is a relay, not an owner.
+
+**How you sign in:**
+
+- **(a) Email and a magic link.** Nothing to store, leak, reset or type twice.
 - **(b) Email and password.**
-- **(c) Sign in with Google/Apple.**
-- **(d) No account: a licence key** typed into the extension.
+- **(c) Sign in with Google or Apple.**
+- **(d) No account, a licence key** typed into the extension.
 
-*Recommendation:* (a), with (c) added later if people ask. No password to
-store is a real reduction in what can go wrong, and it fits a product whose
-pitch is that it holds your data carefully. (d) avoids a server for the cap but
-cannot do sync, so it only defers the problem.
+*Recommendation:* **(a).** No stored password is a real reduction in what can go
+wrong, and it suits a product whose whole pitch is that it holds your reading
+carefully. It also sidesteps Apple's login rule: an iOS app offering a
+third-party sign-in must offer Sign in with Apple beside it, and email is not a
+third-party service, so a magic link alone never raises the question. (Worth
+confirming against current review practice before building — not now.)
+
+(c) can be added later if the friction turns out to be real; it is a second code
+path and there is no evidence yet that one is wanted. (d) cannot do sync, so it
+solves nothing that is left. (b) is strictly more to go wrong than (a).
+
+**Signing in happens in the web app, and nowhere else.** The extension never
+shows a sign-in form. It is handed a token by the web app over the bridge from
+3c, and on iPhone over the native route from 9. One implementation of sign-in,
+living in the one place suited to it, which is a full browser tab.
+
+**Signing up brings your library with you.** The part that is always got wrong,
+so it is written down: somebody who has highlighted for six months on Free and
+then subscribes must find all of it there afterwards. Their local library goes
+up. It is never replaced by an empty one, and the first sync is never a
+download onto a full device.
+
+**Team adds one field, not a second concept:** which team you are in. Who pays
+for a team, and how seats work, is 8.
 
 **Decided:** _______
 
