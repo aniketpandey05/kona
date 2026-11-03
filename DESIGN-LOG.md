@@ -300,7 +300,7 @@ the passage itself, because that is what a person recognises from screen to
 screen; the frame around it genuinely is different work in each place, and
 pretending otherwise is how the ten props arrive.
 
-**3c. The extension is a highlighting tool, and nothing else.**
+**3c. The extension is a highlighting tool, and nothing else. — settled**
 
 The duplication, measured. The extension does not only capture: it has a
 **library page** (1,025 lines) and a **spaces page** (1,487) that open as
@@ -345,12 +345,11 @@ tried here, and it is real work — it is the price of the split, and it is
 cheaper than a second library.
 
 So: **the extension highlights. The web app is where your highlights live.**
-
-**Decided:** _______
+The bridge is agreed as worth building.
 
 ---
 
-**3d. How does a team work?**
+**3d. How does a team work? — settled**
 
 **A shared space has to be openable by someone who has installed nothing.**
 That is the whole constraint. If showing research to five colleagues means
@@ -398,18 +397,68 @@ So Kona is **two surfaces**: the extension, and one web app. The desktop app
 is frozen, and the Team demo folds into the web app rather than standing
 beside it.
 
+Settled with 3c: once the library is a web app, two web apps is plainly one
+too many.
+
+---
+
+**3e. What is the popup for, once the library has gone?**
+
+Most of what the popup offered was a way into pages that no longer exist in
+the extension. But it cannot be deleted, because it holds something that
+cannot move: **`browser.permissions.request` must be called from an extension
+page, on a user gesture.** A content script cannot ask, and on a site Kona is
+not yet allowed on there is no content script at all — so the toolbar button
+has to open *something*.
+
+- **(a) No popup.** The button toggles the panel. *Impossible on a site not
+  yet allowed: there is nothing running there to toggle.*
+- **(b) A small popup**: turn Kona on here, and a way to the library.
+- **(c) Keep the popup as it is.**
+
+*Recommendation:* (b), and small — two states. Off here: one button that asks
+for the site. On here: open the panel, and open my library, which is now a
+link to the web app. The site switches it keeps today stay, because that list
+has nowhere else to live.
+
 **Decided:** _______
 
 ---
 
 ### 4. What does someone see the first time?
 
-There is a welcome page, but no decision about the first five minutes. Someone
-installs the extension and then what — do they get told to highlight something,
-or shown a library that is empty?
+Harder than it looks, because **Kona's value is a delayed one.** Highlighting
+something feels like nothing. The payoff is the return trip — coming back
+later and landing on the exact words — and a first run that only shows the
+first half has shown the boring half.
 
-*Recommendation:* one page that makes them highlight something immediately, on
-a page we supply, so the first highlight happens before any explaining.
+It now spans two surfaces as well: install the extension, highlight, and end
+up at a web app that is where everything lives.
+
+- **(a) A page that explains** what Kona does, with a button to get started.
+- **(b) A page you highlight on**, which then walks you through the return
+  trip: mark a sentence, leave, come back, click it, land on it.
+- **(c) No page.** The panel introduces itself the first time you are on a
+  real page.
+
+*Recommendation:* (b), and the round trip is the whole point of it. Every
+highlighting tool can mark text; the thing worth showing in the first minute
+is the part nobody else does, which is arriving back on the sentence. A tour
+that stops at "you highlighted something" has demonstrated a yellow
+background.
+
+Two things to decide inside it:
+
+**Does the first run mention AI chats?** It is the thing nothing else does,
+and it is also a lot to ask in the first minute. *Recommendation:* name it on
+the welcome page, do not make it a step. The first time somebody opens
+ChatGPT with Kona installed, let the panel say so there, where it costs
+nothing and makes sense.
+
+**When does it hand over to the web app?** *Recommendation:* after the first
+highlight, not before. "That is kept. It lives here" with the link, once there
+is something to look at. Sending somebody to an empty library first is the
+version where nobody comes back.
 
 **Decided:** _______
 
