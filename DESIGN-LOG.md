@@ -151,11 +151,15 @@ while the thinking is fresh, not queued for building.
 
 ---
 
-### 2. What is the in-page panel?
+### 2. What is the in-page panel? — settled
 
 `src/ui/App.tsx`, 766 lines, is the smallest and least considered of the four
 screens that list highlights — and it is the one a person is actually looking
-at while they use Kona. It is the face of the product. Five things to settle.
+at while they use Kona. It is the face of the product.
+
+**All of 2a to 2g are settled**, each as recommended below. They were drawn as
+a mockup of five states and looked at before being agreed; 2g was the one
+raised against it and is answered.
 
 **2a. What does it show?** This page's highlights, or a way into the library?
 
@@ -252,23 +256,49 @@ tells you where a highlight went is the same thing that changes where it
 went.** One element doing the safety job from 2e and the escape hatch at once,
 rather than two.
 
-**Decided:** _______
+### 3. Why the screens do not look like one product
 
----
+Not a matter of taste, and now measured. Eight stylesheets, 5,990 lines, and
+**220 custom properties declared independently** — every screen writes its own
+`--bg`, `--fg`, `--accent` from scratch. They disagree:
 
-### 3. One list of highlights, used in four places
+| Token | Values in use |
+| --- | --- |
+| `--accent` | `#c2410c`, `#ea580c`, `#fb923c` |
+| `--bg` (dark) | `#17181a`, `#191a1c` |
+| `--card` (dark) | `#222427`, `#26272b` |
+| `--muted` (dark) | `#a3a6af`, `#a8a8b3` |
+| `--border` (dark) | `rgba(255,255,255,0.11)`, `rgba(255,255,255,0.12)` |
 
-Four screens draw a list of highlights — the panel, the library, Spaces, and
-the phone app — in 4,449 lines with essentially no shared code. That is why
-they do not look like one product.
+**Kona's own colour is three different oranges depending on which screen you
+are looking at.** Nobody decided that; it is what happens when eight files
+each answer the same question alone.
 
-The pattern already works: `app/src/App.tsx` serves both the phone and the
-desktop from one component, with the difference passed in as a prop. The
-decision is what the shared piece is: just the row? the row plus search and
-filters? the whole screen with slots?
+**3a. One set of tokens, imported everywhere.** One file holding the colours,
+spacing, radii and type scale; every screen imports it and declares none of
+its own.
 
-*Recommendation:* the row and the filter bar, not the whole screen. Each place
-keeps its own frame and header; everything inside it is shared.
+*Recommendation:* do this first, and on its own. It is a few hours, it touches
+no component, and it fixes most of what makes the screens look unrelated. It
+also has to come first for a reason beyond cost: a shared component is
+pointless while the colours under it still differ per screen.
+
+**3b. One piece of shared markup for a passage.**
+
+The five places a passage is drawn: the panel on this page, the panel showing
+a space, the library, the spaces screen, the phone app. They differ in density
+and in which extras they carry — a source line, tags, who gathered it.
+
+- **(a) One row component** with a density prop and flags for the extras.
+- **(b) A small core** — the colour mark, the passage, the note — with each
+  screen composing its own surroundings.
+- **(c) Tokens only**, markup stays separate.
+
+*Recommendation:* (b). (a) ends as a component with ten props, which is harder
+to follow than the five copies it replaced. The part that must never differ is
+the passage itself, because that is what a person recognises from screen to
+screen; the frame around it genuinely is different work in each place, and
+pretending otherwise is how the ten props arrive.
 
 **Decided:** _______
 
