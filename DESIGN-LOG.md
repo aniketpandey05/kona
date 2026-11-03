@@ -11,6 +11,14 @@ once and nobody has to guess later why it is the way it is.
 A decision is finished when it has an answer here, in a sentence anyone could
 act on. Until then it is open and nothing gets built on top of it.
 
+**How duplication is weighed.** Not by the work. Building a thing twice is a
+price, and prices are payable — nothing here is decided by what is cheapest to
+write, and nothing is rushed to avoid writing it. Duplication counts when two
+implementations can *disagree*: when the same highlight could sort differently,
+belong to a different space, or resolve on one surface and fail on another.
+Duplicated effort is a cost. Duplicated meaning is a defect, and only the
+second one decides anything in this document.
+
 Three documents, one job each: `DIRECTION.md` is why, `DEFINITIONS.md` is what
 every word means, and this is what is still undecided.
 
@@ -342,8 +350,8 @@ way is a content script the extension injects into Kona's own domain, bridging
 the page to extension storage by `postMessage`. (`externally_connectable` is
 the tidier Chrome mechanism, but Firefox has never implemented it, and Kona
 ships on Firefox and Safari.) This is a known technique rather than something
-tried here, and it is real work — it is the price of the split, and it is
-cheaper than a second library.
+tried here, and it is real work — it is the price of the split, and what it
+buys is one library instead of two that can come to disagree.
 
 So: **the extension highlights. The web app is where your highlights live.**
 The bridge is agreed as worth building.
@@ -641,11 +649,21 @@ until the product is finished or nearly.
 no second option, in any browser. So the extension is TypeScript, and the only
 live question is the app.
 
-Which makes the question sharper than it first looks. If the app is Swift then
-Kona is two languages, and the library — a list, a search box, a detail view —
-gets built twice, forever. That is already the most expensive mistake in this
-repository: six files and 5,105 lines currently draw a list of highlights. A
-Swift one would be the seventh.
+Which leaves the app — and the honest way to decide it is **not** by how much
+work each option is. Repeated work is a price, and prices are payable. What is
+not payable is two implementations of the same thing quietly **disagreeing**,
+and that is a different objection worth separating out before going further.
+
+Two libraries would not merely cost twice. They would **drift** — not the
+chrome, which is allowed to differ, but the meaning: what sorting does, what a
+space contains, what a tag selects, and most dangerously what counts as a match
+when a page has been edited since you highlighted it. A highlight that resolves
+on the desktop and fails on the phone is not a cosmetic difference. It is Kona
+failing at the only thing it promises.
+
+That is the test every option below has to pass, and it is a narrower test than
+"how much work is it". Some duplication is harmless. Duplicated *meaning* is
+not.
 
 - **(a) One codebase.** TypeScript everywhere. On iOS the App Store container
   carries the Safari extension and little else, and the library is the web app,
@@ -655,10 +673,12 @@ Swift one would be the seventh.
   library. **Capacitor** is this, productised: the same web build wrapped as a
   real iOS and Android app, with native storage, the share sheet and push
   available as plugins, and not one screen rewritten.
-- **(c) A native library on iOS.** SwiftUI, feels right on the platform, and
-  every feature after it is built twice.
-- **(d) React Native.** One language, a real app on both phones, sharing the
-  core with the web.
+- **(c) A native library on iOS.** SwiftUI, and the best feel available on the
+  platform. It implies a Swift core as well, or the TypeScript core run inside
+  a JS engine in the app — and the first of those is where a highlight that
+  resolves on the desktop and fails on the phone gets built in.
+- **(d) React Native.** A real app on both phones, and — unlike Swift — able to
+  share the core, because it runs JavaScript.
 
 *Recommendation:* **(b).** It is (a) plus a reason for the container to exist.
 Apple requires a Safari extension to ship inside an app, so the container is
@@ -666,37 +686,52 @@ not optional — and a container that only tells you to go and switch it on in
 Settings is a thinner thing to hand to review than a container that opens your
 library.
 
-**Why not React Native.** It is the right instinct and the wrong shape, and the
-reason is worth stating exactly, because *one language* sounds like it answers
-the objection above when it does not.
+**Where React Native actually lands.** Judged on drift rather than on effort it
+does better than Swift, and that is worth stating plainly: **React Native runs
+JavaScript, so it shares the core** — the store, the search, the quote matching
+— and the dangerous half of the drift problem does not arise. Only the screens
+diverge, and screens are the half that is allowed to.
 
-**React Native shares a language, not screens.** Its primitives are not the
-web's — a `View` is not a `div` — so every screen in the library gets written a
-second time. That is the same cost as Swift, paid in a friendlier language. The
-argument here was never *one language*. It was *do not build the library
-twice*.
+What still rules it out is narrower, and none of it is about work:
 
-And it cannot reach the part that matters most in any case. **The panel has to
-be DOM**, because it is injected into somebody else's page and paints with the
-browser's own highlight API. The extension can never be React Native. So RN
-does not leave us with one way of building UI; it leaves us with two, plus a
-build chain per store, plus store review on every release of a product whose
-web half deploys in a minute. It would also mean React beside Preact, or
-React inside the content script, which is weight paid on every page a person
-reads.
+**It never gets to one way of building UI.** The panel has to be DOM; it is
+injected into somebody else's page and paints with the browser's own highlight
+API, so the extension can never be React Native. RN therefore adds a second UI
+paradigm rather than replacing one, and the place a person spends most of their
+time stays on the other side of that line.
 
-The honest case *for* it is Android. Chrome on Android has no extensions at
-all, so there the app is the only Kona there can be, and RN would serve both
-phones from one place. That is a real argument, and it belongs to 1h rather
-than here. Today's answer to 1h is that Android is a place you read — and a web
-app serves that well, because Chrome on Android is a much better host for one
-than iOS Safari is.
+**Kona's loop ends in a browser.** This is the decisive one. The payoff is
+clicking a highlight and landing on the words — in Safari. A native library
+exits to the browser on every success it has, which on iOS means an app switch,
+a lost position, and the app switcher as the only way back. A library that
+already lives in Safari lands you one tab away instead. The more successful the
+retrieval, the more a native shell is a thing you pass through.
+
+**A bug in the library would wait in review.** Days, against a minute for the
+web half. That is a quality argument rather than a cost one: it decides how
+quickly a wrong thing stops being wrong.
+
+**What native would genuinely be better at**, recorded so the choice is made
+with open eyes: the feel of long lists, swipe actions and context menus,
+haptics, and Dynamic Type honoured throughout — which matters more here than
+for most products, because the entire content is passages of text somebody
+chose to keep. VoiceOver is better too.
+
+Several of the things usually claimed for native are *not* exclusive to it:
+Spotlight indexing of your highlights, widgets, Shortcuts and push all reach a
+Capacitor app through native plugins or a shared App Group. So the exclusive
+loss is narrower than it first appears — it is feel and typography, not
+capability.
+
+**The honest case for RN is Android**, where Chrome has no extensions at all
+and the app is the only Kona there can be. That argument belongs to 1h.
 
 **When to reopen this:** if the app stops being a viewer and becomes where
-people capture and read; if Android turns into a real share of use; or if
-Safari's eviction proves fatal before sync lands. Capacitor answers all three
-more cheaply, and it is reversible — it ships the web build that already
-exists, so nothing is written twice until something has to be.
+people capture and read; if Android turns into a real share of use; or if the
+feel of a web view in a container turns out to be the thing people dislike
+about Kona on a phone. The last one is a judgement nobody can make from here —
+it needs the Capacitor build in a hand, and it is cheap to find out because
+Capacitor ships the web build that already exists.
 
 **Where Swift is allowed:** the container, and the share extension that makes
 *share a link to Kona* work, which is in the definition of the app and cannot
