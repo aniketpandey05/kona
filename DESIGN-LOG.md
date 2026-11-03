@@ -100,11 +100,16 @@ flag yet. `createdAt` is already there.
 
 ### 1b. What happens to a space when the research is finished? — settled
 
-**A hard five on Free. Archiving is a Team feature.**
+**A hard five on Free. Free cannot archive a space.**
 
 Against my recommendation, and the reasoning is the author's: archiving would
 turn the cap into a formality, and a free tier that gives way at every limit
 leaves nobody a reason to pay. Running out of spaces is supposed to be felt.
+
+*Amended by 11a.* This said "archiving is a Team feature", which went further
+than the reasoning above supports — the reasoning is about Free, and Pro has no
+cap for archiving to defeat. Pro can archive a space. Nothing else here
+changes.
 
 Nothing is deleted or hidden when the cap is reached; a sixth space simply
 cannot be made. Delete one, or pay.
@@ -1086,7 +1091,7 @@ would be felt rather than endless.
 
 ---
 
-**11a. Then should archiving a space still be Team-only?**
+**11a. Then should archiving a space still be Team-only? — settled**
 
 An inconsistency falls out of the line above, and it has been sitting in the
 documents unnoticed.
@@ -1116,7 +1121,12 @@ accepted. The reasoning is untouched here: the Free cap stays a hard five and
 Free still cannot archive a space. Only the claim that Pro cannot changes, and
 it changes because Pro stopped having a cap.
 
-**Decided:** _______
+**Decided: Pro can archive a space.** 1b is amended in place to match, and the
+author's reason for it is the better one: **Team's selling point is other
+people.** Archiving was never what anybody would buy Team for, so holding it
+back was defending a differentiator that was doing no work — while making Pro
+worse for exactly the people most likely to need it. Team sells discussion, who
+gathered what, and deciding together. It does not need a lure.
 
 ---
 

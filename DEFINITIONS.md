@@ -257,9 +257,10 @@ hands the slot straight back, so the limit is how many can be put away at once
 rather than how many ever can be. Reaching it never deletes or un-archives
 anything on its own.
 
-**A space** can be archived on Team only. Free and Pro do not have it, and the
-five-space cap is therefore a hard five: archiving would turn the cap into a
-formality, and that is a reason for someone to pay rather than a hardship.
+**A space** can be archived on Pro and Team, and not on Free. The five-space
+cap is therefore a hard five: archiving would turn that cap into a formality,
+and that is a reason for someone to pay rather than a hardship. Above Free
+there is no cap left for it to defeat.
 
 ### Delete
 
@@ -360,13 +361,13 @@ a time. No sync.
 
 ### Pro
 
-Everything in Free, on every device, kept in step. Unlimited spaces, and
-highlights archived without limit. Hybrid search. One person.
+Everything in Free, on every device, kept in step. Unlimited spaces. Archiving
+without limit, of highlights and of spaces. Hybrid search. One person.
 
 ### Team
 
-Everything in Pro, plus shared spaces: discussion, who gathered what, deciding
-together, and archiving.
+Everything in Pro, plus shared spaces: discussion, who gathered what, and
+deciding together. Its selling point is other people, not a larger allowance.
 
 ### Sync
 
