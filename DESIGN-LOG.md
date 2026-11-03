@@ -300,15 +300,13 @@ the passage itself, because that is what a person recognises from screen to
 screen; the frame around it genuinely is different work in each place, and
 pretending otherwise is how the ten props arrive.
 
-**3c. The extension and the app have built the same library twice.**
+**3c. The extension is a highlighting tool, and nothing else.**
 
-This is the extension-versus-app question in the concrete, and it is further
-along than the rule in `DEFINITIONS.md` suggests. The extension does not only
-capture: it has a **full library page** (1,025 lines) and a **full spaces
-page** (1,487) that open as browser tabs. The app has a library and spaces too
-(1,171). Two builds of one screen, for one person.
-
-And they already agree on how to store things, by accident:
+The duplication, measured. The extension does not only capture: it has a
+**library page** (1,025 lines) and a **spaces page** (1,487) that open as
+browser tabs. The app has a library and spaces too (1,171). Two builds of one
+screen for one person — and the two stores already agree on an interface
+without anyone naming it:
 
 | Job | Extension `src/core/store.ts` | App `app/src/storage.ts` |
 | --- | --- | --- |
@@ -321,37 +319,38 @@ And they already agree on how to store things, by accident:
 | Sync | `syncStore` | `syncStore` |
 | Who you are | `loadMe` `saveMe` `ensureSigningKey` … | the same names again |
 
-**The same interface was written twice because nobody gave it a name.** That
-exact mistake has already been found and fixed once here: the phone and the
-desktop app run one component because `FolderSource` named the seam between
-them and the difference became an argument. Nothing stops the same move again.
+My first answer was to name that interface and mount one screen in both
+places. **The better answer is not to have the screen in the extension at
+all.** The extension is the tool you highlight with. Everything you do
+*afterwards* — reading back, searching, spaces, write-ups — is the web app.
 
-Three things to settle.
+What makes it free rather than a trade: **the extension's library page is
+already just a browser tab**, at a `chrome-extension://` address. The web app
+is a browser tab at an ordinary address. To the person using it there is no
+difference at all — same gesture, same place, same feel — so moving it costs
+nothing anybody can perceive and removes an entire second implementation.
 
-**Where does the library live on a desktop?** The extension page or the app.
-*Recommendation:* the extension page. The desktop app is frozen, and opening a
-separate program to read what you marked in a browser is worse than opening a
-tab, which costs nothing and is already built.
+| | |
+| --- | --- |
+| Leaves the extension | the library page, the spaces page, the plans page, and their stylesheets — **4,647 lines** |
+| Stays | the panel, the content script, the popup — **2,694 lines** |
 
-**One library screen or two?** *Recommendation:* one, mounted in the extension
-page and as the app, with a named interface between it and storage, the way
-`FolderSource` works. It is the largest piece of duplication in the repository
-and the reason the two never look alike.
+**The one thing this needs building.** A free user has no sync, so the web app
+must be able to read the extension's storage on the same machine. The portable
+way is a content script the extension injects into Kona's own domain, bridging
+the page to extension storage by `postMessage`. (`externally_connectable` is
+the tidier Chrome mechanism, but Firefox has never implemented it, and Kona
+ships on Firefox and Safari.) This is a known technique rather than something
+tried here, and it is real work — it is the price of the split, and it is
+cheaper than a second library.
 
-**What is the app for, then?** *Recommendation:* Android, where Chrome has no
-extensions; and any browser where an extension cannot be installed, such as a
-locked-down work machine. Not a second way to do what the extension already
-does on a computer.
+So: **the extension highlights. The web app is where your highlights live.**
 
-One thing to say out loud, because people will hit it: **on one computer the
-extension's library and the app's library are two separate stores** —
-`chrome.storage` and IndexedDB — that only meet through sync. Highlight
-something in the browser and it is not in the app until a sync runs. That is
-defensible, but it has to be said rather than discovered.
+**Decided:** _______
 
-**3d. How does a team work, if the library lives in the extension?**
+---
 
-The question 3c does not survive, and the answer changes the shape of Kona.
+**3d. How does a team work?**
 
 **A shared space has to be openable by someone who has installed nothing.**
 That is the whole constraint. If showing research to five colleagues means
