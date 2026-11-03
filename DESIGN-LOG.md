@@ -151,19 +151,47 @@ while the thinking is fresh, not queued for building.
 
 ---
 
-### 2. What does the in-page panel look like?
+### 2. What is the in-page panel?
 
 `src/ui/App.tsx`, 766 lines, is the smallest and least considered of the four
-list screens — and it is where a user actually spends their time. It is the
-face of the product and currently the thinnest part of it.
+screens that list highlights — and it is the one a person is actually looking
+at while they use Kona. It is the face of the product. Five things to settle.
 
-Worth settling: does the panel show *this page's* highlights only, or is it a
-way into the whole library? How is it opened and closed? Does it push the page
-over or float above it? What does it look like with nothing in it yet?
+**2a. What does it show?** This page's highlights, or a way into the library?
 
-*Recommendation:* this page only, floating, with one line out to the library.
-The panel's job is the current page; the library is a different job and already
-has a screen.
+*Recommendation:* this page only. The library is a different job and has its
+own screen. One exception, and it is new: **the active space belongs here**,
+because it changes what happens when you highlight, and the panel is the only
+place you are looking when you do.
+
+**2b. How is it opened?** Always there, a toggle, or appearing when needed?
+
+*Recommendation:* three states, not two. Out of the way by default; a small
+mark showing this page has highlights on it; open when asked. Most of the time
+somebody is reading, not managing a library, and a panel that is always open
+is a panel that gets turned off for good.
+
+**2c. Does it float over the page or push it aside?**
+
+*Recommendation:* float. Pushing re-flows somebody else's layout and can break
+it, and Kona is a guest on every page it appears on.
+
+**2d. What does it look like on a page with no highlights?**
+
+*Recommendation:* almost nothing — the small mark and no more. An empty panel
+on every page in the world is the fastest way to be uninstalled.
+
+**2e. How does it stop an active space misfiling things?**
+
+The risk that comes with active spaces: you set one on Monday, forget, and
+spend Thursday quietly filing amoeba research into it. The cost is paid later,
+when the space is full of things that do not belong and have to be found and
+moved by hand.
+
+*Recommendation:* the panel always says where highlights are going, in words,
+whenever a space is active — and the new highlight it confirms says it too.
+This is what the panel is *for* as much as the list is. A quiet mode that
+silently changes where your work goes is a bad trade for a saved click.
 
 **Decided:** _______
 
@@ -273,20 +301,26 @@ a much smaller panel, and a share sheet that the desktop does not have.
 
 ---
 
-### 1h. Firefox on Android is an open door
+### 1h. Is Android a place you highlight, or only a place you read?
 
-Chrome on Android has no extensions and never has, which is why the phone app
-exists. **Firefox on Android does** — over six thousand of them as of April
-2026 — and Kona already builds for Firefox, with a gecko id and a minimum
-version set in `wxt.config.ts`.
+The technical part is answered and is not the question. Chrome on Android has
+no extensions and never has. **Firefox on Android does** — over six thousand
+as of April 2026 — and Kona already builds for Firefox with a gecko id set, so
+an Android build is close to free.
 
-So there may be a way to highlight on an Android phone after all, for anyone
-willing to read in Firefox. Whether that is worth the testing, and whether
-Android users will change browser for it, is not obvious and is not decided.
+The question is what we say Android *is*, which is a product decision:
 
-*Recommendation:* try the existing Firefox build on an Android phone before
-deciding anything. It may already work, in which case the question is only
-whether to say so out loud.
+- **(a) Android reads.** The app is the Android answer. Firefox is not
+  mentioned.
+- **(b) Android highlights, in Firefox.** Say so plainly, and accept that the
+  answer to "can I highlight on my phone" is "change your browser".
+- **(c) It works, and it is listed, and nothing is built around it.** Android
+  leads with the app; people already in Firefox find that Kona works there.
+
+*Recommendation:* (c). Telling people to change browser is the same large ask
+as telling them to change where they read, and Firefox is a small share of
+Android. But it costs nothing to let it work, and the people it does reach are
+exactly the people who care about this kind of tool.
 
 **Decided:** _______
 
