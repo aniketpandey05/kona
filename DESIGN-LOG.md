@@ -872,12 +872,49 @@ region of the product.
 hides what somebody chose to keep because time has passed has decided what
 matters on their behalf, and the entire product is an argument against that.
 
-*Recommendation on tier:* **free.** This looks like it contradicts 1b, which
+*Note on 1b:* making this available on Free looks like it contradicts 1b, which
 made archiving a *space* a Team feature, and it does not. The rule underneath
 1b is *archiving must not defeat a cap* — the five-space cap has to be felt, or
 nobody has a reason to pay. Highlights are uncapped on every tier, so there is
-no cap for this to defeat. The only thing gating it would achieve is pushing
-free users to delete.
+no cap here for archiving to defeat.
+
+**Decided:** _______
+
+---
+
+**10a. Is archiving capped on Free?**
+
+Proposed: twenty archived highlights on Free, more on Pro. It follows the same
+rule that set the five-space cap, and the segmentation is sound — twenty is
+above what a casual user ever reaches, so it would only bite heavy users, who
+are the ones most likely to pay.
+
+*Recommendation: do not cap this one,* and the reason is not generosity.
+
+**People pay to do more, not to clean up.** Sync is *do more*. A sixth space is
+*do more*. Both caps work because the thing behind the wall is capability you
+can picture wanting. Archiving is housekeeping, and nobody has ever bought
+housekeeping. Hitting a limit on it does not produce the feeling that preceded
+a purchase; it produces the feeling that the product is getting worse the more
+you use it.
+
+**And the failure mode is deletion.** This is the part that matters. A free user
+with fifty highlights to put away and twenty archives does not upgrade. They
+delete the other thirty — because deleting is free, unlimited, and right there.
+Every other decision in this document is built to make keeping things safe. A
+cap on archiving is the one cap that makes destroying them the rational move,
+and it destroys the thing we are selling in order to advertise it.
+
+**The free tier already has four walls** that are felt and that nobody can
+delete their way around: no sync, no hybrid search, five spaces, no shared
+spaces. A fifth wall that makes the product messier is not more pressure to
+pay. It is friction on using it at all.
+
+**If a wall is wanted here**, gate the convenience and not the number: Free
+archives one at a time, Pro archives in bulk. It bites the same heavy user, for
+the same reason, and the worst case is tedium rather than lost work. This
+contradicts "bulk, or it is not a feature" above, and that is the honest trade
+— a tedious tidy is survivable, a cap that rewards deleting is not.
 
 **Decided:** _______
 
