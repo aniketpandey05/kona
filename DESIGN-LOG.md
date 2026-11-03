@@ -652,15 +652,51 @@ Swift one would be the seventh.
   added to the home screen.
 - **(b) One codebase, and the container shows it.** As (a), but the container
   opens the web app, so the thing installed from the App Store *is* the
-  library.
+  library. **Capacitor** is this, productised: the same web build wrapped as a
+  real iOS and Android app, with native storage, the share sheet and push
+  available as plugins, and not one screen rewritten.
 - **(c) A native library on iOS.** SwiftUI, feels right on the platform, and
   every feature after it is built twice.
+- **(d) React Native.** One language, a real app on both phones, sharing the
+  core with the web.
 
 *Recommendation:* **(b).** It is (a) plus a reason for the container to exist.
 Apple requires a Safari extension to ship inside an app, so the container is
 not optional — and a container that only tells you to go and switch it on in
 Settings is a thinner thing to hand to review than a container that opens your
 library.
+
+**Why not React Native.** It is the right instinct and the wrong shape, and the
+reason is worth stating exactly, because *one language* sounds like it answers
+the objection above when it does not.
+
+**React Native shares a language, not screens.** Its primitives are not the
+web's — a `View` is not a `div` — so every screen in the library gets written a
+second time. That is the same cost as Swift, paid in a friendlier language. The
+argument here was never *one language*. It was *do not build the library
+twice*.
+
+And it cannot reach the part that matters most in any case. **The panel has to
+be DOM**, because it is injected into somebody else's page and paints with the
+browser's own highlight API. The extension can never be React Native. So RN
+does not leave us with one way of building UI; it leaves us with two, plus a
+build chain per store, plus store review on every release of a product whose
+web half deploys in a minute. It would also mean React beside Preact, or
+React inside the content script, which is weight paid on every page a person
+reads.
+
+The honest case *for* it is Android. Chrome on Android has no extensions at
+all, so there the app is the only Kona there can be, and RN would serve both
+phones from one place. That is a real argument, and it belongs to 1h rather
+than here. Today's answer to 1h is that Android is a place you read — and a web
+app serves that well, because Chrome on Android is a much better host for one
+than iOS Safari is.
+
+**When to reopen this:** if the app stops being a viewer and becomes where
+people capture and read; if Android turns into a real share of use; or if
+Safari's eviction proves fatal before sync lands. Capacitor answers all three
+more cheaply, and it is reversible — it ships the web build that already
+exists, so nothing is written twice until something has to be.
 
 **Where Swift is allowed:** the container, and the share extension that makes
 *share a link to Kona* work, which is in the definition of the app and cannot
