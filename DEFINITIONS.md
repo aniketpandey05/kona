@@ -374,6 +374,13 @@ deciding together. Its selling point is other people, not a larger allowance.
 Your library on more than one device, kept in step without you wiring anything
 up. **Paid.**
 
+**What syncs cannot be read by the server.** Highlights are encrypted on the
+device before they leave it, with a key the server never holds. What the server
+knows is that an account exists, its email address, when it last synced and
+roughly how much it holds — never what any of it says. The key lives on your
+devices and in one recovery phrase; if every device and the phrase are lost,
+the data cannot be recovered by anyone, Kona included.
+
 Syncing through a folder you own, or a file you carry between machines, is a
 different thing and is not this.
 
@@ -384,6 +391,10 @@ Searching by meaning as well as by word.
 Search by word is BM25 plus a thesaurus Kona learns from your own library, and
 every tier has it. Hybrid search adds real embeddings on top: a different
 capability, not the same one with a gate in front of it.
+
+The embeddings are computed on the device, like everything else the server is
+not allowed to read. This is affordable because you only ever search your own
+library, which is small.
 
 ### Account
 

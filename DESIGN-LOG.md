@@ -34,6 +34,7 @@ every word means, and this is what is still undecided.
 | Why the free cap | A free tier that does everything leaves no reason to upgrade. Drawn now, with no users, rather than clawed back later |
 | Where the paid line sits | Free is one surface. Pro is every surface, kept in step |
 | Payments | Stripe on the web. Not Apple's in-app purchase: their rate is 30% in year one |
+| Privacy | The server stores what it cannot read. Encryption and embeddings both happen on the device, because you only ever search your own library |
 | What Kona is written in | TypeScript, every screen. Swift only for the iOS container, the share extension and the native bridge |
 | iOS | The Safari extension and the library in one Capacitor container, so one App Store install gives both |
 | Open source | Use it where the problem is solved (matching, article extraction, embeddings). Never for what a space is or how the panel feels. Apache-2.0 and MIT only, nothing AGPL |
@@ -650,7 +651,7 @@ for a team, and how seats work, is 8.
 
 ---
 
-### 6. What syncs, where does it live, and what does privacy mean then?
+### 6. What syncs, where does it live, and what does privacy mean then? — settled
 
 **What syncs — settled.** Every device you are signed in on, kept in step:
 highlight on the PC, and it is on the laptop and the phone. Highlights, notes,
@@ -699,7 +700,12 @@ much data it holds and across how many devices. Metadata, not content.
 in it, which is real cryptographic work. Team is frozen (1g), so this is noted
 and left. Nothing above depends on it.
 
-**Decided:** _______
+**Decided: the server stores what it cannot read.** Encrypted on the device,
+embeddings computed on the device, one recovery phrase whose loss is final and
+is said so in those words at sign-up. The server holds blobs and metadata —
+that an account exists, its email, when it synced, how much and across how many
+devices — and never content. Team's key exchange is left for whenever Team
+thaws.
 
 ---
 
@@ -1256,35 +1262,63 @@ gets ambient marks; Chrome does not, and is not asked to.
 
 ---
 
-### 12. Colours and palettes — open, and the spec is the author's
+### 12. Colours and palettes — open, and the biggest open thing left
 
-Recorded from the author so it is not lost, and left open because it is a real
-piece of design rather than a yes or no:
+The spec, recorded from the author: **four palettes**, a palette can be
+**edited**, adding a colour works **the way it does in Paint** (a picker, not a
+fixed list), and a colour's **name follows the colour**.
 
-- **Four palettes** of highlight colours.
-- A palette can be **edited**.
-- **Adding a colour works the way it does in Paint** — a picker, not a fixed
-  list.
-- A colour's **name follows the colour**: pick a hex value and Kona names it.
+Seven things have to be settled before any of it is built. They are in
+dependency order — the first two decide most of the rest.
 
-Worth deciding before any of it is built:
+**1. Four palettes, or one palette of four?** The phrasing fits either, and
+they are different products. *Four palettes* means themes: you pick one and
+your whole library wears it. *A palette of four* means four colours available at
+once, which is what the panel mockup actually draws — four swatches in the bar.
+Everything below reads differently depending on the answer, so this is first.
 
-**Does a colour mean anything?** Today it is decoration. If a colour carries
-meaning — important, to read again, disagreed with — then it is closer to a tag
-(1c), and the two must not end up as rival ways of saying the same thing.
+**2. Does a colour mean anything?** People will assign meaning whether Kona
+defines it or not — yellow for interesting, red for wrong. The question is
+whether *Kona* knows. If it does, you can filter by it, and colour becomes a
+third axis beside tags and spaces, which 1c was careful to keep apart. If it
+does not, colour is decoration and filtering by it is still possible but means
+nothing to Kona.
 
-**What happens to a colour that is edited away?** If a palette changes, every
-highlight already wearing that colour has to become something. Re-coloured,
-left on the old value, or the palette is a set of slots and highlights point at
-the slot. Only the last one is stable, and it is the one that needs deciding
-first.
+*Leaning:* colour carries **private** meaning. Kona never defines what a colour
+means, and lets you filter by it. That gets the usefulness without inventing a
+taxonomy, and without colliding with tags.
 
-**Naming a hex value** is a solved problem — nearest-named-colour against a
-fixed list — but it must be deterministic, or the same colour gets different
-names on different devices and 6 has to sync a disagreement.
+**3. Then is a colour named by its hue or by you?** These pull apart, and the
+spec picks one. *Name follows the colour* gives "Amber", which is honest
+labelling and says nothing. Letting you rename it gives "Disagree", which is
+where the meaning in (2) would actually live. *Leaning:* auto-name from the hue
+as the default, and let it be renamed. The automatic name is what saves you
+from naming things you do not care about.
 
-**Four palettes of how many?** The panel's bar fits four or five swatches (2g's
-mockup has four). A palette larger than the bar needs somewhere else to live.
+**4. What does a highlight store — a slot or a colour?** This one has a right
+answer. **A palette is a set of slots and a highlight points at a slot.** If a
+highlight stored a hex value, editing a palette would leave every existing
+highlight behind and "edit" would feel broken.
+
+But note the consequence, which needs agreeing rather than discovering:
+pointing at slots means **editing a palette repaints your whole library**. That
+is either the point of palettes or a shock, and which it is depends on (1).
+
+**5. Can a picker make text unreadable?** The real constraint on *Paint-style*
+freedom. Highlights are painted over pages whose backgrounds Kona does not
+control, through the browser's highlight API, so a dark enough pick makes the
+text under it illegible — on a dark page, or in dark mode. Free choice needs
+either a lightness floor, or automatic transparency so the pick becomes a tint
+rather than a fill. *Leaning:* tint automatically, and never refuse a colour.
+
+**6. What tells two highlights apart for somebody who cannot see the
+difference?** If colour means anything, colour alone cannot be the only
+signal — the name has to be reachable too, in the row and to a screen reader.
+9 already committed to VoiceOver mattering.
+
+**7. Palettes on Free are per device.** Free has no sync (11), so a palette
+edited on the laptop is not the palette on the phone. Unavoidable, same as the
+caps in 10a, and worth saying out loud rather than letting somebody find it.
 
 **Decided:** _______
 
