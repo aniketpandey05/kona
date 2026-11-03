@@ -349,6 +349,56 @@ extension's library and the app's library are two separate stores** —
 something in the browser and it is not in the app until a sync runs. That is
 defensible, but it has to be said rather than discovered.
 
+**3d. How does a team work, if the library lives in the extension?**
+
+The question 3c does not survive, and the answer changes the shape of Kona.
+
+**A shared space has to be openable by someone who has installed nothing.**
+That is the whole constraint. If showing research to five colleagues means
+five extension installs, the sharing does not happen — and sharing is the
+entire value of Team. A manager who reads the write-up and votes needs a
+link, not an install.
+
+So: **shared spaces live on the web.** Not in the extension.
+
+This is not a new direction. `team/` is already a web app with routes for
+spaces, members and admin — it was built that way without the reason being
+written down. The shape is already right; it just was not recognised, which
+is why it was built in isolation:
+
+| | |
+| --- | --- |
+| `team/src` | **3,798 lines sharing nothing with `src/` or `app/`** |
+| Its own `memo.ts` | 134 lines, beside `src/core/memo.ts` at 164 |
+| Its own `types.ts` | 122 lines, beside `src/core/types.ts` at 42 |
+| Its own `store.ts` | 291 lines, beside `src/core/store.ts` at 324 |
+
+Counting every file that draws a list of highlights — the panel, the
+extension's library, the extension's spaces, the phone app, and the Team
+app's two — comes to **5,105 lines doing one job six times.**
+
+**Where each thing happens:**
+
+| | Extension | Web app |
+| --- | --- | --- |
+| Highlighting | ✓ only here | — |
+| Your library | ✓ | ✓ |
+| Your own spaces | ✓ | ✓ |
+| Filing into a shared space | ✓ | ✓ |
+| Seeing what a shared space holds | ✓ passages, while reading | ✓ |
+| Discussion, pings, polls, the attention list | — | ✓ |
+| The write-up, members, billing | — | ✓ |
+
+**And the simplification that falls out: there is one web app, not two.**
+`app/` and `team/` are the same thing at different subscriptions. Signed out
+it is your library, installable on a phone — which is what `app/` is. On Team
+it also holds the shared spaces — which is what `team/` is. Keeping them
+apart is what produced a third `memo.ts`.
+
+So Kona is **two surfaces**: the extension, and one web app. The desktop app
+is frozen, and the Team demo folds into the web app rather than standing
+beside it.
+
 **Decided:** _______
 
 ---
