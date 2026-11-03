@@ -284,6 +284,12 @@ rather than two.
 
 ### 3. Why the screens do not look like one product
 
+*Read 3a and 3b as rules for building, not as repairs.* They were written to
+undo duplication in the current code, and the preamble now says that code is a
+sketch rather than a constraint — the UI is expected to end up very different.
+The measurements below are still the reason the rules exist: they are what
+happens without them, found once already. 3c to 3f stand on their own.
+
 Not a matter of taste, and now measured. Eight stylesheets, 5,990 lines, and
 **220 custom properties declared independently** — every screen writes its own
 `--bg`, `--fg`, `--accent` from scratch. They disagree:
