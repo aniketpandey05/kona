@@ -300,6 +300,55 @@ the passage itself, because that is what a person recognises from screen to
 screen; the frame around it genuinely is different work in each place, and
 pretending otherwise is how the ten props arrive.
 
+**3c. The extension and the app have built the same library twice.**
+
+This is the extension-versus-app question in the concrete, and it is further
+along than the rule in `DEFINITIONS.md` suggests. The extension does not only
+capture: it has a **full library page** (1,025 lines) and a **full spaces
+page** (1,487) that open as browser tabs. The app has a library and spaces too
+(1,171). Two builds of one screen, for one person.
+
+And they already agree on how to store things, by accident:
+
+| Job | Extension `src/core/store.ts` | App `app/src/storage.ts` |
+| --- | --- | --- |
+| Every highlight | `loadAllMarks()` | `loadAll()` |
+| Save one | `upsertMark(m)` | `save(m)` |
+| Delete one | `removeMark(site, page, id)` | `remove(id)` |
+| Import | `importMarks(xs)` | `importMarks(xs)` |
+| Spaces | `loadSpaces` `saveSpace` `removeSpace` | the same three names |
+| Watch | `watchAllMarks(fn)` | `watch(fn)` |
+| Sync | `syncStore` | `syncStore` |
+| Who you are | `loadMe` `saveMe` `ensureSigningKey` … | the same names again |
+
+**The same interface was written twice because nobody gave it a name.** That
+exact mistake has already been found and fixed once here: the phone and the
+desktop app run one component because `FolderSource` named the seam between
+them and the difference became an argument. Nothing stops the same move again.
+
+Three things to settle.
+
+**Where does the library live on a desktop?** The extension page or the app.
+*Recommendation:* the extension page. The desktop app is frozen, and opening a
+separate program to read what you marked in a browser is worse than opening a
+tab, which costs nothing and is already built.
+
+**One library screen or two?** *Recommendation:* one, mounted in the extension
+page and as the app, with a named interface between it and storage, the way
+`FolderSource` works. It is the largest piece of duplication in the repository
+and the reason the two never look alike.
+
+**What is the app for, then?** *Recommendation:* Android, where Chrome has no
+extensions; and any browser where an extension cannot be installed, such as a
+locked-down work machine. Not a second way to do what the extension already
+does on a computer.
+
+One thing to say out loud, because people will hit it: **on one computer the
+extension's library and the app's library are two separate stores** —
+`chrome.storage` and IndexedDB — that only meet through sync. Highlight
+something in the browser and it is not in the app until a sync runs. That is
+defensible, but it has to be said rather than discovered.
+
 **Decided:** _______
 
 ---
