@@ -290,6 +290,12 @@ is the only way Apple allows one to be installed. "Kona has an iOS app" and
 Kona inside a browser. **The tool you highlight with**, and the only part of
 Kona that can be.
 
+It reads a site only once you have allowed that site, one site at a time, and
+there are no exceptions: nothing is allowed when Kona is installed, and the AI
+chats are not special. A fresh install therefore has access to nothing, and
+Kona asks for the first site while you are standing on a page you want to keep
+something from.
+
 ### Panel
 
 The strip Kona shows inside the page you are reading. It is about *this page*.

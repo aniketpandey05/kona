@@ -29,6 +29,7 @@ every word means, and this is what is still undecided.
 | Open source | Use it where the problem is solved (matching, article extraction, embeddings). Never for what a space is or how the panel feels. Apache-2.0 and MIT only, nothing AGPL |
 | What a space is | A workspace for researching one topic across many links. Alone: gather and conclude. With a team: discuss and decide. The collaborative parts appear only once it is shared |
 | Extension or app | Neither replaces the other. The extension is the only thing that can highlight, because only it runs inside the page you are reading. The app is where you look at what you gathered |
+| The popup | One line: this site, and whether Kona may read it. Nothing built in, and no list of allowed sites — the browser owns that |
 | Desktop app | Frozen. Its only job was the folder-picker gap, which hosted sync closes |
 | Team | Frozen. Good demo, no users, needs the same server Pro needs |
 
@@ -402,7 +403,7 @@ too many.
 
 ---
 
-**3e. What is the popup for, once the library has gone?**
+**3e. What is the popup for, once the library has gone? — settled**
 
 Most of what the popup offered was a way into pages that no longer exist in
 the extension. But it cannot be deleted, because it holds something that
@@ -411,17 +412,75 @@ page, on a user gesture.** A content script cannot ask, and on a site Kona is
 not yet allowed on there is no content script at all — so the toolbar button
 has to open *something*.
 
-- **(a) No popup.** The button toggles the panel. *Impossible on a site not
-  yet allowed: there is nothing running there to toggle.*
-- **(b) A small popup**: turn Kona on here, and a way to the library.
-- **(c) Keep the popup as it is.**
+So it stays, and it shrinks to one line: **this site, and whether Kona may
+read it.** Two rulings decide the rest.
 
-*Recommendation:* (b), and small — two states. Off here: one button that asks
-for the site. On here: open the panel, and open my library, which is now a
-link to the web app. The site switches it keeps today stay, because that list
-has nowhere else to live.
+**Nothing is built in. Kona asks on every site.**
 
-**Decided:** _______
+Four origins are written into the manifest today and granted at install —
+`chatgpt.com`, `chat.openai.com`, `claude.ai`, `gemini.google.com` — and three
+of them are drawn in the popup as a permanent "Built in" section. That goes.
+
+AI chats are the thing nothing else does, so the instinct to preload them is
+understandable. It is still wrong:
+
+- It is a treadmill. Every new chat product is a release of Kona, and until
+  that release ships Kona is simply wrong about where you read.
+- It is wrong by default for everybody who does not use those three.
+- It claims access to four sites before you have highlighted anything.
+
+The last one is the real cost, and it is paid at the worst possible moment.
+Installing Kona today raises the browser's own warning: *read and change your
+data on chatgpt.com, chat.openai.com, claude.ai and gemini.google.com.* That
+is the first sentence Kona says about itself, and it is a demand. With
+`host_permissions` empty there is no warning at all — Kona installs asking for
+nothing, and asks for a site while you are standing on a page you want to keep
+something from. A better install, and a far easier store review.
+
+What is given up: ChatGPT no longer works the second Kona is installed. It
+costs one grant, in the one place where granting makes sense.
+
+**The allowed sites are not listed in the popup.**
+
+"Sites you've added" is fine at three and unreadable at twenty, and twenty is
+the success case. A list that gets worse the more you use the product is the
+wrong list.
+
+It does not need to move somewhere else either, because the browser already
+draws it: Kona's entry on the browser's extensions screen lists every origin
+granted and takes them back. That screen is *authoritative* in a way Kona's
+copy can never be.
+
+Which exposes a real bug in keeping a copy. `local:disabled-sites` is a second
+list, and the two can already disagree — revoke a site from the browser's
+screen and Kona's stored list never hears, so the popup goes on offering a
+switch for a site it can no longer touch. With nothing built in, "allowed" and
+"on" collapse into one fact, and the second list has no reason to exist. One
+list, owned by the browser, that cannot go stale.
+
+And the list somebody actually wants is a different list. "Which sites am I
+highlighting on" is answered by the pages you have kept something from, which
+is the library — on the web, by 3c. Permissions are plumbing. The library is
+the product.
+
+What is given up: the soft switch, turning Kona quiet on a site without
+handing the permission back. A small loss. Kona at rest is already one faded
+mark in a corner (2d), and allowing a site again is one click.
+
+**Decided:** nothing built in, ask per site, no list of sites. The popup is
+this site and a way to the library.
+
+One consequence to carry into decision 4: with no site granted at install, the
+first run cannot assume Kona may run anywhere. It does not need to — a welcome
+page served by the extension is the extension's *own* page, so the entire
+round trip can be taught there before a single permission is asked for. The
+first grant then lands where it belongs, at the moment you leave for a real
+page.
+
+One thing to check when this gets built, not now: whether an extension may
+deep-link to its own entry on the browser's extensions screen. Chrome has
+restricted navigation to `chrome://` pages before. If it cannot, the popup says
+where to go in words.
 
 ---
 
@@ -451,9 +510,14 @@ Two things to decide inside it:
 
 **Does the first run mention AI chats?** It is the thing nothing else does,
 and it is also a lot to ask in the first minute. *Recommendation:* name it on
-the welcome page, do not make it a step. The first time somebody opens
-ChatGPT with Kona installed, let the panel say so there, where it costs
-nothing and makes sense.
+the welcome page, do not make it a step.
+
+3e makes the welcome page the **only** chance to name it. With no site granted
+at install and no `tabs` permission, Kona cannot tell that you have opened
+ChatGPT at all — a browser does not hand an extension a tab's URL without
+permission for that tab, and asking for every tab's URL buys back the install
+warning 3e just removed. There is no later moment when the panel can appear on
+a chat and introduce itself. The welcome page says it, or nobody finds it.
 
 **When does it hand over to the web app?** *Recommendation:* after the first
 highlight, not before. "That is kept. It lives here" with the link, once there
