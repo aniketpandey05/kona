@@ -225,6 +225,33 @@ and nothing more, which is also what 2b and 2d ask for.
 Picking which space is active is a small control in the panel, not a list of
 spaces. A picker, not a fifth screen.
 
+**2g. How do you highlight something that does not belong in the active space?**
+
+The hole in 2a. You are researching amoebas, and you pass a sentence worth
+keeping that has nothing to do with amoebas. As drawn, the active space takes
+it anyway.
+
+- **(a) A second gesture** — a modifier key, or a separate button, that keeps
+  a highlight out of the space.
+- **(b) It goes in, and you take it out later** from the space.
+- **(c) The confirmation is the way out.** Highlighting shows where it went,
+  and that same thing has one control on it to keep it in the library only.
+
+*Recommendation:* (c), and (a) is ruled out rather than merely beaten.
+**Kona runs on Safari on an iPhone, where there is no right-click and no
+modifier key.** Any design resting on a second gesture is a design that works
+on a laptop and not on a phone, and the phone is where half the reading is.
+
+(b) is the thing active spaces were invented to avoid: it moves the filing to
+later and makes it cleanup rather than a choice.
+
+(c) costs nothing in the normal case and one tap in the exception, taken
+immediately, while you are still looking at the sentence and still know
+whether it belongs. It also earns the confirmation its place: **the thing that
+tells you where a highlight went is the same thing that changes where it
+went.** One element doing the safety job from 2e and the escape hatch at once,
+rather than two.
+
 **Decided:** _______
 
 ---
