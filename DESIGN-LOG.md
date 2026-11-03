@@ -29,7 +29,7 @@ every word means, and this is what is still undecided.
 | Decision | Answer |
 | --- | --- |
 | What Kona is | You highlight a passage anywhere you read, and can find it again and land on the exact words |
-| Tiers | Free: extension, unlimited highlights, word search, 5 spaces, no sync. Pro: sync across devices + hybrid search. Team: shared spaces |
+| Tiers | Free: extension, unlimited highlights, word search, 5 spaces, 10 archived at a time, no sync. Pro: sync across devices + hybrid search. Team: shared spaces |
 | Why the free cap | A free tier that does everything leaves no reason to upgrade. Drawn now, with no users, rather than clawed back later |
 | Where the paid line sits | Free is one surface. Pro is every surface, kept in step |
 | Payments | Stripe on the web. Not Apple's in-app purchase: their rate is 30% in year one |
@@ -882,7 +882,7 @@ no cap here for archiving to defeat.
 
 ---
 
-**10a. Is archiving capped on Free?**
+**10a. Is archiving capped on Free? — settled**
 
 Proposed: twenty archived highlights on Free, more on Pro. It follows the same
 rule that set the five-space cap, and the segmentation is sound — twenty is
@@ -916,7 +916,38 @@ the same reason, and the worst case is tedium rather than lost work. This
 contradicts "bulk, or it is not a feature" above, and that is the honest trade
 — a tedious tidy is survivable, a cap that rewards deleting is not.
 
-**Decided:** _______
+**Decided: ten on Free, unlimited on Pro.** The author's call, against the
+recommendation above, and consistent with how every other limit here was drawn:
+a free tier that gives way at each wall leaves nobody a reason to pay, and the
+walls are supposed to be felt.
+
+One correction to my own argument above, since it cuts the other way: at twenty
+the cap would only have reached heavy users, which was the strongest thing
+going for it. Ten reaches ordinary ones. That makes the shape below matter more
+than the number.
+
+**Three rules keep the cap from rewarding deletion**, which was the real
+objection and is the thing left to design around.
+
+**The ten are a working set, not a lifetime quota.** Only what is *currently*
+archived counts. Un-archiving is free and instant and gives the slot straight
+back. So the limit reads "ten put away at a time", not "ten ever" — a thing you
+manage rather than a thing you spend. Almost everything the objection above
+feared comes from the quota reading, and this is not that.
+
+**Nothing is lost at the wall.** Same as 1b: reaching the limit means an
+eleventh cannot be archived, and never that something already archived comes
+back on its own, or is deleted, or is hidden.
+
+**The wall never offers deleting.** When somebody tries for an eleventh, the two
+ways forward are un-archive something, or go to Pro. A delete control does not
+appear in that moment, anywhere. The product must not be the thing that
+suggests it.
+
+*One consequence of Free having no sync:* the count is per device, because on
+Free the library is local and there is nothing to count it against. Two
+browsers mean ten each. That is unavoidable rather than intended, and it is one
+more thing Pro quietly fixes.
 
 ---
 

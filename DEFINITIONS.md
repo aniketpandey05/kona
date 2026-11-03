@@ -251,10 +251,11 @@ a space is that it produces something.
 thing: whether that thing appears in the default view of the list it belongs
 to. Nothing is deleted, and nothing stops being searchable.
 
-**A highlight** can be archived on any tier. Highlights are uncapped
-everywhere, so there is no cap for archiving to defeat — and the alternative,
-deleting what you went to the trouble of keeping, is the one habit a keeping
-tool must not encourage.
+**A highlight** can be archived on every tier: **ten at a time on Free**,
+without limit on Pro. The ten are a working set and not a quota — un-archiving
+hands the slot straight back, so the limit is how many can be put away at once
+rather than how many ever can be. Reaching it never deletes or un-archives
+anything on its own.
 
 **A space** can be archived on Team only. Free and Pro do not have it, and the
 five-space cap is therefore a hard five: archiving would turn the cap into a
