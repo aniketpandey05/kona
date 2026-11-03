@@ -33,7 +33,8 @@ every word means, and this is what is still undecided.
 | Why the free cap | A free tier that does everything leaves no reason to upgrade. Drawn now, with no users, rather than clawed back later |
 | Where the paid line sits | Free is one surface. Pro is every surface, kept in step |
 | Payments | Stripe on the web. Not Apple's in-app purchase: their rate is 30% in year one |
-| iOS | A Safari Web Extension, not a separate native app |
+| What Kona is written in | TypeScript, every screen. Swift only for the iOS container, the share extension and the native bridge |
+| iOS | The Safari extension and the library in one Capacitor container, so one App Store install gives both |
 | Open source | Use it where the problem is solved (matching, article extraction, embeddings). Never for what a space is or how the panel feels. Apache-2.0 and MIT only, nothing AGPL |
 | What a space is | A workspace for researching one topic across many links. Alone: gather and conclude. With a team: discuss and decide. The collaborative parts appear only once it is shared |
 | Extension or app | Neither replaces the other. The extension is the only thing that can highlight, because only it runs inside the page you are reading. The app is where you look at what you gathered |
@@ -641,7 +642,7 @@ until the product is finished or nearly.
 
 ---
 
-### 9a. What language is Kona written in, and where does Swift start?
+### 9a. What language is Kona written in, and where does Swift start? — settled
 
 9 cannot be answered before this one.
 
@@ -751,11 +752,14 @@ A web view of a remote site can attract Apple's minimum-functionality rule. The
 extension shipping in the same container is the answer to that, and it is worth
 checking against current review practice before building — not now.
 
-**Decided:** _______
+**Decided:** **one TypeScript codebase, every screen.** The app is the web app,
+and on a phone Capacitor wraps it, so the thing installed from the App Store
+*is* the library. Swift exists in three places and nowhere else: the container,
+the share extension, and the native route in 9. Never in a screen.
 
 ---
 
-### 9. What is different on iPhone and iPad?
+### 9. What is different on iPhone and iPad? — settled
 
 Answered on top of 9a: one TypeScript codebase, and the container opens it.
 
@@ -810,7 +814,12 @@ panel. And a share sheet the desktop has no equivalent of, which is capture
 without the extension, and the one thing the phone does better than the
 computer.
 
-**Decided:** _______
+**Decided:** **one Capacitor container carrying both** the Safari extension and
+the library, so one App Store install gives both and there is no
+Add-to-Home-Screen ritual. The library reads what the extension kept by the
+native route, (ii), so a free user on a phone can look at their own highlights
+without sync. Reopen only on the judgement nobody can make from here: whether
+the web view's feel is the thing people dislike about Kona on a phone.
 
 ---
 

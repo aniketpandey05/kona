@@ -283,7 +283,8 @@ sites refuse to be framed at all. No amount of work changes it.
 
 On iPhone the distinction disappears: the extension *is* the app, because that
 is the only way Apple allows one to be installed. "Kona has an iOS app" and
-"Kona has a Safari extension" are the same sentence.
+"Kona has a Safari extension" are the same sentence. The app that carries the
+extension is also where the library is, so one install gives both.
 
 ### Extension
 
@@ -308,9 +309,9 @@ Kona everywhere that is not the page you are reading. **It is where you look at
 what you have gathered** — read, search, organise into spaces, and keep
 everything in step. It never highlights.
 
-It opens in a browser tab, and on a phone from the home screen. What separates
-it from the panel is not the browser: the panel is about one page, and the app
-is about everything.
+It opens in a browser tab, and on a phone from its own icon. What separates it
+from the panel is not the browser: the panel is about one page, and the app is
+about everything.
 
 It also captures, but only by being handed something: share a link or a passage
 to Kona from anywhere, and it is kept. That is capture without being inside
