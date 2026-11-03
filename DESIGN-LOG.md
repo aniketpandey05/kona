@@ -193,6 +193,38 @@ whenever a space is active — and the new highlight it confirms says it too.
 This is what the panel is *for* as much as the list is. A quiet mode that
 silently changes where your work goes is a bad trade for a saved click.
 
+**2f. Does the panel show the space as well as the page?**
+
+There is a real need. Researching one topic across six articles means that on
+the sixth you want to know what you already have — whether this point is
+already gathered, what the space is missing. Leaving the page to check breaks
+the reading, which is the thing Kona is supposed to protect.
+
+There is also a real danger, and it is the one this whole document exists to
+avoid: the panel becomes a fifth screen listing highlights, and then there are
+five of them to keep looking alike instead of four.
+
+- **(a) The passages in the active space, and nothing else.** A second view in
+  the panel — *This page* and *Amoebas (12)* — appearing only when a space is
+  active. Each row is a passage, clickable through to where it came from. No
+  findings, no write-up, no threads, no editing the space.
+- **(b) The whole space**, as the full screen shows it.
+- **(c) Nothing.** The panel is this page, full stop; the space has a screen.
+
+*Recommendation:* (a), with the line drawn hard: **the panel shows passages
+and never a space's machinery.** Findings, the write-up and discussion are
+work you sit down to do, and they belong on the screen you sit down at. What
+belongs in the panel is what you need without stopping reading, which is the
+list of what you have already got.
+
+Two things keep it from growing. It is the same row component as everywhere
+else (decision 3), so it is a mount and not a new screen. And it does not
+exist at all unless a space is active — with none set, the panel is this page
+and nothing more, which is also what 2b and 2d ask for.
+
+Picking which space is active is a small control in the panel, not a list of
+spaces. A picker, not a fifth screen.
+
 **Decided:** _______
 
 ---
