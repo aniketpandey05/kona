@@ -951,6 +951,59 @@ more thing Pro quietly fixes.
 
 ---
 
+**10b. Deleting a highlight — settled**
+
+Delete is available on any highlight, in the default library view and in the
+archived view alike. It is your text; there has to be a way to be rid of it,
+and hiding that control in only one of the two lists would be arbitrary.
+
+This does not reopen the last rule in 10a. That rule is about one moment — the
+instant somebody is told they cannot archive an eleventh thing — and says the
+product must not offer deleting *as the way out of its own limit*. Delete being
+an ordinary action on an ordinary row is a different thing entirely.
+
+**Delete is the opposite of archive, and the pair only makes sense stated
+together:**
+
+| | Archived | Deleted |
+| --- | --- | --- |
+| In the library's default view | No | No |
+| Found by search | Yes | No |
+| Painted on its page | Yes | No |
+| In the spaces it was added to | Yes | No |
+| Recoverable | It was never gone | No |
+
+So the division is: **archive if you might want it, delete if you are sure.**
+
+**No trash.** Archive already occupies the "keep it but take it out of my way"
+slot, and a recoverable-deleted state would be a third place every surface has
+to ask about — the exact defect 10 was shaped to avoid. Delete means gone.
+
+**Undo instead of confirmation**, for a single delete: a brief *deleted · undo*
+after the fact. The real failure is a misclick, and undo answers a misclick
+while a dialog only trains people to dismiss dialogs.
+
+**Confirmation for bulk**, with the count in it. Archiving is bulk, so deleting
+will be too, and fifty at once deserves a deliberate yes rather than a toast
+that may be missed.
+
+**Your own highlights only.** In a shared space you can delete what you
+contributed. Taking out somebody else's contribution is a different operation
+with its own rules, and it belongs to Team.
+
+**Delete is never the easier of the two.** Wherever both appear, archive is at
+least as reachable as delete — same menu, never a primary button where archive
+is buried. A keeping tool may not make destroying things the quickest gesture
+available.
+
+**One honest interaction with 10a, recorded rather than argued:** "archive if
+unsure, delete if sure" holds until the tenth archive. A Free user who is
+unsure, with ten already put away, has only delete in front of them. That is
+the pressure the cap creates, and the three rules in 10a are what keep it from
+becoming a suggestion.
+
+---
+
 ### 1h. Is Android a place you highlight, or only a place you read?
 
 The technical part is answered and is not the question. Chrome on Android has

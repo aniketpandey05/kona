@@ -261,6 +261,19 @@ anything on its own.
 five-space cap is therefore a hard five: archiving would turn the cap into a
 formality, and that is a reason for someone to pay rather than a hardship.
 
+### Delete
+
+**Getting rid of something.** Gone from the library, from search, from every
+space it was in, and no longer painted on its page. Not recoverable, and there
+is no trash — archive is the thing for *I might want this later*, so the pair
+divides cleanly: archive if you might want it, delete if you are sure.
+
+A single delete can be undone immediately afterwards. Deleting several at once
+asks first. In a shared space you can delete what you contributed and not what
+anybody else did.
+
+Wherever both are offered, archive is at least as easy to reach as delete.
+
 ---
 
 ## Surfaces
