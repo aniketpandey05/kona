@@ -66,6 +66,10 @@ Every highlight you have, from everywhere, in one searchable place.
 **The library is organised by where you read.** That is the whole distinction
 from a space, which is organised by what you want to find out.
 
+Its default view leaves out anything archived, and that is the only thing
+archiving changes: an archived highlight is still searchable, still painted on
+its page, and still in every space it was added to.
+
 ---
 
 ## Spaces
@@ -243,11 +247,18 @@ a space is that it produces something.
 
 ### Archive
 
-Putting a space out of the way without losing it. **Team tier.**
+**Putting something out of the way without losing it.** It changes exactly one
+thing: whether that thing appears in the default view of the list it belongs
+to. Nothing is deleted, and nothing stops being searchable.
 
-Free and Pro do not have it, and the five-space cap is therefore a hard five.
-Archiving would turn the cap into a formality, and that is a reason for someone
-to pay rather than a hardship.
+**A highlight** can be archived on any tier. Highlights are uncapped
+everywhere, so there is no cap for archiving to defeat — and the alternative,
+deleting what you went to the trouble of keeping, is the one habit a keeping
+tool must not encourage.
+
+**A space** can be archived on Team only. Free and Pro do not have it, and the
+five-space cap is therefore a hard five: archiving would turn the cap into a
+formality, and that is a reason for someone to pay rather than a hardship.
 
 ---
 

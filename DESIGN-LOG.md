@@ -823,6 +823,66 @@ the web view's feel is the thing people dislike about Kona on a phone.
 
 ---
 
+### 10. Archiving a highlight
+
+The library is everything you ever kept, so it fills with things kept once for
+a reason that has passed. Wanting them out of the way is not wanting them gone,
+and deleting is the only tool there is today — which is the worst possible
+answer from a product whose whole job is keeping things.
+
+**The shape that makes this safe: archived is a filter on one list, not a
+place.**
+
+That is the whole decision; everything else follows from it. A *place* has to
+be known about by everything — search has to decide whether to look there,
+counts whether to count it, spaces whether to show it, sync whether to carry
+it, export whether to include it. Each of those is a chance for two surfaces to
+disagree about where something is, which is the defect this document exists to
+prevent. A *filter* is known about by one list.
+
+So, exhaustively:
+
+| | |
+| --- | --- |
+| In the library's default view | **No.** The only thing archiving changes. |
+| Found by search | **Yes**, always, marked as archived. |
+| Still painted on the page | **Yes.** The mark is the thing you made. |
+| In the panel for that page | **Yes.** The panel is about this page. |
+| Still in the spaces it was added to | **Yes.** A space is deliberate; the library is the firehose. |
+| Visible to others in a shared space | **Yes.** Archiving is personal, always. |
+| Deleted, ever | **No.** |
+
+**Search must never lose it.** Kona promises one thing: that you can find it
+again. An archive that hides things from search is a bin with extra steps, and
+it turns archiving into a decision rather than tidying — which is how people
+end up deleting instead, because at least deleting is honest about itself.
+
+**Personal in a shared space, always.** Otherwise archiving becomes a quiet way
+to take somebody else's contribution out of a space, which is a thing Team must
+not have.
+
+**Bulk, or it is not a feature.** Archiving two hundred highlights one at a
+time is a punishment. Select several and archive them together.
+
+**Where it lives:** a filter inside the library, not a third thing standing
+beside Library and Spaces (3f). Archived is a state a highlight is in, not a
+region of the product.
+
+**No automatic archiving.** Not after a year, not on anything. A tool that
+hides what somebody chose to keep because time has passed has decided what
+matters on their behalf, and the entire product is an argument against that.
+
+*Recommendation on tier:* **free.** This looks like it contradicts 1b, which
+made archiving a *space* a Team feature, and it does not. The rule underneath
+1b is *archiving must not defeat a cap* — the five-space cap has to be felt, or
+nobody has a reason to pay. Highlights are uncapped on every tier, so there is
+no cap for this to defeat. The only thing gating it would achieve is pushing
+free users to delete.
+
+**Decided:** _______
+
+---
+
 ### 1h. Is Android a place you highlight, or only a place you read?
 
 The technical part is answered and is not the question. Chrome on Android has
@@ -863,6 +923,7 @@ what is written, kept here so the definitions do not have to carry it.
 | **Telling everyone** | A space travels by shared folder or handed-over file, so a ping lands when the other copy next syncs. Real push needs the server. |
 | **Space has a note, labels, a position** | Only `createdAt`. Reordering by hand exists for highlights (`order.ts`) and not for spaces. |
 | **Attention list** | Nothing. `openQuestions` exists as a plain list and is not joined to anything. |
+| **Archived highlight** | Nothing. Neither the state nor the filter exists. |
 | **Page** | Correct as of today: tracking parameters are stripped and old highlights migrate. |
 | **Highlight survives an edited page** | Correct as of today. |
 
