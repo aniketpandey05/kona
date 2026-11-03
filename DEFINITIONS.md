@@ -304,9 +304,13 @@ thing in the product.
 
 ### App
 
-Kona outside a browser: on a phone, or on a computer. **It is where you look at
+Kona everywhere that is not the page you are reading. **It is where you look at
 what you have gathered** — read, search, organise into spaces, and keep
 everything in step. It never highlights.
+
+It opens in a browser tab, and on a phone from the home screen. What separates
+it from the panel is not the browser: the panel is about one page, and the app
+is about everything.
 
 It also captures, but only by being handed something: share a link or a passage
 to Kona from anywhere, and it is kept. That is capture without being inside

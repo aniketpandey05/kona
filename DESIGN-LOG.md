@@ -484,6 +484,43 @@ where to go in words.
 
 ---
 
+**3f. What is the thing the extension opens, and what is it called?**
+
+The popup's button says "Open" today, under the hint *your highlights and your
+spaces, in a tab*. The panel's says "Library". Two names for one place, and the
+hint exists because neither name covers what is actually there.
+
+The reason is in the definitions. **The library and spaces are siblings, not
+nested** — a library is organised by where you read, a space by what you want
+to find out. So "Library" cannot name a destination holding both, and "my
+highlights" cannot either: it leaves out the half of the product that the free
+cap and the whole Team tier sit on.
+
+- **(a) Name the product.** The button reads **Open Kona**, in the popup and in
+  the panel both. Inside are two sections, *Library* and *Spaces* — the two
+  words the definitions already define precisely.
+- **(b) Name the main thing.** The button reads **My highlights** and opens the
+  library; spaces are one click away in the nav. This is how most products do
+  it: the button names the primary thing rather than taking an inventory.
+- **(c) Name the contrast.** The button reads **Everything**, against a panel
+  that is only ever about here.
+
+*Recommendation:* (a). It invents no new vocabulary, it cannot go wrong as the
+product grows, and it answers the question people actually ask — *where are my
+highlights?* *In Kona.* (b) is a close second and its flaw is real: it hides
+spaces behind a word that excludes them, which is backwards for the thing we
+charge for. (c) is accurate and too vague to be a place anyone can name out
+loud.
+
+**And what does it open to?** The rule falls out of 2f, which is settled: the
+panel already shows this page and the active space, so **the link leads where
+the panel cannot** — the library, everything, newest first. One exception: if
+somebody arrived by clicking a single highlight, it opens on that highlight.
+
+**Decided:** _______
+
+---
+
 ### 4. What does someone see the first time?
 
 Harder than it looks, because **Kona's value is a delayed one.** Highlighting
@@ -582,11 +619,66 @@ else means a person losing work because a card expired.
 
 ---
 
-### 8. The actual prices, and the monthly/annual toggle
+### 8. The actual prices, and the monthly/annual toggle — deferred on purpose
 
-Needs 5 and 6 settled, because the cost of running sync sets the floor. The
-toggle is the ChatGPT-style switch on the pricing section. `plans.ts` is the
+Not blocked, held back. The numbers get set once the product is built or close
+to it, because pricing something that does not exist yet is guessing, and the
+floor is whatever running sync costs, which is 5 and 6.
+
+The toggle is the ChatGPT-style switch on the pricing section. `plans.ts` is the
 copy of record and `tests/pricing.test.ts` fails if the site drifts from it.
+
+**Decided:** the shape — three tiers, a monthly/annual switch. The numbers wait
+until the product is finished or nearly.
+
+---
+
+### 9a. What language is Kona written in, and where does Swift start?
+
+9 cannot be answered before this one.
+
+**The extension has no choice.** A browser extension is JavaScript — there is
+no second option, in any browser. So the extension is TypeScript, and the only
+live question is the app.
+
+Which makes the question sharper than it first looks. If the app is Swift then
+Kona is two languages, and the library — a list, a search box, a detail view —
+gets built twice, forever. That is already the most expensive mistake in this
+repository: six files and 5,105 lines currently draw a list of highlights. A
+Swift one would be the seventh.
+
+- **(a) One codebase.** TypeScript everywhere. On iOS the App Store container
+  carries the Safari extension and little else, and the library is the web app,
+  added to the home screen.
+- **(b) One codebase, and the container shows it.** As (a), but the container
+  opens the web app, so the thing installed from the App Store *is* the
+  library.
+- **(c) A native library on iOS.** SwiftUI, feels right on the platform, and
+  every feature after it is built twice.
+
+*Recommendation:* **(b).** It is (a) plus a reason for the container to exist.
+Apple requires a Safari extension to ship inside an app, so the container is
+not optional — and a container that only tells you to go and switch it on in
+Settings is a thinner thing to hand to review than a container that opens your
+library.
+
+**Where Swift is allowed:** the container, and the share extension that makes
+*share a link to Kona* work, which is in the definition of the app and cannot
+be done from a web page. Nowhere else. Every screen a person reads is
+TypeScript.
+
+**Two risks to carry rather than wave away:**
+
+Safari drops script-written site data after about a week without interaction.
+Home-screen web apps are treated better than ordinary tabs, but a library is a
+thin thing to stand on that ledge. It stops mattering once sync exists, because
+then the server holds the real copy and the local one is a cache — so this
+leans on 6, and shipping iOS before sync would mean standing on the ledge on
+purpose.
+
+A web view of a remote site can attract Apple's minimum-functionality rule. The
+extension shipping in the same container is the answer to that, and it is worth
+checking against current review practice before building — not now.
 
 **Decided:** _______
 
