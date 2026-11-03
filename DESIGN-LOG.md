@@ -42,6 +42,8 @@ every word means, and this is what is still undecided.
 | The popup | One line: this site, and whether Kona may read it. Nothing built in, and no list of allowed sites — the browser owns that |
 | Desktop app | Frozen. Its only job was the folder-picker gap, which hosted sync closes |
 | Team | Frozen. Good demo, no users, needs the same server Pro needs |
+| Android | Both: highlights in Firefox, and in Chrome by the share sheet. The return trip needs no extension — text fragments are native |
+| At the cap | You delete a space or you pay. Kona itself never removes or hides anything, and the cap limits making rather than keeping |
 
 ## Open, in order
 
@@ -538,43 +540,48 @@ somebody arrived by clicking a single highlight, it opens on that highlight.
 
 ### 4. What does someone see the first time?
 
-Harder than it looks, because **Kona's value is a delayed one.** Highlighting
-something feels like nothing. The payoff is the return trip — coming back
-later and landing on the exact words — and a first run that only shows the
-first half has shown the boring half.
+**A welcome page, shown once.** It teaches what each thing does, what the
+features are, and what the tiers cost. Once it has been shown it does not come
+back on its own — it stays reachable for anybody who goes looking.
 
-It now spans two surfaces as well: install the extension, highlight, and end
-up at a web app that is where everything lives.
+**The part worth noticing in that, because it is unusual.** Most products build
+onboarding, show it once, and throw it away; then they build a help page
+separately, and the two drift. Here they are **the same content**: shown once
+automatically, and permanently available afterwards. One thing to write, one
+thing to keep true, and no moment where a person has been taught something the
+help page then contradicts.
 
-- **(a) A page that explains** what Kona does, with a button to get started.
-- **(b) A page you highlight on**, which then walks you through the return
-  trip: mark a sentence, leave, come back, click it, land on it.
-- **(c) No page.** The panel introduces itself the first time you are on a
-  real page.
+So it has sections, which are also the reference:
 
-*Recommendation:* (b), and the round trip is the whole point of it. Every
-highlighting tool can mark text; the thing worth showing in the first minute
-is the part nobody else does, which is arriving back on the sentence. A tour
-that stops at "you highlighted something" has demonstrated a yellow
+| | |
+| --- | --- |
+| **Highlights** | Making them, colours, notes, getting back to the page |
+| **Spaces** | What a space is for, solo and shared, the five |
+| **Account** | What it is for — sync, and nothing else (5) |
+| **Teams** | Shared spaces, discussion, deciding together |
+| **Settings** | Including the palettes (12) |
+| **About** | What Kona can do, for anybody who has forgotten, and what is new or coming |
+
+**About carries the release notes**, which is the detail that makes the whole
+thing earn its keep. A page nobody returns to is dead weight; a page that tells
+you what changed is a page people open on purpose. That also gives new features
+somewhere to be announced that is not an email.
+
+**Still recommended inside it: teach by doing, not by telling.** Kona's value is
+delayed — marking text feels like nothing, and the payoff is the return trip.
+So the Highlights section should *be* the round trip: highlight this sentence,
+leave, come back, tap it, land on it. Every highlighting tool can colour text.
+A page that stops at "you highlighted something" has demonstrated a yellow
 background.
 
-Two things to decide inside it:
+And it needs nothing granted to do that: a welcome page served by the extension
+is the extension's own page (3e), so the whole loop can be taught before a
+single permission is asked for.
 
-**Does the first run mention AI chats?** It is the thing nothing else does,
-and it is also a lot to ask in the first minute. *Recommendation:* name it on
-the welcome page, do not make it a step.
-
-3e makes the welcome page the **only** chance to name it. With no site granted
-at install and no `tabs` permission, Kona cannot tell that you have opened
-ChatGPT at all — a browser does not hand an extension a tab's URL without
-permission for that tab, and asking for every tab's URL buys back the install
-warning 3e just removed. There is no later moment when the panel can appear on
-a chat and introduce itself. The welcome page says it, or nobody finds it.
-
-**When does it hand over to the web app?** *Recommendation:* after the first
-highlight, not before. "That is kept. It lives here" with the link, once there
-is something to look at. Sending somebody to an empty library first is the
-version where nobody comes back.
+**AI chats get named here and nowhere else.** By 3e, with no site granted at
+install and no `tabs` permission, Kona cannot tell you have opened ChatGPT —
+there is no later moment for the panel to introduce itself on a chat. The
+welcome page says it, or nobody finds it.
 
 **Decided:** _______
 
@@ -645,36 +652,77 @@ for a team, and how seats work, is 8.
 
 ### 6. What syncs, where does it live, and what does privacy mean then?
 
-The substance of Pro, and the biggest build.
+**What syncs — settled.** Every device you are signed in on, kept in step:
+highlight on the PC, and it is on the laptop and the phone. Highlights, notes,
+tags, spaces and which space is active. Not the marks' paint state or anything
+else a device works out for itself.
 
-Open inside it: does the server hold the highlight text, or only encrypted
-blobs it cannot read? What happens when the same highlight is edited on two
-devices? What is kept when someone stops paying?
+**What privacy means — recommendation, since this was handed to me.**
 
-*Recommendation:* the server stores blobs it cannot read, encrypted with a key
-derived on the device. It costs more work and it is the only version that lets
-the sentence stay close to what it is now. Decide this before writing any
-server code — it cannot be retrofitted.
+**The server stores what it cannot read.** Highlights are encrypted on the
+device before they leave it, with a key the server never has.
 
-The claim has to change either way, from *nothing leaves your computer* to
-something like *nothing leaves your computer unless you turn sync on, and what
-does, we cannot read.* Write that sentence as part of this decision.
+The reason is specific rather than fashionable. **A highlight library is a
+reading history** — what you looked up about an illness, a lawsuit, a debt, an
+election. There is hardly a more sensitive category of personal data, and every
+other tool in this space holds it in the clear. And note what Free already is:
+no account, nothing leaving the device at all. It would be strange for paying
+to be the thing that makes you less private.
+
+**The objection, which is real: hybrid search needs to read the text.** Pro's
+other selling point is hybrid search, and embeddings are normally computed on
+a server that can read what it is embedding. Encrypted storage appears to rule
+that out.
+
+It does not, and the reason is particular to Kona: **your library is small.** A
+highlight is a passage, a URL, a note and some ids — about a kilobyte (11). Even
+fifty thousand of them is fifty megabytes of short texts. Embedding that on the
+device is slow once and then incremental, and searching your own library has
+never needed a datacentre. So **embeddings are computed on the device and
+stored encrypted like everything else**, and the server stays a dumb store with
+no index, no embedding job and no GPU bill. The thing that makes E2E
+unaffordable for most products — that they must search everybody's data — is
+not true here, because you only ever search your own.
+
+**The cost, stated plainly rather than buried.** 5 chose a magic link, so there
+is no password to derive a key from. The key therefore lives on your devices,
+wrapped, plus **one recovery phrase shown once at sign-up**. Lose every device
+and the phrase, and the data is genuinely gone — nobody can recover it, us
+included. That is the honest price of the promise, and it must be said in those
+words at sign-up rather than in a help page afterwards.
+
+**What the server still knows**, because claiming otherwise would be a lie:
+that an account exists, its email address, when it last synced, roughly how
+much data it holds and across how many devices. Metadata, not content.
+
+**Deferred, not solved:** a shared space needs its key shared with the people
+in it, which is real cryptographic work. Team is frozen (1g), so this is noted
+and left. Nothing above depends on it.
 
 **Decided:** _______
 
 ---
 
-### 7. What happens at the edges of the cap?
+### 7. What happens at the edges of the cap? — settled
 
-Small, but it will be discovered at the worst moment if nobody decides it.
-Someone has seven spaces and their subscription lapses. Someone on free tries
-to make a sixth.
+**You delete a space, or you pay.** The author's answer, and it is already
+1b's: nothing is taken away, a sixth space simply cannot be made.
 
-*Recommendation:* never delete and never hide. Over the cap, everything stays
-readable and no new ones can be made until they are under it again. Anything
-else means a person losing work because a card expired.
+Worth separating two things that can sound contradictory. **Kona never deletes
+or hides anything by itself** — not at the cap, not on downgrade, not ever.
+What the *person* does at the wall is delete something or subscribe. The rule
+is about who acts, not about whether deletion happens.
 
-**Decided:** _______
+Which fixes downgrading, the case nobody asks about until it happens. Somebody
+with forty spaces who stops paying keeps all forty. They are all readable, all
+searchable, all still there. What they cannot do is make a forty-first, and
+they cannot archive (1b, 11a). The cap governs **making**, never keeping.
+
+Anything else would mean Kona destroying somebody's research because a card
+expired, and no reason is good enough for that.
+
+**Decided:** delete or pay, Kona itself never removes anything, and the cap
+limits making rather than keeping.
 
 ---
 
@@ -1130,26 +1178,113 @@ gathered what, and deciding together. It does not need a lure.
 
 ---
 
-### 1h. Is Android a place you highlight, or only a place you read?
+### 1h. Is Android a place you highlight, or only a place you read? — settled
 
-The technical part is answered and is not the question. Chrome on Android has
-no extensions and never has. **Firefox on Android does** — over six thousand
-as of April 2026 — and Kona already builds for Firefox with a gecko id set, so
-an Android build is close to free.
+**Both.** Confirmed by hand: the extension works in Firefox for Android.
 
-The question is what we say Android *is*, which is a product decision:
+**The reframe that makes the rest of Android tractable.** Kona does not need to
+run inside the page to make a highlight. It needs two things — **the page's
+URL and the exact quote** — and the extension is simply the most convenient way
+to get them. Android can get them another way.
 
-- **(a) Android reads.** The app is the Android answer. Firefox is not
-  mentioned.
-- **(b) Android highlights, in Firefox.** Say so plainly, and accept that the
-  answer to "can I highlight on my phone" is "change your browser".
-- **(c) It works, and it is listed, and nothing is built around it.** Android
-  leads with the app; people already in Firefox find that Kona works there.
+So Android is not one question but three, and they have very different answers:
 
-*Recommendation:* (c). Telling people to change browser is the same large ask
-as telling them to change where they read, and Firefox is a small share of
-Android. But it costs nothing to let it work, and the people it does reach are
-exactly the people who care about this kind of tool.
+| | Chrome on Android | Firefox on Android |
+| --- | --- | --- |
+| **Making a highlight** | Share sheet → Kona. Two or three taps. | The extension. Identical to desktop. |
+| **Coming back to it** | **Native, and perfect.** | The extension paints it. |
+| **Seeing old marks on a page you simply opened** | **Impossible.** | Works. |
+
+The middle row is the one nobody expects. Kona's links are **URL text
+fragments** (`#:~:text=`), which `src/core/link.ts` already produces. Every
+current browser resolves them itself: tapping a highlight in Kona opens Chrome
+at exactly those words, scrolled to and highlighted *by Chrome*. **The return
+trip — the actual payoff, per decision 4 — needs no extension at all.**
+
+So the only genuine loss on Chrome for Android is the third row: ambient
+re-display, seeing your marks on a page you arrived at by yourself. That is
+real, and it is one row rather than the whole product.
+
+**Nobody is told to change browser.** That was the objection to the old
+recommendation (b). The honest line is the other way round: Chrome gets capture
+and the return trip, and **Firefox additionally shows your marks as you
+browse.** One extra thing for people already there, rather than a demand of
+everybody else.
+
+#### How capture gets as close to the extension as Android allows
+
+**The share sheet, into the app Capacitor already gives us.** 9a chose
+Capacitor for iOS, and Capacitor builds Android from the same source, so the
+Play Store app costs nothing extra. It registers as a share target natively,
+which also avoids Android's rule that a *web* app must be installed before its
+share target appears at all.
+
+**Chrome already does the hard part.** Chrome on Android has a built-in *share
+link to highlighted text*, built on text fragments — so a share can arrive
+carrying the page and the exact passage together, in Kona's own format.
+
+**And Kona does not depend on that.** If a share arrives as plain text plus a
+URL instead, Kona builds the quote selector itself with the matcher in
+`src/core/quote.ts` that it already uses everywhere else. Chrome's feature
+makes the capture more precise; it is not load-bearing, so a change to it
+cannot break Android.
+
+**Rejected: `ACTION_PROCESS_TEXT`.** This is the one-tap route — an app can put
+itself directly in Android's text-selection toolbar, no share sheet. It is
+tempting and it is wrong here, for two independent reasons:
+
+- **It carries no URL.** The system passes the selected text and nothing else.
+  A highlight without its page cannot do the one thing a highlight is for, so
+  this would manufacture broken highlights.
+- **It cannot be filtered by context.** The action appears on *every* text
+  selection in *every* app on the phone. "Kona" next to a phone number in
+  Settings is clutter we would be inflicting system-wide to save one tap.
+
+**What makes it feel smooth is not the tap count.** Three things:
+
+- **It must not be an app switch you have to come back from.** The share
+  target takes the highlight and gets out of the way — a brief confirmation,
+  the same gesture-sized thing as 2g's bar, not a screen to dismiss.
+- **The active space applies**, exactly as it does everywhere else (2e). A
+  share is a capture, and captures go where captures go.
+- **Colour is not chosen at capture.** There is no selection bar to put swatches
+  in, so a share takes the default colour and it can be changed afterwards.
+  Speed over control, at the one moment speed matters.
+
+**Decided:** Android highlights, on both browsers, by the routes above. Firefox
+gets ambient marks; Chrome does not, and is not asked to.
+
+---
+
+### 12. Colours and palettes — open, and the spec is the author's
+
+Recorded from the author so it is not lost, and left open because it is a real
+piece of design rather than a yes or no:
+
+- **Four palettes** of highlight colours.
+- A palette can be **edited**.
+- **Adding a colour works the way it does in Paint** — a picker, not a fixed
+  list.
+- A colour's **name follows the colour**: pick a hex value and Kona names it.
+
+Worth deciding before any of it is built:
+
+**Does a colour mean anything?** Today it is decoration. If a colour carries
+meaning — important, to read again, disagreed with — then it is closer to a tag
+(1c), and the two must not end up as rival ways of saying the same thing.
+
+**What happens to a colour that is edited away?** If a palette changes, every
+highlight already wearing that colour has to become something. Re-coloured,
+left on the old value, or the palette is a set of slots and highlights point at
+the slot. Only the last one is stable, and it is the one that needs deciding
+first.
+
+**Naming a hex value** is a solved problem — nearest-named-colour against a
+fixed list — but it must be deterministic, or the same colour gets different
+names on different devices and 6 has to sync a disagreement.
+
+**Four palettes of how many?** The panel's bar fits four or five swatches (2g's
+mockup has four). A palette larger than the bar needs somewhere else to live.
 
 **Decided:** _______
 
