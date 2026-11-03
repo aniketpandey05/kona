@@ -722,8 +722,58 @@ checking against current review practice before building — not now.
 
 ### 9. What is different on iPhone and iPad?
 
-The Safari extension is the same code, but the surface is not: no right-click,
-a much smaller panel, and a share sheet that the desktop does not have.
+Answered on top of 9a: one TypeScript codebase, and the container opens it.
+
+**The container is not optional.** Apple only allows a Safari extension to be
+installed inside an app, so the question is never *whether* to ship a native
+app — only what that app does. Making it a Capacitor app rather than a page of
+instructions costs little and buys four things:
+
+- **Storage Apple never evicts.** This is the risk named in 9a, and iOS is
+  where it bites. Inside the container it stops applying at all.
+- **The share sheet.** *Share a link to Kona from anywhere* is in the
+  definition of the app, and on iOS it cannot be done from a web page. It needs
+  a share extension, which needs a container.
+- **One listing, one icon, one install.** The extension and the library arrive
+  together instead of separately.
+- **No Add-to-Home-Screen ritual.** Worth saying plainly, because this project
+  has already been bitten by it: "Add to Home Screen" is not an install. It
+  keeps whatever URL is open and never reads the manifest, which is exactly how
+  the landing page came to open instead of the app. An App Store install
+  removes that whole class of problem rather than working around it.
+
+**The thing that is genuinely harder on iOS, and was nearly missed.**
+
+3c put the library in the web app, and the web app reads the extension's
+highlights through a content script running on the page. **That bridge does not
+exist inside the container.** The Safari extension runs in Safari; the
+container's library runs in its own web view, where no extension is injected.
+So the desktop answer does not carry over, and with no second route a free user
+would highlight on their phone and have no way to look at what they kept.
+
+- **(i) Open the library in Safari instead.** The bridge works unchanged, and
+  the container goes back to being a page of instructions — thin, and thin is
+  what review dislikes.
+- **(ii) A native route.** A Safari Web Extension can message its container
+  app, and the two can share one App Group container. The library in the
+  container reads that.
+- **(iii) The library on iOS shows only synced highlights**, making it
+  Pro-only. Clean to build, and wrong: free would mean an extension whose
+  highlights you cannot look at.
+
+*Recommendation:* **(ii)**, and it is affordable for a reason worth naming. The
+web app already needs more than one way to read highlights — the content-script
+bridge on desktop, the server once somebody is on Pro. That is already an
+interface with implementations behind it. iOS adds a third implementation, not
+a third library. Draw that interface properly and this is small and contained;
+draw it badly and iOS is where it hurts.
+
+**The surface differences, which are smaller than the above.** No right-click,
+so everything the panel offers has to survive touch alone — already true of 2g,
+which chose a tap over a modifier key for exactly this reason. A much smaller
+panel. And a share sheet the desktop has no equivalent of, which is capture
+without the extension, and the one thing the phone does better than the
+computer.
 
 **Decided:** _______
 
