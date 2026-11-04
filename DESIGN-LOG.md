@@ -1797,6 +1797,102 @@ light.
 
 ---
 
+**17a. The account chip is a menu — settled**
+
+The chip reading "AP Free" should open the things that have nowhere else to
+live: the plan, the palette, export, settings, help and signing out. One place
+for everything that is about *you* rather than about what you kept.
+
+**It has two states, because 5 made an account optional.** Signed out is the
+default on Free and shows no name and no avatar — there is nobody to name. It
+offers Sign in, and says in a line what signing in is for, which is sync and
+nothing else. Signed in shows the name and the plan.
+
+Getting this wrong in the other direction is easy: a product that shows an
+empty avatar and a "Free" badge to somebody who never signed up is implying an
+account they do not have.
+
+---
+
+### 18. Can an image be highlighted? — settled
+
+**Yes, and it is a highlight, not a new noun.** A chart can be the whole point
+of a page, and screenshotting it into a folder is what people do instead.
+
+But almost everything about it differs under the surface, so it is worth
+writing down rather than assuming it falls out:
+
+**It cannot be painted the usual way.** The CSS Custom Highlight API takes text
+ranges; an image is not text. So an image is marked with an outline drawn in
+Kona's own layer, over the image, never in the page's DOM — the same discipline
+10c relies on.
+
+**Its anchor is weaker, and that is the honest cost.** Text has a quote
+selector that survives rewriting. An image has its source, its position among
+the page's images, and the text nearest it. Those are good enough most of the
+time and worse than a passage, so an image is likelier than a passage to end up
+in 13's state — kept, searchable, no longer landable.
+
+**It carries text anyway, or search loses it.** The caption, the alt text, or
+the paragraph it sits in becomes the highlight's searchable content. An image
+with no text near it is the one case that is genuinely hard to find again, and
+Kona should say so rather than pretend.
+
+**Kona keeps a copy, not a link — and this is the part that is easy to get
+wrong.** Showing the image in the library by its original URL would fetch it
+from the site it came from, which is exactly the per-page fetch 6 forbids: it
+tells that host you kept something from their page, and it would do it for Free
+users too. So the bytes are stored. On Free that is local, which `storage` and
+`unlimitedStorage` in the manifest already allow; on Pro it syncs as an
+encrypted blob like everything else.
+
+Storing it has a second benefit worth naming: **the image survives the page.**
+A copy is still there when the site is not.
+
+**Two things to bound when it is built:** a ceiling on what gets stored, with
+large images scaled down rather than kept whole — nobody needs a twenty-megabyte
+hero image preserved — and the knowledge that this changes 11's arithmetic. A
+passage is about a kilobyte; a kept chart is hundreds. Images are the one thing
+in Kona that could make sync expensive.
+
+---
+
+### 19. How much can one highlight hold? — settled
+
+**No limit, and no invented number.** Select a word or select the whole page;
+Kona keeps it. A cap would be arbitrary and would exist only to make a number
+tidy.
+
+But length is not free, and the reason is in the matcher rather than in a rule.
+`quote.ts` allows `min(24, floor(length × 0.12))` differences when re-finding a
+passage on a changed page, which has two consequences nobody would guess:
+
+| Length | Differences tolerated | In effect |
+| --- | --- | --- |
+| 9 characters | 1 | the shortest that can flex at all |
+| 100 characters | 12 | 12% |
+| 200 characters | 24 | the cap starts to bind here |
+| 1,000 characters | 24 | 2.4% |
+| 5,000 characters | 24 | 0.5% |
+
+**So a very long highlight is matched more strictly, not less.** The absolute
+cap stops a long passage being matched by almost anything, which is right — but
+it means a page edit anywhere inside a long selection is likelier to lose it
+than the same edit inside a short one. Worth knowing; not worth a warning in
+the interface.
+
+**And below nine characters nothing flexes at all**: the match must be exact.
+Also right, because fuzzily matching a short phrase is how you land on the
+wrong one.
+
+**What the interface does about length: truncate, never refuse.** A long
+passage shows its opening in the panel and in the library with a way to see the
+whole of it. A highlight that is an entire page is really a bookmark, and Kona
+does not need to forbid that — it just will not be very useful, which the
+person can see for themselves.
+
+---
+
 ## Where the code is behind the definitions
 
 `DEFINITIONS.md` describes Kona finished. This is the distance between that and
@@ -1821,6 +1917,13 @@ well as AI chats, because the chat sites came first. The word is wrong for most
 of what Kona now covers, and renaming is cheapest before more is built on it.
 
 ## Loose ends
+
+**A stale comment in `src/core/quote.ts`.** The note above `MAX_ERROR_RATE`
+says "nothing under 17 characters is allowed a single error". The arithmetic
+says nine: the budget is `floor(length * 0.12)`, which first reaches 1 at nine
+characters. Seventeen would be right for a rate of 0.06, so the rate was
+presumably raised and the comment left behind. Harmless today and exactly the
+kind of thing that misleads whoever reads it next.
 
 **`SHIPPED_AHEAD` in `src/core/plans.ts`** promises, in the extension's Plans
 page and on the landing page, that sync and spaces will not be switched off
