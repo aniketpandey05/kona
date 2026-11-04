@@ -1743,6 +1743,60 @@ the default, and not nothing.
 
 ---
 
+### 17. How you move around the library — settled
+
+Prompted by the first mockup getting this wrong. It drew `Everything` and
+`Archived` as two pills in the same row as `Colour`, `Tag`, `Site` and `When` —
+and those are not the same kind of control at all.
+
+**Three kinds of control, three places.** Conflating any two of them is what
+made the first attempt feel cheap.
+
+| | | |
+| --- | --- | --- |
+| **Where you are** | Exclusive — one at a time | The nav |
+| **Across everything** | Spans every scope | The search box |
+| **Refinements** | Additive — stack freely | The chips |
+
+**A left nav, the way Gmail has one**, collapsing behind the three bars at
+narrow widths and shown at desktop width:
+
+- **Highlights** — the default, archived left out.
+- **Archived** — just those. Two complementary sets, and no third "everything"
+  item is needed, because **search is the everything** (15).
+- **Spaces**, with the spaces themselves listed under it; the active one wears
+  the orange dot, so 2e's rule is visible wherever you are rather than only on
+  the spaces screen. The section heading opens the grid.
+- **Tags**, which 1c settled are an independent axis.
+
+**The nav is what makes unlimited spaces survivable.** 11 gives Pro as many
+spaces as it likes, and a tab reading "Spaces 40" with a grid behind it is
+worse the more you have. Gmail grew a nav for exactly this reason: labels
+multiply. A list you can scan does not get worse at forty.
+
+**Tag and Space leave the chip row** and become nav items, because picking one
+*is* changing where you are. That removes a duplication the first mockup had,
+where Space was both a chip and a tab. The chips are now only attributes of a
+highlight — **Colour, Site, When** — which is a clean definition rather than a
+leftover.
+
+**No segmented switch here, and the reason is worth keeping:** a segmented
+toggle says *two equal alternatives*, which is why it is right for the
+monthly/annual switch in 8. `Highlights` and `Archived` are not symmetric — one
+is the default and the other is what you put aside — so a switch would state
+something false about them.
+
+**And one rule the mockups were already following without saying so: the panel
+is dark, the library is light.** The panel floats over somebody else's page and
+has to stay legible over anything, so it is a dark slab. The library is your
+own room: cream, serif passages, no chrome competing for attention. That
+settles the look of every surface added later — in the page, dark; of our own,
+light.
+
+**Decided:** all of the above.
+
+---
+
 ## Where the code is behind the definitions
 
 `DEFINITIONS.md` describes Kona finished. This is the distance between that and
