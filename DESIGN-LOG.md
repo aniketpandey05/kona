@@ -860,7 +860,7 @@ limits making rather than keeping.
 
 ---
 
-### 8. The actual prices, and the monthly/annual toggle — the number settled, the shape open
+### 8. The actual prices, and the monthly/annual toggle — Pro settled
 
 Not blocked, held back. The numbers get set once the product is built or close
 to it, because pricing something that does not exist yet is guessing, and the
@@ -869,7 +869,8 @@ floor is whatever running sync costs, which is 5 and 6.
 The toggle is the ChatGPT-style switch on the pricing section. `plans.ts` is the
 copy of record and `tests/pricing.test.ts` fails if the site drifts from it.
 
-**Decided: Pro is $3.** Whether that is monthly or once is 8a, below. Team waits for the cost of running the setup,
+**Decided: Pro is $3 a month or $30 a year**, the second being the headline.
+The reasoning, and why not a lifetime, is 8a below. Team waits for the cost of running the setup,
 which is the right thing to price it against.
 
 *One consequence of a low number, worth having before the toggle is built.*
@@ -889,7 +890,7 @@ very little else.
 
 ---
 
-**8a. Three dollars a month, or three dollars once?**
+**8a. Three dollars a month, or three dollars once? — settled**
 
 Proposed: **$3 forever, paid once.** The reasoning is sound and the instinct
 behind it is probably right about something else too — see the end.
@@ -942,11 +943,59 @@ that the fixed part of a card fee takes 13% of it every month. If it is going
 to be $3, once is a better shape than monthly — the question is only what the
 $3 is allowed to buy forever.
 
-*Recommendation:* **(a) with (c)** — this version forever, with synced images
-bounded. Everything a person keeps stays theirs either way, which is the part
-that must never be in doubt.
+**Decided: $3 a month, or $30 a year. No lifetime at launch.** The author asked
+for my judgement on this one rather than giving it, so this is mine, and the
+reasoning is here so it can be overruled on something specific.
 
-**Decided:** _______
+**First, a correction to what I said above.** I called $3 a month low. Against
+this field it is not: Raindrop is $28 a year for a bookmarking tool with sync,
+Instapaper $60, Readwise around $100. **$30 a year is the market rate for what
+Kona does**, not a discount. The number was right; it was the shape that needed
+work.
+
+**Why annual is the headline and monthly the alternative:**
+
+- **It fixes the fee.** The fixed part of a card charge takes about 13% of $3
+  every month and about 4% of $30 once. That difference is a third of the
+  distance between viable and not.
+- **It matches the product.** A reading library is a thing you keep for years.
+  Nobody churns in and out of one monthly, so monthly billing prices it like
+  something it is not.
+- **Monthly still exists**, because some people will not commit a year to an
+  unknown, and offering it costs nothing. Twelve months at $3 against $30 is
+  the usual two months free, which is a real saving and simple to say.
+
+**Why no lifetime, despite the instinct being half right.**
+
+The instinct is right that $3 *monthly* is an awkward shape. It is wrong that
+cheapness is what wins the user, and that is the part worth being plain about:
+
+> **At $3 against $30, price is not what is stopping anybody.** Somebody
+> leaving Readwise does not hesitate over twenty-seven dollars a year. They
+> hesitate over whether their highlights will still be there in two years and
+> whether the thing works on the pages they read. **The free tier is the
+> adoption lever** — one device, unlimited highlights, five spaces, word
+> search, no account, nothing leaving the machine. That is already doing the
+> job a lifetime price was being asked to do.
+
+And the asymmetry settles it: **a price can be lowered, an offer can be run, a
+discount can be given — a lifetime licence already sold can never be
+un-sold.** Giving away the business permanently to solve a problem that the
+free tier already solves is a bad trade in one direction only.
+
+**If a founding offer is ever wanted**, the shape that works is bounded in
+number and priced at a multiple: something like $60 for the first few hundred
+people, which is two years, with an end date said out loud. That keeps the
+cash and the early-adopter pull without an open-ended liability. Not at
+launch, and not at $3.
+
+**And the image cap stands under any pricing** (18). Images are the only
+unbounded thing in Kona, and the only part where one person's use can cost
+more than one person's payment. That is true at $3 a month as well as at $3
+once — it is just survivable when the payment repeats.
+
+**Team is still open** and should be priced against what running the setup
+actually costs, as the author said. Per seat, and not before there is a seat.
 
 ---
 

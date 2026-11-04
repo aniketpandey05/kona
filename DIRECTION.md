@@ -199,18 +199,22 @@ came first.
 
 | | |
 | --- | --- |
-| **Pro's shape** (8a) | $3 is settled. Monthly or once is not — images are what decides it |
-| **Team's price** (8) | Waits for what the setup costs to run |
+| **Team's price** (8) | Waits for what the setup costs to run. Per seat, and not before there is a seat |
 | **The selection bar on a phone** (22) | Needs an iPhone, not a desk |
 
 ---
 
 ## 7. Money, and other people's code
 
-**Pro is $3 a month**, through **Stripe on the web** — not Apple's in-app
-purchase, which takes 30% in year one. At $3 the fixed part of a card fee is
-about 13% of the price every month and about 4% once a year, so the
-annual switch carries most of the margin rather than being decoration.
+**Pro is $30 a year, or $3 a month**, through **Stripe on the web** — not
+Apple's in-app purchase, which takes 30% in year one. Annual is the headline
+because the fixed part of a card fee takes about 13% of $3 every month against
+about 4% of $30 once a year, and because a reading library is a thing people
+keep for years rather than churn through monthly.
+
+**No lifetime** (8a). At $3 against $30 the price is not what stops anybody —
+the free tier is the adoption lever — and a price can always be lowered where
+a licence already sold can never be un-sold.
 
 **Open source for solved problems** — `approx-string-match` is already doing
 the approximate matching, and it is the Hypothesis author's work on exactly
