@@ -166,6 +166,24 @@ Setting the topic once is one.
 One space is active at a time, and none being active is normal — highlights
 then go to the library only.
 
+### Taking something out of a space
+
+**It leaves the space and nothing else.** It is still in your library and still
+in every other space it was in. This is the gentlest of the three ways to be
+rid of something, and the other two are [Archive](#archive), which takes a
+highlight out of the library's default view, and [Delete](#delete), which is
+everywhere and final.
+
+### A link with nothing marked on it
+
+**A space may hold a page you have not read yet** — something you found and
+mean to look at. It shows as what it is, an invitation rather than a passage
+you kept.
+
+These live only in spaces. **The library is passages**, which is why nothing
+without one can be imported into it: a bookmark in a library is clutter nobody
+chose, while a link in a space is a deliberate act.
+
 ### Solo space
 
 A space with one person in it. **Personal, and deliberately low ceremony:**

@@ -1893,7 +1893,7 @@ person can see for themselves.
 
 ---
 
-### 20. What is a space from the inside?
+### 20. What is a space from the inside? — settled
 
 **The biggest undesigned surface in the product**, and the one the whole paid
 ladder leans on: the five-space cap is on it, Team is built on it, and nobody
@@ -1922,7 +1922,55 @@ To settle inside it: whether the highlights in a space keep their own hand
 order (1e says highlights already have one, in `order.ts`), and whether a
 finding is a highlight promoted or a note of its own.
 
-**Decided:** _______
+**Decided: the spine is the list.** A space is the things you put in it, the
+things you take back out, and what you write about them. That is option (b)
+above rather than (a), for a reason the author's answer did not have to
+mention — see the write-up, below.
+
+**Three things follow, and two of them are new.**
+
+**Taking something out of a space is a third verb.** "Remove the links" is not
+archiving and not deleting, and conflating it with either would be a real loss:
+
+| | Where it goes |
+| --- | --- |
+| **Remove from this space** | Out of this space. Still in the library, still in any other space. |
+| **Archive** (10) | Out of the library's default view. Still in every space. |
+| **Delete** (10b) | Gone everywhere. |
+
+Three verbs, three scopes, and each one leaves more standing than the next.
+Removing from a space is the gentlest thing in the product and should be the
+easiest to do and to undo.
+
+**A space can hold a page you have not marked yet.** The author said *links*,
+and a research workspace genuinely wants *I found this, I will read it* — which
+is a page with no passage in it. That sits oddly beside 14a's rule that the
+unit is a passage, and the two reconcile cleanly:
+
+> **Bare links live in spaces, never in the library.** The library is passages.
+> A space is a workspace, and a workspace may hold something you have not read
+> yet. It shows as what it is — an invitation to read, not a passage you kept.
+
+That is also why 14a refuses to import bookmarks: a bookmark put in the library
+is clutter nobody chose, while a link put in a space is a deliberate act.
+
+**The write-up stays, and it is why the answer is (b) rather than (a).**
+`DEFINITIONS.md` already settled it, Free, in these words: *a space that cannot
+produce a write-up is a folder, and the point of a space is that it produces
+something.* The author's description did not mention it, so it is worth being
+explicit rather than letting it fall out of the product by omission: the list is
+the spine and the write-up is produced **from** it, sitting beside it, never
+replacing it and never required. A space of twelve links and a note is finished
+and good (1d).
+
+**Unchanged, and confirmed:** discussing, settling and pinging are Team, as 1f,
+1g and the Shared space definition already say. A solo space has none of it,
+and that is not a gate over a shared feature — none of it means anything with
+one person in the room.
+
+**Still open inside this:** whether a finding is a highlight promoted or a note
+of its own, and whether the things in a space keep a hand order of their own
+the way highlights do in `order.ts` (1e).
 
 ---
 
