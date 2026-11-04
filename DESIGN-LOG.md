@@ -1797,29 +1797,51 @@ light.
 
 ---
 
-**17a. The account chip is a menu — settled**
+**17a. The foot of the sidebar — settled**
 
-The chip reading "AP Free" should open the things that have nowhere else to
-live: the plan, the palette, export, settings, help and signing out. One place
-for everything that is about *you* rather than about what you kept.
+**It is a status line, not a profile chip**, and the first version of this
+entry got it wrong by copying the shape other products use.
 
-**It lives at the foot of the sidebar and opens upward**, next to a Pens row
-that stays a row rather than a menu item: Pens is the one thing here somebody
-reaches for while reading, and it should not cost two clicks. The menu holds
-Settings, Export, What's new, Get help, View plans, Get the extension, and
-signing out.
+Other products put a name and a plan badge down there because they are
+account-first: the account is the thing you have. Kona is local first and the
+account is optional (5), so a name and a badge answer a question nobody asked.
+**What changes what happens to your work is where your library currently
+lives**, and that is what the row says:
 
-**It has two states, because 5 made an account optional.** Signed out is the
-default on Free and shows no name and no avatar — there is nobody to name. It
-offers Sign in, and says in a line what signing in is for, which is sync and
-nothing else. Signed in shows the name and the plan.
+| | |
+| --- | --- |
+| **On this device** | Nothing leaves this machine. No account. |
+| **In step, 3 devices** | Last sent 2 minutes ago, sealed. |
+| **Sending 12 highlights** | Sync is batched (6), so it catches up in bursts. |
+| **Not sent since Tuesday** | Amber. Something is wrong and you should know. |
 
-Getting this wrong in the other direction is easy: a product that shows an
-empty avatar and a "Free" badge to somebody who never signed up is implying an
-account they do not have. Two smaller things follow from the same rule: no
-**Log out** when there is nothing to log out of, and no **Upgrade** above the
-sign-in, because sync cannot be bought before there is an account to attach it
-to.
+**And it is the only place Kona is allowed to speak.** 23 says no
+notifications, ever, unless a person did something — so a sync that has not run
+since Tuesday has exactly one route to you, and this is it. Which is also why
+the row must stay quiet the rest of the time. A status line that cries wolf is
+a status line nobody reads, and then the one message that mattered is the one
+that gets missed.
+
+**Pens sits above it as its own row**, not inside the menu: it is the one thing
+down here somebody reaches for while reading, and it should not cost two
+clicks.
+
+**The menu is one state of the row, not the design of it.** Opened, it carries
+what is genuinely about you and your library and nothing else:
+
+- **Save a copy of everything**, first, and saying what it is for. 14 made it
+  the only backup that exists once the server cannot read your library, so it
+  does not belong under Settings with the preferences.
+- **Devices**, because that is what an account is for.
+- **Settings**, **What's new** (4's About), and signing out.
+- Your email address, low down, where an identity belongs when identity is not
+  the point.
+
+**Two things stay out on purpose.** *Get the extension* is only offered to
+somebody who does not have it — the bridge from 3c means the web app already
+knows. And there is no **Upgrade** above a sign-in, because sync cannot be
+bought before there is an account to attach it to, nor any **Log out** when
+there is nothing to log out of.
 
 ---
 
