@@ -48,7 +48,7 @@ every word means, and this is what is still undecided.
 | What a space is | A workspace for researching one topic across many links. Alone: gather and conclude. With a team: discuss and decide. The collaborative parts appear only once it is shared |
 | Extension or app | Neither replaces the other. The extension is the only thing that can highlight, because only it runs inside the page you are reading. The app is where you look at what you gathered |
 | The popup | One line: this site, and whether Kona may read it. Nothing built in, and no list of allowed sites — the browser owns that |
-| Desktop app | Frozen. Its only job was the folder-picker gap, which hosted sync closes |
+| Desktop app | The web app installs as one — own window, own icon, no browser chrome. The Electron app stays frozen: its only job was the folder-picker gap, which hosted sync closes |
 | Team | Frozen. Good demo, no users, needs the same server Pro needs |
 | Android | Both: highlights in Firefox, and in Chrome by the share sheet. The return trip needs no extension — text fragments are native |
 | At the cap | You delete a space or you pay. Kona itself never removes or hides anything, and the cap limits making rather than keeping |
@@ -2171,6 +2171,40 @@ treating your attention as its inventory. It is also the rarest kind of
 promise — one that costs nothing to keep and cannot be taken back once broken.
 
 **Decided:** _______
+
+---
+
+### 24. Kona as an app on the desktop — settled
+
+**Yes, and it needs nothing built.** The argument for it is right: if today's job
+is watching what the team gathered rather than reading the web, going to
+Chrome and finding a tab among forty is the wrong way in. A tab is not a
+place. An app in the dock is one click and always in the same spot.
+
+**The web app installs as a desktop app already.** Chrome and Edge offer
+*Install*; Safari on macOS has *Add to Dock*. What you get is a real window
+with its own icon, its own slot in the task switcher, and no browser chrome —
+which is the whole of what was being asked for.
+
+So this does not reopen the frozen Electron app, and should not be confused
+with it. **That** app existed to sync through a folder you picked, which
+hosted sync replaced, and it stays frozen. What is being installed here is the
+same web build — the same thing 9a settled for the phone, where Capacitor
+wraps it. One codebase, three windows around it.
+
+**What follows for the interface:** the extension's **Library** button should
+open the installed app when there is one, and a tab when there is not. Chrome
+can hand a link to an installed app for its own origin, and that behaviour is
+worth confirming before it is relied on; the fallback is a tab, which is what
+happens today.
+
+**And the first run should say so** (4). An installable app that nobody knows
+is installable is not an app. One line in the welcome page, and one in About.
+
+**What a signed, store-listed desktop app would add**, if it is ever wanted:
+being findable in a store, and an installer for people who will never press
+*Install* in a browser. It is a wrapper around the same build, the same shape
+as iOS, so it can be decided late and cheaply. Nothing above depends on it.
 
 ---
 

@@ -385,7 +385,10 @@ Kona everywhere that is not the page you are reading. **It is where you look at
 what you have gathered** — read, search, organise into spaces, and keep
 everything in step. It never highlights.
 
-It opens in a browser tab, and on a phone from its own icon. What separates it
+It opens in a browser tab, and from its own icon on a phone or a computer —
+the same build, installed. On a desktop that is *Install* in Chrome or Edge and
+*Add to Dock* in Safari, which gives it a window and a place in the dock
+without a browser around it. What separates it
 from the panel is not the browser: the panel is about one page, and the app is
 about everything.
 
