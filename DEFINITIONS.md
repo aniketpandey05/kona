@@ -51,7 +51,7 @@ A highlight kept from a PDF is in this state from the start.
 Your own words, attached to one highlight. Optional. One per highlight.
 
 A note is what *you* thought. The highlight is what the *page* said. The two
-are never mixed together, including in the write-up and in exports.
+are never mixed together, including in exports.
 
 ### Tag
 
@@ -135,8 +135,15 @@ on:
 - Change its note while in a space and the note is changed, full stop, because
   there is only ever the one highlight.
 - Removing it from a space removes it from the space. It is still in the
-  library. Only deleting deletes.
+  library and still in every other space. Only deleting deletes, and archiving
+  only takes it out of the library's default view: three verbs, each leaving
+  more standing than the next.
 - One highlight can be in several spaces at once.
+
+**What makes it not a tag**, since a tag groups highlights too: a space has an
+identity of its own — a name, a question, a note, a hand order, the people in
+it, and a cap of five. A tag is a word on a highlight. One is a project, the
+other a label.
 
 ### What a space has of its own
 
@@ -151,7 +158,6 @@ Beyond the highlights it points at:
 | **Created** | The day it was made. |
 | **Active** | Whether this is the space being worked in right now. See below. |
 | **Position** | Where it sits in your list. Spaces are reordered by hand, the way highlights already are. |
-| **Findings, open questions, decision** | Optional, and drawn only once they hold something. |
 
 ### Active space
 
@@ -165,14 +171,6 @@ Setting the topic once is one.
 
 One space is active at a time, and none being active is normal — highlights
 then go to the library only.
-
-### Taking something out of a space
-
-**It leaves the space and nothing else.** It is still in your library and still
-in every other space it was in. This is the gentlest of the three ways to be
-rid of something, and the other two are [Archive](#archive), which takes a
-highlight out of the library's default view, and [Delete](#delete), which is
-everywhere and final.
 
 ### A link with nothing marked on it
 
@@ -190,7 +188,7 @@ A space with one person in it. **Personal, and deliberately low ceremony:**
 search different things, put them in, make sense of them later.
 
 Nothing in it is required. A space holding a question and twelve highlights,
-with no findings and no decision, is a finished and perfectly good space. It
+with nothing concluded, is a finished and perfectly good space. It
 must look that way and never like a form somebody abandoned.
 
 ### Shared space
@@ -263,7 +261,7 @@ question, which is why answering it and settling the thread put it away again.
 
 **A quick way to ask "does everyone agree?" without ten replies saying yes.**
 
-Put on a finding, a decision, or a highlight somebody has questioned. Anyone in
+Put on a highlight, or on a question somebody has raised about one. Anyone in
 the space can start one, anyone can answer, and the tally is visible.
 
 **A poll records agreement. It never acts on its own.** Nothing is removed,
@@ -273,15 +271,8 @@ quorum, a tie-break, a rule about who may vote, or an expiry — the things that
 turn asking a question into a governance system.
 
 So "four of five agree" is something the team knows, and then a person decides.
-It also earns its keep in the write-up: a finding four people agreed with reads
+And it is worth having later: a passage four people agreed with reads
 differently from one nobody answered.
-
-### Finding
-
-A claim you drew out of a space, carrying the passages it rests on.
-
-Findings are what the write-up is assembled from. Optional, like everything in
-a solo space.
 
 ### Open question
 
@@ -291,15 +282,6 @@ Something the space has not settled. Optional. The reason to come back to it.
 
 What the space concluded, if it concluded anything. Optional, and more useful
 to a team than to one person.
-
-### Write-up
-
-The document a space produces: the question, the findings, each citing the
-passages behind it, with links that land on the exact words for a reader who
-has never installed Kona.
-
-**Free.** A space that cannot produce a write-up is a folder, and the point of
-a space is that it produces something.
 
 ### Archive
 

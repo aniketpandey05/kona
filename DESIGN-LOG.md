@@ -1922,10 +1922,10 @@ To settle inside it: whether the highlights in a space keep their own hand
 order (1e says highlights already have one, in `order.ts`), and whether a
 finding is a highlight promoted or a note of its own.
 
-**Decided: the spine is the list.** A space is the things you put in it, the
-things you take back out, and what you write about them. That is option (b)
-above rather than (a), for a reason the author's answer did not have to
-mention — see the write-up, below.
+**Decided: a space is a place to put highlights together. That is the whole of
+it** — option (a). `DEFINITIONS.md` already said exactly that, in exactly those
+words, and the rest of this entry is about what had quietly grown on top of
+it.
 
 **Three things follow, and two of them are new.**
 
@@ -1954,14 +1954,22 @@ unit is a passage, and the two reconcile cleanly:
 That is also why 14a refuses to import bookmarks: a bookmark put in the library
 is clutter nobody chose, while a link put in a space is a deliberate act.
 
-**The write-up stays, and it is why the answer is (b) rather than (a).**
-`DEFINITIONS.md` already settled it, Free, in these words: *a space that cannot
-produce a write-up is a folder, and the point of a space is that it produces
-something.* The author's description did not mention it, so it is worth being
-explicit rather than letting it fall out of the product by omission: the list is
-the spine and the write-up is produced **from** it, sitting beside it, never
-replacing it and never required. A space of twelve links and a note is finished
-and good (1d).
+**And the write-up goes, which costs nothing because 3d already provides it.**
+`DEFINITIONS.md` had claimed a space *produces* a document, Free, on the
+grounds that *a space that cannot produce a write-up is a folder*. That
+argument runs backwards: it defends a feature by insulting the alternative,
+and the alternative is what a space actually is.
+
+It was also a second way to make something that already exists. **3d put shared
+spaces on the web**, openable by somebody who has installed nothing, every
+highlight linking to the exact words. That is the document. A write-up object
+would have been an editor and a citation system for producing the same page a
+second time.
+
+So a space keeps its own **question** and **note** (1e), which is where a
+conclusion goes, and **Finding** and **Write-up** leave the definitions
+entirely. A settled thread is a team's decision (1f), and a finding was only
+ever a highlight with a note on it.
 
 **Unchanged, and confirmed:** discussing, settling and pinging are Team, as 1f,
 1g and the Shared space definition already say. A solo space has none of it,
@@ -1974,35 +1982,51 @@ the way highlights do in `order.ts` (1e).
 
 ---
 
-### 21. What happens when two devices disagree?
+### 21. What happens when your laptop and your phone disagree?
 
-6 settled what syncs and that the server cannot read it. It did not settle what
-happens when the same thing changes in two places — and **encryption makes that
-harder, not easier: a server that cannot read your data cannot merge it.** Every
-merge happens on a device.
+**The situation, concretely**, because the short version of this was
+unreadable. You are on Pro, so Kona is on your laptop and your phone and keeps
+them in step. But they are not always in touch — your phone is on a train with
+no signal.
 
-The cases that actually occur: a note edited on the laptop and the phone; a
-highlight deleted on one and re-coloured on the other; a space renamed in both
-places; the same passage highlighted twice on two machines.
+On the train you add a note to a highlight. At home, on the laptop, you change
+that same highlight to blue. Each device now holds a different version of the
+same thing. **When the phone reconnects, something has to happen**, and nobody
+has decided what.
 
-*Leaning: when in doubt, keep.* A keeping tool resolves conflicts in favour of
-things continuing to exist.
+It is the same shape every time:
 
-- **Field by field, not record by record.** A note edited on one device and a
-  colour changed on another should keep both. Last-write-wins per record throws
-  away an edit nobody asked it to.
-- **A deletion never silently beats an edit.** If one device deleted a
-  highlight and another changed it, it comes back and says why. The opposite
-  rule loses work quietly, which is the one failure a keeping tool cannot
-  afford.
-- **Two edits to the same note keep both**, one appended, rather than a silent
-  winner.
+| On one device | On the other | And then? |
+| --- | --- | --- |
+| A note is written | The colour is changed | Do you get both? |
+| The highlight is deleted | A note is added to it | Does it come back? |
+| The note is edited | The note is edited differently | Which words survive? |
+| A space is renamed | The same space is renamed | Which name? |
+
+**Why this cannot be left to the server.** Normally the server would work it
+out — it can see both versions and merge them. Ours cannot: 6 settled that it
+stores **what it cannot read**. It holds sealed blobs. So the merging happens
+on a device, in Kona's own code, and whatever rule we write is the rule there
+is.
+
+*Leaning: when in doubt, keep.* A tool whose whole job is keeping things should
+resolve every one of these in favour of things continuing to exist.
+
+- **Merge field by field, not record by record.** The note and the colour are
+  different fields of the same highlight, so both changes survive. Taking the
+  newest version of the whole record would throw away an edit nobody asked it
+  to throw away.
+- **A deletion never silently beats an edit.** Deleted on one device, edited on
+  the other, and it comes back — with a line saying why. The opposite rule
+  loses work quietly, which is the one failure this product cannot afford.
+- **Two different edits to the same note keep both**, one after the other,
+  rather than a silent winner. It is untidy for a moment and nothing is gone.
 
 **And a correction to 6 while this is open.** 6 lists *which space is active*
-among the things that sync. That is probably wrong: the active space is a
-statement about what you are doing on **this machine right now** (1a), so a
-phone switching it under your laptop is an annoyance rather than a
-convenience. *Leaning:* the active space is per device and does not sync.
+among the things that sync. That is probably wrong: the active space says what
+you are doing **on this machine right now** (1a), so a phone switching it
+under your laptop is an annoyance rather than a convenience. *Leaning:* the
+active space is per device and does not sync.
 
 **Decided:** _______
 
