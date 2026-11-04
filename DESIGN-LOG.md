@@ -1463,92 +1463,130 @@ device (10a).
 
 ---
 
-### 13. What happens when a highlight cannot be found again?
+### 13. What happens when a highlight cannot be found again? — settled
 
-**Nothing in either document covers the failure of the one thing Kona
+**Nothing in either document covered the failure of the one thing Kona
 promises.** The matcher tries three ways — exact, then ignoring whitespace,
 then approximately within a 12% error budget. Pages get rewritten, paywalled
 and deleted, so sooner or later all three fail.
 
-- **(a) Say nothing.** The highlight sits in the library and quietly does not
-  paint. You find out by noticing that nothing happened.
-- **(b) Say so, in place.** "This page has changed." Show the passage you kept,
-  and offer the link anyway.
-- **(c) Mark it in the library**, so you can see which of your highlights have
-  rotted.
+**Decided: say so in place, and mark it in the library.**
 
-*Leaning:* **(b) and (c) together.** The kept text is still worth having when
-the page has moved on — what is lost is the landing, not the quote. And link
-rot is permanent, so hiding it only means finding out later and trusting Kona
-less. A page that is gone entirely is the same case with the same answer.
+**In place**, when you open the page: *this page has changed.* The passage you
+kept is shown, and the link is still offered, because a page that has been
+edited near your highlight is usually still the page you wanted.
 
-**How it breaks is part of the promise**, which is why this is not a detail.
+**In the library**, as a state on the highlight, so you can see which of your
+highlights have rotted instead of discovering it one at a time.
 
-**Decided:** _______
+**The reasoning that makes this cheap rather than sad:** what is lost is the
+**landing, not the quote.** The passage is still in your library, still
+searchable, still in its spaces — Kona copied it when you kept it. So an
+unfindable highlight is a highlight that has lost one of its abilities, not a
+broken record. That is worth saying in the interface too, in those terms.
 
----
+And link rot is permanent. Hiding it only means somebody finds out later, in a
+worse moment, and trusts Kona less for having been quiet about it. A page that
+has disappeared entirely is the same case with the same answer.
 
-### 14. Getting your highlights out, and other people's in
-
-Mentioned once in passing in 6 and never decided.
-
-**Export matters more because of 6, not less.** If the server cannot read your
-library and you lose every device and the recovery phrase, the data is gone —
-so a file you can keep is the only backup that exists. That makes export a
-safety feature rather than a courtesy, and it has to be free, on every tier,
-and always reachable.
-
-To decide: **what the file is.** A machine format that can be read back in, a
-readable one for a person, or both. *Leaning:* both, because they serve
-different fears — one is a backup, the other is "I want my work even if Kona
-dies."
-
-**Import is the adoption lever**, and lower priority: Readwise, Hypothesis,
-Kindle, browser bookmarks. Worth deciding whether any of it ships at all before
-anyone builds a parser.
-
-**Decided:** _______
+**How it breaks is part of the promise**, which is why this was never a detail.
 
 ---
 
-### 15. Where search lives, and what it spans
+### 14. Getting your highlights out — settled. Import is open.
 
-Hybrid search is Pro's other selling point (11) and has no interface decided
+**Decided: export is free, on every tier, always reachable, in two formats.**
+
+**It matters more because of 6, not less.** If the server cannot read your
+library, and you lose every device and the recovery phrase, then the data is
+genuinely gone — we said so plainly. A file you keep is therefore **the only
+backup that exists**. End-to-end encryption turns export from a courtesy into a
+safety feature, and nothing that is a safety feature goes behind a tier.
+
+**Two formats, because they answer two different fears:**
+
+| | |
+| --- | --- |
+| **A machine format** | A backup. It can be read back in, so your library survives a lost phrase. |
+| **A readable one** | "I want my work even if Kona dies." Useful without us. |
+
+**14a. Does import ship at all? — open.** Readwise, Hypothesis, Kindle, browser
+bookmarks. It is the adoption lever and it is also a parser per source, each of
+which can be wrong in its own way. Worth deciding **whether any of it ships**
+before anybody writes one, rather than collecting them one at a time.
+
+**Decided on 14a:** _______
+
+---
+
+### 15. Where search lives, and what it spans — settled
+
+Hybrid search is Pro's other selling point (11) and had no interface decided
 anywhere.
 
-- Does one box span **both** library views — highlights and spaces (3f)?
-- Where do the filters live: colour (12), tag, space, date, domain?
-- Is there search in the panel, or only in the library?
+**Decided: one box, in the library, spanning both of its views.** Highlights
+and spaces (3f) are two ways of organising the same things, so searching one
+and not the other would make you guess which view your answer is filed under —
+which is the question search exists to stop you asking.
 
-*Leaning:* one box in the library, spanning both views, with filters as
-refinements rather than a screen of their own. **No search in the panel** — the
-panel is about one page, and you can already see it. Archived highlights are
-always included; 10 settled that.
+**Filters are refinements on that box, not a screen of their own**: colour (12,
+built from the colours in use rather than the palette), tag, space, domain,
+date. A filter screen is a second place to be, and it would compete with the
+box instead of sharpening it.
 
-**Decided:** _______
+**No search in the panel.** The panel is about this page (2a), and a page's
+highlights are already in front of you — a search box over four rows is
+furniture. The panel's job is *here*; the library's job is *everything*, and
+search belongs to the second.
+
+**Archived highlights are always included**, marked as archived. 10 settled
+that, and it is the reason archive is safe to use: nothing you put away ever
+stops being findable.
 
 ---
 
-### 16. PDFs
+### 16. PDFs — settled
 
-A whole category of reading, and neither document mentions it. The popup copy
-already admits the problem: Chrome's PDF viewer is itself a built-in extension,
-so a content script does not run there and Kona cannot highlight a PDF in
-Chrome.
+**My leaning was wrong, and checking it was worth more than the leaning.** I
+guessed that Firefox renders PDFs with pdf.js as an ordinary page, so a content
+script could run there. It cannot. **MDN lists the PDF viewer among privileged
+pages**, alongside `about:addons` and reader view, and Mozilla's own bug thread
+says the viewer would have to lose its privileged status first — true since
+Firefox 60. Chrome's viewer is protected the same way.
 
-- **(a) PDFs are out.** Say so plainly rather than letting people discover it.
-- **(b) The web app opens them.** Read the PDF in Kona and highlight there —
-  the same shape as the rule already in `DEFINITIONS.md` for a browser built
-  into an app: it works, but only where you chose to read inside Kona.
-- **(c) It may already work in Firefox.** Firefox renders PDFs with pdf.js,
-  which is an ordinary web page, so a content script can probably run in it.
+So this is not the Android case. There is no browser where Kona can run inside
+a PDF being read in the browser's own viewer. **Flat no, both engines.**
 
-*Leaning:* **check (c) before deciding anything.** It is the same shape as the
-Android finding — capability that varies by browser rather than a flat no — and
-if it holds, PDFs become another thing Firefox does that Chrome cannot, stated
-honestly, with (b) as the answer for everybody else.
+**But the check turned up a route that is better than giving up**, and it fits
+a decision made ten minutes ago.
 
-**Decided:** _______
+**Decided: capture by context menu, and admit there is no landing.**
+
+A context menu item **can** read the selection on a privileged page — that is
+the documented exception, and `contextMenus` is already in the manifest. A
+right-click gives Kona the selected text and the page's URL, which is
+everything a highlight is made of. So on a PDF: select, right-click, keep. The
+passage and the source are saved.
+
+What it cannot do is paint the mark on the PDF or land you back on it, because
+nothing of Kona can run in that viewer. **Which is exactly the state 13 just
+defined** — a highlight that has the quote and has lost the landing, shown
+honestly as such. PDFs do not need a new concept; they arrive already in a
+state the product understands.
+
+**Two limits, stated rather than discovered:**
+
+- **Desktop only.** A context menu needs a right-click, and there is not one
+  on a phone. The inverse of 2g, which chose a tap over a modifier key for the
+  same reason.
+- **No page number.** A text selection does not carry one, so the source is the
+  PDF, not a place in it.
+
+**And the full-fidelity option stays available for anyone who wants it:**
+reading the PDF *inside* Kona, in a viewer Kona ships, where everything works
+normally. That is the rule `DEFINITIONS.md` already states for a browser built
+into an app — it works, but only where somebody chose to read inside Kona. Not
+the default, and not nothing.
 
 ---
 

@@ -32,6 +32,20 @@ It is the atom of Kona. Everything else points at highlights.
   is still one highlight.
 - Deleting it is the only thing that removes it.
 
+### A highlight that cannot be found
+
+A page can be rewritten, paywalled or deleted until the passage you kept is no
+longer in it. Then the highlight **has lost its landing, not its quote**: the
+passage is still in your library, still searchable, still in its spaces,
+because Kona copied it when you kept it.
+
+Kona says so where it happens — *this page has changed* — and marks it in the
+library, so you can see what has rotted rather than meeting it one at a time.
+The link is still offered, because an edited page is usually still the page you
+wanted.
+
+A highlight kept from a PDF is in this state from the start.
+
 ### Note
 
 Your own words, attached to one highlight. Optional. One per highlight.
@@ -316,6 +330,7 @@ page you are reading?** Everything else follows from the answer.
 | --- | --- |
 | **Extension** | Yes — inside any page, in the browser you already use. |
 | **A native app with a browser built into it** | Only inside pages you browse *in Kona*. |
+| **A PDF in the browser's own viewer** | Capture only, by right-click. Both engines treat the viewer as privileged, so nothing of Kona runs in it: no mark drawn, no landing. Reading the PDF inside Kona works normally. |
 | **A web app** | **Never.** |
 
 The last one is not a gap to engineer around. A web page cannot reach into
