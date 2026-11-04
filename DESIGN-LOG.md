@@ -1803,6 +1803,12 @@ The chip reading "AP Free" should open the things that have nowhere else to
 live: the plan, the palette, export, settings, help and signing out. One place
 for everything that is about *you* rather than about what you kept.
 
+**It lives at the foot of the sidebar and opens upward**, next to a Pens row
+that stays a row rather than a menu item: Pens is the one thing here somebody
+reaches for while reading, and it should not cost two clicks. The menu holds
+Settings, Export, What's new, Get help, View plans, Get the extension, and
+signing out.
+
 **It has two states, because 5 made an account optional.** Signed out is the
 default on Free and shows no name and no avatar — there is nobody to name. It
 offers Sign in, and says in a line what signing in is for, which is sync and
@@ -1810,7 +1816,10 @@ nothing else. Signed in shows the name and the plan.
 
 Getting this wrong in the other direction is easy: a product that shows an
 empty avatar and a "Free" badge to somebody who never signed up is implying an
-account they do not have.
+account they do not have. Two smaller things follow from the same rule: no
+**Log out** when there is nothing to log out of, and no **Upgrade** above the
+sign-in, because sync cannot be bought before there is an account to attach it
+to.
 
 ---
 
