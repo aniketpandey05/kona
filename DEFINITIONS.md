@@ -275,6 +275,10 @@ a space is that it produces something.
 thing: whether that thing appears in the default view of the list it belongs
 to. Nothing is deleted, and nothing stops being searchable.
 
+**Archiving is done in the library**, because that is the list it affects. It
+is not offered on the page, where it would change nothing you can see — an
+archived highlight is still painted where you made it.
+
 **A highlight** can be archived on every tier: **ten at a time on Free**,
 without limit on Pro. The ten are a working set and not a quota — un-archiving
 hands the slot straight back, so the limit is how many can be put away at once

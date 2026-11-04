@@ -1110,6 +1110,10 @@ least as reachable as delete — same menu, never a primary button where archive
 is buried. A keeping tool may not make destroying things the quickest gesture
 available.
 
+*Scope, after 10c:* they only both appear in the library, which is the one
+place archiving is done. On the page, Delete stands alone, and what makes that
+acceptable is the undo toast rather than a sibling button.
+
 **One honest interaction with 10a, recorded rather than argued:** "archive if
 unsure, delete if sure" holds until the tenth archive. A Free user who is
 unsure, with ten already put away, has only delete in front of them. That is
@@ -1126,7 +1130,19 @@ panel, not in the library, not anywhere you have to travel to.
 
 **So: tap the highlight, and the bar appears at the highlight.** The same bar
 that appears when you make one — colours, Note, and where it is going (2g) —
-with Archive and Delete on it.
+with **Delete** on it.
+
+**Archive is not on it, and decision 10's own table says why.** Archiving
+changes exactly one thing: whether a highlight is in the library's default
+view. It is still painted on its page. So archiving from the page would be an
+action with **no visible effect where you performed it** — you tap Archive,
+and the highlight you are looking at stays exactly as it was. That is a bad
+affordance regardless of how useful the action is.
+
+**Archive belongs where the list it affects is: the library.** Not the panel
+either, which is about this page (2a) rather than the library's default view,
+so it has the same problem. On the page you are reading, not tidying, and the
+two things you want are to change a highlight or to be rid of it.
 
 **One component, two moments.** The bar you get for making a highlight and the
 bar you get for reconsidering one are the same bar. That is worth having as a
@@ -1136,8 +1152,8 @@ learn the second time.
 
 Delete follows 10b unchanged — gone from the library, from search, from its
 spaces, no longer painted — with the undo toast afterwards, so a mis-tap on a
-phone is survivable. **Archive is never harder to reach than Delete** on that
-bar.
+phone is survivable. That toast is what makes Delete acceptable as the only
+destructive thing on the bar.
 
 **The mechanism, because it is not what anybody would assume.** `painter.ts`
 draws with the CSS Custom Highlight API: `new Highlight()` and `::highlight()`.
@@ -1161,8 +1177,9 @@ the bar is already open at that moment, so it carries undo too, and a
 misselection costs one tap with no dialog in front of it.
 
 **Decided:** tap a highlight on the page and get the same bar you got when you
-made it, carrying colour, note, archive and delete. Highlights over links fall
-back to the panel, and nothing of the page's own behaviour is intercepted.
+made it, carrying colour, note and delete. Archiving is done in the library.
+Highlights over links fall back to the panel, and nothing of the page's own
+behaviour is intercepted.
 
 ---
 
