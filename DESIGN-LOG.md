@@ -1797,51 +1797,42 @@ light.
 
 ---
 
-**17a. The foot of the sidebar — settled**
+**17a. The account row at the foot of the sidebar — settled**
 
-**It is a status line, not a profile chip**, and the first version of this
-entry got it wrong by copying the shape other products use.
+**It is an account row, and it is quiet.** My first two attempts at this were
+both wrong in the same direction — borrowing a shape from a product that is
+account-first, then over-correcting into a four-state status line.
 
-Other products put a name and a plan badge down there because they are
-account-first: the account is the thing you have. Kona is local first and the
-account is optional (5), so a name and a badge answer a question nobody asked.
-**What changes what happens to your work is where your library currently
-lives**, and that is what the row says:
+Three of those four states were furniture. *On this device* never changes. *In
+step, 3 devices* never changes. Mid-sync is a flicker nobody watches. **Only
+the fourth earned its place:** 23 allows no notifications, so a sync that has
+not run since Tuesday has exactly one route to the person, and this row is it.
+
+So the row says the least it can:
 
 | | |
 | --- | --- |
-| **On this device** | Nothing leaves this machine. No account. |
-| **In step, 3 devices** | Last sent 2 minutes ago, sealed. |
-| **Sending 12 highlights** | Sync is batched (6), so it catches up in bursts. |
-| **Not sent since Tuesday** | Amber. Something is wrong and you should know. |
+| No account | **Sign in** — something you can act on, rather than naming a state you cannot change |
+| Signed in | Your name. No plan badge, no sync time, nothing to say |
+| Sync has failed | It changes, and goes amber |
 
-**And it is the only place Kona is allowed to speak.** 23 says no
-notifications, ever, unless a person did something — so a sync that has not run
-since Tuesday has exactly one route to you, and this is it. Which is also why
-the row must stay quiet the rest of the time. A status line that cries wolf is
-a status line nobody reads, and then the one message that mattered is the one
-that gets missed.
+**It is quiet the rest of the time precisely so it is believed when it is
+not.** A row that reports its own health all day is one nobody reads, and then
+the one message that mattered is the one that gets missed.
 
-**Pens sits above it as its own row**, not inside the menu: it is the one thing
-down here somebody reaches for while reading, and it should not cost two
-clicks.
+**Colours sits above it**, as its own row — the thing you reach for while
+reading should not cost two clicks.
 
-**The menu is one state of the row, not the design of it.** Opened, it carries
-what is genuinely about you and your library and nothing else:
+**And it is Colours, not Pens.** The pen was a way to explain why editing the
+list leaves old marks alone (12); it was never a name for a button. A
+reasoning metaphor that ends up on the interface is a mistake, however good the
+reasoning was.
 
-- **Save a copy of everything**, first, and saying what it is for. 14 made it
-  the only backup that exists once the server cannot read your library, so it
-  does not belong under Settings with the preferences.
-- **Devices**, because that is what an account is for.
-- **Settings**, **What's new** (4's About), and signing out.
-- Your email address, low down, where an identity belongs when identity is not
-  the point.
-
-**Two things stay out on purpose.** *Get the extension* is only offered to
-somebody who does not have it — the bridge from 3c means the web app already
-knows. And there is no **Upgrade** above a sign-in, because sync cannot be
-bought before there is an account to attach it to, nor any **Log out** when
-there is nothing to log out of.
+**Opened, the menu holds:** save a copy of everything, first, and saying what
+it is for, since 14 made it the only backup that exists; devices; settings;
+what's new (4); the email address, low down; and signing out. Signed out it
+holds only settings and saving a copy — there is no upgrade to offer before
+there is an account to attach it to, and nothing to log out of.
 
 ---
 
