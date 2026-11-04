@@ -1820,13 +1820,14 @@ So the row says the least it can:
 not.** A row that reports its own health all day is one nobody reads, and then
 the one message that mattered is the one that gets missed.
 
-**Colours sits above it**, as its own row — the thing you reach for while
-reading should not cost two clicks.
+**Pens sits above it**, as its own row — the thing you reach for while reading
+should not cost two clicks.
 
-**And it is Colours, not Pens.** The pen was a way to explain why editing the
-list leaves old marks alone (12); it was never a name for a button. A
-reasoning metaphor that ends up on the interface is a mistake, however good the
-reasoning was.
+**Why the row exists at all**, since it was asked: signing in has to live
+somewhere, and so do your account, your settings and saving a copy. Every one
+of those is about you rather than about what you kept, and the nav above is
+about what you kept. The amber state is a second job the row happens to be
+well placed for, not the reason it is there.
 
 **Opened, the menu holds:** save a copy of everything, first, and saying what
 it is for, since 14 made it the only backup that exists; devices; settings;

@@ -64,10 +64,9 @@ tags, from any number of pages; a highlight keeps its tags whether or not it is
 in a space. Neither one implies the other, and neither is a lesser version of
 the other.
 
-### Colours
+### Palette
 
-**The colours you can mark with**, and the list of them. The colours available
-when you highlight something
+**Your highlighting pens.** The colours available when you highlight something
 — four to begin with, and you can make your own with a picker and an opacity
 slider. Kona never refuses a colour you chose.
 
