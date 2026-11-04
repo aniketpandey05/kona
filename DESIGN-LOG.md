@@ -1982,7 +1982,7 @@ the way highlights do in `order.ts` (1e).
 
 ---
 
-### 21. What happens when your laptop and your phone disagree?
+### 21. What happens when your laptop and your phone disagree? — settled
 
 **The situation, concretely**, because the short version of this was
 unreadable. You are on Pro, so Kona is on your laptop and your phone and keeps
@@ -2028,7 +2028,38 @@ you are doing **on this machine right now** (1a), so a phone switching it
 under your laptop is an annoyance rather than a convenience. *Leaning:* the
 active space is per device and does not sync.
 
-**Decided:** _______
+**Decided: the latest change wins.** The author's call, and simpler than the
+rule I was proposing without losing much of what it was protecting.
+
+It is worth spelling out *why* it loses little, because the two positions turn
+out to be nearly the same one:
+
+**Per field, so the example above still works.** The note and the colour are
+different fields of the same highlight. Each has its own latest change, so both
+survive. Latest-wins only ever discards something when two devices changed **the
+same field** — which is rarer than it sounds.
+
+**A deletion is just another change with a time on it.** Deleted at ten, edited
+at five past, and the edit is later, so it comes back. Edited at five to and
+deleted at ten, and it stays deleted, because deleting it was the last thing
+you decided. That is consistent, predictable, and it happens to err towards
+keeping in the case people actually hit.
+
+**What it does cost, stated once:** two devices editing the *same note* to
+different words. The later one wins and the earlier is gone. My alternative was
+to keep both, appended — which produces a garbled note the person then has to
+clean up. On balance the simple rule is better, and this case is rare enough to
+accept rather than design around.
+
+**The one thing this still needs at build time: what "latest" means.** Device
+clocks disagree, and a phone running ten minutes fast would win every
+conflict it ever had. The server can order the blobs it receives without
+reading them, so ordering by arrival is available and reliable — but it is
+wrong for a device that was offline for a week, whose genuinely older changes
+would arrive stamped as newest. Worth choosing deliberately then; not now.
+
+**And the correction to 6 stands:** the active space is per device and does not
+sync, because it says what you are doing on this machine right now (1a).
 
 ---
 
