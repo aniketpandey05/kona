@@ -2121,6 +2121,26 @@ tapping it turns the dot into the full-width bar, with the same contents as the
 desktop one and nothing under 38px. 2g's escape hatch is the same single tap,
 which is exactly why it was never a modifier key.
 
+#### What to check on the phone, which needs no build
+
+All of it can be answered in Safari on any article, today. The dot's whole
+design rests on these five answers.
+
+1. **Where does Safari put its menu?** Select text near the top of the screen,
+   then the middle, then the bottom. The dot assumes *menu above, so we go
+   below* — if Safari flips below when the selection is near the top, the dot
+   has to flip with it.
+2. **How tall is the menu, in lines of text?** That is how much vertical room
+   is actually being contested, and it decides how far clear the dot must sit.
+3. **Does tapping a blank part of the page clear the selection?** If it does —
+   and it probably does — then tapping Kona's dot must not count as tapping
+   elsewhere. That is a real constraint on how the dot is built, not a detail,
+   because a dot that clears the selection before Kona can read it is useless.
+4. **Does the menu come back** if you tap the selected text again? That is the
+   recovery path when somebody dismisses it by accident.
+5. **Does any of this change in landscape, or with larger text turned on?**
+   Both are common and both move the same few hundred pixels around.
+
 *Leaning:* this is still the one decision in the log that **should not be
 settled from a desk.** It turns on behaviour that differs by OS version, and there is an
 iPhone, an iPad and an Android phone here to check it on. The shape worth
