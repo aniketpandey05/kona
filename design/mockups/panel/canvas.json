@@ -1,0 +1,25 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-03T12:00:00Z" },
+  "title": "Kona panel mockup",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1100, "h": 700, "title": "1 — At rest, a space is active" },
+    "Open.dc.html": { "x": 1180, "y": 0, "w": 1100, "h": 700, "title": "2 — Open, this page" },
+    "Space.dc.html": { "x": 0, "y": 820, "w": 1100, "h": 700, "title": "3 — Open, the active space" },
+    "Empty.dc.html": { "x": 1180, "y": 820, "w": 1100, "h": 700, "title": "4 — Nothing here, nothing set" },
+    "JustMarked.dc.html": { "x": 0, "y": 1640, "w": 1100, "h": 700, "title": "5 — Just marked, and it does not belong" }
+  },
+  "order": ["Main.dc.html", "Open.dc.html", "Space.dc.html", "Empty.dc.html", "JustMarked.dc.html"],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "text": "The panel, five states",
+      "kind": "title1",
+      "maxW": 2280
+    }
+  },
+  "designSystems": []
+}

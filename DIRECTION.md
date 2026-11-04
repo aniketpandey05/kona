@@ -7,8 +7,7 @@ Three documents, one job each, and two sets of drawings.
 | **`DIRECTION.md`** | What Kona is, and what every surface of it does. This file. |
 | **`DEFINITIONS.md`** | What every word means, in the present tense of the finished product. |
 | **`DESIGN-LOG.md`** | Every decision, why it was made, and the few still open. |
-| **Panel mockup** | The in-page panel, five states. |
-| **Library mockup** | The library, the settings, and the phones. Thirteen boards. |
+| **`design/MOCKUPS.md`** | Eighteen boards, what each one shows, and the links. The source is in `design/mockups/`, so this does not depend on claude.ai. |
 
 This file is the design drawn together. Where it says *(2e)* it is naming the
 decision that settled something, and where it says *board 7* it is naming the

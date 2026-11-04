@@ -1,0 +1,47 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-04T10:00:00Z" },
+  "title": "Kona library mockup",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1280, "h": 900, "title": "1 — Highlights, at rest", "expand": "fill" },
+    "Search.dc.html": { "x": 1360, "y": 0, "w": 1280, "h": 900, "title": "2 — Searching, across both views", "expand": "fill" },
+    "Archived.dc.html": { "x": 2720, "y": 0, "w": 1280, "h": 900, "title": "3 — Archived, and the fifteen are full", "expand": "fill" },
+    "Spaces.dc.html": { "x": 0, "y": 1020, "w": 1280, "h": 900, "title": "4 — Spaces, and the hard five", "expand": "fill" },
+    "Unfindable.dc.html": { "x": 1360, "y": 1020, "w": 1100, "h": 700, "title": "5 — The page has changed" },
+    "Tapped.dc.html": { "x": 2540, "y": 1020, "w": 1100, "h": 700, "title": "6 — Tapped a highlight you already made" },
+    "Account.dc.html": { "x": 0, "y": 1840, "w": 1100, "h": 700, "title": "7 — The account menu, both states" },
+    "Pens.dc.html": { "x": 1180, "y": 1840, "w": 1280, "h": 900, "title": "8 — The pen case, and what + opens", "expand": "fill" },
+    "PhoneSelect.dc.html": { "x": 0, "y": 2860, "w": 390, "h": 844, "title": "9 — iPhone, the bar at the bottom" },
+    "PhoneBar.dc.html": { "x": 470, "y": 2860, "w": 390, "h": 844, "title": "10 — iPhone, just after marking" },
+    "PhonePanel.dc.html": { "x": 940, "y": 2860, "w": 390, "h": 844, "title": "11 — iPhone, the panel" },
+    "PhoneLibrary.dc.html": { "x": 1410, "y": 2860, "w": 390, "h": 844, "title": "12 — iPhone, the library" },
+    "AndroidShare.dc.html": { "x": 1880, "y": 2860, "w": 390, "h": 844, "title": "13 — Android Chrome, the share route" }
+  },
+  "order": [
+    "Main.dc.html",
+    "Search.dc.html",
+    "Archived.dc.html",
+    "Spaces.dc.html",
+    "Unfindable.dc.html",
+    "Tapped.dc.html",
+    "Account.dc.html",
+    "Pens.dc.html",
+    "PhoneSelect.dc.html",
+    "PhoneBar.dc.html",
+    "PhonePanel.dc.html",
+    "PhoneLibrary.dc.html",
+    "AndroidShare.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "text": "The library, and two moments on the page",
+      "kind": "title1",
+      "maxW": 4000
+    }
+  },
+  "designSystems": []
+}

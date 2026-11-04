@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>iPhone, the library</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #b45309; } a:hover { color: #92400e; }
+    .chip { box-sizing: border-box; flex-shrink: 0; min-height: 34px; padding: 7px 13px; font: inherit; font-size: 13px; color: #5c574f; background: #fff; border: 1px solid #ddd8d0; border-radius: 999px; cursor: pointer; }
+  </style>
+</helmet>
+
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #f8f5ee; font-family: Inter, system-ui, sans-serif">
+
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px 6px; font-size: 13px; font-weight: 600; color: #1c1a17">
+    <span>9:41</span>
+    <span style="display: flex; align-items: center; gap: 5px">
+      <svg aria-hidden="true" width="17" height="11" viewBox="0 0 17 11" fill="#1c1a17"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="4.6" y="5" width="3" height="6" rx="1"></rect><rect x="9.2" y="2.6" width="3" height="8.4" rx="1"></rect><rect x="13.8" y="0" width="3" height="11" rx="1"></rect></svg>
+      <svg aria-hidden="true" width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.6" y="0.6" width="19" height="10.8" rx="3" stroke="#1c1a17" stroke-opacity="0.4"></rect><rect x="2.2" y="2.2" width="13" height="7.6" rx="1.8" fill="#1c1a17"></rect><path d="M21.6 4.2v3.6a2 2 0 0 0 0-3.6Z" fill="#1c1a17" fill-opacity="0.4"></path></svg>
+    </span>
+  </div>
+
+  <header style="box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 8px 16px 12px; border-bottom: 1px solid #e6e2dc">
+    <button type="button" aria-label="Show the menu" style="display: flex; flex-direction: column; justify-content: center; gap: 4px; width: 44px; height: 44px; padding: 0 12px; background: transparent; border: 0; border-radius: 10px; cursor: pointer">
+      <span aria-hidden="true" style="display: block; height: 1.8px; background: #4a453e; border-radius: 2px"></span>
+      <span aria-hidden="true" style="display: block; height: 1.8px; background: #4a453e; border-radius: 2px"></span>
+      <span aria-hidden="true" style="display: block; height: 1.8px; background: #4a453e; border-radius: 2px"></span>
+    </button>
+    <label style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 11px 14px; background: #fff; border: 1px solid #ddd8d0; border-radius: 12px">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6f6a64" stroke-width="1.6"><circle cx="6.8" cy="6.8" r="4.6"></circle><path d="M10.4 10.4 L14 14"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search everything you kept</span>
+      <input type="text" placeholder="Search everything" style="flex-grow: 1; min-width: 0; padding: 0; font: inherit; font-size: 14.5px; color: #2b2824; background: transparent; border: 0; outline: none">
+    </label>
+  </header>
+
+  <div style="box-sizing: border-box; display: flex; align-items: baseline; gap: 9px; padding: 14px 16px 10px">
+    <h1 style="margin: 0; font-size: 18px; font-weight: 600; color: #1c1a17">Highlights</h1>
+    <p style="margin: 0; font-size: 12.5px; color: #6f6a64">1,284</p>
+  </div>
+
+  <div style="box-sizing: border-box; display: flex; gap: 7px; padding: 0 16px 12px; overflow: hidden">
+    <span class="chip" style="display: flex; align-items: center; gap: 6px; padding-left: 10px">
+      <span aria-hidden="true" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #eab308"></span>
+      <span aria-hidden="true" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #3b82f6"></span>
+      Colour
+    </span>
+    <button type="button" class="chip">Site</button>
+    <button type="button" class="chip">When</button>
+  </div>
+
+  <ul style="box-sizing: border-box; margin: 0; padding: 0 16px; list-style: none; display: flex; flex-direction: column; gap: 17px">
+    <li style="box-sizing: border-box; padding: 2px 2px 15px; border-bottom: 1px solid #ece7df">
+      <div style="display: flex; align-items: flex-start; gap: 11px">
+        <span aria-hidden="true" style="flex-shrink: 0; width: 10px; height: 10px; margin-top: 6px; border-radius: 50%; background: #eab308"></span>
+        <div>
+          <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 16.5px; line-height: 1.55; color: #15130f">The microscope that made it possible was ground by hand over eleven years</p>
+          <p style="margin: 7px 0 0; font-size: 12px; color: #6f6a64">cell-biology.example.org &middot; 2h &middot; <span style="color: #b45309">Amoebas</span></p>
+        </div>
+      </div>
+    </li>
+    <li style="box-sizing: border-box; padding: 2px 2px 15px; border-bottom: 1px solid #ece7df">
+      <div style="display: flex; align-items: flex-start; gap: 11px">
+        <span aria-hidden="true" style="flex-shrink: 0; width: 10px; height: 10px; margin-top: 6px; border-radius: 50%; background: #3b82f6"></span>
+        <div>
+          <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 16.5px; line-height: 1.55; color: #15130f">Contractile vacuoles expel water that enters the cell by osmosis</p>
+          <p style="margin: 7px 0 0; font-size: 12px; color: #6f6a64">journals.example.edu &middot; 1d</p>
+        </div>
+      </div>
+    </li>
+    <li style="box-sizing: border-box; padding: 2px 2px 15px; border-bottom: 1px solid #ece7df">
+      <div style="display: flex; align-items: flex-start; gap: 11px">
+        <span aria-hidden="true" style="flex-shrink: 0; width: 10px; height: 10px; margin-top: 6px; border-radius: 50%; background: #16a34a"></span>
+        <div>
+          <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 16.5px; line-height: 1.55; color: #15130f">Not all amoeboid organisms are closely related</p>
+          <p style="margin: 7px 0 0; font-size: 12px; color: #6f6a64">chatgpt.com &middot; 1d</p>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 22px; padding: 0 16px">
+    <div style="box-sizing: border-box; padding: 12px 15px; background: #f1ece1; border: 0; border-radius: 12px">
+      <p style="margin: 0 0 6px; font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: #8a8580">What to look at</p>
+      <p style="margin: 0; font-size: 12px; line-height: 1.55; color: #5c574f">The nav folds behind the three bars, which is what 17 chose it for &mdash; and the account row and Pens fold in with it, so the phone loses nothing. The filter chips scroll sideways rather than wrapping into three rows.</p>
+      <p style="margin: 8px 0 0; font-size: 12px; line-height: 1.55; color: #5c574f">Tapping a passage opens the page and lands on the words. On this phone that works whether or not the extension is on, because the link is a text fragment (1h).</p>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

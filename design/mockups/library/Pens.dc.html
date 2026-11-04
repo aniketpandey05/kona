@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pens — adding a colour</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+  <style>
+    body { margin: 0; background: #f8f5ee; }
+    a { color: #b45309; } a:hover { color: #92400e; }
+    .tab { box-sizing: border-box; min-height: 36px; padding: 8px 14px; font: inherit; font-size: 13.5px; color: #5c574f; text-decoration: none; background: transparent; border: 0; border-radius: 9px; cursor: pointer; }
+    .tab-on { background: #f0ece4; color: #1c1a17; font-weight: 600; }
+    .pen { box-sizing: border-box; display: flex; align-items: center; gap: 13px; padding: 13px 15px; background: #fff; border: 1px solid #ebe6de; border-radius: 14px; box-shadow: 0 1px 2px rgba(28,26,23,0.035); }
+    .dot { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(28, 26, 23, 0.12); }
+    .tiny { box-sizing: border-box; min-height: 32px; padding: 6px 11px; font: inherit; font-size: 12.5px; color: #5c574f; background: #fff; border: 1px solid #ddd8d0; border-radius: 8px; cursor: pointer; }
+  </style>
+</helmet>
+
+<div style="box-sizing: border-box; min-height: 900px; background: #f8f5ee; font-family: Inter, system-ui, sans-serif; color: #2b2824">
+
+  <header style="box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 14px 28px; border-bottom: 1px solid #e6e2dc">
+    <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none">
+      <span aria-hidden="true" style="display: inline-block; width: 22px; height: 22px; border-radius: 7px; background: #ea580c"></span>
+      <strong style="font-size: 15.5px; font-weight: 600; color: #1c1a17">Kona</strong>
+    </a>
+    <span style="font-size: 15px; color: #a39c93">/</span>
+    <span style="font-size: 15px; font-weight: 500; color: #1c1a17">Settings</span>
+    <span style="flex-grow: 1"></span>
+    <a href="Main.dc.html" style="min-height: 38px; padding: 9px 14px; font-size: 13.5px; color: #2b2824; text-decoration: none; border: 1px solid #ddd8d0; border-radius: 10px">Back to the library</a>
+  </header>
+
+  <div style="box-sizing: border-box; display: flex; gap: 8px; padding: 12px 28px 0">
+    <span class="tab tab-on" aria-current="page">Pens</span>
+    <button type="button" class="tab">Account</button>
+    <button type="button" class="tab">Export</button>
+    <button type="button" class="tab">About</button>
+  </div>
+
+  <main style="box-sizing: border-box; padding: 20px 28px 56px">
+    <div style="display: flex; flex-wrap: wrap; gap: 26px">
+
+      <section style="flex: 1 1 340px; min-width: 0">
+        <h1 style="margin: 0 0 5px; font-size: 21px; font-weight: 600; letter-spacing: -0.01em; color: #15130f">Your pens</h1>
+        <p style="margin: 0 0 16px; font-size: 13px; line-height: 1.55; color: #5c574f">The colours you can mark with. What a colour <em style="font-style: normal; color: #1c1a17">means</em> is yours &mdash; Kona never decides, and you can filter the library by any of them.</p>
+
+        <div style="display: flex; flex-direction: column; gap: 9px">
+          <div class="pen">
+            <span aria-hidden="true" class="dot" style="background: rgba(234, 179, 8, 0.45)"></span>
+            <span style="flex-grow: 1; min-width: 0">
+              <strong style="display: block; font-size: 13.5px; font-weight: 500; color: #1c1a17">Yellow</strong>
+              <span style="display: block; margin-top: 2px; font-size: 12px; color: #6f6a64">on 612 highlights</span>
+            </span>
+            <button type="button" class="tiny">Edit</button>
+          </div>
+          <div class="pen">
+            <span aria-hidden="true" class="dot" style="background: rgba(59, 130, 246, 0.42)"></span>
+            <span style="flex-grow: 1; min-width: 0">
+              <strong style="display: block; font-size: 13.5px; font-weight: 500; color: #1c1a17">Blue</strong>
+              <span style="display: block; margin-top: 2px; font-size: 12px; color: #6f6a64">on 341 highlights</span>
+            </span>
+            <button type="button" class="tiny">Edit</button>
+          </div>
+          <div class="pen">
+            <span aria-hidden="true" class="dot" style="background: rgba(22, 163, 74, 0.4)"></span>
+            <span style="flex-grow: 1; min-width: 0">
+              <strong style="display: block; font-size: 13.5px; font-weight: 500; color: #1c1a17">Green</strong>
+              <span style="display: block; margin-top: 2px; font-size: 12px; color: #6f6a64">on 208 highlights</span>
+            </span>
+            <button type="button" class="tiny">Edit</button>
+          </div>
+          <div class="pen">
+            <span aria-hidden="true" class="dot" style="background: rgba(219, 39, 119, 0.4)"></span>
+            <span style="flex-grow: 1; min-width: 0">
+              <strong style="display: block; font-size: 13.5px; font-weight: 500; color: #1c1a17">Pink</strong>
+              <span style="display: block; margin-top: 2px; font-size: 12px; color: #6f6a64">on 97 highlights</span>
+            </span>
+            <button type="button" class="tiny">Edit</button>
+          </div>
+
+          <div class="pen" style="border: 1px solid #ea580c; box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1)">
+            <span aria-hidden="true" class="dot" style="background: rgba(20, 184, 166, 0.45)"></span>
+            <span style="flex-grow: 1; min-width: 0">
+              <strong style="display: block; font-size: 13.5px; font-weight: 500; color: #1c1a17">Teal</strong>
+              <span style="display: block; margin-top: 2px; font-size: 12px; color: #6f6a64">being added &rarr;</span>
+            </span>
+          </div>
+        </div>
+
+        <h2 style="margin: 26px 0 5px; font-size: 13.5px; font-weight: 600; color: #1c1a17">Also in your library</h2>
+        <p style="margin: 0 0 11px; font-size: 12.5px; line-height: 1.55; color: #5c574f">Colours you have marked with that are not pens any more. <strong style="font-weight: 600; color: #1c1a17">Taking a pen out of the case never changes a mark you already made</strong>, so these stay exactly as they were, and you can still filter by them.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <button type="button" class="tiny" style="display: flex; align-items: center; gap: 8px">
+            <span aria-hidden="true" style="display: inline-block; width: 13px; height: 13px; border-radius: 50%; background: rgba(168, 85, 247, 0.42)"></span>
+            Purple &middot; 54
+          </button>
+          <button type="button" class="tiny" style="display: flex; align-items: center; gap: 8px">
+            <span aria-hidden="true" style="display: inline-block; width: 13px; height: 13px; border-radius: 50%; background: rgba(249, 115, 22, 0.42)"></span>
+            Orange &middot; 12
+          </button>
+        </div>
+      </section>
+
+      <section style="flex: 1 1 330px; min-width: 0; max-width: 380px">
+        <div style="box-sizing: border-box; padding: 19px; background: #fff; border: 1px solid #e6e0d6; border-radius: 17px; box-shadow: 0 12px 34px rgba(28, 26, 23, 0.09)">
+          <h2 style="margin: 0 0 14px; font-size: 14.5px; font-weight: 600; color: #1c1a17">A new pen</h2>
+
+          <div aria-hidden="true" style="position: relative; height: 150px; margin: 0 0 11px; border-radius: 10px; background: linear-gradient(to top, #000, rgba(0,0,0,0)), linear-gradient(to right, #fff, #14b8a6)">
+            <span style="position: absolute; left: 73%; top: 30%; width: 15px; height: 15px; margin: -8px 0 0 -8px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,0.35)"></span>
+          </div>
+
+          <label style="display: block; margin: 0 0 11px">
+            <span style="display: block; margin: 0 0 5px; font-size: 12px; color: #5c574f">Hue</span>
+            <input type="range" min="0" max="360" value="174" style="width: 100%; height: 14px; margin: 0; border-radius: 7px; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); appearance: none; cursor: pointer">
+          </label>
+
+          <label style="display: block; margin: 0 0 13px">
+            <span style="display: flex; justify-content: space-between; margin: 0 0 5px; font-size: 12px; color: #5c574f">
+              <span>Opacity</span>
+              <span style="color: #1c1a17">45%</span>
+            </span>
+            <input type="range" min="10" max="60" value="45" style="width: 100%; height: 14px; margin: 0; border-radius: 7px; background: linear-gradient(to right, rgba(20,184,166,0.1), rgba(20,184,166,0.6)); appearance: none; cursor: pointer">
+            <span style="display: block; margin: 6px 0 0; font-size: 11.5px; line-height: 1.45; color: #6f6a64">Stops at 60%. A highlighter is see&#8209;through, and a solid one hides the words underneath it.</span>
+          </label>
+
+          <div style="display: flex; align-items: center; gap: 9px; margin: 0 0 14px">
+            <label style="flex-grow: 1; display: flex; align-items: center; gap: 8px; padding: 8px 11px; background: #fdfdfc; border: 1px solid #ddd8d0; border-radius: 9px">
+              <span style="font-size: 12px; color: #8a8580">#</span>
+              <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Hex value</span>
+              <input type="text" value="14B8A6" style="flex-grow: 1; min-width: 0; padding: 0; font: inherit; font-size: 13px; letter-spacing: 0.04em; color: #1c1a17; background: transparent; border: 0; outline: none">
+            </label>
+            <span style="padding: 8px 12px; font-size: 13px; font-weight: 500; color: #1c1a17; background: #f0ece4; border-radius: 9px">Teal</span>
+          </div>
+
+          <p style="margin: 0 0 9px; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: #8a8580">Over a page</p>
+          <p style="margin: 0 0 8px; padding: 10px 12px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13.5px; line-height: 1.55; color: #2b2824; background: #fff; border: 1px solid #ebe6de; border-radius: 9px">A light page, where <mark style="background: linear-gradient(180deg, rgba(20,184,166,0.34) 0%, rgba(20,184,166,0.56) 100%); color: #16181d; padding: 1px 1px; border-radius: 3px">the words have to stay readable</mark> underneath.</p>
+          <p style="margin: 0 0 14px; padding: 10px 12px; font-family: 'Source Serif 4', Georgia, serif; font-size: 13.5px; line-height: 1.55; color: #e8e6e3; background: #1b1d20; border-radius: 9px">A dark page, where <mark style="background: linear-gradient(180deg, rgba(20,184,166,0.34) 0%, rgba(20,184,166,0.56) 100%); color: #16181d; padding: 1px 1px; border-radius: 3px">the same colour has to work too</mark>, unchanged.</p>
+
+          <div style="display: flex; gap: 8px">
+            <button type="button" style="flex-grow: 1; min-height: 40px; padding: 10px; font: inherit; font-size: 13.5px; font-weight: 500; color: #fff; background: #3f3b35; border: 0; border-radius: 9px; cursor: pointer">Add this colour</button>
+            <button type="button" style="min-height: 40px; padding: 10px 14px; font: inherit; font-size: 13.5px; color: #5c574f; background: transparent; border: 1px solid #ddd8d0; border-radius: 9px; cursor: pointer">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+      <section style="flex: 1 1 260px; min-width: 240px; max-width: 320px">
+        <div style="box-sizing: border-box; padding: 15px 17px; background: #fff; border: 1px solid #e6e2dc; border-radius: 12px">
+          <p style="margin: 0 0 8px; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: #8a8580">What to look at</p>
+          <p style="margin: 0 0 11px; font-size: 13px; line-height: 1.6; color: #5c574f"><strong style="font-weight: 600; color: #1c1a17">Also in your library</strong> is 12&rsquo;s hardest rule made visible. Editing the case never repaints what you already marked, so colours in use can outnumber the pens &mdash; and that list is where a colour goes when you retire it, rather than nowhere, which is how somebody would otherwise lose track of 54 highlights.</p>
+          <p style="margin: 0 0 11px; font-size: 13px; line-height: 1.6; color: #5c574f">The name writes itself from the hue. <em style="font-style: normal; color: #1c1a17">Teal</em>, not <em style="font-style: normal; color: #1c1a17">Disagree</em> &mdash; pens have colours, not labels, and the meaning stays yours.</p>
+          <p style="margin: 0 0 11px; font-size: 13px; line-height: 1.6; color: #5c574f">Two previews, light and dark, because a mark is painted over a page whose background Kona does not control. That is also what the <strong style="font-weight: 600; color: #1c1a17">60% ceiling</strong> is for &mdash; the one piece of 12 still open. Here it is as a slider that simply ends, with a reason rather than an error.</p>
+          <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #5c574f">Pens are free and per device, since Free does not sync (11).</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

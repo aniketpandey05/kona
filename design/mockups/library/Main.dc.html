@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Library — everything you kept</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+  <style>
+    body { margin: 0; background: #f8f5ee; }
+    a { color: #b45309; } a:hover { color: #92400e; }
+    .nav-item { box-sizing: border-box; display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 8px 12px; font-size: 13.5px; color: #4a453e; text-decoration: none; border-radius: 9px; }
+    .nav-item:hover { background: #f3efe8; color: #1c1a17; }
+    .nav-on { background: #f0ece4; color: #1c1a17; font-weight: 600; }
+    .nav-count { margin-left: auto; font-size: 12px; font-weight: 400; color: #6f6a64; }
+    .nav-head { margin: 18px 0 6px; padding: 0 12px; font-size: 10.5px; letter-spacing: 0.09em; text-transform: uppercase; color: #8a8580; }
+    .chip { box-sizing: border-box; min-height: 34px; padding: 7px 13px; font: inherit; font-size: 13px; color: #5c574f; background: #fff; border: 1px solid #ddd8d0; border-radius: 999px; cursor: pointer; }
+  </style>
+</helmet>
+
+<div style="box-sizing: border-box; min-height: 900px; background: #f8f5ee; font-family: Inter, system-ui, sans-serif; color: #2b2824">
+
+  <header style="box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 14px 28px; border-bottom: 1px solid #e6e2dc">
+    <button type="button" aria-label="Show or hide the menu" style="display: flex; flex-direction: column; justify-content: center; gap: 4px; width: 38px; height: 38px; padding: 0 10px; background: transparent; border: 0; border-radius: 9px; cursor: pointer">
+      <span aria-hidden="true" style="display: block; height: 1.8px; background: #4a453e; border-radius: 2px"></span>
+      <span aria-hidden="true" style="display: block; height: 1.8px; background: #4a453e; border-radius: 2px"></span>
+      <span aria-hidden="true" style="display: block; height: 1.8px; background: #4a453e; border-radius: 2px"></span>
+    </button>
+
+    <span style="display: flex; align-items: center; gap: 10px">
+      <span aria-hidden="true" style="display: inline-block; width: 22px; height: 22px; border-radius: 7px; background: #ea580c"></span>
+      <strong style="font-size: 15.5px; font-weight: 600; color: #1c1a17">Kona</strong>
+    </span>
+
+    <label style="flex: 999 1 400px; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 15px; background: #fff; border: 1px solid #ddd8d0; border-radius: 11px">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6f6a64" stroke-width="1.6">
+        <circle cx="6.8" cy="6.8" r="4.6"></circle><path d="M10.4 10.4 L14 14"></path>
+      </svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search everything you kept</span>
+      <input type="text" placeholder="Search everything you kept" style="flex-grow: 1; min-width: 0; padding: 0; font: inherit; font-size: 14px; color: #2b2824; background: transparent; border: 0; outline: none">
+    </label>
+
+  </header>
+
+  <div style="box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 0">
+
+    <nav aria-label="Library" style="box-sizing: border-box; flex: 1 1 236px; max-width: 262px; min-height: 814px; display: flex; flex-direction: column; padding: 16px 14px 18px; border-right: 1px solid #e6e2dc">
+      <a class="nav-item nav-on" href="Main.dc.html" aria-current="page">Highlights <span class="nav-count">1,284</span></a>
+      <a class="nav-item" href="Archived.dc.html">Archived <span class="nav-count">15</span></a>
+
+      <p class="nav-head"><a href="Spaces.dc.html" style="color: #8a8580; text-decoration: none">Spaces &middot; 4 of 5</a></p>
+      <a class="nav-item" href="Spaces.dc.html">
+        <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ea580c"></span>
+        Amoebas <span class="nav-count">12</span>
+      </a>
+      <a class="nav-item" href="Spaces.dc.html">
+        <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #d8d2c8"></span>
+        Housing <span class="nav-count">31</span>
+      </a>
+      <a class="nav-item" href="Spaces.dc.html">
+        <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #d8d2c8"></span>
+        Text matching <span class="nav-count">18</span>
+      </a>
+      <a class="nav-item" href="Spaces.dc.html">
+        <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #d8d2c8"></span>
+        Unsorted reading <span class="nav-count">7</span>
+      </a>
+
+      <p class="nav-head">Tags</p>
+      <a class="nav-item" href="Main.dc.html">osmosis <span class="nav-count">9</span></a>
+      <a class="nav-item" href="Main.dc.html">to&#8209;read <span class="nav-count">22</span></a>
+      <a class="nav-item" href="Main.dc.html">methods <span class="nav-count">14</span></a>
+      <div style="margin-top: auto; padding-top: 20px">
+        <div aria-hidden="true" style="height: 1px; margin: 0 0 9px; background: #ebe6de"></div>
+
+        <a class="nav-item" href="Pens.dc.html">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#5c574f" stroke-width="1.6">
+            <circle cx="6.2" cy="6.4" r="2.6"></circle><circle cx="12" cy="11.4" r="2.6"></circle><path d="M2.2 14.8h4"></path><path d="M13 3.6h2.8"></path>
+          </svg>
+          Pens
+        </a>
+
+        <button type="button" style="box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; margin-top: 2px; padding: 8px 10px; font: inherit; text-align: left; background: transparent; border: 0; border-radius: 9px; cursor: pointer">
+          <span aria-hidden="true" style="flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; font-size: 11.5px; font-weight: 600; color: #fff; background: #3f3b35; border-radius: 50%">AP</span>
+          <span style="flex-grow: 1; min-width: 0">
+            <span style="display: block; font-size: 13px; font-weight: 500; color: #1c1a17">ani_ket_pan</span>
+            <span style="display: block; margin-top: 1px; font-size: 11.5px; color: #6f6a64">Free</span>
+          </span>
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#6f6a64" stroke-width="1.6">
+            <circle cx="9" cy="9" r="2.5"></circle><path d="M9 1.9v1.8M9 14.3v1.8M1.9 9h1.8M14.3 9h1.8M4 4l1.3 1.3M12.7 12.7 14 14M14 4l-1.3 1.3M5.3 12.7 4 14"></path>
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <main style="box-sizing: border-box; flex: 999 1 560px; min-width: 0; padding: 20px 28px 56px">
+
+      <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin: 0 0 16px">
+        <h1 style="margin: 0; font-size: 21px; font-weight: 600; letter-spacing: -0.01em; color: #15130f">Highlights</h1>
+        <p style="margin: 0; font-size: 13px; color: #6f6a64">Newest first. Archived left out.</p>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 20px">
+        <span style="display: flex; align-items: center; gap: 6px; min-height: 34px; padding: 6px 12px 6px 11px; background: #fff; border: 1px solid #ddd8d0; border-radius: 999px">
+          <span style="font-size: 13px; color: #5c574f">Colour</span>
+          <span aria-hidden="true" style="display: inline-block; width: 13px; height: 13px; border-radius: 50%; background: #eab308"></span>
+          <span aria-hidden="true" style="display: inline-block; width: 13px; height: 13px; border-radius: 50%; background: #3b82f6"></span>
+          <span aria-hidden="true" style="display: inline-block; width: 13px; height: 13px; border-radius: 50%; background: #16a34a"></span>
+          <span aria-hidden="true" style="display: inline-block; width: 13px; height: 13px; border-radius: 50%; background: #db2777"></span>
+        </span>
+        <button type="button" class="chip">Site</button>
+        <button type="button" class="chip">When</button>
+        <span style="flex-grow: 1"></span>
+        <button type="button" class="chip" style="font-weight: 500; color: #2b2824">Select</button>
+      </div>
+
+      <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 17px">
+
+        <li style="box-sizing: border-box; padding: 3px 2px 18px; border-bottom: 1px solid #ece7df">
+          <div style="display: flex; align-items: flex-start; gap: 13px">
+            <span aria-hidden="true" style="flex-shrink: 0; width: 11px; height: 11px; margin-top: 6px; border-radius: 50%; background: #eab308"></span>
+            <div style="flex-grow: 1; min-width: 0">
+              <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.58; color: #15130f">The microscope that made it possible was ground by hand over eleven years by a man who never published a paper</p>
+              <p style="margin: 8px 0 0; font-size: 12.5px; color: #6f6a64">cell-biology.example.org &middot; 2 hours ago &middot; <span style="color: #b45309">Amoebas</span></p>
+            </div>
+          </div>
+        </li>
+
+        <li style="box-sizing: border-box; padding: 3px 2px 18px; border-bottom: 1px solid #ece7df">
+          <div style="display: flex; align-items: flex-start; gap: 13px">
+            <span aria-hidden="true" style="flex-shrink: 0; width: 11px; height: 11px; margin-top: 6px; border-radius: 50%; background: #3b82f6"></span>
+            <div style="flex-grow: 1; min-width: 0">
+              <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.58; color: #15130f">Contractile vacuoles expel water that enters the cell by osmosis</p>
+              <p style="margin: 9px 0 0; padding: 8px 11px; font-size: 13px; line-height: 1.5; color: #4a453e; background: #fbf8f2; border-left: 2px solid #e0b88a; border-radius: 0 6px 6px 0">Check whether this is active transport or passive &mdash; the paper is vague and I keep forgetting which.</p>
+              <p style="margin: 8px 0 0; font-size: 12.5px; color: #6f6a64">journals.example.edu &middot; yesterday &middot; <span style="color: #b45309">Amoebas</span></p>
+            </div>
+          </div>
+        </li>
+
+        <li style="box-sizing: border-box; padding: 3px 2px 18px; border-bottom: 1px solid #ece7df">
+          <div style="display: flex; align-items: flex-start; gap: 13px">
+            <span aria-hidden="true" style="flex-shrink: 0; width: 11px; height: 11px; margin-top: 6px; border-radius: 50%; background: #16a34a"></span>
+            <div style="flex-grow: 1; min-width: 0">
+              <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.58; color: #15130f">Not all amoeboid organisms are closely related; the shape has evolved repeatedly</p>
+              <p style="margin: 8px 0 0; font-size: 12.5px; color: #6f6a64">chatgpt.com &middot; yesterday</p>
+            </div>
+          </div>
+        </li>
+
+        <li style="box-sizing: border-box; padding: 3px 2px 18px; border-bottom: 1px solid #ece7df">
+          <div style="display: flex; align-items: flex-start; gap: 13px">
+            <span aria-hidden="true" style="flex-shrink: 0; width: 11px; height: 11px; margin-top: 6px; border-radius: 50%; background: #eab308"></span>
+            <div style="flex-grow: 1; min-width: 0">
+              <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.58; color: #15130f">Rent control reduced displacement for sitting tenants and reduced the supply of rental housing by fifteen per cent</p>
+              <p style="margin: 8px 0 0; font-size: 12.5px; color: #6f6a64">econ.example.ac.uk &middot; 3 days ago &middot; <span style="color: #b45309">Housing</span></p>
+            </div>
+          </div>
+        </li>
+
+        <li style="box-sizing: border-box; padding: 3px 2px 18px; border-bottom: 1px solid #ece7df">
+          <div style="display: flex; align-items: flex-start; gap: 13px">
+            <span aria-hidden="true" style="flex-shrink: 0; width: 11px; height: 11px; margin-top: 6px; border-radius: 50%; background: #db2777"></span>
+            <div style="flex-grow: 1; min-width: 0">
+              <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.58; color: #15130f">Every index is a theory of what matters, written down and then forgotten about</p>
+              <p style="margin: 8px 0 0; font-size: 12.5px; color: #6f6a64">essays.example.net &middot; 4 days ago</p>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+
+      <div style="box-sizing: border-box; margin: 24px 0 0; padding: 14px 17px; background: #f1ece1; border: 0; border-radius: 12px">
+        <p style="margin: 0 0 7px; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: #8a8580">What to look at</p>
+        <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #5c574f">17, after the first attempt put a scope in the filter row. Three kinds of control, three places: the nav is <em style="font-style: normal; color: #1c1a17">where you are</em> and only one can be true; the box searches across all of it; the chips stack. Tag and Space moved into the nav, because picking one changes where you are &mdash; which leaves the chips meaning only attributes of a highlight. The active space keeps its orange dot wherever you stand, and a list is what makes Pro&rsquo;s unlimited spaces survivable: forty tabs would be unreadable, forty rows are not.</p>
+      </div>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

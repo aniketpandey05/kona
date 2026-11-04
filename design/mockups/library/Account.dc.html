@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The account row at the foot of the sidebar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; background: #f6f3ed; }
+    a { color: #b45309; } a:hover { color: #92400e; }
+    .sidebar { box-sizing: border-box; width: 262px; height: 430px; display: flex; flex-direction: column; padding: 14px 12px 12px; background: #fdfdfc; border: 1px solid #e6e2dc; border-radius: 12px; }
+    .ni { box-sizing: border-box; display: flex; align-items: center; gap: 10px; min-height: 34px; padding: 7px 10px; font-size: 13px; color: #4a453e; text-decoration: none; border-radius: 8px; }
+    .ni-on { background: #f0ece4; color: #1c1a17; font-weight: 600; }
+    .cnt { margin-left: auto; font-size: 11.5px; font-weight: 400; color: #6f6a64; }
+    .hd { margin: 14px 0 5px; padding: 0 10px; font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: #8a8580; }
+    .acct { box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 7px 9px; font: inherit; text-align: left; background: transparent; border: 0; border-radius: 9px; cursor: pointer; }
+    .mi { box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 36px; padding: 7px 11px; font: inherit; font-size: 13px; color: #2b2824; text-align: left; background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
+    .sep { height: 1px; margin: 6px 9px; background: #ebe6de; }
+  </style>
+</helmet>
+
+<div style="width: 1100px; height: 700px; box-sizing: border-box; padding: 24px 30px; background: #f6f3ed; font-family: Inter, system-ui, sans-serif; color: #2b2824">
+
+  <h1 style="margin: 0 0 3px; font-size: 18px; font-weight: 600; color: #1c1a17">The account row</h1>
+  <p style="margin: 0 0 18px; font-size: 13px; color: #5c574f">At the foot of the sidebar, under Pens. Quiet almost always &mdash; and the one thing in Kona allowed to speak up, because 23 gives a broken sync no other way to reach you.</p>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 22px">
+
+    <section style="flex: 0 0 auto">
+      <div class="sidebar">
+        <a class="ni ni-on" href="Main.dc.html">Highlights <span class="cnt">1,284</span></a>
+        <a class="ni" href="Archived.dc.html">Archived <span class="cnt">15</span></a>
+        <p class="hd">Spaces &middot; 4 of 5</p>
+        <a class="ni" href="Spaces.dc.html"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #ea580c"></span>Amoebas <span class="cnt">12</span></a>
+        <a class="ni" href="Spaces.dc.html"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #d8d2c8"></span>Housing <span class="cnt">31</span></a>
+
+        <div style="margin-top: auto; padding-top: 14px">
+          <div aria-hidden="true" style="height: 1px; margin: 0 0 8px; background: #ebe6de"></div>
+          <a class="ni" href="Pens.dc.html">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="#5c574f" stroke-width="1.6"><circle cx="6.2" cy="6.4" r="2.6"></circle><circle cx="12" cy="11.4" r="2.6"></circle><path d="M2.2 14.8h4"></path><path d="M13 3.6h2.8"></path></svg>
+            Pens
+          </a>
+          <button type="button" class="acct">
+            <span aria-hidden="true" style="flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; border: 1px dashed #c9c2b6"></span>
+            <span style="flex-grow: 1; min-width: 0; font-size: 13px; color: #4a453e">Sign in</span>
+          </button>
+        </div>
+      </div>
+      <p style="margin: 8px 0 0; font-size: 12px; color: #6f6a64">No account. The default on Free (5).</p>
+    </section>
+
+    <section style="flex: 0 0 auto">
+      <div class="sidebar">
+        <a class="ni ni-on" href="Main.dc.html">Highlights <span class="cnt">1,284</span></a>
+        <a class="ni" href="Archived.dc.html">Archived <span class="cnt">15</span></a>
+        <p class="hd">Spaces</p>
+        <a class="ni" href="Spaces.dc.html"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #ea580c"></span>Amoebas <span class="cnt">12</span></a>
+        <a class="ni" href="Spaces.dc.html"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #d8d2c8"></span>Housing <span class="cnt">31</span></a>
+
+        <div style="margin-top: auto; padding-top: 14px">
+          <div aria-hidden="true" style="height: 1px; margin: 0 0 8px; background: #ebe6de"></div>
+          <a class="ni" href="Pens.dc.html">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="#5c574f" stroke-width="1.6"><circle cx="6.2" cy="6.4" r="2.6"></circle><circle cx="12" cy="11.4" r="2.6"></circle><path d="M2.2 14.8h4"></path><path d="M13 3.6h2.8"></path></svg>
+            Pens
+          </a>
+          <button type="button" class="acct">
+            <span aria-hidden="true" style="flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; font-size: 11px; font-weight: 600; color: #fff; background: #3f3b35; border-radius: 50%">AP</span>
+            <span style="flex-grow: 1; min-width: 0; font-size: 13px; color: #1c1a17">ani_ket_pan</span>
+          </button>
+        </div>
+      </div>
+      <p style="margin: 8px 0 0; font-size: 12px; color: #6f6a64">Signed in. No plan badge, no status &mdash; nothing to say.</p>
+    </section>
+
+    <section style="flex: 0 0 auto">
+      <div class="sidebar">
+        <a class="ni ni-on" href="Main.dc.html">Highlights <span class="cnt">1,284</span></a>
+        <a class="ni" href="Archived.dc.html">Archived <span class="cnt">15</span></a>
+        <p class="hd">Spaces</p>
+        <a class="ni" href="Spaces.dc.html"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #ea580c"></span>Amoebas <span class="cnt">12</span></a>
+        <a class="ni" href="Spaces.dc.html"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #d8d2c8"></span>Housing <span class="cnt">31</span></a>
+
+        <div style="margin-top: auto; padding-top: 14px">
+          <div aria-hidden="true" style="height: 1px; margin: 0 0 8px; background: #ebe6de"></div>
+          <a class="ni" href="Pens.dc.html">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="#5c574f" stroke-width="1.6"><circle cx="6.2" cy="6.4" r="2.6"></circle><circle cx="12" cy="11.4" r="2.6"></circle><path d="M2.2 14.8h4"></path><path d="M13 3.6h2.8"></path></svg>
+            Pens
+          </a>
+          <button type="button" class="acct" style="background: #fffaf2; box-shadow: inset 0 0 0 1px #e0cfae">
+            <span aria-hidden="true" style="flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; font-size: 11px; font-weight: 600; color: #fff; background: #3f3b35; border-radius: 50%">AP</span>
+            <span style="flex-grow: 1; min-width: 0">
+              <span style="display: block; font-size: 13px; font-weight: 500; color: #8a2d0e">Not sent since Tuesday</span>
+              <span style="display: block; margin-top: 1px; font-size: 11.5px; color: #6f6a64">This machine only, for now</span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <p style="margin: 8px 0 0; font-size: 12px; color: #8a2d0e">The only time it speaks.</p>
+    </section>
+
+    <section style="flex: 1 1 250px; min-width: 240px">
+      <div style="box-sizing: border-box; padding: 15px 17px; background: #f1ece1; border: 0; border-radius: 12px">
+        <p style="margin: 0 0 8px; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: #8a8580">What to look at</p>
+        <p style="margin: 0 0 11px; font-size: 13px; line-height: 1.6; color: #5c574f">It is an account row, not a status line. The earlier version gave it four states, and three of them were furniture: &ldquo;on this device&rdquo; never changes, &ldquo;in step&rdquo; never changes, and mid-sync is a flicker nobody watches.</p>
+        <p style="margin: 0 0 11px; font-size: 13px; line-height: 1.6; color: #5c574f"><strong style="font-weight: 600; color: #1c1a17">Only the fourth earned it.</strong> 23 allows no notifications, so a sync that has not run since Tuesday has exactly one route to you. The row is quiet the rest of the time precisely so that it is believed when it is not.</p>
+        <p style="margin: 0 0 11px; font-size: 13px; line-height: 1.6; color: #5c574f">Signed out it says <strong style="font-weight: 600; color: #1c1a17">Sign in</strong> &mdash; something you can act on &mdash; rather than naming a state you cannot change.</p>
+        <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #5c574f">The row exists for one plain reason: <strong style="font-weight: 600; color: #1c1a17">signing in has to live somewhere</strong>, and so do your account, settings and saving a copy. The amber state is a second job it happens to be well placed for, not the reason it is there.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <div style="box-sizing: border-box; margin: 20px 0 0; padding: 13px 16px; background: #fff; border: 1px solid #e6e2dc; border-radius: 12px">
+    <p style="margin: 0 0 10px; font-size: 13px; line-height: 1.6; color: #5c574f"><strong style="font-weight: 600; color: #1c1a17">Clicking it opens:</strong> save a copy of everything (first, and saying what it is for &mdash; 14 makes it the only backup there is), your devices, settings, what&rsquo;s new, your email address, and signing out. Nothing else, and none of it while signed out except settings and saving a copy.</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 11px 13px; background: #fffdf8; border: 1px dashed #d9cdb8; border-radius: 11px">
+      <div style="flex: 999 1 420px; min-width: 0">
+        <strong style="display: block; font-size: 13px; font-weight: 600; color: #1c1a17">Install Kona</strong>
+        <span style="display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.5; color: #5c574f">Its own window and a dock icon, instead of a tab you have to find. Shown only while Kona is running in a tab &mdash; like <em style="font-style: normal; color: #1c1a17">Get the extension</em>, the menu offers what you do not have and nothing you already do (24).</span>
+      </div>
+      <button type="button" style="min-height: 38px; padding: 10px 15px; font: inherit; font-size: 13px; font-weight: 500; color: #fff; background: #3f3b35; border: 0; border-radius: 9px; cursor: pointer">Install</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

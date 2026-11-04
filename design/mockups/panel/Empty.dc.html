@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kona on a page with nothing kept</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #b45309; } a:hover { color: #92400e; }
+  </style>
+</helmet>
+
+<div style="width: 1100px; height: 700px; box-sizing: border-box; position: relative; overflow: hidden; background: #f8f5ee; font-family: Inter, system-ui, sans-serif">
+
+  <div style="box-sizing: border-box; width: 820px; padding: 56px 64px 0 72px">
+    <p style="margin: 0 0 6px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8580">news.example.com</p>
+    <h1 style="margin: 0 0 8px; font-family: 'Source Serif 4', Georgia, serif; font-size: 38px; line-height: 1.15; color: #1c1a17">A page you are only passing through</h1>
+    <p style="margin: 0 0 28px; font-size: 14px; color: #6f6a64">Nothing kept here, and no space set</p>
+
+    <div style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17.5px; line-height: 1.68; color: #2b2824">
+      <p style="margin: 0 0 18px">Most pages are like this one. You open them, read a little, and leave without keeping anything, and that is the normal case rather than the exception.</p>
+      <p style="margin: 0 0 18px">So this is what Kona looks like almost all of the time it is installed: a single small mark in the corner, and nothing else. No panel, no empty list, no prompt asking whether you would like to highlight something.</p>
+      <p style="margin: 0">An empty panel on every page in the world is the fastest way to be uninstalled. The product has to be willing to be invisible.</p>
+    </div>
+  </div>
+
+  <div style="position: absolute; right: 28px; bottom: 28px">
+    <button type="button" aria-label="Open Kona" style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; padding: 0; background: linear-gradient(180deg, #212326 0%, #16171a 100%); border: 1px solid #303238; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 10px 24px -6px rgba(0,0,0,0.38); cursor: pointer; opacity: 0.72">
+      <span aria-hidden="true" style="display: inline-block; width: 17px; height: 17px; border-radius: 5px; background: #ea580c"></span>
+    </button>
+  </div>
+
+  <div style="position: absolute; left: 72px; bottom: 26px; width: 404px; padding: 13px 16px; background: #f1ece1; border: 0; border-radius: 12px">
+    <p style="margin: 0 0 7px; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: #a39c93">What to look at</p>
+    <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #5c574f">This is 2d, and it is the state Kona is in most of the time. No count, because there is nothing to count. No orange strip, because no space is set. One mark, slightly faded.</p>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The moment just after highlighting</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #b45309; } a:hover { color: #92400e; }
+  </style>
+</helmet>
+
+<div style="width: 1100px; height: 700px; box-sizing: border-box; position: relative; overflow: hidden; background: #f8f5ee; font-family: Inter, system-ui, sans-serif">
+
+  <div style="box-sizing: border-box; width: 760px; padding: 52px 64px 0 72px">
+    <p style="margin: 0 0 6px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8580">cell-biology.example.org</p>
+    <h1 style="margin: 0 0 8px; font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; line-height: 1.15; color: #1c1a17">How an amoeba moves</h1>
+    <p style="margin: 0 0 24px; font-size: 14px; color: #6f6a64">Freshwater protists, and the mechanics of the pseudopod</p>
+
+    <div style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17.5px; line-height: 1.68; color: #2b2824">
+      <p style="margin: 0 0 16px">An amoeba moves by extending a pseudopod, and then flowing the rest of itself into the space the projection has made.</p>
+      <p style="margin: 0 0 14px">The technique was first drawn properly in the 1830s. <mark style="background: linear-gradient(180deg, rgba(250,204,21,0.34) 0%, rgba(250,204,21,0.56) 100%); color: #16181d; padding: 2px 1px; border-radius: 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone">The microscope that made it possible was ground by hand over eleven years by a man who never published a paper</mark>, which is the sort of thing you keep for its own sake.</p>
+    </div>
+  </div>
+
+  <div style="position: absolute; left: 196px; top: 346px; display: flex; align-items: center; gap: 4px; padding: 7px 8px; background: linear-gradient(180deg, #212326 0%, #16171a 100%); border: 1px solid #303238; border-radius: 13px; box-shadow: 0 1px 2px rgba(0,0,0,0.24), 0 16px 36px -8px rgba(0,0,0,0.46)">
+    <button type="button" aria-label="Yellow" style="width: 23px; height: 23px; padding: 0; background: #eab308; border: 2px solid #f7f7f8; border-radius: 50%; cursor: pointer"></button>
+    <button type="button" aria-label="Green" style="width: 23px; height: 23px; padding: 0; background: #22c55e; border: 0; border-radius: 50%; cursor: pointer"></button>
+    <button type="button" aria-label="Blue" style="width: 23px; height: 23px; padding: 0; background: #3b82f6; border: 0; border-radius: 50%; cursor: pointer"></button>
+    <button type="button" aria-label="Pink" style="width: 23px; height: 23px; padding: 0; background: #ec4899; border: 0; border-radius: 50%; cursor: pointer"></button>
+    <span aria-hidden="true" style="width: 1px; height: 21px; margin: 0 4px; background: #3a3c40"></span>
+    <button type="button" style="padding: 5px 9px; font: inherit; font-size: 12.5px; color: #d8d4cd; background: transparent; border: 0; border-radius: 7px; cursor: pointer">Note</button>
+    <span aria-hidden="true" style="width: 1px; height: 21px; margin: 0 4px; background: #3a3c40"></span>
+    <span style="display: flex; align-items: center; gap: 7px; padding: 4px 5px 4px 10px; background: rgba(234, 88, 12, 0.2); border: 1px solid rgba(234, 88, 12, 0.5); border-radius: 999px">
+      <span style="font-size: 12.5px; font-weight: 500; color: #ffd9c2">In Amoebas</span>
+      <button type="button" aria-label="Keep this out of Amoebas, library only" style="display: flex; align-items: center; justify-content: center; width: 19px; height: 19px; padding: 0; font: inherit; font-size: 13px; line-height: 1; color: #ffd9c2; background: rgba(0,0,0,0.26); border: 0; border-radius: 50%; cursor: pointer">&times;</button>
+    </span>
+  </div>
+
+  <div style="position: absolute; left: 240px; top: 404px; display: flex; align-items: center; gap: 7px; padding: 7px 12px; background: #fff; border: 1px solid #ebe4d8; border-radius: 9px; box-shadow: 0 1px 2px rgba(28,26,23,0.06), 0 6px 18px -4px rgba(28,26,23,0.12)">
+    <span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ea580c"></span>
+    <span style="font-size: 12px; color: #5c574f">tap the &times; and it stays in your library only</span>
+  </div>
+
+  <div style="position: absolute; right: 28px; bottom: 28px; display: flex; align-items: center; gap: 10px; padding: 9px 14px 9px 11px; background: linear-gradient(180deg, #212326 0%, #16171a 100%); border: 1px solid #303238; border-radius: 999px; box-shadow: 0 1px 2px rgba(0,0,0,0.22), 0 14px 32px -8px rgba(0,0,0,0.4)">
+    <span aria-hidden="true" style="display: inline-block; width: 20px; height: 20px; border-radius: 6px; background: #ea580c"></span>
+    <span style="font-size: 13.5px; font-weight: 600; color: #f7f7f8">4</span>
+    <span aria-hidden="true" style="width: 1px; height: 17px; background: #3a3c40"></span>
+    <span style="font-size: 12.5px; color: #c9b8a8">going to</span>
+    <span style="padding: 3px 9px; font-size: 12.5px; font-weight: 500; color: #ffd9c2; background: rgba(234, 88, 12, 0.22); border: 1px solid rgba(234, 88, 12, 0.5); border-radius: 999px">Amoebas</span>
+  </div>
+
+  <div style="position: absolute; left: 72px; bottom: 26px; width: 440px; padding: 13px 16px; background: #f1ece1; border: 0; border-radius: 12px">
+    <p style="margin: 0 0 7px; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: #a39c93">What to look at</p>
+    <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #5c574f">This is 2g. The passage is worth keeping and has nothing to do with amoebas. The bar that says where it went is the same bar that takes it back out, one tap, while you are still looking at the sentence. No modifier key, because an iPhone has none.</p>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
