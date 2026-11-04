@@ -285,9 +285,15 @@ a space is that it produces something.
 
 ### Archive
 
-**Putting something out of the way without losing it.** It changes exactly one
-thing: whether that thing appears in the default view of the list it belongs
-to. Nothing is deleted, and nothing stops being searchable.
+**Putting something out of the way without losing it** — the way archiving an
+email takes it out of the inbox and leaves it in the account. It changes exactly
+one thing: whether that thing appears in the default view of the list it belongs
+to. Nothing is deleted, nothing stops being searchable, and search is how
+anybody gets an archived thing back.
+
+It is an ordinary gesture, used often and in bulk, not a considered one. And it
+never protects anything from you: an archived highlight can be deleted like any
+other.
 
 **Archiving is done in the library**, because that is the list it affects. It
 is not offered on the page, where it would change nothing you can see — an

@@ -1047,7 +1047,7 @@ the web view's feel is the thing people dislike about Kona on a phone.
 
 ---
 
-### 10. Archiving a highlight
+### 10. Archiving a highlight — settled
 
 The library is everything you ever kept, so it fills with things kept once for
 a reason that has passed. Wanting them out of the way is not wanting them gone,
@@ -1074,7 +1074,7 @@ So, exhaustively:
 | In the panel for that page | **Yes.** The panel is about this page. |
 | Still in the spaces it was added to | **Yes.** A space is deliberate; the library is the firehose. |
 | Visible to others in a shared space | **Yes.** Archiving is personal, always. |
-| Deleted, ever | **No.** |
+| Deleted by archiving | **No** — and you can still delete it yourself. |
 
 **Search must never lose it.** Kona promises one thing: that you can find it
 again. An archive that hides things from search is a bin with extra steps, and
@@ -1102,7 +1102,31 @@ made archiving a *space* a Team feature, and it does not. The rule underneath
 nobody has a reason to pay. Highlights are uncapped on every tier, so there is
 no cap here for archiving to defeat.
 
-**Decided:** _______
+**Decided: archive works the way Gmail's does.** The author's analogy, and it
+is a better frame than the one I reached for, because it says in two words what
+"a filter on one list" takes a paragraph to say: **archiving means "not in my
+inbox", and search is how you get it back.**
+
+Everything in the table above is Gmail's behaviour. Out of the default view but
+still in everything; found by search, which is the main way anybody ever
+retrieves archived mail; labels — here tags and spaces — stay attached;
+reversible at any time; and archiving itself never deletes.
+
+It also sets the **frequency**, which the table did not. In Gmail archiving is
+not a rare, considered act — it is the ordinary gesture you apply to almost
+everything, in bulk, to keep the inbox down to what you are actually looking
+at. That is what "there are so many highlights, I want to archive the ones I am
+not looking at" describes, and it is why **bulk** above is not a nicety.
+
+**And deleting an archived highlight works normally.** Asked explicitly, and
+10b already had it: delete is offered on the default view and the archived view
+alike. The table row saying *deleted, ever: no* means **archiving** never
+deletes something — not that an archived highlight is protected from you. It is
+yours; you can always be rid of it.
+
+**One correction to the wording above:** "a filter inside the library" predates
+3f, which made the library the place that holds two views. It is a filter on
+the **Highlights** view. Substance unchanged.
 
 ---
 
@@ -1290,6 +1314,47 @@ misselection costs one tap with no dialog in front of it.
 made it, carrying colour, note and delete. Archiving is done in the library.
 Highlights over links fall back to the panel, and nothing of the page's own
 behaviour is intercepted.
+
+---
+
+**10d. Does the Gmail model survive a cap of ten?**
+
+Not an argument I am reopening — the cap is settled (10a) and the reasoning is
+the author's. This is a consequence of the frame chosen in 10, and it points
+somewhere the number may not want to go.
+
+**Gmail's archive is a high-volume gesture.** Its whole purpose is clearing an
+inbox of hundreds. The use case given for Kona is the same one: *so many
+highlights, I want to archive the ones I am not looking at.*
+
+A cap of **ten at a time** makes it a scarce one. The arithmetic is blunt:
+
+| Library | Can be put away on Free | Left in the default view |
+| --- | --- | --- |
+| 50 highlights | 10 | 40 |
+| 300 highlights | 10 | 290 |
+
+10a's working-set framing — ten *at a time*, reusable, un-archiving hands the
+slot back — is what keeps the cap from being a lifetime quota, and it holds.
+But it does not help somebody who wants two hundred things out of the way. At
+that size, archiving on Free is not a tight feature; it is a gesture that
+cannot do its job.
+
+So one of three things is true, and it is worth saying which on purpose:
+
+- **(a) The number rises** — to something like a hundred, where it still bounds
+  Free but can still clear an inbox.
+- **(b) The cap goes**, and Free's walls are the four it already has: no sync,
+  no hybrid search, five spaces, no shared spaces.
+- **(c) Ten stands**, and archiving on Free is accepted as a taste of the
+  feature rather than the feature. Legitimate, as long as it is chosen rather
+  than discovered.
+
+*No recommendation here;* I have already given mine twice and the author has
+answered twice. The only thing this needs is for (c) to be a decision instead of
+an accident.
+
+**Decided:** _______
 
 ---
 
