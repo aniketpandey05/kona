@@ -731,12 +731,61 @@ much data it holds and across how many devices. Metadata, not content.
 in it, which is real cryptographic work. Team is frozen (1g), so this is noted
 and left. Nothing above depends on it.
 
+#### What touches the network at all
+
+Added after the obvious question: **sync is network requests, so what exactly
+is the promise?**
+
+The promise is about **Free**, not about Kona. Free has no account and no sync,
+so a Free install genuinely contacts nothing — which is why the changelog ships
+with the build (4) rather than being fetched. Pro talks to a server by
+definition. What protects Pro is not silence; it is that the server cannot read
+what it holds.
+
+So, exhaustively, the things that leave a device:
+
+| | When | Who it is for |
+| --- | --- | --- |
+| **Sync** | On change, batched | Pro |
+| **Signing in** | Only when you sign in | Pro |
+| **Payment** | Only when subscribing, through Stripe on the web | Pro |
+| **The embedding model** | Once, after signing in | Pro |
+| Nothing else | — | — |
+
+**Batched, not one request per highlight.** A request each time you mark
+something would stream your reading rhythm to the server live — when you read,
+for how long, how hard you were concentrating — all of it visible without
+decrypting a byte. Batching blunts that, and is cheaper and better for a
+phone's battery anyway. Timing is the metadata that is easiest to leak by
+accident and hardest to notice.
+
+**The embedding model is a download, which 6 did not account for.** On-device
+embeddings need a model, and a model is tens of megabytes — too much to bundle
+into an extension that everybody installs, including the people who will never
+pay for hybrid search. So it is fetched **once, after signing in**, which is
+Pro-only and therefore reveals nothing the account did not already.
+
+**Add IP address to what the server knows.** The list above said email, sync
+times and rough volume. Every request also carries an address, and therefore a
+rough location. Saying otherwise would make this promise dishonest, and the
+honest version is: content is unreadable, the fact and shape of the traffic is
+not.
+
+**And one rule that is easy to break by accident: never fetch anything
+per-page.** A favicon, a preview image, a title lookup — anything fetched
+because of a page you kept tells whoever hosts it that you kept something from
+their site, and does it for Free users too. The library shows the domain as
+text (as the panel mockups do) and fetches nothing. This is the kind of leak
+that arrives in a pull request called "nicer library rows".
+
 **Decided: the server stores what it cannot read.** Encrypted on the device,
 embeddings computed on the device, one recovery phrase whose loss is final and
 is said so in those words at sign-up. The server holds blobs and metadata —
 that an account exists, its email, when it synced, how much and across how many
-devices — and never content. Team's key exchange is left for whenever Team
-thaws.
+devices — and never content, plus the IP address every request carries. Sync is
+batched rather than one request per highlight, nothing is ever fetched because
+of a page you kept, and the embedding model is downloaded once after signing
+in. Team's key exchange is left for whenever Team thaws.
 
 ---
 
