@@ -1794,6 +1794,12 @@ monthly/annual switch in 8. `Highlights` and `Archived` are not symmetric — on
 is the default and the other is what you put aside — so a switch would state
 something false about them.
 
+**Dark mode is coming, and it does not undo the rule below.** The library gains
+a dark theme that follows the system. The panel does not have a light one: it
+floats over somebody else's page and must stay legible over a white article
+and a black one alike, which is a different job from matching your preference.
+So dark mode is a setting on the library, and the panel stays as it is.
+
 **And one rule the mockups were already following without saying so: the panel
 is dark, the library is light.** The panel floats over somebody else's page and
 has to stay legible over anything, so it is a dark slab. The library is your
@@ -2109,8 +2115,14 @@ iOS a Safari Web Extension cannot replace or add to that menu.
 - **(c) A single small button** that expands into the bar once tapped, so the
   footprint while the OS menu is up is one dot.
 
-*Leaning:* this is the one decision in the log that **should not be made from a
-desk.** It turns on behaviour that differs by OS version, and there is an
+*Drawn in boards 9 and 10, which is as far as a desk can take it.* Kona takes
+one 44px dot, placed below the selection where Safari puts its menu above;
+tapping it turns the dot into the full-width bar, with the same contents as the
+desktop one and nothing under 38px. 2g's escape hatch is the same single tap,
+which is exactly why it was never a modifier key.
+
+*Leaning:* this is still the one decision in the log that **should not be
+settled from a desk.** It turns on behaviour that differs by OS version, and there is an
 iPhone, an iPad and an Android phone here to check it on. The shape worth
 testing is (c) falling back to (b): a dot is cheap to place and hard to collide
 with, and the share route exists either way.
