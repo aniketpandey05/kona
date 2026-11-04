@@ -1118,34 +1118,51 @@ becoming a suggestion.
 
 ---
 
-**10c. Editing and deleting a highlight from the page — settled**
+**10c. Editing and deleting a highlight on the page — settled**
 
-Asked for: being on a page, seeing a highlight you made by mistake, and wanting
-it gone without going anywhere. **Both undo and delete, and they are different
-tools for different moments.**
+The ask, precisely: you are scrolling a page, you pass a highlight you made,
+you decide it was not that important, and **it goes, right there.** Not in the
+panel, not in the library, not anywhere you have to travel to.
 
-**Undo is for the second after.** The bar that appears when you highlight
-something — the one that already says which space it went to (2g) — carries
-undo. One tap and what you just made is gone. No dialog: the case this serves
-is a misselection, and a dialog in front of a misselection is an insult.
+**So: tap the highlight, and the bar appears at the highlight.** The same bar
+that appears when you make one — colours, Note, and where it is going (2g) —
+with Archive and Delete on it.
 
-**Delete is for later.** Click an existing highlight on the page and the panel
-offers delete, with the same undo afterwards that 10b gives the library. The
-rules are 10b's unchanged — gone from the library, from search, from its
-spaces, and no longer painted — and archive sits beside it, never harder to
-reach.
+**One component, two moments.** The bar you get for making a highlight and the
+bar you get for reconsidering one are the same bar. That is worth having as a
+rule rather than as a coincidence: it means there is one thing to design well,
+one place to look for anything you can do to a highlight, and nothing new to
+learn the second time.
 
-**Edit is the same gesture.** Clicking an existing highlight is also how you
-change its colour or write a note on it. One way in, three things out: edit,
-archive, delete.
+Delete follows 10b unchanged — gone from the library, from search, from its
+spaces, no longer painted — with the undo toast afterwards, so a mis-tap on a
+phone is survivable. **Archive is never harder to reach than Delete** on that
+bar.
 
-**Why this belongs on the page at all.** The panel is about this page (2a), and
-a highlight you regret is almost always one you are looking at. Making somebody
-open the library to undo something they can see in front of them would be the
-product being organised for its own convenience.
+**The mechanism, because it is not what anybody would assume.** `painter.ts`
+draws with the CSS Custom Highlight API: `new Highlight()` and `::highlight()`.
+A highlight is **a paint layer with nothing in the page's DOM** — which is
+exactly why Kona never disturbs anybody's markup, and also means **there is no
+element to attach a tap to.** So tapping has to be hit-tested: take the click
+point, find the text position under it, and ask whether that position falls
+inside a range Kona is holding. This is the difference between "add a click
+handler" and "write a hit test", and it is better known now than discovered
+later.
 
-**Decided:** undo in the bar for the moment after, and edit, archive and delete
-on any existing highlight from the panel.
+**And one case it creates: a highlight over a link.** Since nothing of Kona is
+in the DOM, the page's own click still happens — tap highlighted link text and
+you navigate, before any bar could appear. Kona must **not** intercept that:
+breaking somebody's links to offer a delete menu is the wrong way round. For
+those, the panel's row for this page is the way in. It is one tap, and the
+panel is about this page anyway (2a).
+
+**Undo immediately after making one** stays as a separate and cheaper thing:
+the bar is already open at that moment, so it carries undo too, and a
+misselection costs one tap with no dialog in front of it.
+
+**Decided:** tap a highlight on the page and get the same bar you got when you
+made it, carrying colour, note, archive and delete. Highlights over links fall
+back to the panel, and nothing of the page's own behaviour is intercepted.
 
 ---
 
