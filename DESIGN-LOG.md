@@ -2228,7 +2228,7 @@ sync, because it says what you are doing on this machine right now (1a).
 
 ---
 
-### 22. The selection bar on a phone
+### 22. The selection bar on a phone — settled, pending the phone
 
 Every mockup so far is a desktop one, and the phone has a problem the desktop
 does not: **the operating system already puts a menu over selected text.** Copy,
@@ -2269,8 +2269,27 @@ design rests on these five answers.
 5. **Does any of this change in landscape, or with larger text turned on?**
    Both are common and both move the same few hundred pixels around.
 
-*Leaning:* this is still the one decision in the log that **should not be
-settled from a desk.** It turns on behaviour that differs by OS version, and there is an
+**Decided: a bar fixed to the bottom of the screen** — (d), which was not in
+the first list because I had assumed Kona needed to be *near the selection*.
+It does not, and dropping that assumption dissolves the collision:
+
+- **It never fights the OS menu**, which appears beside the text. Nothing has
+  to be placed relative to a thing we do not control.
+- **It is where the thumb already is.** A 44px dot halfway up the screen is
+  worse than a bar in the same place every time, and on a phone reach beats
+  proximity.
+- **It is the pattern people already know**, so there is nothing to learn.
+
+What it costs: the controls are no longer beside the passage, and iOS Safari
+keeps its own URL bar at the bottom, so Kona sits just above it. Crowded, and
+arguably natural, since that is already where controls live on that screen.
+
+**Still to be tested on the phone, and the answer could overturn this.** The
+checklist below stands, and question 3 is the one that decides everything:
+**if tapping Kona's bar clears the selection, every in-page option dies** and
+capture on a phone becomes the share route (1h) on both platforms. A bottom
+bar is no more exposed to that than a dot was, which is why it is safe to
+draw now and test later. It turns on behaviour that differs by OS version, and there is an
 iPhone, an iPad and an Android phone here to check it on. The shape worth
 testing is (c) falling back to (b): a dot is cheap to place and hard to collide
 with, and the share route exists either way.
@@ -2283,7 +2302,7 @@ looks.
 
 ---
 
-### 23. Does Kona ever notify you?
+### 23. Does Kona ever notify you? — settled
 
 Nowhere in either document, and exactly the kind of thing that gets decided
 later by whoever wants a number to go up.
@@ -2298,7 +2317,11 @@ worth keeping; a tool that pesters you about your own reading has started
 treating your attention as its inventory. It is also the rarest kind of
 promise — one that costs nothing to keep and cannot be taken back once broken.
 
-**Decided:** _______
+**Decided: never, unless a person did something.** The only notification Kona
+sends is a ping from somebody in a shared space (1f), which is Team. No
+digests, no streaks, no reminders, no re-engagement of any kind. Which is also
+why the account row at the foot of the sidebar matters (17a): a sync that has
+stopped has exactly one way to reach you, and that is it.
 
 ---
 

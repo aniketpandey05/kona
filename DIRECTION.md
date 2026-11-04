@@ -130,9 +130,14 @@ requires anyway (9) — so one install gives both, and nobody performs the
 Add-to-Home-Screen ritual that broke this product once already.
 
 The phone already shows its own menu over selected text, and an extension
-cannot replace it. **Kona takes one dot below the selection**, which becomes
-the full bar when tapped (22, boards 9 and 10). This is the one decision that
-cannot be settled from a desk.
+cannot replace it. **So Kona does not try to sit beside the selection at
+all** — the bar is fixed to the bottom of the screen (22, boards 9 and 10). It
+never meets Safari's menu, which appears next to the text, and it is where the
+thumb already is. Reach beats proximity on a phone.
+
+One thing is still to be tested rather than reasoned: if tapping the bar
+clears the selection, every in-page option dies and capture becomes the share
+route on both platforms.
 
 **Android is both a place you read and a place you highlight** (1h). Firefox
 runs the extension. Chrome has none, so capture is the share sheet — and Chrome
@@ -200,6 +205,7 @@ came first.
 | | |
 | --- | --- |
 | **Team's price** (8) | Waits for what the setup costs to run. Per seat, and not before there is a seat |
+| **The phone bar, in practice** (22) | Settled as a bottom bar, and still to be tried on a real iPhone |
 | **The selection bar on a phone** (22) | Needs an iPhone, not a desk |
 
 ---
