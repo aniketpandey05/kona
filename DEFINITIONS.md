@@ -374,6 +374,18 @@ the page, and it is as far as an app can go.
 The app is the only Kona available where no extension can run, which today is
 Chrome on Android.
 
+### Welcome, and About
+
+**One place that changes role.** It opens exactly once, when Kona is installed,
+and greets you: what Kona can do, and what the tiers are. From then on it is
+**About** — releases, what is coming, the FAQ, and the tutorials.
+
+It stops opening by itself once it has been finished, not once it has been
+opened. Abandoned halfway, it comes back.
+
+Its releases ship with the build rather than being fetched, so a Free install
+still sends nothing anywhere.
+
 ### Device
 
 One browser profile, or one installation of the app. What "one device" and

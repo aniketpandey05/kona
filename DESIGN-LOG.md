@@ -549,52 +549,73 @@ library is the place that holds both views.
 
 ---
 
-### 4. What does someone see the first time?
+### 4. What does someone see the first time? — settled
 
-**A welcome page, shown once.** It teaches what each thing does, what the
-features are, and what the tiers cost. Once it has been shown it does not come
-back on its own — it stays reachable for anybody who goes looking.
-
-**The part worth noticing in that, because it is unusual.** Most products build
-onboarding, show it once, and throw it away; then they build a help page
-separately, and the two drift. Here they are **the same content**: shown once
-automatically, and permanently available afterwards. One thing to write, one
-thing to keep true, and no moment where a person has been taught something the
-help page then contradicts.
-
-So it has sections, which are also the reference:
+**One place that changes role.** It opens **exactly once**, when you install —
+the way a phone walks you through setup the first time you switch it on — and
+after that it is the **About** section, which is where it lives permanently.
 
 | | |
 | --- | --- |
-| **Highlights** | Making them, colours, notes, getting back to the page |
-| **Spaces** | What a space is for, solo and shared, the five |
-| **Account** | What it is for — sync, and nothing else (5) |
-| **Teams** | Shared spaces, discussion, deciding together |
-| **Settings** | Including the palettes (12) |
-| **About** | What Kona can do, for anybody who has forgotten, and what is new or coming |
+| **Welcome**, once | Greets you. What Kona can do, and what the tiers are. |
+| **About**, forever after | Releases, what is coming, FAQ, and the tutorials — Teams and the rest. |
 
-**About carries the release notes**, which is the detail that makes the whole
-thing earn its keep. A page nobody returns to is dead weight; a page that tells
-you what changed is a page people open on purpose. That also gives new features
-somewhere to be announced that is not an email.
+Not two pages, and not the same page twice. The welcome framing is spent after
+it is used; the reference framing takes over and is the thing people come back
+to.
 
-**Still recommended inside it: teach by doing, not by telling.** Kona's value is
-delayed — marking text feels like nothing, and the payoff is the return trip.
-So the Highlights section should *be* the round trip: highlight this sentence,
-leave, come back, tap it, land on it. Every highlighting tool can colour text.
-A page that stops at "you highlighted something" has demonstrated a yellow
-background.
+**The part of this worth noticing.** Most products build onboarding, show it
+once and throw it away, then build a help page separately and let the two
+drift. Here the welcome *becomes* the help, so there is no moment where
+somebody was taught one thing and the help page says another.
 
-And it needs nothing granted to do that: a welcome page served by the extension
-is the extension's own page (3e), so the whole loop can be taught before a
-single permission is asked for.
+**When does it flip?** On reaching the end, not on being opened. The phone
+analogy is the right one: setup that is abandoned halfway resumes, and only a
+setup that finished stops coming back. Close the tab early and it returns; get
+to the end and it never opens by itself again.
+
+**No buy button on Welcome.** The tiers are there to be *seen*, not sold —
+somebody who has had Kona for ninety seconds has no basis for the decision, and
+Free needs no account (5), so stating the ladder early is reassurance rather
+than a pitch. 11 makes it one sentence: one device, every device, other people.
+
+**Still the round trip, inside it.** Kona's value is delayed — marking text
+feels like nothing, and the payoff is coming back and landing on the words. So
+the highlighting part of Welcome should *be* that loop rather than describe it:
+highlight this sentence, leave, come back, tap it, land on it. Every tool can
+colour text. A page that stops at "you highlighted something" has demonstrated
+a yellow background.
+
+It needs nothing granted to do that: a page served by the extension is the
+extension's own page (3e), so the whole loop is teachable before a single
+permission is asked for.
 
 **AI chats get named here and nowhere else.** By 3e, with no site granted at
-install and no `tabs` permission, Kona cannot tell you have opened ChatGPT —
-there is no later moment for the panel to introduce itself on a chat. The
-welcome page says it, or nobody finds it.
+install and no `tabs` permission, Kona cannot tell that you have opened
+ChatGPT, so there is no later moment for the panel to introduce itself on a
+chat. Welcome says it, or nobody finds it.
 
-**Decided:** _______
+#### Where the releases come from
+
+A changelog has to come from somewhere, and the obvious answer would quietly
+break a promise made in 6. **Free sends nothing anywhere** — no account, no
+server. Fetching news would mean every Free install contacting us, which
+reveals that somebody has Kona and when they opened it, for the sake of a list
+of features.
+
+*Recommendation: the changelog ships with the release.* An extension updates
+anyway, so the notes arrive with the update they describe. No network, nothing
+to log, and it is automatically right for the version actually running rather
+than for the newest one. "Coming soon" is the only part that wants to be
+fresher than that, and it can wait for the next update like everything else.
+
+**The Teams tutorial waits for Team.** Team is frozen (1g), so that section is a
+placeholder until it thaws — and About is the right place for it to appear when
+it does, which is the point of having a place that people return to.
+
+**Decided:** one place, Welcome once and About thereafter, flipping when it is
+finished rather than when it is opened; no buy button; the round trip inside
+it; and the releases shipped with the build rather than fetched.
 
 ---
 
