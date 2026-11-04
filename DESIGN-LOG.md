@@ -1463,6 +1463,95 @@ device (10a).
 
 ---
 
+### 13. What happens when a highlight cannot be found again?
+
+**Nothing in either document covers the failure of the one thing Kona
+promises.** The matcher tries three ways — exact, then ignoring whitespace,
+then approximately within a 12% error budget. Pages get rewritten, paywalled
+and deleted, so sooner or later all three fail.
+
+- **(a) Say nothing.** The highlight sits in the library and quietly does not
+  paint. You find out by noticing that nothing happened.
+- **(b) Say so, in place.** "This page has changed." Show the passage you kept,
+  and offer the link anyway.
+- **(c) Mark it in the library**, so you can see which of your highlights have
+  rotted.
+
+*Leaning:* **(b) and (c) together.** The kept text is still worth having when
+the page has moved on — what is lost is the landing, not the quote. And link
+rot is permanent, so hiding it only means finding out later and trusting Kona
+less. A page that is gone entirely is the same case with the same answer.
+
+**How it breaks is part of the promise**, which is why this is not a detail.
+
+**Decided:** _______
+
+---
+
+### 14. Getting your highlights out, and other people's in
+
+Mentioned once in passing in 6 and never decided.
+
+**Export matters more because of 6, not less.** If the server cannot read your
+library and you lose every device and the recovery phrase, the data is gone —
+so a file you can keep is the only backup that exists. That makes export a
+safety feature rather than a courtesy, and it has to be free, on every tier,
+and always reachable.
+
+To decide: **what the file is.** A machine format that can be read back in, a
+readable one for a person, or both. *Leaning:* both, because they serve
+different fears — one is a backup, the other is "I want my work even if Kona
+dies."
+
+**Import is the adoption lever**, and lower priority: Readwise, Hypothesis,
+Kindle, browser bookmarks. Worth deciding whether any of it ships at all before
+anyone builds a parser.
+
+**Decided:** _______
+
+---
+
+### 15. Where search lives, and what it spans
+
+Hybrid search is Pro's other selling point (11) and has no interface decided
+anywhere.
+
+- Does one box span **both** library views — highlights and spaces (3f)?
+- Where do the filters live: colour (12), tag, space, date, domain?
+- Is there search in the panel, or only in the library?
+
+*Leaning:* one box in the library, spanning both views, with filters as
+refinements rather than a screen of their own. **No search in the panel** — the
+panel is about one page, and you can already see it. Archived highlights are
+always included; 10 settled that.
+
+**Decided:** _______
+
+---
+
+### 16. PDFs
+
+A whole category of reading, and neither document mentions it. The popup copy
+already admits the problem: Chrome's PDF viewer is itself a built-in extension,
+so a content script does not run there and Kona cannot highlight a PDF in
+Chrome.
+
+- **(a) PDFs are out.** Say so plainly rather than letting people discover it.
+- **(b) The web app opens them.** Read the PDF in Kona and highlight there —
+  the same shape as the rule already in `DEFINITIONS.md` for a browser built
+  into an app: it works, but only where you chose to read inside Kona.
+- **(c) It may already work in Firefox.** Firefox renders PDFs with pdf.js,
+  which is an ordinary web page, so a content script can probably run in it.
+
+*Leaning:* **check (c) before deciding anything.** It is the same shape as the
+Android finding — capability that varies by browser rather than a flat no — and
+if it holds, PDFs become another thing Firefox does that Chrome cannot, stated
+honestly, with (b) as the answer for everybody else.
+
+**Decided:** _______
+
+---
+
 ## Where the code is behind the definitions
 
 `DEFINITIONS.md` describes Kona finished. This is the distance between that and
