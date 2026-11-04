@@ -2277,6 +2277,25 @@ privacy failure rather than a product one. So the panel distinguishes them:
 That is the only thing about Team the extension ever shows, and it is there
 because of honesty, not because of sales.
 
+#### Everything else about Team happens in the app
+
+Sharing a space, inviting, threads, settling, pings and who gathered what are
+all the app — the same app whether it was opened as a tab, as the installed
+desktop window (24) or as the phone container (9, 9a).
+
+Taking part is not all-or-nothing, which falls out of the decisions rather
+than being designed:
+
+| To do this in a shared space | What you need |
+| --- | --- |
+| **Read it** | Nothing. A link, no install, no account (3d) |
+| **Discuss in it** | An account. Still just the app |
+| **Add highlights to it** | The extension, because only the extension highlights (3c) |
+
+So somebody whose job is to read and respond takes full part with nothing
+installed. That is worth keeping on purpose: requiring a browser extension of
+a person who will never highlight anything would cost a team its readers.
+
 ---
 
 ## Where the code is behind the definitions
