@@ -1893,6 +1893,121 @@ person can see for themselves.
 
 ---
 
+### 20. What is a space from the inside?
+
+**The biggest undesigned surface in the product**, and the one the whole paid
+ladder leans on: the five-space cap is on it, Team is built on it, and nobody
+has decided what you actually *do* once you open one. The grid in the mockup
+shows spaces from outside. Inside is blank.
+
+`DEFINITIONS.md` already names what can be in one: the highlights gathered, a
+note, findings, open questions, decisions, and a write-up. What is undecided is
+**which of those is the spine.**
+
+- **(a) A list.** The space is its highlights, in an order you set, with a note
+  at the top. Everything else is a label on a highlight.
+- **(b) A list that can grow a write-up beside it.** The gathering is the
+  space; the write-up is something the space *produces*, sitting alongside and
+  never replacing it.
+- **(c) A document that cites highlights.** You write, and pull passages in.
+
+*Leaning:* **(b).** (c) is tempting and wrong for the same reason 1c was wrong:
+it makes a space a document, and 1d settled that nothing in a space is
+required. A document-first space is empty and reproachful on day one, when all
+you have done is gather four links — which is the moment a space has to feel
+worth keeping. (a) is honest but leaves nowhere for a conclusion to live, and a
+space whose research is finished with nothing written is 1b's problem again.
+
+To settle inside it: whether the highlights in a space keep their own hand
+order (1e says highlights already have one, in `order.ts`), and whether a
+finding is a highlight promoted or a note of its own.
+
+**Decided:** _______
+
+---
+
+### 21. What happens when two devices disagree?
+
+6 settled what syncs and that the server cannot read it. It did not settle what
+happens when the same thing changes in two places — and **encryption makes that
+harder, not easier: a server that cannot read your data cannot merge it.** Every
+merge happens on a device.
+
+The cases that actually occur: a note edited on the laptop and the phone; a
+highlight deleted on one and re-coloured on the other; a space renamed in both
+places; the same passage highlighted twice on two machines.
+
+*Leaning: when in doubt, keep.* A keeping tool resolves conflicts in favour of
+things continuing to exist.
+
+- **Field by field, not record by record.** A note edited on one device and a
+  colour changed on another should keep both. Last-write-wins per record throws
+  away an edit nobody asked it to.
+- **A deletion never silently beats an edit.** If one device deleted a
+  highlight and another changed it, it comes back and says why. The opposite
+  rule loses work quietly, which is the one failure a keeping tool cannot
+  afford.
+- **Two edits to the same note keep both**, one appended, rather than a silent
+  winner.
+
+**And a correction to 6 while this is open.** 6 lists *which space is active*
+among the things that sync. That is probably wrong: the active space is a
+statement about what you are doing on **this machine right now** (1a), so a
+phone switching it under your laptop is an annoyance rather than a
+convenience. *Leaning:* the active space is per device and does not sync.
+
+**Decided:** _______
+
+---
+
+### 22. The selection bar on a phone
+
+Every mockup so far is a desktop one, and the phone has a problem the desktop
+does not: **the operating system already puts a menu over selected text.** Copy,
+Look Up, Share, Translate. Kona's bar wants the same few hundred pixels, and on
+iOS a Safari Web Extension cannot replace or add to that menu.
+
+- **(a) Place the bar clear of it** — below the selection when the OS menu is
+  above, and the reverse. Workable, and it depends on where the OS puts its own
+  menu, which is not under our control.
+- **(b) No bar on a phone.** Capture goes through the share route 1h already
+  designed for Android, and the panel confirms afterwards.
+- **(c) A single small button** that expands into the bar once tapped, so the
+  footprint while the OS menu is up is one dot.
+
+*Leaning:* this is the one decision in the log that **should not be made from a
+desk.** It turns on behaviour that differs by OS version, and there is an
+iPhone, an iPad and an Android phone here to check it on. The shape worth
+testing is (c) falling back to (b): a dot is cheap to place and hard to collide
+with, and the share route exists either way.
+
+Worth saying plainly, because it is easy to miss: **this is the core gesture on
+the surface iOS was chosen for.** If it is awkward, 9 is worth less than it
+looks.
+
+**Decided:** _______
+
+---
+
+### 23. Does Kona ever notify you?
+
+Nowhere in either document, and exactly the kind of thing that gets decided
+later by whoever wants a number to go up.
+
+*Leaning:* **never, unless a person did something.** No "you have not
+highlighted in a while", no weekly digest of your own library, no streaks, no
+re-engagement of any kind. The only notification Kona sends is a ping from
+somebody in a shared space (1f), which is Team.
+
+The reason is the product's own argument. Kona exists because what you read is
+worth keeping; a tool that pesters you about your own reading has started
+treating your attention as its inventory. It is also the rarest kind of
+promise — one that costs nothing to keep and cannot be taken back once broken.
+
+**Decided:** _______
+
+---
+
 ## Where the code is behind the definitions
 
 `DEFINITIONS.md` describes Kona finished. This is the distance between that and
