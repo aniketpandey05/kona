@@ -2198,6 +2198,23 @@ can hand a link to an installed app for its own origin, and that behaviour is
 worth confirming before it is relied on; the fallback is a tab, which is what
 happens today.
 
+**Where the offer lives, and where it cannot.** The extension cannot install
+anything: the browser fires its install prompt at the *page*, not at an
+extension, so the extension could only link to the library — and its Library
+button already does. Putting an offer in the popup would add a step without
+adding a capability, and 3e kept that popup to two states for a reason.
+
+**So the library offers it, in the account menu, beside the one that already
+works this way.** The menu shows what you do not have: *Get the extension* when
+there is no extension (the 3c bridge knows), and **Install Kona** when it is
+running in a tab rather than its own window (`display-mode: standalone` knows).
+Neither nags, both disappear once taken, and the menu is where somebody is
+already looking at things about themselves rather than about what they kept.
+
+**The why is one line, not a feature list:** *its own window and a dock icon,
+instead of a tab you have to find.* That is the entire benefit, and selling a
+window harder than that would be overselling it.
+
 **And the first run should say so** (4). An installable app that nobody knows
 is installable is not an app. One line in the welcome page, and one in About.
 
