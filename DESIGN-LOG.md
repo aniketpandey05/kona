@@ -860,7 +860,7 @@ limits making rather than keeping.
 
 ---
 
-### 8. The actual prices, and the monthly/annual toggle — Pro settled
+### 8. The actual prices, and the monthly/annual toggle — the number settled, the shape open
 
 Not blocked, held back. The numbers get set once the product is built or close
 to it, because pricing something that does not exist yet is guessing, and the
@@ -869,7 +869,7 @@ floor is whatever running sync costs, which is 5 and 6.
 The toggle is the ChatGPT-style switch on the pricing section. `plans.ts` is the
 copy of record and `tests/pricing.test.ts` fails if the site drifts from it.
 
-**Decided: Pro is $3 a month.** Team waits for the cost of running the setup,
+**Decided: Pro is $3.** Whether that is monthly or once is 8a, below. Team waits for the cost of running the setup,
 which is the right thing to price it against.
 
 *One consequence of a low number, worth having before the toggle is built.*
@@ -886,6 +886,67 @@ What makes $3 viable at all is 6: the server holds blobs it cannot read, so
 there is no index to maintain, no embedding job and no GPU. A library is about
 a kilobyte a highlight (11). The cost per person is storage and bandwidth and
 very little else.
+
+---
+
+**8a. Three dollars a month, or three dollars once?**
+
+Proposed: **$3 forever, paid once.** The reasoning is sound and the instinct
+behind it is probably right about something else too — see the end.
+
+**What is genuinely in its favour**, and it is more than usual:
+
+- At $3 it is an impulse rather than a decision, so conversion would be far
+  higher than any subscription at any price.
+- *Pay once* is rare and real, and a differentiator nobody else in this field
+  offers.
+- **Our marginal cost per person is almost nothing**, and that is not luck: 6
+  made the server hold blobs it cannot read, so there is no index, no embedding
+  job and no GPU. A text library is about a kilobyte a highlight (11), so
+  fifty thousand highlights is fifty megabytes — fractions of a cent a month.
+
+**The number that decides it is images.**
+
+18 settled that a kept image is stored rather than linked, because fetching it
+from its original host would tell that host what you kept. Images are the one
+thing in Kona that is not kilobytes. A chart is a few hundred of them.
+
+| | |
+| --- | --- |
+| $3 once, after card fees | about **$2.61, once, forever** |
+| One person holding 1&nbsp;GB of images | roughly **$3.40 a year**, every year |
+
+**So a single ordinary heavy user costs more every year than they ever paid.**
+Two thousand kept charts is a gigabyte, and somebody doing real research for
+three years gets there without trying. Unlimited, plus images, plus a one-off
+payment is the combination that does not survive, and **a lifetime price cannot
+be taken back** — a subscription can be lowered, a licence already sold cannot
+be un-sold.
+
+**Four ways to keep *pay once* and bound the liability:**
+
+- **(a) Bound the version.** $3 buys this major version forever; the next one
+  is priced again. Sublime Text and Tailwind do this, and it is honest: you
+  keep what you paid for, and new work is new.
+- **(b) Bound the number.** $3 forever for the first few hundred people, then a
+  subscription. Early backers are rewarded, the liability has a ceiling, and
+  it is a real reason to sign up now.
+- **(c) Bound the storage.** Unlimited highlights, since those are kilobytes,
+  but a cap on synced **images** — the only unbounded thing.
+- **(d) Price the lifetime properly.** Lifetime is usually three to five times
+  the annual price, not equal to one month of it.
+
+**And the instinct is right about something else.** $3 *a month* may be the
+worst of both: too small to feel worth a recurring charge, and small enough
+that the fixed part of a card fee takes 13% of it every month. If it is going
+to be $3, once is a better shape than monthly — the question is only what the
+$3 is allowed to buy forever.
+
+*Recommendation:* **(a) with (c)** — this version forever, with synced images
+bounded. Everything a person keeps stays theirs either way, which is the part
+that must never be in doubt.
+
+**Decided:** _______
 
 ---
 

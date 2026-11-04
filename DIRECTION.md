@@ -199,7 +199,8 @@ came first.
 
 | | |
 | --- | --- |
-| **Team's price** (8) | Waits for what the setup costs to run. Pro is $3 a month |
+| **Pro's shape** (8a) | $3 is settled. Monthly or once is not — images are what decides it |
+| **Team's price** (8) | Waits for what the setup costs to run |
 | **The selection bar on a phone** (22) | Needs an iPhone, not a desk |
 
 ---
