@@ -299,8 +299,9 @@ other.
 is not offered on the page, where it would change nothing you can see — an
 archived highlight is still painted where you made it.
 
-**A highlight** can be archived on every tier: **ten at a time on Free**,
-without limit on Pro. The ten are a working set and not a quota — un-archiving
+**A highlight** can be archived on every tier: **fifteen at a time on Free**,
+without limit on Pro. The fifteen are a working set and not a quota —
+un-archiving
 hands the slot straight back, so the limit is how many can be put away at once
 rather than how many ever can be. Reaching it never deletes or un-archives
 anything on its own.
@@ -419,8 +420,8 @@ One browser profile, or one installation of the app. What "one device" and
 The extension, on one device. **An account is available and not required**,
 and without one nothing leaves the device at all; a Free account holds no
 highlights, because storing them for one device would be sync with one device. Unlimited highlights, notes and
-tags. Search by word. **Five spaces, a hard five.** Ten highlights archived at
-a time. No sync.
+tags. Search by word. **Five spaces, a hard five.** Fifteen highlights archived
+at a time. No sync.
 
 ### Pro
 

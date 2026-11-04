@@ -37,7 +37,7 @@ every word means, and this is what is still undecided.
 | --- | --- |
 | What Kona is | You highlight a passage anywhere you read, and can find it again and land on the exact words |
 | Tiers | Each rung is a different kind of thing: Free is alone on one device, Pro is alone everywhere in step, Team is with other people |
-| Limits | Only on Free, so the rung is felt: 5 spaces, 10 archived at a time. Pro is unlimited. Highlights are unlimited on every tier |
+| Limits | Only on Free, so the rung is felt: 5 spaces, 15 archived at a time. Pro is unlimited. Highlights are unlimited on every tier |
 | Why the free cap | A free tier that does everything leaves no reason to upgrade. Drawn now, with no users, rather than clawed back later |
 | Where the paid line sits | Free is one surface. Pro is every surface, kept in step |
 | Payments | Stripe on the web. Not Apple's in-app purchase: their rate is 30% in year one |
@@ -628,7 +628,7 @@ highlights the same on every device you read on, and it is nothing else.**
 free cap needs an account too — that Kona must know who you are to know you may
 not have a sixth space. That was written before 10a, which settled the
 opposite: Free has no sync, so its counts are local and **per device**. The
-five-space cap and the ten-archive cap are both enforced on the machine they
+five-space cap and the archive cap are both enforced on the machine they
 happen on, by code that needs to know nothing at all about you.
 
 So **Free does not need an account.** No sign-up, no email, nothing to get
@@ -1164,37 +1164,41 @@ the same reason, and the worst case is tedium rather than lost work. This
 contradicts "bulk, or it is not a feature" above, and that is the honest trade
 — a tedious tidy is survivable, a cap that rewards deleting is not.
 
-**Decided: ten on Free, unlimited on Pro.** The author's call, against the
+**Decided: fifteen on Free, unlimited on Pro.** The author's call, against the
 recommendation above, and consistent with how every other limit here was drawn:
 a free tier that gives way at each wall leaves nobody a reason to pay, and the
 walls are supposed to be felt.
 
 One correction to my own argument above, since it cuts the other way: at twenty
 the cap would only have reached heavy users, which was the strongest thing
-going for it. Ten reaches ordinary ones. That makes the shape below matter more
+going for it. Fifteen reaches ordinary ones too. That makes the shape below
+matter more
 than the number.
 
 **Three rules keep the cap from rewarding deletion**, which was the real
 objection and is the thing left to design around.
 
-**The ten are a working set, not a lifetime quota.** Only what is *currently*
+**The fifteen are a working set, not a lifetime quota.** Only what is
+*currently*
 archived counts. Un-archiving is free and instant and gives the slot straight
-back. So the limit reads "ten put away at a time", not "ten ever" — a thing you
+back. So the limit reads "fifteen put away at a time", not "fifteen ever" — a
+thing you
 manage rather than a thing you spend. Almost everything the objection above
 feared comes from the quota reading, and this is not that.
 
 **Nothing is lost at the wall.** Same as 1b: reaching the limit means an
-eleventh cannot be archived, and never that something already archived comes
+sixteenth cannot be archived, and never that something already archived comes
 back on its own, or is deleted, or is hidden.
 
-**The wall never offers deleting.** When somebody tries for an eleventh, the two
+**The wall never offers deleting.** When somebody tries for a sixteenth, the two
 ways forward are un-archive something, or go to Pro. A delete control does not
 appear in that moment, anywhere. The product must not be the thing that
 suggests it.
 
 *One consequence of Free having no sync:* the count is per device, because on
 Free the library is local and there is nothing to count it against. Two
-browsers mean ten each. That is unavoidable rather than intended, and it is one
+browsers mean fifteen each. That is unavoidable rather than intended, and it is
+one
 more thing Pro quietly fixes.
 
 ---
@@ -1206,7 +1210,7 @@ archived view alike. It is your text; there has to be a way to be rid of it,
 and hiding that control in only one of the two lists would be arbitrary.
 
 This does not reopen the last rule in 10a. That rule is about one moment — the
-instant somebody is told they cannot archive an eleventh thing — and says the
+instant somebody is told they cannot archive a sixteenth thing — and says the
 product must not offer deleting *as the way out of its own limit*. Delete being
 an ordinary action on an ordinary row is a different thing entirely.
 
@@ -1249,8 +1253,8 @@ place archiving is done. On the page, Delete stands alone, and what makes that
 acceptable is the undo toast rather than a sibling button.
 
 **One honest interaction with 10a, recorded rather than argued:** "archive if
-unsure, delete if sure" holds until the tenth archive. A Free user who is
-unsure, with ten already put away, has only delete in front of them. That is
+unsure, delete if sure" holds until the fifteenth archive. A Free user who is
+unsure, with fifteen already put away, has only delete in front of them. That is
 the pressure the cap creates, and the three rules in 10a are what keep it from
 becoming a suggestion.
 
@@ -1317,44 +1321,42 @@ behaviour is intercepted.
 
 ---
 
-**10d. Does the Gmail model survive a cap of ten?**
+**10d. Does the Gmail model survive a cap of fifteen? — settled**
 
-Not an argument I am reopening — the cap is settled (10a) and the reasoning is
-the author's. This is a consequence of the frame chosen in 10, and it points
-somewhere the number may not want to go.
+**Decided: fifteen on Free. Past that, un-archive something, delete something,
+or take Pro.**
 
-**Gmail's archive is a high-volume gesture.** Its whole purpose is clearing an
-inbox of hundreds. The use case given for Kona is the same one: *so many
-highlights, I want to archive the ones I am not looking at.*
+This is option (c) below, chosen rather than discovered, which is the only
+thing this entry was ever asking for. Recorded without re-argument: the number
+was raised from ten, the author has answered this three times, and the
+reasoning throughout has been consistent — a free tier that gives way at each
+wall leaves nobody a reason to pay.
 
-A cap of **ten at a time** makes it a scarce one. The arithmetic is blunt:
+The arithmetic is unchanged and belongs on the record so nobody is surprised by
+it later. **Gmail's archive is a high-volume gesture** — the use case given for
+Kona is the same one, *so many highlights, I want to archive the ones I am not
+looking at* — and a cap bounds it:
 
-| Library | Can be put away on Free | Left in the default view |
+| Library | Put away on Free | Left in the default view |
 | --- | --- | --- |
-| 50 highlights | 10 | 40 |
-| 300 highlights | 10 | 290 |
+| 50 highlights | 15 | 35 |
+| 300 highlights | 15 | 285 |
 
-10a's working-set framing — ten *at a time*, reusable, un-archiving hands the
-slot back — is what keeps the cap from being a lifetime quota, and it holds.
-But it does not help somebody who wants two hundred things out of the way. At
-that size, archiving on Free is not a tight feature; it is a gesture that
-cannot do its job.
+So on a large library, archiving on Free is **a taste of the gesture rather
+than the gesture**, and Pro is where it becomes the thing Gmail's is. That is
+now a decision.
 
-So one of three things is true, and it is worth saying which on purpose:
+*One wording note, because the author's phrasing and 10a's rule can look like
+they disagree and do not.* "They either have to delete or choose Pro" describes
+what somebody **can** do, and they can: delete is available on every highlight
+everywhere (10b, 10c). 10a's rule is narrower and about one moment — the wall
+itself does not put a delete control in front of you, because the product
+should not be what suggests destroying things. Un-archiving is offered there,
+and it hands the slot straight back. Both hold.
 
-- **(a) The number rises** — to something like a hundred, where it still bounds
-  Free but can still clear an inbox.
-- **(b) The cap goes**, and Free's walls are the four it already has: no sync,
-  no hybrid search, five spaces, no shared spaces.
-- **(c) Ten stands**, and archiving on Free is accepted as a taste of the
-  feature rather than the feature. Legitimate, as long as it is chosen rather
-  than discovered.
-
-*No recommendation here;* I have already given mine twice and the author has
-answered twice. The only thing this needs is for (c) to be a decision instead of
-an accident.
-
-**Decided:** _______
+- **(a) Raise it further.**
+- **(b) Drop the cap.**
+- **(c) A bounded version on Free.** ← chosen, at fifteen.
 
 ---
 
@@ -1388,7 +1390,7 @@ fifty megabytes, which is nothing. The unlimited claim is affordable, not
 brave.
 
 **The caps that remain are both Free's, and both deliberate:** five spaces (1b)
-and ten highlights archived at a time (10a). Each was drawn so the free tier
+and fifteen highlights archived at a time (10a). Each was drawn so the free tier
 would be felt rather than endless.
 
 **Decided:** the ladder above, and unlimited spaces and highlights on Pro.
@@ -1416,7 +1418,7 @@ is available wherever there is no cap for it to defeat.
 
 | | Highlights | Spaces |
 | --- | --- | --- |
-| **Free** | Ten at a time — the cap is the point | **No** — the hard five must be felt |
+| **Free** | Fifteen at a time — the cap is the point | **No** — the hard five must be felt |
 | **Pro** | Unlimited | **Yes** — no cap to defeat |
 | **Team** | Unlimited | **Yes** |
 
@@ -1615,12 +1617,58 @@ safety feature, and nothing that is a safety feature goes behind a tier.
 | **A machine format** | A backup. It can be read back in, so your library survives a lost phrase. |
 | **A readable one** | "I want my work even if Kona dies." Useful without us. |
 
-**14a. Does import ship at all? — open.** Readwise, Hypothesis, Kindle, browser
-bookmarks. It is the adoption lever and it is also a parser per source, each of
-which can be wrong in its own way. Worth deciding **whether any of it ships**
-before anybody writes one, rather than collecting them one at a time.
+**14a. Does import ship at all? — settled**
 
-**Decided on 14a:** _______
+**Decided: Kona's own export, and a rule for everything else.**
+
+**The required one is reading our own export**, which is two things at once and
+only one piece of work: the **restore** half of 14's backup promise, and the way
+a library moves between accounts.
+
+**And an export somebody else shares with you.** The author added this, and it
+is worth naming for what it is: a **copy, not a shared space.** A file brings
+the passages, their pages and their notes into your library and they are yours
+from then on — no threads, no who-gathered-what, no later updates when the
+sender adds something. Shared spaces are still 3d's answer and still Team's.
+This is a snapshot handed over, which is a different and much smaller thing,
+and saying so keeps it from quietly becoming a worse version of Team.
+
+An imported highlight keeps its page, quote, note and colour, and is marked as
+imported with a date. Kona does not invent authorship it cannot show.
+
+#### Can they import from other tools?
+
+Yes, and the useful answer is a rule rather than a list, because the formats
+divide sharply and not in the way you would guess.
+
+**The unit is a passage.** Kona imports things that carry a quote. A bookmark or
+a saved article carries no passage, so it is not a highlight and does not come
+in — importing bookmarks would fill a library with pages nobody had marked.
+
+**Then it lands if the format carries a selector, and arrives orphaned if it
+does not.**
+
+| | What it carries | What it becomes |
+| --- | --- | --- |
+| **Hypothesis** | W3C Web Annotation, including a **TextQuoteSelector** | A full highlight that lands, because that is the model `quote.ts` already uses |
+| **Readwise** | Text, title, sometimes a URL | A highlight that cannot be found again |
+| **Kindle** | Text and a book title, no URL | The same, and arguably not Kona's business at all |
+| **Bookmarks, read-later** | A page, no passage | Not imported |
+
+**Hypothesis is the one high-fidelity import available**, and the reason is
+free: it uses the same W3C quote-selector model Kona was built on, so its
+annotations arrive able to resolve. If any third-party import ships, it is that
+one.
+
+**Everything else arrives in 13's state** — the quote kept, the landing lost —
+which is the point. **Import needs no new concept.** It is the same state PDFs
+arrive in (16) and the same state a rewritten page produces, so there is one
+behaviour to build and it is already decided.
+
+*Order:* our own export first, because it is the backup promise. Hypothesis
+next, if anybody asks, because it is cheap and lands. A generic text-plus-URL
+reader covers the rest whenever it is worth the afternoon. No parser is ever
+written on spec.
 
 ---
 
