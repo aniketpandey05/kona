@@ -709,7 +709,15 @@ than *required*:
   required account means every Free install contacts us.
 
 **What a Free account does: nothing yet.** It is a name claimed and something
-to attach a subscription to. It explicitly does **not** get backup — a library
+to attach a subscription to. A Free account is a Free account — the same five
+spaces and fifteen archives, and still no sync.
+
+*And the caps stay per device even so*, which is worth stating because the
+opposite is tempting. Now that a Free account exists, the counts could be kept
+against it and the two-browsers loophole closed. Do not: it would make signing
+up strictly worse than not signing up, which destroys the only reason anybody
+would do it early — and that reason, a subscription that just switches sync on,
+is why accounts are available on Free at all. It explicitly does **not** get backup — a library
 stored on a server for one device is sync with one device, and that is Pro's
 rung of the ladder (11). Pretending otherwise would give away the thing being
 sold while calling it something else.
