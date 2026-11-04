@@ -2225,6 +2225,60 @@ as iOS, so it can be decided late and cheaply. Nothing above depends on it.
 
 ---
 
+### 25. How anybody finds out Pro and Team exist — settled
+
+**The extension offers neither, and that is the answer rather than a gap.**
+Nothing the extension does is capped: highlighting is unlimited on every tier
+(11). So there is no moment while reading when a limit is felt, and an
+*upgrade* button next to the colour swatches would be advertising at the one
+moment somebody is concentrating.
+
+**Every limit is in the library, so every offer is in the library** — and
+always at the moment the limit is felt, never before. That is already the
+pattern, three times over:
+
+| The moment | What it says |
+| --- | --- |
+| The sixteenth archive (10a) | Bring one back, or Pro |
+| The sixth space (1b) | Delete one, or Pro |
+| A word search that found nothing by meaning | Pro also matches by meaning |
+
+**Sync is discovered by its absence, which is the only honest way.** You
+highlight on the laptop, pick up the phone, open the library, and your
+morning is not in it. That is the moment, and it is in the library. No banner
+can manufacture it earlier, and a banner that tries is selling a problem the
+person has not had yet.
+
+**Team is discovered by invitation, not by advertising.** Somebody shares a
+space and sends the link; 3d means you open it on the web with nothing
+installed and see what it is — other people's passages, who gathered what, the
+discussion. That is a far better explanation than any feature list, and it
+costs us no interface at all. Besides that, it is named in the welcome page
+and About (4) and listed on the plans page, which is enough.
+
+#### The one thing the extension must show, and it is not a pitch
+
+**When the active space is shared, the panel has to say so.**
+
+2e settled that the panel always says where a highlight is going, in words,
+because what is going where must never be implied. If where it is going is a
+*shared* space, then "going to Housing" is no longer the whole truth — the
+whole truth is that three other people will see this passage, from the page
+you are reading, with your name on it.
+
+Somebody quietly publishing their reading to colleagues because the panel said
+the same thing it always says is the worst failure available here, and it is a
+privacy failure rather than a product one. So the panel distinguishes them:
+
+- Solo space: **Going to Housing**
+- Shared space: **Going to Housing &middot; 3 people**, and the strip carries
+  the faces or the count rather than looking identical.
+
+That is the only thing about Team the extension ever shows, and it is there
+because of honesty, not because of sales.
+
+---
+
 ## Where the code is behind the definitions
 
 `DEFINITIONS.md` describes Kona finished. This is the distance between that and

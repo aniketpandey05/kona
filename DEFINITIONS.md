@@ -376,6 +376,11 @@ something from.
 ### Panel
 
 The strip Kona shows inside the page you are reading. It is about *this page*.
+
+**When the active space is shared, it says so** — not just the space's name but
+that other people are in it. A passage going somewhere other people can see it
+is a different act from one going into your own library, and the panel never
+lets the two look alike.
 It is where a person spends most of their time and should be the best-made
 thing in the product.
 
