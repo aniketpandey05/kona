@@ -619,7 +619,7 @@ it; and the releases shipped with the build rather than fetched.
 
 ---
 
-### 5. What is an account?
+### 5. What is an account? — settled
 
 *Recommendation, in one line:* **an account is the thing that makes your
 highlights the same on every device you read on, and it is nothing else.**
@@ -631,8 +631,9 @@ opposite: Free has no sync, so its counts are local and **per device**. The
 five-space cap and the ten-archive cap are both enforced on the machine they
 happen on, by code that needs to know nothing at all about you.
 
-So **Free has no account.** No sign-up, no email, nothing to get past. You
-install the extension, you highlight something, and it is yours. That matters
+So **Free does not need an account.** No sign-up, no email, nothing to get
+past. You install the extension, you highlight something, and it is yours. One
+is available if you want it — see the decision at the end of this section. That matters
 more here than in most products, for the reason decision 4 turns on: Kona's
 value is delayed, and the payoff is the return trip. A sign-up form in front of
 a product whose first minute feels like nothing is the fastest way never to be
@@ -678,7 +679,45 @@ download onto a full device.
 **Team adds one field, not a second concept:** which team you are in. Who pays
 for a team, and how seats work, is 8.
 
-**Decided:** _______
+**Decided: an account is available on Free, and not required.**
+
+The author's call, and the reason given was that somebody upgrading to Pro
+should get sync immediately rather than having to be migrated into it. That
+risk is real and it is the thing most often got wrong. Two things follow from
+looking at it closely, and they point different ways.
+
+**An early account does not make the upgrade safer, because it holds nothing.**
+Free does not sync (11), so an account on Free stores no highlights — it is a
+name and nothing else. When somebody subscribes, the first sync is a full
+upload of a local library either way. What actually protects that moment is the
+rule already written below: **the local library goes up, and is never replaced
+by an empty one.** That rule is the guarantee being asked for, and it does not
+depend on when the account was made.
+
+**But available costs nothing, so it should be available.** Somebody who wants
+to be known early can be, and then subscribing is only switching sync on. There
+is no reason to refuse that.
+
+**Required would cost a great deal**, which is why it is *available* rather
+than *required*:
+
+- It puts a sign-up form in front of a product whose first minute feels like
+  nothing. 4 turns on exactly that — the value is delayed, and the payoff is
+  the return trip.
+- It would break the promise in 6 that an install with no account sends
+  nothing anywhere, which is what the changelog decision in 4 is built on. A
+  required account means every Free install contacts us.
+
+**What a Free account does: nothing yet.** It is a name claimed and something
+to attach a subscription to. It explicitly does **not** get backup — a library
+stored on a server for one device is sync with one device, and that is Pro's
+rung of the ladder (11). Pretending otherwise would give away the thing being
+sold while calling it something else.
+
+**Decided, in full:** an account means sync and nothing else; it is available
+on every tier and required on none; Free with no account sends nothing
+anywhere; sign-in is a magic link, in the web app only; and a library made
+before an account existed goes up intact when one does.
 
 ---
 
@@ -736,18 +775,19 @@ and left. Nothing above depends on it.
 Added after the obvious question: **sync is network requests, so what exactly
 is the promise?**
 
-The promise is about **Free**, not about Kona. Free has no account and no sync,
-so a Free install genuinely contacts nothing — which is why the changelog ships
-with the build (4) rather than being fetched. Pro talks to a server by
-definition. What protects Pro is not silence; it is that the server cannot read
-what it holds.
+The promise is about **an install with no account**, not about Kona. An account
+is available on Free but never required (5), and without one there is no sync
+and nothing to send — which is why the changelog ships with the build (4)
+rather than being fetched: that promise has to hold for somebody who never
+signed up. Pro talks to a server by definition, and what protects Pro is not
+silence but that the server cannot read what it holds.
 
 So, exhaustively, the things that leave a device:
 
 | | When | Who it is for |
 | --- | --- | --- |
 | **Sync** | On change, batched | Pro |
-| **Signing in** | Only when you sign in | Pro |
+| **Signing in** | Only when you sign in | Anyone who chooses an account |
 | **Payment** | Only when subscribing, through Stripe on the web | Pro |
 | **The embedding model** | Once, after signing in | Pro |
 | Nothing else | — | — |

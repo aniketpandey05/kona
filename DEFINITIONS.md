@@ -410,7 +410,9 @@ One browser profile, or one installation of the app. What "one device" and
 
 ### Free
 
-The extension, on one device, with no account. Unlimited highlights, notes and
+The extension, on one device. **An account is available and not required**,
+and without one nothing leaves the device at all; a Free account holds no
+highlights, because storing them for one device would be sync with one device. Unlimited highlights, notes and
 tags. Search by word. **Five spaces, a hard five.** Ten highlights archived at
 a time. No sync.
 
@@ -453,6 +455,13 @@ library, which is small.
 
 ### Account
 
-**Open.** The one word in here without a meaning: see decision 5 in
-`DESIGN-LOG.md`. Everything paid rests on it, the free cap included, because
-you cannot cap what you cannot identify.
+**What makes your highlights the same on every device you read on**, and
+nothing else. Available on every tier, required on none, and it does the work
+only on Pro, where there is sync for it to do.
+
+It is not where your highlights live — the device is, and the account is what
+lets them travel. Sign out and everything stays. A library made before an
+account existed goes up intact when one is made, and is never replaced by an
+empty one.
+
+You sign in with an emailed link, in the web app. The extension never asks.
