@@ -199,15 +199,17 @@ came first.
 
 | | |
 | --- | --- |
-| **The prices** (8) | Held on purpose until the product is finished or nearly |
-| **The opacity ceiling** (12) | Whether a custom colour may reach full opacity |
+| **Team's price** (8) | Waits for what the setup costs to run. Pro is $3 a month |
 | **The selection bar on a phone** (22) | Needs an iPhone, not a desk |
 
 ---
 
 ## 7. Money, and other people's code
 
-**Stripe on the web.** Not Apple's in-app purchase: 30% in year one.
+**Pro is $3 a month**, through **Stripe on the web** — not Apple's in-app
+purchase, which takes 30% in year one. At $3 the fixed part of a card fee is
+about 13% of the price every month and about 4% once a year, so the
+annual switch carries most of the margin rather than being decoration.
 
 **Open source for solved problems** — `approx-string-match` is already doing
 the approximate matching, and it is the Hypothesis author's work on exactly

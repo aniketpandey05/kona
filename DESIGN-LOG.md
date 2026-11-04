@@ -860,7 +860,7 @@ limits making rather than keeping.
 
 ---
 
-### 8. The actual prices, and the monthly/annual toggle — deferred on purpose
+### 8. The actual prices, and the monthly/annual toggle — Pro settled
 
 Not blocked, held back. The numbers get set once the product is built or close
 to it, because pricing something that does not exist yet is guessing, and the
@@ -869,8 +869,23 @@ floor is whatever running sync costs, which is 5 and 6.
 The toggle is the ChatGPT-style switch on the pricing section. `plans.ts` is the
 copy of record and `tests/pricing.test.ts` fails if the site drifts from it.
 
-**Decided:** the shape — three tiers, a monthly/annual switch. The numbers wait
-until the product is finished or nearly.
+**Decided: Pro is $3 a month.** Team waits for the cost of running the setup,
+which is the right thing to price it against.
+
+*One consequence of a low number, worth having before the toggle is built.*
+Card fees are a percentage **plus a fixed amount** — roughly 2.9% and 30c — and
+the fixed part is what hurts at $3. Monthly, that is about **13% of the price
+gone to fees**. Annually at $30 it is charged once instead of twelve times and
+falls to about **4%**.
+
+So the monthly/annual switch is not decoration at this price; it is most of the
+margin. Which also means the annual price should be a real saving rather than a
+token one, because every person who takes it is worth meaningfully more.
+
+What makes $3 viable at all is 6: the server holds blobs it cannot read, so
+there is no index to maintain, no embedding job and no GPU. A library is about
+a kilobyte a highlight (11). The cost per person is storage and bandwidth and
+very little else.
 
 ---
 
@@ -1559,11 +1574,14 @@ Two consequences, worth stating because they follow and are easy to get wrong:
 **5. An opacity slider.** The author's call, and better than my automatic
 tinting: explicit beats clever, and Kona never refuses a colour you chose.
 
-*One guardrail worth considering, not settled:* the slider could stop short of
-full opacity, because a highlighter is translucent by nature and a fully opaque
-pick makes the text under it unreadable — a real risk, since highlights are
-painted over pages whose background Kona does not control, and worse in dark
-mode. A ceiling honours the pen image rather than overriding the decision.
+*And no ceiling — settled.* I had wanted the slider to stop short of full
+opacity, because a solid colour hides the text under it. The author's answer is
+that this is the person's own pen and their own call, and on reflection my
+concern was weaker than I made it sound: 12's own rule is that **editing the
+list never repaints what you already marked**, so a bad pick affects nothing
+but the next highlight, and the preview shows it before it is made. The blast
+radius is one colour, visible before it is chosen, undoable after. A guardrail
+against that is a guardrail against nothing.
 
 **6. Colour is never the only signal.** The name is reachable in the row and to
 a screen reader, so two highlights are distinguishable by somebody who cannot
