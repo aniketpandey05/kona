@@ -1,0 +1,6 @@
+# tokens.css is generated from tokens.json and compared against it by
+# tests/designTokens.test.ts. With core.autocrlf on, a checkout would hand back
+# a CRLF copy and the test would fail on line endings rather than on a value,
+# which is the one thing it must not do.
+src/design/tokens.css text eol=lf
+src/design/tokens.json text eol=lf

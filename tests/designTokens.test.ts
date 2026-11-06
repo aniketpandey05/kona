@@ -13,7 +13,13 @@ describe('the token file', () => {
   it('has the stylesheet that was generated from it', () => {
     // The one failure this file exists for: a value changed in tokens.json and
     // `npm run tokens` not run, so the stylesheets are still on the old value.
-    expect(readFileSync(CSS, 'utf8')).toBe(render(read()));
+    //
+    // Line endings are normalised first. .gitattributes pins both files to LF,
+    // and this is the second guard: on Windows an editor can still save CRLF,
+    // and a test that fails over a carriage return teaches everyone to ignore
+    // it, which costs the drift it was written to catch.
+    const lf = (text: string) => text.replace(/\r\n/g, '\n');
+    expect(lf(readFileSync(CSS, 'utf8'))).toBe(lf(render(read())));
   });
 
   it('decides each value in exactly one place', () => {
