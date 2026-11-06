@@ -1,27 +1,16 @@
+import { MARK_FLASH, MARK_INK, MARK_NOTED, PEN_COLORS, PEN_MARKS } from '../design/tokens';
 import type { HighlightColor } from './types';
 
 /**
- * For painting over text, where the words underneath have to stay readable,
- * hence the transparency.
+ * The pens, from the one place they are decided (`src/design/tokens.json`).
+ *
+ * These two names are what the screens already import, and they are kept so
+ * that moving the values out of this file changes nothing else. The product
+ * word is *pen*, so they go when the screens are rebuilt on `PEN_MARKS` and
+ * `PEN_COLORS` directly.
  */
-export const HIGHLIGHT_COLORS: Record<HighlightColor, string> = {
-  yellow: 'rgba(250, 204, 21, 0.45)',
-  green: 'rgba(74, 222, 128, 0.40)',
-  blue: 'rgba(96, 165, 250, 0.40)',
-  pink: 'rgba(244, 114, 182, 0.40)',
-};
-
-/**
- * The same hues at full strength, for the panel and library, where a colour
- * sits on a plain background with nothing showing through. The transparent
- * ones wash out to almost nothing there.
- */
-export const UI_COLORS: Record<HighlightColor, string> = {
-  yellow: '#eab308',
-  green: '#22c55e',
-  blue: '#3b82f6',
-  pink: '#ec4899',
-};
+export const HIGHLIGHT_COLORS = PEN_MARKS;
+export const UI_COLORS = PEN_COLORS;
 
 const FLASH = 'kona-flash';
 const NOTED = 'kona-noted';
@@ -50,18 +39,18 @@ export class HighlightPainter {
   }
 
   constructor(doc: Document = document) {
-    const colors = Object.keys(HIGHLIGHT_COLORS) as HighlightColor[];
+    const colors = Object.keys(PEN_MARKS) as HighlightColor[];
     this.style = doc.createElement('style');
     this.style.setAttribute('data-kona-ui', '');
     this.style.textContent = [
       // Dark text on every highlight, so pale colors stay readable on dark pages and in code blocks.
       ...colors.map(
-        (c) => `::highlight(${layerName(c)}) { background-color: ${HIGHLIGHT_COLORS[c]}; color: #16181d; }`,
+        (c) => `::highlight(${layerName(c)}) { background-color: ${PEN_MARKS[c]}; color: ${MARK_INK}; }`,
       ),
       // Firefox does not apply text-decoration inside ::highlight(), so a noted
       // highlight simply looks unmarked there. The panel still shows the note.
-      `::highlight(${NOTED}) { text-decoration: underline dotted rgba(234, 88, 12, 0.9); text-decoration-thickness: 2px; }`,
-      `::highlight(${FLASH}) { background-color: rgba(249, 115, 22, 0.85); color: #16181d; }`,
+      `::highlight(${NOTED}) { text-decoration: underline dotted ${MARK_NOTED}; text-decoration-thickness: 2px; }`,
+      `::highlight(${FLASH}) { background-color: ${MARK_FLASH}; color: ${MARK_INK}; }`,
     ].join('\n');
     doc.head.append(this.style);
 

@@ -17,6 +17,7 @@
     "zip:firefox": "wxt zip -b firefox",
     "zip:safari": "wxt zip -b safari",
     "compile": "tsc --noEmit",
+    "tokens": "node scripts/tokens-css.mjs",
     "postinstall": "wxt prepare",
     "test": "vitest run",
     "dev:app": "vite --config app/vite.config.ts",
