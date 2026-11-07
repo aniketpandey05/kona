@@ -1,0 +1,238 @@
+/**
+ * The panel in the page: three resting states and the open strip.
+ *
+ * Decision 2 says what it shows, 2h says where it sits. Everything here is
+ * token values -- the slab's colours, the type scale, the two shadows -- so
+ * that the panel and the library cannot drift apart again, which is the whole
+ * of 3a.
+ *
+ * The frame around a passage lives here and the passage itself does not: that
+ * is 3b, and `.kona-panel-card` is this screen's surroundings for the shared
+ * core in design/passage.css.
+ */
+
+/**
+ * 2h. Fixed to the viewport, docked right at 24px, and above the page's own
+ * furniture -- a panel that loses a stacking fight is invisible, which is
+ * worse than one that overlaps something.
+ *
+ * `fixed` is not as safe as it looks. A transformed, filtered or will-change
+ * ancestor becomes the containing block for fixed descendants and the panel
+ * scrolls away with the page. The host is mounted on documentElement rather
+ * than body for that reason; there is no airtight answer on a page Kona does
+ * not control.
+ */
+.kona-rest,
+.kona-panel {
+  position: fixed;
+  right: var(--kona-space-24);
+  z-index: 2147483647;
+  box-sizing: border-box;
+  font-family: var(--kona-font-ui);
+  color: var(--kona-slab-ink);
+  background: linear-gradient(180deg, var(--kona-slab-top) 0%, var(--kona-slab-bottom) 100%);
+  border: 1px solid var(--kona-slab-line);
+}
+
+/**
+ * At rest on a page with nothing kept: one faded mark and no more (2d). An
+ * empty panel on every page in the world is the fastest way to be uninstalled,
+ * so this is as small as Kona gets while still being there to click.
+ */
+.kona-rest {
+  bottom: var(--kona-space-24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: var(--kona-radius-lg);
+  box-shadow: var(--kona-shadow-pill);
+  opacity: 0.72;
+  cursor: pointer;
+  transition: opacity 120ms ease;
+}
+
+.kona-rest:hover,
+.kona-rest:focus-visible {
+  opacity: 1;
+}
+
+/**
+ * At rest on a page that has something: the same mark, grown into a pill that
+ * says how much (2b). This is the middle of the three states, and the reason
+ * there are three rather than two -- you can tell a page has highlights on it
+ * without opening anything.
+ */
+.kona-rest--counted {
+  width: auto;
+  height: auto;
+  gap: var(--kona-space-8);
+  padding: 9px 14px 9px 11px;
+  border-radius: var(--kona-radius-pill);
+  opacity: 1;
+}
+
+.kona-rest-count {
+  font-size: var(--kona-text-md);
+  font-weight: var(--kona-weight-semibold);
+  line-height: 1;
+}
+
+/**
+ * Open. 324 wide and as tall as its content, up to the viewport less the inset
+ * at each end -- the two heights the boards draw are this one rule with three
+ * highlights and with twelve.
+ */
+.kona-panel {
+  top: var(--kona-space-24);
+  display: flex;
+  flex-direction: column;
+  width: 324px;
+  max-height: calc(100vh - var(--kona-space-24) * 2);
+  border-radius: var(--kona-radius-xl);
+  box-shadow: var(--kona-shadow-slab);
+  overflow: hidden;
+}
+
+/**
+ * 2h. Below 840px the strip becomes the sheet the phone already uses: 324 of
+ * panel and 24 either side take 372, which would leave the article under 470 --
+ * about as narrow as a column of prose stays readable.
+ *
+ * By width rather than by what the browser calls itself, so a half-width window
+ * on a desktop gets the sheet too. It is the same problem.
+ */
+@media (max-width: 839px) {
+  .kona-panel {
+    right: 0;
+    left: 0;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    height: 62vh;
+    max-height: none;
+    border-width: 1px 0 0;
+    border-radius: var(--kona-radius-xl) var(--kona-radius-xl) 0 0;
+  }
+}
+
+.kona-panel-head {
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-8);
+  padding: 13px 14px 11px;
+}
+
+.kona-panel-name {
+  flex-grow: 1;
+  font-size: var(--kona-text-md);
+  font-weight: var(--kona-weight-semibold);
+}
+
+.kona-panel-link,
+.kona-panel-close {
+  font: inherit;
+  color: var(--kona-slab-ink-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.kona-panel-link {
+  padding: 4px 9px;
+  font-size: var(--kona-text-sm);
+  border: 1px solid var(--kona-slab-control-line);
+  border-radius: var(--kona-radius-sm);
+}
+
+.kona-panel-close {
+  width: 26px;
+  height: 26px;
+  font-size: var(--kona-text-lg);
+  line-height: 1;
+  border: 0;
+}
+
+.kona-panel-link:hover,
+.kona-panel-close:hover {
+  color: var(--kona-slab-ink);
+}
+
+/**
+ * The tabs. One while no space is active, which is 2f's own rule: the second
+ * view does not exist at all unless there is a space for it to show. A second
+ * tab appears beside this one when the active space is built.
+ */
+.kona-panel-tabs {
+  display: flex;
+  gap: var(--kona-space-6);
+  padding: 0 12px 11px;
+}
+
+.kona-panel-tab {
+  padding: 6px 12px;
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-slab-ink-chip);
+  background: transparent;
+  border: 1px solid var(--kona-slab-control-line);
+  border-radius: var(--kona-radius-pill);
+  cursor: pointer;
+}
+
+.kona-panel-tab[aria-current='page'] {
+  font-weight: var(--kona-weight-medium);
+  color: var(--kona-mark-ink);
+  background: var(--kona-slab-ink);
+  border-color: transparent;
+}
+
+.kona-panel-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0 12px 12px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--kona-space-8);
+}
+
+/* This screen's surroundings for the shared passage (3b). */
+.kona-panel-card {
+  display: block;
+  width: 100%;
+  padding: 11px 12px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: var(--kona-slab-card);
+  border: 1px solid var(--kona-slab-card-line);
+  border-radius: var(--kona-radius-md);
+  cursor: pointer;
+}
+
+.kona-panel-card:hover,
+.kona-panel-card:focus-visible {
+  border-color: var(--kona-slab-control-line);
+}
+
+/**
+ * Decision 13. The passage is still yours -- it was copied when you kept it --
+ * so this says the landing is gone and nothing more alarming than that.
+ */
+.kona-panel-lost {
+  display: block;
+  margin-top: var(--kona-space-6);
+  font-size: var(--kona-text-xs);
+  color: var(--kona-slab-going-label);
+}
+
+.kona-panel-none {
+  margin: 0;
+  padding: 0 14px 18px;
+  font-size: var(--kona-text-base);
+  line-height: var(--kona-leading-normal);
+  color: var(--kona-slab-ink-note);
+}

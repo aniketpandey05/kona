@@ -87,6 +87,8 @@ export const browser = {
 
 interface UiOptions<T> {
   name: string;
+  /** A selector WXT resolves to mount against. Kona uses 'html' -- see 2h. */
+  anchor?: string;
   onMount: (container: HTMLElement) => T;
   onRemove?: (mounted: T | undefined) => void;
 }
@@ -104,7 +106,12 @@ export async function createShadowRootUi<T>(_ctx: unknown, options: UiOptions<T>
   let mounted: T | undefined;
   return {
     mount() {
-      document.body.append(host);
+      // Honour the anchor, so the harness mounts where the extension does.
+      // Kona asks for 'html' because a transform on <body> would make it the
+      // containing block for the panel's fixed positioning (2h), and a harness
+      // that always used body could never show that going wrong.
+      const anchor = options.anchor ? document.querySelector(options.anchor) : document.body;
+      (anchor ?? document.body).append(host);
       mounted = options.onMount(container);
     },
     remove() {

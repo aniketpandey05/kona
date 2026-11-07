@@ -4,7 +4,7 @@ import type { SiteAdapter } from '../adapters/types';
 import { HighlightPainter } from '../core/painter';
 import { App } from '../ui/App';
 // Bundled as text so the styles travel with the script, even on sites registered at runtime.
-import styles from '../ui/styles.css?inline';
+import styles from '../ui/shadow.css?inline';
 import { KonaController, UI_TAG } from './controller';
 
 export async function mountKona(ctx: ContentScriptContext, adapter: SiteAdapter): Promise<void> {
@@ -17,7 +17,11 @@ export async function mountKona(ctx: ContentScriptContext, adapter: SiteAdapter)
   const ui = await createShadowRootUi(ctx, {
     name: UI_TAG,
     position: 'inline',
-    anchor: 'body',
+    // 2h: documentElement rather than body. A transformed, filtered or
+    // will-change ancestor becomes the containing block for a fixed child, and
+    // the panel would then scroll away with the page. A transform on <html> is
+    // much rarer than one on <body>; there is no airtight answer here.
+    anchor: 'html',
     append: 'last',
     // Stop key presses inside our UI from reaching the site's keyboard shortcuts.
     isolateEvents: true,
