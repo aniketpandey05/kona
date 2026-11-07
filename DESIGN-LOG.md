@@ -44,7 +44,7 @@ every word means, and this is what is still undecided.
 | Privacy | The server stores what it cannot read. Encryption and embeddings both happen on the device, because you only ever search your own library |
 | What Kona is written in | TypeScript, every screen. Swift only for the iOS container, the share extension and the native bridge |
 | iOS | The Safari extension and the library in one Capacitor container, so one App Store install gives both |
-| Open source | Use it where the problem is solved (matching, article extraction, embeddings). Never for what a space is or how the panel feels. Apache-2.0 and MIT only, nothing AGPL |
+| Open source | Use it where the problem is solved (matching, article extraction, embeddings). Never for what a space is or how the panel feels. Apache-2.0 and MIT for code, OFL for fonts, nothing AGPL |
 | What a space is | A workspace for researching one topic across many links. Alone: gather and conclude. With a team: discuss and decide. The collaborative parts appear only once it is shared |
 | Extension or app | Neither replaces the other. The extension is the only thing that can highlight, because only it runs inside the page you are reading. The app is where you look at what you gathered |
 | The popup | One line: this site, and whether Kona may read it. Nothing built in, and no list of allowed sites — the browser owns that |
@@ -546,6 +546,67 @@ by clicking a single highlight and it opens on that highlight.
 
 **Decided:** the button says Library, in the popup and the panel, and the
 library is the place that holds both views.
+
+---
+
+**3g. Where the fonts come from, and what the panel gets — settled**
+
+The boards load Inter and Source Serif 4 from `fonts.googleapis.com`. That is a
+convenience of the drawings and it cannot ship. Decision 6 says nothing is
+fetched because of a page you are reading, and a webfont in the panel is
+exactly that: a request to Google for every page you open, carrying your
+address and the fact that you were reading one. So the files ship with the
+build.
+
+What ships, measured: latin, upright, one variable weight axis each — **47 KB
+for Inter and 50 KB for Source Serif 4.** The optical-size and italic cuts are
+two to three times that and nothing asks for them, since no screen sets italic
+and the optical-size axis only earns its keep at display sizes the boards do
+not use. Non-latin text falls back to the system font, which is the right way
+round: shipping every subset so the occasional Greek passage is covered is a
+cost every install pays.
+
+**The panel is the hard part, and it does not get Inter.**
+
+The panel's stylesheet is inlined into a shadow root inside somebody else's
+page, so a relative `url()` resolves against *their* origin and fetches
+nothing. Two ways out:
+
+| | |
+| --- | --- |
+| **Base64, into the inlined stylesheet** | No request, no manifest change, nothing a page can detect. About 64 KB of string parsed on every page Kona is allowed on |
+| **Web-accessible, built at mount from `runtime.getURL`** | Fetched once, then cached across every page. A manifest change, and a URL a page can probe to learn Kona is installed |
+
+The second is the better engineering and the worse fit. Chrome's
+`use_dynamic_url` closes the probe, and Firefox and Safari already randomise
+the extension origin per install, so the privacy cost is payable — but it is a
+manifest change in aid of a typeface, and `host_permissions` was emptied in 3e
+precisely so the manifest asks for as little as it can.
+
+What settles it is that the difference is small. Drawn side by side at 13px on
+the slab, Inter and the system stack differ by a little width and a little
+looseness. The panel is the best-made thing in the product, and that is about
+what it says and how it rests over somebody's article — not about its typeface.
+Against that, 64 KB parsed on every page you read is a real cost, paid
+everywhere, for a difference most people would never see.
+
+The library is the other way round. It is a page of its own, opened
+deliberately, where a passage is read back as prose at 18px and the serif is
+the whole point of reading it there rather than in the strip.
+
+This one is reversible in a way most of this document is not: if the panel ever
+looks wrong beside the library, base64 is one commit and touches no manifest.
+
+**Decided:** the fonts ship with the build, latin and upright only. The library
+loads both. The panel loads neither and falls back to the system stack, which
+is what the fallback list in `--kona-font-ui` is for.
+
+**And one rule to bring into step.** Both fonts are SIL Open Font License 1.1,
+where the rule is Apache-2.0 and MIT only. That rule was written about code.
+OFL is what essentially every open font uses, it permits bundling outright, and
+its one real condition — that the fonts are not sold on their own — is not
+something Kona could trip over. The rule now reads: **Apache-2.0 and MIT for
+code, OFL for fonts.**
 
 ---
 
@@ -2486,3 +2547,11 @@ page and on the landing page, that sync and spaces will not be switched off
 later. The tier decision contradicts it. Nobody but the author uses Kona, so
 nobody is relying on that promise and it is not urgent: fold it into decision 8
 when the tier copy is rewritten, rather than treating it as its own job.
+
+**The pen dot in `src/design/Passage.tsx` has no accessible name.** It is
+`aria-hidden`, as the boards draw it. DEFINITIONS says a colour is named by its
+hue so that Kona can say it to a screen reader, and a row announcing "yellow"
+before every passage is noise — so the name belongs on the frame, which is the
+thing that is a link to a page and has something to say already. Nothing is
+wrong until the first frame is built; it is wrong if that frame is built
+without it.

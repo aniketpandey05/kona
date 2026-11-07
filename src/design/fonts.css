@@ -48,22 +48,22 @@
 }
 
 /**
- * Why the panel does not import this file.
+ * Why the panel does not import this file. Decision 3g.
  *
  * The panel's stylesheet is inlined into a shadow root inside somebody else's
  * page, so a relative url() here would resolve against *their* origin and
- * fetch nothing. The two ways out are both decisions rather than details, and
- * neither is made yet:
+ * fetch nothing. Getting a font in there costs either about 64 KB of base64
+ * parsed on every page Kona is allowed on, or a manifest change declaring the
+ * file web-accessible -- and host_permissions was emptied in 3e precisely so
+ * the manifest asks for as little as it can.
  *
- *   - base64 the file into the inlined stylesheet. No request, no manifest
- *     change, nothing a page can detect -- and about 64 KB of string parsed on
- *     every page you have allowed Kona on.
- *   - declare the file web-accessible and build the @font-face at mount time
- *     from browser.runtime.getURL. Fetched once and cached across every page,
- *     at the cost of a manifest change and a URL a page could probe to find
- *     out Kona is installed. Chrome's use_dynamic_url closes that; Firefox and
- *     Safari already randomise the extension origin per install.
+ * Drawn side by side at 13px on the slab, Inter and the system stack differ by
+ * a little width and a little looseness. That is not worth a cost paid on
+ * every page somebody reads, so the panel falls back, which is what the
+ * fallback list in --kona-font-ui is for. The library is the other way round:
+ * a page of its own, opened deliberately, where a passage is read back as
+ * prose at 18px and the serif is the point.
  *
- * Until then `--kona-font-ui` names Inter and the panel falls back to the
- * system stack, which is what the token's fallback list is for.
+ * Reversible if the panel ever looks wrong beside the library: base64 is one
+ * commit and touches no manifest.
  */

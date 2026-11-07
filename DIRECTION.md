@@ -225,4 +225,7 @@ a licence already sold can never be un-sold.
 the approximate matching, and it is the Hypothesis author's work on exactly
 this problem. Article extraction and embeddings are the same kind of thing.
 **Never for what Kona is**: what a space is, how the panel feels, what happens
-when a highlight cannot be found. **Apache-2.0 and MIT only.**
+when a highlight cannot be found. **Apache-2.0 and MIT for code, OFL for
+fonts** (3g) — Inter and Source Serif 4 ship with the build rather than
+being fetched, because decision 6 forbids a request made on account of a
+page you are reading.
