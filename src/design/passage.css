@@ -1,0 +1,135 @@
+/**
+ * A passage, drawn the one way it is drawn.
+ *
+ * Decision 3b. A passage is drawn in five places -- the panel on this page,
+ * the panel showing a space, the library, the spaces screen, the phone -- and
+ * it was five copies. The part that must never differ is the passage itself,
+ * because that is what a person recognises from one screen to the next. The
+ * frame around it genuinely is different work in each place: a card in the
+ * panel, a row with a source line in the library, a sheet on a phone. So what
+ * is shared is only the three things that are always there, in the order they
+ * are always in:
+ *
+ *   the pen it was marked with, the words, and your note
+ *
+ * and each screen composes its own surroundings. That is 3b(b) rather than
+ * 3b(a): one row component carrying every screen's extras ends up with ten
+ * props, which is harder to follow than the five copies it replaced.
+ *
+ * There are no props for which room it is in. There are two rooms by decision
+ * 17 -- the panel is a dark slab because it floats over somebody else's
+ * article, the library is paper because it is your own -- and a room is set
+ * once on an ancestor, not passed down every call. Paper is the default,
+ * because the library is the place (3f).
+ *
+ * Sizes that belong to this drawing and nowhere else -- how big the pen dot
+ * is, how far down it sits to meet the first line -- are written here rather
+ * than in tokens.json. A token is a primitive the whole product shares; the
+ * diameter of this dot is this component's business, and putting it in the
+ * token file would mean every component's measurements ended up there.
+ */
+
+.kona-passage {
+  /* Paper, the library's values. The boards draw the gap at 13 and the note's
+     gap at 8; the scale's nearest steps are 12 and 8. */
+  --kona-passage-gap: var(--kona-space-12);
+  --kona-passage-pen-size: 11px;
+  --kona-passage-pen-top: 6px;
+  --kona-passage-font: var(--kona-font-prose);
+  --kona-passage-size: var(--kona-text-xl);
+  --kona-passage-leading: var(--kona-leading-prose);
+  --kona-passage-ink: var(--kona-paper-ink);
+  --kona-passage-note-gap: var(--kona-space-8);
+  --kona-passage-note-pad: var(--kona-space-8) var(--kona-space-10);
+  --kona-passage-note-size: var(--kona-text-base);
+  --kona-passage-note-leading: var(--kona-leading-normal);
+  --kona-passage-note-ink: var(--kona-paper-ink-note);
+  --kona-passage-note-bg: var(--kona-paper-note);
+  --kona-passage-note-edge: var(--kona-paper-note-edge);
+  --kona-passage-note-radius: 0 var(--kona-radius-sm) var(--kona-radius-sm) 0;
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--kona-passage-gap);
+}
+
+/**
+ * The slab. Denser, because the panel is a strip beside an article rather than
+ * a page of its own, and the words are the interface font rather than prose --
+ * the library is where a passage is read back, the panel is where it is
+ * checked. The note loses its background and keeps only the accent edge,
+ * since a filled note on the slab reads as another card.
+ */
+.kona-slab .kona-passage,
+.kona-slab.kona-passage {
+  --kona-passage-gap: var(--kona-space-8);
+  --kona-passage-pen-size: 9px;
+  --kona-passage-pen-top: 5px;
+  --kona-passage-font: var(--kona-font-ui);
+  --kona-passage-size: var(--kona-text-base);
+  --kona-passage-leading: var(--kona-leading-normal);
+  --kona-passage-ink: var(--kona-slab-ink-passage);
+  --kona-passage-note-gap: var(--kona-space-6);
+  --kona-passage-note-pad: 0 0 0 var(--kona-space-8);
+  --kona-passage-note-size: var(--kona-text-sm);
+  --kona-passage-note-leading: var(--kona-leading-snug);
+  --kona-passage-note-ink: var(--kona-slab-ink-note);
+  --kona-passage-note-bg: transparent;
+  --kona-passage-note-edge: var(--kona-accent);
+  --kona-passage-note-radius: 0;
+}
+
+/**
+ * The pen. A round dot of the colour the passage was marked with, which is the
+ * pen at full strength: on paper or on the slab there is nothing showing
+ * through, and the transparent value it was painted onto the page with washes
+ * out to almost nothing here.
+ *
+ * It carries no accessible name. The colour is worth saying to a screen reader
+ * (DEFINITIONS, Palette), but a row announcing "yellow" before every passage
+ * is noise, and the row is what gets the name -- the frame knows it is a link
+ * to a page and can say the colour as part of that. Kept here as a loose end
+ * for whoever builds the first frame.
+ */
+.kona-passage-pen {
+  flex-shrink: 0;
+  width: var(--kona-passage-pen-size);
+  height: var(--kona-passage-pen-size);
+  margin-top: var(--kona-passage-pen-top);
+  border-radius: var(--kona-radius-pill);
+}
+
+/* min-width: 0 so a long unbroken string shrinks instead of pushing the pen
+   out of the row. */
+.kona-passage-body {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.kona-passage-text {
+  margin: 0;
+  font-family: var(--kona-passage-font);
+  font-size: var(--kona-passage-size);
+  line-height: var(--kona-passage-leading);
+  color: var(--kona-passage-ink);
+  overflow-wrap: break-word;
+}
+
+/**
+ * Your note. Set apart from the passage rather than run together with it,
+ * because a note is what *you* thought and the passage is what the *page*
+ * said, and the two are never mixed (DEFINITIONS, Note). The edge down its
+ * left is what does that work.
+ */
+.kona-passage-note {
+  margin: var(--kona-passage-note-gap) 0 0;
+  padding: var(--kona-passage-note-pad);
+  font-family: var(--kona-font-ui);
+  font-size: var(--kona-passage-note-size);
+  line-height: var(--kona-passage-note-leading);
+  color: var(--kona-passage-note-ink);
+  background: var(--kona-passage-note-bg);
+  border-left: 2px solid var(--kona-passage-note-edge);
+  border-radius: var(--kona-passage-note-radius);
+  overflow-wrap: break-word;
+}
