@@ -1,0 +1,69 @@
+/**
+ * The two families, shipped with the build.
+ *
+ * Decision 6 says nothing is fetched because of a page you are reading, and
+ * that an install with no account sends nothing anywhere. A webfont served
+ * from Google would break both: a request to Google for every page you opened,
+ * carrying your address and the fact that you were reading. So the files are
+ * here, and the boards' `<link>` to fonts.googleapis.com is a convenience of
+ * the drawings rather than anything that ships.
+ *
+ * Both are SIL Open Font License 1.1, and both licences are beside the files.
+ * DIRECTION's rule is Apache-2.0 and MIT only, which was written about code;
+ * OFL is the licence essentially every open font uses, it permits bundling
+ * outright, and its one real condition -- that the fonts are not sold on their
+ * own -- is not something Kona could trip over. Worth a line in DESIGN-LOG so
+ * the rule and the practice agree.
+ *
+ * Latin only, upright only, one variable weight axis each: about 97 KB for the
+ * two. A passage in Greek or Japanese falls back to the system font, which is
+ * the right way round -- shipping every subset to everybody, to cover the
+ * passage that might not be latin, is a cost paid by every install.
+ *
+ * NOT loaded by the panel. See the note at the foot of this file.
+ */
+
+/* Inter, for the interface. 100-900 from one file: it is a variable font, so
+   the weights the tokens name cost nothing extra. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Source Serif 4, for a passage read back as prose -- the library, where the
+   words are the thing on the screen rather than a line in a strip. */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('./fonts/source-serif-4-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/**
+ * Why the panel does not import this file.
+ *
+ * The panel's stylesheet is inlined into a shadow root inside somebody else's
+ * page, so a relative url() here would resolve against *their* origin and
+ * fetch nothing. The two ways out are both decisions rather than details, and
+ * neither is made yet:
+ *
+ *   - base64 the file into the inlined stylesheet. No request, no manifest
+ *     change, nothing a page can detect -- and about 64 KB of string parsed on
+ *     every page you have allowed Kona on.
+ *   - declare the file web-accessible and build the @font-face at mount time
+ *     from browser.runtime.getURL. Fetched once and cached across every page,
+ *     at the cost of a manifest change and a URL a page could probe to find
+ *     out Kona is installed. Chrome's use_dynamic_url closes that; Firefox and
+ *     Safari already randomise the extension origin per install.
+ *
+ * Until then `--kona-font-ui` names Inter and the panel falls back to the
+ * system stack, which is what the token's fallback list is for.
+ */
