@@ -282,6 +282,69 @@ tells you where a highlight went is the same thing that changes where it
 went.** One element doing the safety job from 2e and the escape hatch at once,
 rather than two.
 
+**2h. Where the panel sits — settled**
+
+2a to 2g settle what the panel *shows* and never say where it is. The boards
+draw it, and two of them draw it differently: `Open` puts it 210px in from the
+right at content height, `Space` docks it 24px in and fills the height. Same
+panel, same 1100×700 canvas.
+
+Most of that is not a disagreement. `Open` holds three highlights and `Space`
+holds twelve, so the difference in height is the content rather than a rule.
+The horizontal inset is a real disagreement, and 24 is the one to keep: a panel
+floating somewhere in the middle of the right half wanders into the article at
+some window widths and not others, and there is no width at which 210px of gap
+is doing any work.
+
+**The strip.** Fixed to the viewport, docked right at 24px, 324px wide, as tall
+as its content up to the viewport height less the inset at each end. The
+resting mark takes the same inset both ways — the boards draw the mark at 28
+and the panel at 24, a four-pixel disagreement with nothing behind it.
+
+**Right rather than left**, because the left is where sites put navigation and
+where the eye starts a line. The right edge is furniture.
+
+**It is fixed, and that is less safe than it sounds.** A transformed, filtered
+or `will-change` ancestor becomes the containing block for fixed descendants,
+and the panel then scrolls away with the page. The host element is appended to
+`body` today and moves to `documentElement`, where a transform is far rarer. On
+a page Kona does not control there is no way to make this airtight; anchoring
+as high as possible and accepting the remainder is the whole of the answer.
+
+**Narrow, it becomes the sheet the phone already uses.** Below **840px** the
+strip becomes the bottom sheet `PhonePanel` draws — full width, anchored to the
+bottom, a little under two thirds of the viewport. The arithmetic: 324 of panel
+and 24 of inset at each end take 372px, so below 840 the article is left under
+470, which is about as narrow as a column of prose stays readable. The switch
+goes by width and not by what the browser calls itself, so a half-width window
+on a desktop gets the sheet too — it is the same problem, and 9 does not need
+to be involved to answer it.
+
+**The corner is already taken, often.** Bottom right is the most contested
+space on the web: Intercom, Drift, cookie banners, back-to-top buttons, and on
+ChatGPT the composer. Kona is a guest (2c) and cannot win that by stacking over
+it, because the thing underneath is somebody's actual control.
+
+Decided: **do not build for it yet.** At rest Kona is one small faded mark
+(2d), so a collision is two small things in a corner rather than a broken page,
+and detecting what occupies a corner is fragile enough to become its own source
+of bugs. If the sites this is really used on turn out to put something there,
+the answer is a mark that can be moved and remembered per site — not detection.
+Written down so the next person meets a decision rather than a surprise.
+
+**Above the page, by the largest z-index there is.** The panel has to sit over
+a site's own fixed furniture or it is unusable on exactly the sites where it
+matters most. A panel that loses a stacking fight is invisible, which is worse
+than one that overlaps something.
+
+**Decided:** fixed to the viewport, docked right at 24px, 324px wide, content
+height capped to the viewport; the bottom sheet below 840px; mounted on
+`documentElement` rather than `body`; the resting mark on the same 24px inset.
+The contested corner is accepted rather than engineered around.
+
+The 324 and the 840 are the panel's own measurements and live with the panel,
+not in the token file — the rule from *3a and 3b, as built*.
+
 ### 3. Why the screens do not look like one product
 
 *Read 3a and 3b as rules for building, not as repairs.* They were written to

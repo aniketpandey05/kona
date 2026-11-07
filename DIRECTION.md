@@ -56,7 +56,9 @@ of Kona that can, because only it runs inside the page you are reading.
 
 **The panel** is about *this page* (2a) and has three resting states, not two
 (2b): out of the way by default, a small mark when there is something here, and
-open when you ask. It **floats and never pushes the page** (2c), and on a page
+open when you ask. It **floats and never pushes the page** (2c) — a strip fixed
+to the right edge, becoming the phone's bottom sheet on any window too narrow
+to hold both it and a readable column (2h) — and on a page
 with nothing kept it is one faded mark and no more (2d) — an empty panel on
 every page in the world is the fastest way to be uninstalled.
 
