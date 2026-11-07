@@ -610,6 +610,78 @@ code, OFL for fonts.**
 
 ---
 
+**3a and 3b, as built — settled**
+
+3a and 3b were written as recommendations, and building them raised a handful
+of questions neither had answered. None of these deserved a section of its own.
+All of them would have been answered differently by whoever came next, which is
+the only reason this document exists.
+
+**The token file is not retrofitted into the existing screens.** 3a says every
+screen imports it and declares none of its own, which reads as a job to do now.
+It is not: 3c removes the extension's library, spaces and plans pages with
+their stylesheets — 4,647 lines — and 3d folds `team.css`, another 1,533, into
+the web app. Retrofitting a file on its way out is work paid twice. So the
+token file is the foundation and each screen adopts it as it is rebuilt, which
+is also the only moment *declares none of its own* can be enforced rather than
+asserted and then quietly eroded.
+
+**The source is JSON, not TypeScript.** The values have to reach stylesheets
+and code both, because `painter.ts` builds its `::highlight()` rules from
+script and needs the pens as values. That there is one source was never in
+question; which file it is, was. TypeScript would mean running a `.ts` module
+from a build script, which needs either a dependency or Node 22, and `engines`
+says 20. JSON is read natively by Node and by Vite, so the generator and
+`tokens.ts` read the same file and neither holds a value of its own. What it
+cost: JSON has no comments, so the reasons live in `note` arrays and are
+written out into the generated stylesheet.
+
+**The sizes are a scale, and the boards are snapped to it.** The boards hold
+twenty-four font sizes — two of them half a pixel apart in the same panel — and
+fourteen radii. There are now nine sizes, ten spacings and six radii: 12.5 and
+13 collapse to one step, 13.5 goes to 14, 17.5 to 18. The rebuilt screens will
+sit a pixel off the drawings in places. A list of every value somebody drew by
+eye is not a scale, and does nothing to stop a twenty-fifth being added.
+
+**The pens are the boards', not the code's.** `painter.ts` had green at
+`#22c55e` and pink at `#ec4899`; the boards draw `#16a34a` and `#db2777`. The
+boards win, because they are the settled design and the code is the sketch.
+Two things followed. The mark alphas stay different per pen — yellow is pale
+and needs more of itself to register, green and pink swamp the words if given
+the same — so one number for all four would have been tidier and wrong. And
+the boards paint the mark as a vertical gradient, which the CSS Custom
+Highlight API cannot render: `::highlight()` takes a flat `background-color`
+and almost nothing else. Each mark is the flat value from the middle of the
+gradient it was drawn as.
+
+**The tokens are declared on three selectors rather than on `:root`.** The
+panel is mounted in a shadow root with its stylesheet inlined, so `:root` there
+is the article's document. Reaching it that way would mean writing Kona's
+tokens into somebody else's page and inheriting whatever that page had already
+set — the opposite of why the panel is a slab that ignores the page's theme.
+`:root, :host, .kona-tokens` covers the web app, the panel, and anything
+mounted deeper than either.
+
+**The passage core takes no prop for which room it is in.** There are two rooms
+by 17, and a room is set once on an ancestor: `.kona-slab` for the panel,
+nothing at all for paper, since the library is the place. So the call is
+`<Passage color text note />` and that is the whole surface — which is what
+keeps 3b(b) from sliding back into the ten-prop component that 3b(a) would have
+become.
+
+**A component's own measurements stay with the component.** The pen dot's
+diameter, and how far down it sits to meet the first line, are in
+`passage.css` and not in the token file. A token is a primitive the whole
+product shares; let every component's measurements in and the token file
+becomes the stylesheet it was written to replace.
+
+**And the folder is `src/design/`, because `src/core/tokens.ts` was taken.** It
+means turning text into the words a search can compare, and it is tested under
+that name. `core/tokens` and `design/tokens` now never meet at an import site,
+which is cheaper than renaming a tested file to free up a word.
+
+---
+
 ### 4. What does someone see the first time? — settled
 
 **One place that changes role.** It opens **exactly once**, when you install —
