@@ -3,13 +3,11 @@ import type { KonaController, NoteCardState, SearchState, ViewState } from '../c
 import { HIGHLIGHT_COLORS, UI_COLORS } from '../core/painter';
 import { siteLabel } from '../core/sites';
 import { addTags, removeTag } from '../core/tags';
+import { MarkBar, SelectionBar } from './Bar';
 import { Panel } from './Panel';
 import type { HighlightColor, Mark } from '../core/types';
 
 const COLORS = Object.keys(HIGHLIGHT_COLORS) as HighlightColor[];
-// ChatGPT shows its own "Ask ChatGPT" bar above a selection, so ours sits below it by default.
-const TOOLBAR_HEIGHT = 34;
-const TOOLBAR_GAP = 10;
 const MAX_NOTE_LENGTH = 1000;
 interface Props {
   controller: KonaController;
@@ -21,11 +19,17 @@ export function App({ controller }: Props) {
   const cardMark = state.card && state.items.find((item) => item.mark.id === state.card?.markId)?.mark;
   return (
     <div class={state.dark ? 'k-root k-dark' : 'k-root'}>
-      {state.selection && <SelectionToolbar selection={state.selection} controller={controller} />}
+      {state.selection && <SelectionBar selection={state.selection} controller={controller} />}
       <Panel state={state} controller={controller} />
-      {state.card && cardMark && (
-        <NoteCard key={cardMark.id} card={state.card} mark={cardMark} controller={controller} />
-      )}
+      {/* 10c: a tap gives the bar; the bar's Note button is what opens the
+          editor. focusNote is the controller already saying which was asked for. */}
+      {state.card &&
+        cardMark &&
+        (state.card.focusNote ? (
+          <NoteCard key={cardMark.id} card={state.card} mark={cardMark} controller={controller} />
+        ) : (
+          <MarkBar card={state.card} mark={cardMark} controller={controller} />
+        ))}
       <Minimap state={state} controller={controller} />
       {state.search && <SearchPalette search={state.search} controller={controller} />}
       {state.undo && (
@@ -54,49 +58,6 @@ function useViewState(controller: KonaController): ViewState {
   return state;
 }
 
-function SelectionToolbar({
-  selection,
-  controller,
-}: Props & { selection: NonNullable<ViewState['selection']> }) {
-  const fitsBelow = innerHeight - selection.bottom > TOOLBAR_HEIGHT + TOOLBAR_GAP * 2;
-  const top = fitsBelow
-    ? selection.bottom + TOOLBAR_GAP
-    : Math.max(TOOLBAR_GAP, selection.top - TOOLBAR_HEIGHT - TOOLBAR_GAP);
-  return (
-    <div
-      class="k-toolbar"
-      style={{ top: `${top}px`, left: `${selection.left}px` }}
-      // Keep the page's text selection alive while the toolbar is clicked.
-      onMouseDown={(event) => event.preventDefault()}
-    >
-      {selection.streaming ? (
-        <span class="k-toolbar-note">Wait for the reply to finish</span>
-      ) : (
-        <>
-          {COLORS.map((color) => (
-            <button
-              key={color}
-              class="k-dot"
-              style={{ background: HIGHLIGHT_COLORS[color] }}
-              aria-label={`Highlight in ${color}`}
-              title={color === 'yellow' ? 'Highlight (Alt+Shift+H)' : 'Highlight'}
-              onClick={() => void controller.highlight(color)}
-            />
-          ))}
-          <span class="k-divider" />
-          <button
-            class="k-icon-button"
-            aria-label="Highlight and add a note"
-            title="Highlight and add a note (Alt+Shift+N)"
-            onClick={() => void controller.highlight('yellow', { withNote: true })}
-          >
-            <PencilIcon />
-          </button>
-        </>
-      )}
-    </div>
-  );
-}
 
 function NoteCard({ card, mark, controller }: Props & { card: NoteCardState; mark: Mark }) {
   const [note, setNote] = useState(mark.note ?? '');
@@ -307,19 +268,3 @@ function SearchPalette({ search, controller }: Props & { search: SearchState }) 
     </div>
   );
 }
-
-function PencilIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" />
-    </svg>
-  );
-}
-
-
-
-
-
-
-

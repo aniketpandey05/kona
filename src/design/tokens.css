@@ -96,6 +96,11 @@
      The going-to strip is its own small set because it is the one thing
      the panel must always be able to say (decision 2e), and it is drawn
      in the accent so it cannot be mistaken for the page.
+
+     The ink has six steps because the boards use six, and the bar is what
+     needs the last two: a control's label sits above the chip grey, and
+     Delete is the one warm one, because it is the only thing on the bar
+     that cannot be undone by doing it again.
   */
   --kona-slab-top: #1e2023;
   --kona-slab-bottom: #16171a;
@@ -108,6 +113,8 @@
   --kona-slab-ink-note: #a9a49c;
   --kona-slab-ink-muted: #b9b5ae;
   --kona-slab-ink-chip: #c4c0b9;
+  --kona-slab-ink-action: #d8d4cd;
+  --kona-slab-ink-danger: #f0a58a;
   --kona-slab-going-bg: rgba(234, 88, 12, 0.14);
   --kona-slab-going-line: rgba(234, 88, 12, 0.42);
   --kona-slab-going-label: #e8b795;

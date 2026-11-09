@@ -13,4 +13,5 @@
 @import '../design/tokens.css';
 @import '../design/passage.css';
 @import './panel.css';
+@import './bar.css';
 @import './styles.css';

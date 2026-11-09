@@ -1,0 +1,85 @@
+/**
+ * The bar: the one thing you get when you mark a passage, and the same thing
+ * you get back when you tap one you already made (2g, 10c).
+ *
+ * One bar rather than two surfaces, because 2g turns on that: *the thing that
+ * tells you where a highlight went is the same thing that changes where it
+ * went.* A separate confirmation and a separate editor would be two elements
+ * doing one job, and the second would always be a click further away than the
+ * moment it is needed.
+ *
+ * Never a modifier key, anywhere in here. Kona runs on Safari on an iPhone,
+ * where there is no right-click and no modifier, and a design that rests on
+ * one is a design that works on a laptop and not on a phone (2g).
+ */
+
+.kona-bar {
+  position: fixed;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-4);
+  box-sizing: border-box;
+  padding: 7px 8px;
+  font-family: var(--kona-font-ui);
+  background: linear-gradient(180deg, var(--kona-slab-top) 0%, var(--kona-slab-bottom) 100%);
+  border: 1px solid var(--kona-slab-line);
+  border-radius: 13px;
+  box-shadow: var(--kona-shadow-slab);
+}
+
+/**
+ * The pens, at full strength. The bar is one of Kona's own rooms, so the dot
+ * is the pen rather than the transparent value it gets painted onto the page
+ * with -- that one washes out to almost nothing on a dark slab.
+ */
+.kona-bar-pen {
+  width: 23px;
+  height: 23px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--kona-radius-pill);
+  cursor: pointer;
+}
+
+/* The one it is marked in now, ringed rather than merely bigger, so it reads
+   as a state and not as the colour being slightly different. */
+.kona-bar-pen--in-use {
+  border: 2px solid var(--kona-slab-ink);
+}
+
+.kona-bar-divider {
+  width: 1px;
+  height: 21px;
+  margin: 0 var(--kona-space-4);
+  background: var(--kona-slab-control-line);
+}
+
+.kona-bar-action {
+  min-height: 30px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-slab-ink-action);
+  background: transparent;
+  border: 0;
+  border-radius: var(--kona-radius-sm);
+  cursor: pointer;
+}
+
+.kona-bar-action:hover,
+.kona-bar-action:focus-visible {
+  color: var(--kona-slab-ink);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* The only thing on the bar that doing again will not undo. */
+.kona-bar-action--danger {
+  color: var(--kona-slab-ink-danger);
+}
+
+.kona-bar-wait {
+  padding: 6px 10px;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-slab-ink-muted);
+}

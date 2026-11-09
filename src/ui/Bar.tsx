@@ -1,0 +1,125 @@
+import type { JSX } from 'preact';
+import type { KonaController, NoteCardState, ViewState } from '../content/controller';
+import { PEN_COLORS } from '../design/tokens';
+import type { HighlightColor, Mark } from '../core/types';
+
+const PENS = Object.keys(PEN_COLORS) as HighlightColor[];
+
+/** Enough to decide whether the bar fits under the selection or has to go above it. */
+const BAR_HEIGHT = 37;
+const BAR_GAP = 10;
+
+interface BarProps {
+  top: number;
+  left: number;
+  /** The pen it is already marked in, ringed. Absent before anything is marked. */
+  inUse?: HighlightColor;
+  onPick: (color: HighlightColor) => void;
+  onNote: () => void;
+  /** Only an existing highlight can be deleted, so only then is this given (10c). */
+  onDelete?: () => void;
+}
+
+/**
+ * The bar itself. Six inputs, each doing one thing, because the five copies
+ * 3b replaced became five copies by growing a prop at a time.
+ */
+function Bar({ top, left, inUse, onPick, onNote, onDelete }: BarProps): JSX.Element {
+  return (
+    <div
+      class="kona-bar"
+      style={{ top: `${top}px`, left: `${left}px` }}
+      // Keep the page's selection alive while the bar is clicked: losing it
+      // would throw away the thing being marked.
+      onMouseDown={(event) => event.preventDefault()}
+    >
+      {PENS.map((pen) => (
+        <button
+          key={pen}
+          type="button"
+          class={pen === inUse ? 'kona-bar-pen kona-bar-pen--in-use' : 'kona-bar-pen'}
+          style={{ background: PEN_COLORS[pen] }}
+          aria-label={pen === inUse ? `${pen}, in use` : pen}
+          onClick={() => onPick(pen)}
+        />
+      ))}
+      <span class="kona-bar-divider" aria-hidden="true" />
+      <button type="button" class="kona-bar-action" onClick={onNote}>
+        Note
+      </button>
+      {onDelete && (
+        <>
+          <span class="kona-bar-divider" aria-hidden="true" />
+          <button type="button" class="kona-bar-action kona-bar-action--danger" onClick={onDelete}>
+            Delete
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Marking something: the bar sits by the selection, and a pen makes the
+ * highlight. On a phone this goes to the foot of the screen instead (22),
+ * which needs an iPhone to try and is not built here.
+ */
+export function SelectionBar({
+  selection,
+  controller,
+}: {
+  selection: NonNullable<ViewState['selection']>;
+  controller: KonaController;
+}): JSX.Element {
+  const fitsBelow = innerHeight - selection.bottom > BAR_HEIGHT + BAR_GAP * 2;
+  const top = fitsBelow
+    ? selection.bottom + BAR_GAP
+    : Math.max(BAR_GAP, selection.top - BAR_HEIGHT - BAR_GAP);
+
+  if (selection.streaming) {
+    return (
+      <div class="kona-bar" style={{ top: `${top}px`, left: `${selection.left}px` }}>
+        <span class="kona-bar-wait">Wait for the reply to finish</span>
+      </div>
+    );
+  }
+
+  return (
+    <Bar
+      top={top}
+      left={selection.left}
+      onPick={(color) => void controller.highlight(color)}
+      onNote={() => void controller.highlight('yellow', { withNote: true })}
+    />
+  );
+}
+
+/**
+ * 10c. Tapping a highlight you already made brings up the same bar, now with
+ * delete. Not archive: archiving leaves a highlight painted, so doing it here
+ * would change nothing you can see -- it belongs in the library, which is the
+ * list it affects (DEFINITIONS, Archive).
+ */
+export function MarkBar({
+  card,
+  mark,
+  controller,
+}: {
+  card: NoteCardState;
+  mark: Mark;
+  controller: KonaController;
+}): JSX.Element | null {
+  if (!card.position) return null;
+  return (
+    <Bar
+      top={card.position.top}
+      left={card.position.left}
+      inUse={mark.color}
+      onPick={(color) => void controller.updateMark(mark.id, { color })}
+      // Opens the note editor on the same highlight, which is this bar's Note
+      // button doing the one thing the bar itself has no room for.
+      onNote={() => controller.editNote(mark.id)}
+      onDelete={() => void controller.remove(mark.id)}
+    />
+  );
+}
