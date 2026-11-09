@@ -2652,7 +2652,7 @@ what is written, kept here so the definitions do not have to carry it.
 
 | Defined | What exists |
 | --- | --- |
-| **Active space** | Nothing. No active id, no control, no hook in the save path. |
+| **Active space** | Built. A device-local id, a picker in the panel, a hook in the save path, and 2g's way back out. Per device and never on the space itself, for the reason now in `DEFINITIONS.md`. |
 | **Thread states** | Settled and not-settled. *Asking* does not exist, and it is the one that does the work. |
 | **Raising a question (ping)** | Nothing. Comments exist, but none can be marked a question. |
 | **Poll** | Nothing. |

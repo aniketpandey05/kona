@@ -48,6 +48,7 @@ function stub(overrides: Partial<KonaController> = {}): KonaController {
     updateMark: vi.fn(),
     editNote: vi.fn(),
     remove: vi.fn(),
+    keepOutOfSpace: vi.fn(),
     ...overrides,
   } as unknown as KonaController;
 }
@@ -131,5 +132,35 @@ describe('the bar, on a highlight you already made', () => {
     // on screen. A bar at 0,0 in the corner would be worse than none.
     const el = draw(<MarkBar card={{ ...card, position: null }} mark={mark} controller={stub()} />);
     expect(el.querySelector('.kona-bar')).toBeNull();
+  });
+});
+
+describe("the bar's escape hatch", () => {
+  it('says where it went, and offers one tap to take it out (2g)', () => {
+    const controller = stub();
+    const el = draw(
+      <MarkBar card={card} mark={mark} controller={controller} inSpace="Amoebas" />,
+    );
+    expect(el.querySelector('.kona-bar-space-name')?.textContent).toBe('In Amoebas');
+    el.querySelector<HTMLElement>('.kona-bar-space-out')?.click();
+    expect(controller.keepOutOfSpace).toHaveBeenCalledWith('m1');
+  });
+
+  it('names the space in the escape hatch, for a screen reader too', () => {
+    const el = draw(<MarkBar card={card} mark={mark} controller={stub()} inSpace="Amoebas" />);
+    expect(el.querySelector('.kona-bar-space-out')?.getAttribute('aria-label')).toBe(
+      'Keep this out of Amoebas, library only',
+    );
+  });
+
+  it('says nothing about spaces when the highlight is in none', () => {
+    const el = draw(<MarkBar card={card} mark={mark} controller={stub()} />);
+    expect(el.querySelector('.kona-bar-space')).toBeNull();
+  });
+
+  it('never offers an escape hatch before anything has been marked', () => {
+    // Nothing has gone anywhere yet, so there is nothing to take back out.
+    const el = draw(<SelectionBar selection={selection} controller={stub()} />);
+    expect(el.querySelector('.kona-bar-space')).toBeNull();
   });
 });

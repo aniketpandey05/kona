@@ -28,7 +28,16 @@ export function App({ controller }: Props) {
         (state.card.focusNote ? (
           <NoteCard key={cardMark.id} card={state.card} mark={cardMark} controller={controller} />
         ) : (
-          <MarkBar card={state.card} mark={cardMark} controller={controller} />
+          <MarkBar
+            card={state.card}
+            mark={cardMark}
+            controller={controller}
+            inSpace={
+              state.activeSpace?.items.some((each) => each.id === cardMark.id)
+                ? state.activeSpace.name
+                : undefined
+            }
+          />
         ))}
       <Minimap state={state} controller={controller} />
       {state.search && <SearchPalette search={state.search} controller={controller} />}

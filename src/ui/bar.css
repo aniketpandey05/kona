@@ -83,3 +83,43 @@
   font-size: var(--kona-text-sm);
   color: var(--kona-slab-ink-muted);
 }
+
+/**
+ * 2g. Where the highlight went, and the way to take it back out.
+ *
+ * Drawn in the accent, like the panel's going-to strip, because it is the same
+ * fact said in the same voice: a passage that went somewhere other than your
+ * own library never looks like one that did not.
+ */
+.kona-bar-space {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 5px 4px 10px;
+  background: var(--kona-slab-going-bg);
+  border: 1px solid var(--kona-slab-going-line);
+  border-radius: var(--kona-radius-pill);
+}
+
+.kona-bar-space-name {
+  font-size: var(--kona-text-sm);
+  font-weight: var(--kona-weight-medium);
+  color: var(--kona-slab-going-name);
+}
+
+.kona-bar-space-out {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  padding: 0;
+  font: inherit;
+  font-size: var(--kona-text-base);
+  line-height: 1;
+  color: var(--kona-slab-going-name);
+  background: rgba(0, 0, 0, 0.26);
+  border: 0;
+  border-radius: var(--kona-radius-pill);
+  cursor: pointer;
+}

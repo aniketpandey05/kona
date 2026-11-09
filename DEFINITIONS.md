@@ -172,6 +172,13 @@ Setting the topic once is one.
 One space is active at a time, and none being active is normal — highlights
 then go to the library only.
 
+**It belongs to the device, not to the space.** Which space you are working in
+is a statement about what you are doing at this desk right now, so a laptop and
+a phone can honestly be in the middle of different things. It also must not
+travel: spaces move between people, and if being active were a property of the
+space, opening one somebody sent you would quietly redirect where your own
+highlights go.
+
 ### A link with nothing marked on it
 
 **A space may hold a page you have not read yet** — something you found and

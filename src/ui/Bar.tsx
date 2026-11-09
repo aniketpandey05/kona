@@ -18,13 +18,15 @@ interface BarProps {
   onNote: () => void;
   /** Only an existing highlight can be deleted, so only then is this given (10c). */
   onDelete?: () => void;
+  /** The active space this one went into, when it did. 2g's escape hatch. */
+  inSpace?: { name: string; onKeepOut: () => void };
 }
 
 /**
  * The bar itself. Six inputs, each doing one thing, because the five copies
  * 3b replaced became five copies by growing a prop at a time.
  */
-function Bar({ top, left, inUse, onPick, onNote, onDelete }: BarProps): JSX.Element {
+function Bar({ top, left, inUse, onPick, onNote, onDelete, inSpace }: BarProps): JSX.Element {
   return (
     <div
       class="kona-bar"
@@ -53,6 +55,25 @@ function Bar({ top, left, inUse, onPick, onNote, onDelete }: BarProps): JSX.Elem
           <button type="button" class="kona-bar-action kona-bar-action--danger" onClick={onDelete}>
             Delete
           </button>
+        </>
+      )}
+      {/* 2g. Where it went, and the one control that takes it back out. The
+          same element doing the safety job and the escape hatch, rather than
+          two -- and one tap, never a modifier key, because a phone has none. */}
+      {inSpace && (
+        <>
+          <span class="kona-bar-divider" aria-hidden="true" />
+          <span class="kona-bar-space">
+            <span class="kona-bar-space-name">In {inSpace.name}</span>
+            <button
+              type="button"
+              class="kona-bar-space-out"
+              aria-label={`Keep this out of ${inSpace.name}, library only`}
+              onClick={inSpace.onKeepOut}
+            >
+              ×
+            </button>
+          </span>
         </>
       )}
     </div>
@@ -104,10 +125,13 @@ export function MarkBar({
   card,
   mark,
   controller,
+  inSpace,
 }: {
   card: NoteCardState;
   mark: Mark;
   controller: KonaController;
+  /** Named only when this highlight is actually in the active space. */
+  inSpace?: string;
 }): JSX.Element | null {
   if (!card.position) return null;
   return (
@@ -115,6 +139,9 @@ export function MarkBar({
       top={card.position.top}
       left={card.position.left}
       inUse={mark.color}
+      inSpace={
+        inSpace ? { name: inSpace, onKeepOut: () => void controller.keepOutOfSpace(mark.id) } : undefined
+      }
       onPick={(color) => void controller.updateMark(mark.id, { color })}
       // Opens the note editor on the same highlight, which is this bar's Note
       // button doing the one thing the bar itself has no room for.

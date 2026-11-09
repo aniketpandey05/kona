@@ -236,3 +236,119 @@
   line-height: var(--kona-leading-normal);
   color: var(--kona-slab-ink-note);
 }
+
+/**
+ * 2e. Where highlights are going, in words, whenever a space is active.
+ *
+ * Drawn in the accent so it cannot be mistaken for part of the page behind.
+ * This is what the panel is *for* as much as the list is: you set a space on
+ * Monday, forget, and spend Thursday filing amoeba research into it, and the
+ * cost is paid later when the space is full of things that have to be found
+ * and moved by hand.
+ */
+.kona-going {
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-8);
+  margin: 0 12px 11px;
+  padding: 9px 11px;
+  background: var(--kona-slab-going-bg);
+  border: 1px solid var(--kona-slab-going-line);
+  border-radius: var(--kona-radius-md);
+}
+
+.kona-going-label {
+  font-size: var(--kona-text-sm);
+  color: var(--kona-slab-going-label);
+}
+
+.kona-going-name {
+  flex-grow: 1;
+  font-size: var(--kona-text-sm);
+  font-weight: var(--kona-weight-semibold);
+  color: var(--kona-slab-going-name);
+}
+
+/**
+ * A shared space says so, with the number of people. Silently publishing your
+ * reading to colleagues is the worst failure available here (25), so this is
+ * never left to be inferred from the space's name.
+ */
+.kona-going-people {
+  padding: 2px 7px;
+  font-size: var(--kona-text-xs);
+  color: var(--kona-slab-going-name);
+  background: var(--kona-slab-going-control);
+  border-radius: var(--kona-radius-pill);
+}
+
+.kona-going-change,
+.kona-going-set,
+.kona-going-choice {
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-slab-going-name);
+  background: transparent;
+  border: 1px solid var(--kona-slab-going-control);
+  border-radius: var(--kona-radius-sm);
+  cursor: pointer;
+}
+
+.kona-going-change {
+  padding: 3px 8px;
+}
+
+/* With no space set there is no strip, only the quiet way to make one (2d). */
+.kona-going--none {
+  padding: 0 12px 11px;
+  margin: 0;
+  background: transparent;
+  border: 0;
+}
+
+.kona-going-set {
+  width: 100%;
+  padding: 7px 10px;
+  color: var(--kona-slab-ink-muted);
+  border-color: var(--kona-slab-control-line);
+}
+
+.kona-going--picking {
+  display: block;
+  padding: var(--kona-space-6);
+}
+
+.kona-going-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kona-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kona-going-choice {
+  width: 100%;
+  padding: 6px 9px;
+  text-align: left;
+  border-color: transparent;
+}
+
+.kona-going-choice:hover,
+.kona-going-choice:focus-visible {
+  border-color: var(--kona-slab-going-control);
+}
+
+/* 2e at rest: the resting pill says the space without being opened. */
+.kona-rest-space {
+  max-width: 120px;
+  overflow: hidden;
+  padding: 3px 9px;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-slab-going-name);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: var(--kona-slab-going-bg);
+  border: 1px solid var(--kona-slab-going-line);
+  border-radius: var(--kona-radius-pill);
+}

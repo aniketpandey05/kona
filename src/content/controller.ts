@@ -1,5 +1,12 @@
 import { browser, type ContentScriptContext } from '#imports';
 import type { MessageRef, SiteAdapter } from '../adapters/types';
+import {
+  fileIntoActiveSpace,
+  keepOutOfActiveSpace,
+  loadActiveSpace,
+  setActiveSpaceId,
+  watchActiveSpaceId,
+} from '../core/activeSpace';
 import { debounce } from '../core/debounce';
 import { isSiteEnabled, loadDisabledSites, watchDisabledSites } from '../core/enabledSites';
 import { describeMessage, resolveMarks, type ResolvedMark } from '../core/locate';
@@ -7,9 +14,20 @@ import type { PendingJump, RuntimeMessage } from '../core/messages';
 import { moveItem, nextOrder, sortByOrder } from '../core/order';
 import { HighlightPainter } from '../core/painter';
 import { describeQuote } from '../core/quote';
+import { linkToMark } from '../core/link';
 import { searchLibrary } from '../core/search';
 import { sameSite, siteLabel } from '../core/sites';
-import { loadAllMarks, loadMarks, removeMark, saveOrder, upsertMark, watchMarks } from '../core/store';
+import type { Space } from '../core/spaces';
+import {
+  loadAllMarks,
+  loadMarks,
+  loadMe,
+  removeMark,
+  saveOrder,
+  upsertMark,
+  watchMarks,
+  watchSpaces,
+} from '../core/store';
 import { loadTheme, watchTheme, type Theme } from '../core/theme';
 import { buildTextIndex, spanFromRange, type TextIndex, type TextSpan } from '../core/textIndex';
 import type { HighlightColor, Mark } from '../core/types';
@@ -71,6 +89,27 @@ export interface Tick {
   label: string;
 }
 
+/**
+ * The space new highlights are going into, as the panel needs to say it.
+ *
+ * 2e: the panel always says where highlights are going, in words, whenever a
+ * space is active. A quiet mode that silently changes where your work goes is
+ * a bad trade for a saved click -- you set a space on Monday, forget, and
+ * spend Thursday filing amoeba research into it.
+ */
+export interface ActiveSpaceState {
+  id: string;
+  name: string;
+  /**
+   * How many people are in it. More than one means a passage filed here is
+   * visible to other people, which is a different act from keeping it in your
+   * own library, and the panel never lets the two look alike (25).
+   */
+  people: number;
+  /** The passages already gathered here, from every page (2f). */
+  items: Mark[];
+}
+
 export interface ViewState {
   /** False when the user switched highlighting off for this site. */
   enabled: boolean;
@@ -88,6 +127,8 @@ export interface ViewState {
   /** The search box over every highlight from every site; null when closed. */
   search: SearchState | null;
   health: 'ok' | 'no-messages';
+  /** Where highlights are going, and what is already there. Null when none is set. */
+  activeSpace: ActiveSpaceState | null;
   /**
    * Highlights kept on this site but in other conversations. A new chat starts
    * empty, which looks identical to having never highlighted here at all.
@@ -123,11 +164,17 @@ export class KonaController {
     card: null,
     search: null,
     health: 'ok',
+    activeSpace: null,
     dark: false,
     notice: null,
   };
   /** Every highlight from every site, loaded when the search box opens. */
   private allMarks: Mark[] = [];
+
+  /** The space being worked in, or null. Watched, because it is set elsewhere. */
+  private activeSpace: Space | null = null;
+  private unwatchActive: (() => void) | undefined;
+  private unwatchSpaces: (() => void) | undefined;
   /** Kept for a few seconds after a delete, so it can be undone. */
   private deleted: Mark | null = null;
   /** The element the page scrolls in, found again on every refresh. */
@@ -170,8 +217,17 @@ export class KonaController {
       this.scheduleRefresh.cancel();
       this.captureWhenSettled.cancel();
       this.unwatch?.();
+      this.unwatchActive?.();
+      this.unwatchSpaces?.();
       this.painter.dispose();
     });
+
+    // Where highlights are going. Watched on both sides: the id changes when a
+    // space is picked here or in another tab, and the space's own contents
+    // change whenever anything is filed into it anywhere.
+    void this.syncActiveSpace();
+    this.unwatchActive = watchActiveSpaceId(() => void this.syncActiveSpace());
+    this.unwatchSpaces = watchSpaces(() => void this.syncActiveSpace());
 
     this.ctx.addEventListener(window, 'wxt:locationchange', ({ newUrl }) => {
       void this.openConversation(newUrl);
@@ -257,6 +313,78 @@ export class KonaController {
     this.refresh();
     if (withNote) this.openCard(mark.id, true);
     await upsertMark(mark);
+
+    // While a space is active a new highlight goes into it as well as into the
+    // library, with nothing to file by hand (DEFINITIONS, Active space).
+    if (this.activeSpace) {
+      await fileIntoActiveSpace(mark.id, await loadMe());
+      await this.syncActiveSpace();
+      // 2e and 2g together: the thing that says where it went is the same
+      // thing that takes it back out, so marking opens the bar. Only while a
+      // space is active -- with none set there is nothing to confirm, and a
+      // page you are reading stays quiet.
+      if (!withNote) this.openCard(mark.id, false);
+    }
+  }
+
+  /**
+   * 2f: picking which space is active is a small control in the panel, not a
+   * list of spaces. A picker, not a fifth screen.
+   */
+  async setActiveSpace(id: string | null): Promise<void> {
+    await setActiveSpaceId(id);
+    await this.syncActiveSpace();
+  }
+
+  /**
+   * A passage in the active space, clicked. Clicking it in a space does
+   * exactly what clicking it in the library does: it lands you on the exact
+   * words (DEFINITIONS, Space). When those words are on this page that is a
+   * jump; when they are on one of the other four articles it is the link,
+   * which is a text fragment and needs no extension at the other end.
+   */
+  openMark(mark: Mark): void {
+    if (this.marks.some((each) => each.id === mark.id)) {
+      this.jump(mark.id);
+      return;
+    }
+    window.open(linkToMark(mark), '_blank', 'noopener');
+  }
+
+  /** 2g: keep this one in the library only, after all. */
+  async keepOutOfSpace(markId: string): Promise<void> {
+    await keepOutOfActiveSpace(markId);
+    await this.syncActiveSpace();
+  }
+
+  /**
+   * Reload where highlights are going and what is already there.
+   *
+   * Every mark in the library is read, not just this page's: a space gathers
+   * across pages, which is the whole reason it exists. That only happens while
+   * a space is active, so a page with none set pays nothing for it.
+   */
+  private async syncActiveSpace(): Promise<void> {
+    const space = await loadActiveSpace();
+    this.activeSpace = space;
+    if (!space) {
+      this.setState({ activeSpace: null });
+      return;
+    }
+    this.allMarks = await loadAllMarks();
+    const byId = new Map(this.allMarks.map((mark) => [mark.id, mark]));
+    this.setState({
+      activeSpace: {
+        id: space.id,
+        name: space.name,
+        people: space.people?.length ?? 0,
+        // A space can point at a highlight that has since been deleted; the
+        // library is the only place a highlight actually lives.
+        items: space.markIds
+          .map((id) => byId.get(id))
+          .filter((mark): mark is Mark => mark !== undefined),
+      },
+    });
   }
 
   async updateMark(id: string, patch: Partial<Pick<Mark, 'color' | 'note' | 'tags'>>): Promise<void> {
