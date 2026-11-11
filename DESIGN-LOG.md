@@ -745,6 +745,55 @@ which is cheaper than renaming a tested file to free up a word.
 
 ---
 
+**3i. The bridge: where it runs, and what it may do — settled**
+
+3c agreed the bridge is worth building and said what it is — a content script
+the extension injects into Kona's own domain, bridging the page to extension
+storage by `postMessage`, because `externally_connectable` is the tidier
+mechanism and Firefox has never implemented it. What it did not say is the
+three things that decide whether it is safe.
+
+**One origin, and it is Kona's own.** The content script needs a `matches`
+entry in the manifest, which is the thing 3e emptied. That is not a
+contradiction. 3e is about claiming access to *other people's* sites before you
+have highlighted anything, and its argument is that the first sentence Kona
+says about itself should not be a demand. An entry for Kona's own domain is the
+product talking to itself. It is still exactly one, and it is still worth
+saying out loud, because "just one origin" is how a manifest grows back to
+four.
+
+**There is no domain yet**, which building this turned up rather than solved.
+The origin lives in one named constant with the development host beside it, and
+that constant is what changes when there is a real one. A placeholder spread
+across a manifest, a content script and a client is how a domain gets missed at
+launch.
+
+**It reads and writes.** Read-only was tempting and is wrong: the library is
+where you archive, delete, reorder and keep spaces, so a read-only bridge means
+a second write path, and two write paths against one store is the duplicated
+*meaning* this document counts as a defect rather than a cost.
+
+**What it refuses, which is the part that matters.** A content script listening
+on `window` hears from anything that can post to that window.
+
+| | |
+| --- | --- |
+| Not the page itself | `event.source !== window`: a page that frames Kona can post into the frame, and must not be answered |
+| Not Kona's origin | `event.origin !== location.origin` |
+| A frame at all | the script is top-level, never `all_frames` |
+| A reply to nothing | an id the page never issued is dropped |
+
+And every reply names its origin. `postMessage(reply, '*')` would hand the
+library to whatever happened to be listening, and it is shorter to write than
+doing it properly — which is exactly why it is written down here rather than
+left to be remembered.
+
+**Decided:** one content script, Kona's own origin only, top level only, read
+and write, every message checked for source and origin, every reply addressed.
+The real domain is one constant away.
+
+---
+
 ### 4. What does someone see the first time? — settled
 
 **One place that changes role.** It opens **exactly once**, when you install —
