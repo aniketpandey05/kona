@@ -2,6 +2,10 @@ import { geminiAdapter } from '../adapters/gemini';
 import { mountKona } from '../content/mount';
 
 export default defineContentScript({
-  matches: ['https://gemini.google.com/*'],
+  // 3e: not in the manifest, so nothing is granted at install. The background
+  // registers this once you allow the site, which is also when Kona can first
+  // read it.
+  registration: 'runtime',
+  matches: [],
   main: (ctx) => mountKona(ctx, geminiAdapter),
 });

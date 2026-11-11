@@ -94,9 +94,10 @@ export function Welcome() {
             to act on it: they get your question, your evidence and your conclusions, can add
             to it, and can send it back.
           </p>
-          <a class="wel-button" href={browser.runtime.getURL('/spaces.html')}>
+          {/* 3c: spaces live in the library now, which is the web app. */}
+          <button class="wel-button" onClick={openLibrary}>
             Open spaces
-          </a>
+          </button>
         </li>
       </ol>
 

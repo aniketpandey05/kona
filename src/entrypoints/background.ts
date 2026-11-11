@@ -1,20 +1,13 @@
+import { konaAppUrl } from '../core/bridge';
 import { browser, defineBackground } from '#imports';
 import type { PendingJump, RuntimeMessage } from '../core/messages';
+import { SITE_SCRIPTS, WEB_SCRIPT, scriptsForOrigins } from '../core/sites';
 import { mergeDuplicatePages } from '../core/store';
 import type { Mark } from '../core/types';
 
-const LIBRARY_PAGE = '/library.html';
-const SPACES_PAGE = '/spaces.html';
+
 const WELCOME_PAGE = '/welcome.html';
-const WEB_SCRIPT_ID = 'web-pages';
 const MENU_ID = 'highlight-selection';
-// The chat sites come with the extension; every other site is switched on by the user.
-const BUILT_IN = [
-  'https://*.chatgpt.com/*',
-  'https://chat.openai.com/*',
-  'https://*.claude.ai/*',
-  'https://gemini.google.com/*',
-];
 const pendingKey = (tabId: number) => `pending-jump:${tabId}`;
 
 /**
@@ -79,38 +72,55 @@ async function handle(message: RuntimeMessage, senderTabId: number | undefined) 
   }
 }
 
-/** The sites the user allowed, as match patterns. */
+/**
+ * The sites the user allowed, as match patterns.
+ *
+ * 3e: every one of them, with nothing filtered out, because nothing is built
+ * in any more. What the browser has granted is the whole truth about where
+ * Kona may run -- there is no second list for it to disagree with.
+ */
 async function enabledSites(): Promise<string[]> {
   const granted = await browser.permissions.getAll();
-  return (granted.origins ?? []).filter((origin) => !BUILT_IN.includes(origin));
+  return granted.origins ?? [];
 }
 
-/** Registers (or unregisters) the plain-page script for exactly the allowed sites. */
+/**
+ * Registers exactly the scripts the allowed sites need, and nothing else.
+ *
+ * Every content script is registered at runtime now (3e), including the three
+ * that know the chat sites. A site Kona has an adapter for gets that adapter;
+ * everything else gets the plain-page one. Registering the wrong one is the
+ * quiet failure here -- ChatGPT would still highlight, but as an ordinary
+ * page, and stop understanding a conversation -- so which script owns which
+ * host is decided in `core/sites.ts`, under test.
+ */
 async function syncWebSites(startOnActiveTab = false): Promise<null> {
   const matches = await enabledSites();
-  const registered = await browser.scripting
-    .getRegisteredContentScripts({ ids: [WEB_SCRIPT_ID] })
-    .catch(() => []);
+  const wanted = scriptsForOrigins(matches);
+  const wantedIds = new Set(wanted.map((each) => each.id));
+  const allIds = [...SITE_SCRIPTS.map((each) => each.id), WEB_SCRIPT.id];
 
-  if (matches.length === 0) {
-    if (registered.length) await browser.scripting.unregisterContentScripts({ ids: [WEB_SCRIPT_ID] });
-    await buildMenu(matches);
-    return null;
-  }
-  if (registered.length) {
-    await browser.scripting.updateContentScripts([
-      { id: WEB_SCRIPT_ID, matches, js: ['content-scripts/web.js'] },
-    ]);
-  } else {
-    await browser.scripting.registerContentScripts([
-      {
-        id: WEB_SCRIPT_ID,
-        matches,
-        js: ['content-scripts/web.js'],
-        runAt: 'document_idle',
-        persistAcrossSessions: true,
-      },
-    ]);
+  const registered = await browser.scripting
+    .getRegisteredContentScripts({ ids: allIds })
+    .catch(() => []);
+  const registeredIds = new Set(registered.map((each) => each.id));
+
+  // Anything granted and then taken back leaves a script with nothing to run
+  // on. Unregister it rather than leave it matching an origin Kona no longer
+  // holds.
+  const stale = [...registeredIds].filter((id) => !wantedIds.has(id));
+  if (stale.length) await browser.scripting.unregisterContentScripts({ ids: stale });
+
+  for (const script of wanted) {
+    const entry = {
+      id: script.id,
+      matches: script.matches,
+      js: [script.js],
+      runAt: 'document_idle' as const,
+      persistAcrossSessions: true,
+    };
+    if (registeredIds.has(script.id)) await browser.scripting.updateContentScripts([entry]);
+    else await browser.scripting.registerContentScripts([entry]);
   }
 
   await buildMenu(matches);
@@ -140,7 +150,9 @@ async function buildMenu(userSites: string[]): Promise<void> {
     id: MENU_ID,
     title: 'Highlight with Kona',
     contexts: ['selection'],
-    documentUrlPatterns: [...BUILT_IN, ...userSites],
+    // Only where Kona is actually allowed (3e). A right-click menu offered on
+    // a site it cannot read would do nothing when clicked.
+    documentUrlPatterns: userSites,
   });
 }
 
@@ -183,8 +195,13 @@ async function takePendingJump(tabId: number | undefined): Promise<PendingJump |
   return pending ?? null;
 }
 
+/**
+ * 3c. The library is the web app now, not a page of the extension's. A tab is
+ * a tab either way, so nothing about the gesture changes -- what changes is
+ * that there is one library instead of two that can come to disagree.
+ */
 async function openLibrary(site?: string): Promise<null> {
-  const base = browser.runtime.getURL(LIBRARY_PAGE);
+  const base = konaAppUrl('', import.meta.env.DEV);
   const url = site ? `${base}?site=${encodeURIComponent(site)}` : base;
   // The trailing * so a library already showing a filter still counts as open.
   const existing = await findTab(`${base}*`);
@@ -199,8 +216,8 @@ async function openLibrary(site?: string): Promise<null> {
 }
 
 async function openSpace(spaceId: string): Promise<null> {
-  const base = browser.runtime.getURL(SPACES_PAGE);
-  const url = `${base}#/${spaceId}`;
+  const base = konaAppUrl('', import.meta.env.DEV);
+  const url = `${base}#/spaces/${spaceId}`;
   const existing = await findTab(`${base}*`);
   if (existing?.id === undefined) {
     await browser.tabs.create({ url });

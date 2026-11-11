@@ -42,6 +42,22 @@ export function bridgeMatches(includeDev: boolean): string[] {
   return origins.map((origin) => `${origin}/*`);
 }
 
+/**
+ * Where the web app is served.
+ *
+ * 3c: the library leaves the extension entirely. The extension's library page
+ * was already just a browser tab at a `chrome-extension://` address, and the
+ * web app is a browser tab at an ordinary one -- to the person using it there
+ * is no difference at all, same gesture, same place. So moving it costs
+ * nothing anybody can perceive and removes a whole second implementation.
+ *
+ * The app builds under the landing page and is served at `/app/`.
+ */
+export function konaAppUrl(path = '', dev = false): string {
+  const origin = dev ? KONA_DEV_ORIGINS[0] : KONA_ORIGINS[0];
+  return `${origin}/app/${path}`;
+}
+
 export type BridgeRequest =
   /** Is the extension here at all, and which version. */
   | { kind: 'hello' }

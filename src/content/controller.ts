@@ -8,7 +8,6 @@ import {
   watchActiveSpaceId,
 } from '../core/activeSpace';
 import { debounce } from '../core/debounce';
-import { isSiteEnabled, loadDisabledSites, watchDisabledSites } from '../core/enabledSites';
 import { describeMessage, resolveMarks, type ResolvedMark } from '../core/locate';
 import type { PendingJump, RuntimeMessage } from '../core/messages';
 import { moveItem, nextOrder, sortByOrder } from '../core/order';
@@ -111,7 +110,15 @@ export interface ActiveSpaceState {
 }
 
 export interface ViewState {
-  /** False when the user switched highlighting off for this site. */
+  /**
+   * Whether Kona is running here at all.
+   *
+   * Since 3e there is no soft switch: a content script only exists on a site
+   * the browser has granted, so by the time this object does, the answer is
+   * yes. It is kept because the panel still has to draw nothing before a page
+   * is recognised, and because taking the permission back tears the script
+   * down rather than setting this to false.
+   */
   enabled: boolean;
   conversationId: string | null;
   /** Highlights in the user's order. */
@@ -258,14 +265,6 @@ export class KonaController {
     this.theme = await loadTheme();
     watchTheme((theme) => {
       this.theme = theme;
-      this.refresh();
-    });
-
-    const isOn = (disabled: string[]) => isSiteEnabled(disabled, location.hostname);
-    this.setState({ enabled: isOn(await loadDisabledSites()) });
-    watchDisabledSites((disabled) => {
-      if (isOn(disabled) === this.state.enabled) return;
-      this.setState({ enabled: isOn(disabled) });
       this.refresh();
     });
 

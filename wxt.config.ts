@@ -17,13 +17,12 @@ export default defineConfig({
     // "activeTab" lets the popup see which page you're on when you click the icon, and nothing more.
     // "scripting" lets the extension start highlighting on a site right after you allow it.
     permissions: ['storage', 'unlimitedStorage', 'scripting', 'activeTab', 'contextMenus'],
-    // The chat sites work out of the box; any other site is allowed one at a time from the popup.
-    host_permissions: [
-      'https://*.chatgpt.com/*',
-      'https://chat.openai.com/*',
-      'https://*.claude.ai/*',
-      'https://gemini.google.com/*',
-    ],
+    // 3e: nothing is built in. With host_permissions empty the browser raises
+    // no warning at install -- Kona asks for nothing, and asks for a site while
+    // you are standing on a page you want to keep something from. The chat
+    // sites are not special; their content scripts are registered at runtime
+    // like every other, once you allow them.
+    host_permissions: [],
     optional_host_permissions: ['*://*/*'],
     action: { default_title: 'Kona' },
     // Firefox needs an explicit add-on id to be submitted, and a floor: the CSS

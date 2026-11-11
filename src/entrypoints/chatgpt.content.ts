@@ -2,7 +2,10 @@ import { chatgptAdapter } from '../adapters/chatgpt';
 import { mountKona } from '../content/mount';
 
 export default defineContentScript({
-  // A bare host misses www., and chat.openai.com still redirects here.
-  matches: ['https://*.chatgpt.com/*', 'https://chat.openai.com/*'],
+  // 3e: not in the manifest, so nothing is granted at install. The background
+  // registers this once you allow the site, which is also when Kona can first
+  // read it.
+  registration: 'runtime',
+  matches: [],
   main: (ctx) => mountKona(ctx, chatgptAdapter),
 });

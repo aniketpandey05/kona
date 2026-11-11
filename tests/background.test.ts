@@ -134,8 +134,17 @@ it('switches a site on where there is no menu to rebuild', async () => {
 
   safari.allowSite();
 
-  await vi.waitFor(() => expect(safari.scripts).toHaveLength(1));
-  expect(safari.scripts[0]!.matches).toEqual(['https://example.com/*']);
+  // Two, not one: since 3e nothing is built in, so a granted claude.ai is a
+  // site the user allowed like any other and gets the adapter that knows it.
+  // Filtering it out here was the old behaviour, when it came with the build.
+  await vi.waitFor(() => expect(safari.scripts).toHaveLength(2));
+  expect(safari.scripts.map((each) => each.id).sort()).toEqual(['claude', 'web-pages']);
+  expect(safari.scripts.find((each) => each.id === 'web-pages')!.matches).toEqual([
+    'https://example.com/*',
+  ]);
+  expect(safari.scripts.find((each) => each.id === 'claude')!.matches).toEqual([
+    'https://*.claude.ai/*',
+  ]);
   // And highlighting starts on the page in front, without a reload, which is
   // what a throw on the way past the missing menu used to cost.
   await vi.waitFor(() => expect(safari.started).toEqual(['/content-scripts/web.js']));

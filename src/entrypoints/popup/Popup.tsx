@@ -1,28 +1,42 @@
 import { browser } from '#imports';
 import { useEffect, useState } from 'preact/hooks';
-import { isSiteEnabled, loadDisabledSites, setSiteEnabled, siteKey, watchDisabledSites } from '../../core/enabledSites';
 import type { RuntimeMessage } from '../../core/messages';
 import { KonaMark } from '../../ui/KonaMark';
 
-const BUILT_IN = [
-  { host: 'chatgpt.com', label: 'ChatGPT' },
-  { host: 'claude.ai', label: 'Claude' },
-  { host: 'gemini.google.com', label: 'Gemini' },
-];
-
+/**
+ * The popup, as 3e leaves it: **this site, and whether Kona may read it.**
+ *
+ * It survives for one reason. `browser.permissions.request` must be called
+ * from an extension page on a user gesture — a content script cannot ask, and
+ * on a site Kona is not yet allowed on there is no content script at all, so
+ * the toolbar button has to open *something*.
+ *
+ * What went, and why:
+ *
+ * - **The built-in sites.** Nothing is built in. Preloading the chat sites is
+ *   a treadmill (every new chat product is a release), wrong by default for
+ *   everybody who does not use them, and claims four origins before you have
+ *   highlighted anything.
+ * - **The list of sites you have added.** Fine at three and unreadable at
+ *   twenty, and twenty is the success case. A list that gets worse the more
+ *   you use the product is the wrong list — and the browser already draws it,
+ *   authoritatively, on its own extensions screen.
+ * - **The soft switch.** `local:disabled-sites` was a second list that could
+ *   disagree with the browser's: revoke a site from the browser's screen and
+ *   Kona's copy never heard, so the popup went on offering a switch for a site
+ *   it could no longer touch. With nothing built in, *allowed* and *on*
+ *   collapse into one fact and the second list has no reason to exist.
+ */
 const send = (message: RuntimeMessage) => browser.runtime.sendMessage(message);
 const patternFor = (url: URL) => `${url.protocol}//${url.hostname}/*`;
-const hostFromPattern = (pattern: string) => pattern.replace(/^https?:\/\//, '').replace(/\/\*$/, '');
 
 export function Popup() {
   const [url, setUrl] = useState<URL | null>(null);
   const [ready, setReady] = useState(false);
   const [allowed, setAllowed] = useState<string[]>([]);
-  const [switchedOff, setSwitchedOff] = useState<string[]>([]);
 
   const refresh = async () => {
     setAllowed(((await send({ type: 'list-sites' })) as string[]) ?? []);
-    setSwitchedOff(await loadDisabledSites());
   };
 
   useEffect(() => {
@@ -36,37 +50,25 @@ export function Popup() {
       await refresh();
       setReady(true);
     })();
-    return watchDisabledSites(setSwitchedOff);
   }, []);
 
-  const isOn = (host: string) => isSiteEnabled(switchedOff, host);
-
-  const toggleSite = async (host: string, on: boolean) => {
-    await setSiteEnabled(host, on);
-    await refresh();
-  };
-
-  /** Allowing a new site needs Chrome's permission; everything else is just a switch. */
-  const allowCurrentSite = async (pattern: string, host: string) => {
-    const granted = await browser.permissions.request({ origins: [pattern] });
-    if (!granted) return;
-    await setSiteEnabled(host, true);
-    await send({ type: 'sites-changed' });
-    await refresh();
-  };
-
-  const forgetSite = async (pattern: string) => {
-    await browser.permissions.remove({ origins: [pattern] });
-    await setSiteEnabled(hostFromPattern(pattern), true);
-    await send({ type: 'sites-changed' });
-    await refresh();
-  };
-
   const hostname = url?.hostname ?? '';
-  const builtIn = BUILT_IN.some((site) => siteKey(site.host) === siteKey(hostname));
   const supported = url?.protocol === 'https:' || url?.protocol === 'http:';
   const pattern = url && supported ? patternFor(url) : null;
-  const knownHere = builtIn || (pattern ? allowed.includes(pattern) : false);
+  const on = pattern ? allowed.includes(pattern) : false;
+
+  /**
+   * One switch, and it is the permission itself. Turning it on asks the
+   * browser; turning it off hands the permission back, so Kona's idea of where
+   * it may run and the browser's cannot drift apart.
+   */
+  const toggle = async () => {
+    if (!pattern) return;
+    if (on) await browser.permissions.remove({ origins: [pattern] });
+    else if (!(await browser.permissions.request({ origins: [pattern] }))) return;
+    await send({ type: 'sites-changed' });
+    await refresh();
+  };
 
   return (
     <main class="pop">
@@ -86,15 +88,7 @@ export function Popup() {
         </p>
       ) : (
         <label class="pop-toggle">
-          <input
-            type="checkbox"
-            checked={knownHere && isOn(hostname)}
-            onChange={() =>
-              void (knownHere
-                ? toggleSite(hostname, !isOn(hostname))
-                : allowCurrentSite(pattern, hostname))
-            }
-          />
+          <input type="checkbox" checked={on} onChange={() => void toggle()} />
           <span class="pop-switch" aria-hidden="true" />
           <span>
             Highlight on <strong>{hostname}</strong>
@@ -102,69 +96,15 @@ export function Popup() {
         </label>
       )}
 
-      {ready && pattern && !knownHere && (
-        <p class="pop-hint">Chrome will ask you to allow this site. Nothing happens until you do.</p>
-      )}
-
-      <section class="pop-sites">
-        <h2>Built in</h2>
-        <ul>
-          {BUILT_IN.map(({ host, label }) => (
-            <li key={host}>
-              <span>{label}</span>
-              <label class="pop-row-toggle">
-                <input
-                  type="checkbox"
-                  checked={isOn(host)}
-                  aria-label={`Highlight on ${label}`}
-                  onChange={() => void toggleSite(host, !isOn(host))}
-                />
-                <span class="pop-switch pop-switch-small" aria-hidden="true" />
-              </label>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {allowed.length > 0 && (
-        <section class="pop-sites">
-          <h2>Sites you've added</h2>
-          <ul>
-            {allowed.map((site) => {
-              const host = hostFromPattern(site);
-              return (
-                <li key={site}>
-                  <span title={host}>{host}</span>
-                  <label class="pop-row-toggle">
-                    <input
-                      type="checkbox"
-                      checked={isOn(host)}
-                      aria-label={`Highlight on ${host}`}
-                      onChange={() => void toggleSite(host, !isOn(host))}
-                    />
-                    <span class="pop-switch pop-switch-small" aria-hidden="true" />
-                  </label>
-                  <button
-                    class="pop-forget"
-                    onClick={() => void forgetSite(site)}
-                    aria-label={`Forget ${host}`}
-                    title="Forget this site and give the permission back"
-                  >
-                    ✕
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
+      {ready && pattern && !on && (
+        <p class="pop-hint">Your browser will ask you to allow this site. Nothing happens until you do.</p>
       )}
 
       {/*
         One way in, and it has to go through the background. A plain <a> here
-        navigates the popup itself, which is a 380px window: the Spaces page
-        loaded into it with its nav stacked on top of itself and the whole
-        thing scrolling. `open-library` opens a real tab, or focuses the one
-        already open, and the library is where both highlights and spaces are.
+        navigates the popup itself, which is a 380px window. `open-library`
+        opens a real tab, or focuses the one already open — and since 3c the
+        library is the web app, at an ordinary address.
       */}
       <section class="pop-open">
         <button
@@ -174,7 +114,7 @@ export function Popup() {
             window.close();
           }}
         >
-          Open
+          Library
         </button>
         <p class="pop-hint pop-open-hint">Your highlights and your spaces, in a tab.</p>
       </section>
