@@ -1,0 +1,320 @@
+/**
+ * The library, on paper.
+ *
+ * Decision 17: dark in the page, light in our own rooms. The panel is a dark
+ * slab because it floats over somebody else's article and has to stay legible
+ * over anything; this is your own room, so it is paper and takes the paper
+ * tokens.
+ *
+ * Every value here comes from design/tokens.css. The passage itself is the
+ * shared core and is not styled here at all -- only the frame around it is,
+ * which is 3b's whole division of labour.
+ */
+
+.lib {
+  min-height: 100vh;
+  background: var(--kona-paper);
+  color: var(--kona-paper-ink-soft);
+  font-family: var(--kona-font-ui);
+}
+
+.lib-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* The header: the three bars, the mark, and the search box that spans
+   everything you kept (15). */
+.lib-top {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kona-space-16);
+  padding: var(--kona-space-16) var(--kona-space-24);
+  border-bottom: 1px solid var(--kona-paper-line-strong);
+}
+
+.lib-bars {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--kona-space-4);
+  width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--kona-radius-md);
+  cursor: pointer;
+}
+
+.lib-bars > span {
+  display: block;
+  height: 1.8px;
+  background: var(--kona-paper-ink-note);
+  border-radius: 2px;
+}
+
+.lib-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-10);
+  font-size: var(--kona-text-lg);
+  color: var(--kona-paper-ink-heading);
+}
+
+.lib-search {
+  flex: 999 1 400px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-10);
+  padding: var(--kona-space-10) 15px;
+  color: var(--kona-paper-ink-muted);
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: 11px;
+}
+
+.lib-search input {
+  flex-grow: 1;
+  min-width: 0;
+  padding: 0;
+  font: inherit;
+  font-size: var(--kona-text-md);
+  color: var(--kona-paper-ink-soft);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.lib-body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/**
+ * The nav. Gmail-shaped, one place at a time (17), and what makes unlimited
+ * spaces survivable: forty rows scan, forty tabs do not.
+ */
+.lib-nav {
+  box-sizing: border-box;
+  flex: 1 1 236px;
+  max-width: 262px;
+  display: flex;
+  flex-direction: column;
+  padding: var(--kona-space-16) var(--kona-space-16) 18px;
+  border-right: 1px solid var(--kona-paper-line-strong);
+}
+
+.lib-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-10);
+  min-height: 38px;
+  padding: 0 var(--kona-space-12);
+  font-size: var(--kona-text-base);
+  color: var(--kona-paper-ink-note);
+  text-decoration: none;
+  border-radius: var(--kona-radius-md);
+}
+
+.lib-nav-item:hover {
+  background: var(--kona-paper-sunken);
+}
+
+.lib-nav-item--on {
+  font-weight: var(--kona-weight-semibold);
+  color: var(--kona-paper-ink-heading);
+  background: var(--kona-paper-sunken);
+}
+
+.lib-nav-count {
+  margin-left: auto;
+  font-size: var(--kona-text-sm);
+  font-weight: var(--kona-weight-normal);
+  color: var(--kona-paper-ink-muted);
+}
+
+.lib-nav-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--kona-radius-pill);
+  background: var(--kona-paper-dot-empty);
+}
+
+.lib-nav-head {
+  margin: 18px 0 var(--kona-space-6);
+  padding: 0 var(--kona-space-12);
+  font-size: var(--kona-text-xs);
+  letter-spacing: var(--kona-tracking-caps);
+  text-transform: uppercase;
+  color: var(--kona-paper-ink-faint);
+}
+
+/* 17a: the account row sits at the foot of the sidebar, quiet. */
+.lib-nav-foot {
+  margin-top: auto;
+  padding-top: var(--kona-space-20);
+  border-top: 1px solid var(--kona-paper-line);
+}
+
+.lib-account {
+  margin: var(--kona-space-10) 0 0;
+  padding: 0 var(--kona-space-12);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+}
+
+.lib-main {
+  box-sizing: border-box;
+  flex: 999 1 560px;
+  min-width: 0;
+  padding: var(--kona-space-20) var(--kona-space-24) 56px;
+}
+
+.lib-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--kona-space-12);
+  margin-bottom: var(--kona-space-16);
+}
+
+.lib-head h1 {
+  margin: 0;
+  font-size: var(--kona-text-2xl);
+  font-weight: var(--kona-weight-semibold);
+  letter-spacing: -0.01em;
+  color: var(--kona-paper-ink);
+}
+
+.lib-head p {
+  margin: 0;
+  font-size: var(--kona-text-base);
+  color: var(--kona-paper-ink-muted);
+}
+
+/* The chips. Colour, site, when — and they stack, which is what makes them a
+   different kind of control from the nav (17). */
+.lib-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kona-space-8);
+  margin-bottom: var(--kona-space-20);
+}
+
+.lib-chip {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-6);
+  min-height: 34px;
+  padding: 7px 13px;
+  font: inherit;
+  font-size: var(--kona-text-base);
+  color: var(--kona-paper-ink-note);
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-pill);
+  cursor: pointer;
+}
+
+.lib-chip--pens {
+  padding-right: var(--kona-space-12);
+  cursor: default;
+}
+
+.lib-chip-label {
+  color: var(--kona-paper-ink-note);
+}
+
+/**
+ * A pen in the filter is the pen at full strength, like everywhere in Kona's
+ * own rooms. Unpicked ones are dimmed rather than greyed, so the colour is
+ * still what identifies them.
+ */
+.lib-pen {
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--kona-radius-pill);
+  opacity: 0.45;
+  cursor: pointer;
+}
+
+.lib-pen--on {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--kona-paper-raised), 0 0 0 3px var(--kona-accent);
+}
+
+.lib-list {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* This screen's surroundings for the shared passage (3b). */
+.lib-row {
+  box-sizing: border-box;
+  padding: 3px 2px 18px;
+  border-bottom: 1px solid var(--kona-paper-line);
+}
+
+.lib-row:last-child {
+  border-bottom: 0;
+}
+
+.lib-row-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.lib-row-where {
+  margin: var(--kona-space-8) 0 0;
+  padding-left: 24px;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+}
+
+.lib-none {
+  margin: var(--kona-space-24) 0;
+  font-size: var(--kona-text-md);
+  color: var(--kona-paper-ink-muted);
+}
+
+/* The nav folds behind the three bars on a phone (17). */
+@media (max-width: 839px) {
+  .lib-bars {
+    display: flex;
+  }
+
+  .lib-nav {
+    display: none;
+    flex-basis: 100%;
+    max-width: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--kona-paper-line-strong);
+  }
+
+  .lib-nav--open {
+    display: flex;
+  }
+}
+
+/* 15: the words that earned a result its place. */
+.lib-also {
+  margin: calc(-1 * var(--kona-space-12)) 0 var(--kona-space-16);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+}
