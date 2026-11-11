@@ -320,15 +320,56 @@ would cost to change.
 
 ---
 
+## The rest of the in-page product
+
+### The note editor, and two things that should not exist — this commit
+
+The last of `src/ui/styles.css`, which is now deleted.
+
+**The note editor** is rebuilt on the tokens as `Note.tsx`, and it lost half of
+itself on the way: the old card carried the pens and Delete in its header, but
+10c put both on the bar and the editor opens *from* that bar. Repeating them
+was the same control in two places, one click apart, disagreeing about which
+you pressed. What is left is what the editor is actually for — your words, and
+your tags.
+
+**Search in the panel was already decided against.** 15 says *no search in the
+panel* in as many words. The palette had simply never been removed, which makes
+it the third settled decision this rebuild found unimplemented, after 3c and
+3e.
+
+**The minimap had never been decided at all** — not in any of the three
+documents, not on any board. 2j settles it: it goes. 2b settles three resting
+states and a permanent fourth thing is not one of them; 2c says Kona is a guest
+on every page, and a guest does not put two pieces of furniture in the room.
+
+Removing both left the controller carrying their machinery — the search state,
+the tick building, the viewport slice tracked on every scroll. All gone.
+
+**Measured afterwards.** The in-page surfaces now declare **zero** values of
+their own: `panel.css`, `bar.css` and `note.css` all read entirely from the
+token file. Only the extension's own pages are left — `popup.css` at 21 and
+`welcome.css` at 18. The build dropped from **548 KB to 468 KB**.
+
+**A test environment finding worth keeping.** The click-away save could not be
+tested until I measured when preact's effects actually run under happy-dom:
+not on the render tick, and not on the next one — they need a frame, because
+preact schedules on `requestAnimationFrame` and happy-dom backs that with a
+timer. The test waits for one rather than guessing.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 437 |
+| Tests | 445 |
 | `src/ui/App.tsx` | 766 → 279 lines |
 | Removed | 4,698 lines of duplicated screens, plus the soft switch |
-| Built | the token file, the passage core, the fonts, the panel, the bar, the active space, the bridge, the Highlights view |
-| Not yet | Spaces rebuilt, archiving, `team/` folded in (3d) |
+| Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the Highlights view |
+| Removed as decided | the extension's library, spaces and plans pages; the soft switch; the panel's search (15); the minimap (2j) |
+| In-page, on the tokens | all of it — `panel.css`, `bar.css`, `note.css` declare nothing of their own |
+| Not yet | Welcome/About (4), Spaces rebuilt, archiving, `team/` folded in (3d) |
 
 **Still carrying the old sketch:** `team/` has not been touched, so 3d — one
 web app, not two — is still only a decision. `app/`'s Spaces screen is still

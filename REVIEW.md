@@ -48,6 +48,19 @@ Reversible only by reverting the commit.
 quietly redirect where your own highlights go, which 25 calls the worst failure
 available here. Changing this later means a migration.
 
+**The minimap is gone (2j).** This is the one I would most expect you to push
+back on, because it removes something that worked and that no decision asked me
+to remove. My argument is in the log: 2b settles three resting states and the
+minimap was a permanent fourth; 2c says Kona is a guest on every page; and what
+it answered is the panel's first tab, one click away, with the words as well as
+the position. What is lost is seeing at a glance that a long page has marks
+further down. Reversible — it was a self-contained component — but it is a
+deletion, so it is here rather than lower down.
+
+**The note editor lost its pens and its Delete.** They are on the bar, and the
+editor opens from the bar, so they were the same control twice. If you think
+the editor should still be able to delete, that is a one-line change.
+
 ---
 
 ## Moderate — shape rather than substance

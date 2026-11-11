@@ -14,7 +14,6 @@ import { moveItem, nextOrder, sortByOrder } from '../core/order';
 import { HighlightPainter } from '../core/painter';
 import { describeQuote } from '../core/quote';
 import { linkToMark } from '../core/link';
-import { searchLibrary } from '../core/search';
 import { sameSite, siteLabel } from '../core/sites';
 import type { Space } from '../core/spaces';
 import {
@@ -63,29 +62,11 @@ export interface PanelItem {
   found: boolean;
 }
 
-export interface SearchState {
-  query: string;
-  results: Mark[];
-  /** Which result the arrow keys are on. */
-  active: number;
-  /** Words nobody typed that earned a result its place. */
-  alsoMatched: string[];
-}
-
 export interface NoteCardState {
   markId: string;
   /** Viewport position next to the highlight; null docks the card beside the panel. */
   position: { top: number; left: number } | null;
   focusNote: boolean;
-}
-
-/** A highlight's place in the whole page, for the ticks beside the scrollbar. */
-export interface Tick {
-  id: string;
-  color: HighlightColor;
-  /** 0 at the top of the page, 1 at the bottom. */
-  at: number;
-  label: string;
 }
 
 /**
@@ -123,16 +104,11 @@ export interface ViewState {
   conversationId: string | null;
   /** Highlights in the user's order. */
   items: PanelItem[];
-  ticks: Tick[];
-  /** Which slice of the page is on screen, as fractions, for the minimap. */
-  viewport: { top: number; height: number } | null;
   /** A just-deleted highlight that can still be brought back. */
   undo: { label: string } | null;
   /** Viewport position of the current text selection, when it can be highlighted. */
   selection: { top: number; bottom: number; left: number; streaming: boolean } | null;
   card: NoteCardState | null;
-  /** The search box over every highlight from every site; null when closed. */
-  search: SearchState | null;
   health: 'ok' | 'no-messages';
   /** Where highlights are going, and what is already there. Null when none is set. */
   activeSpace: ActiveSpaceState | null;
@@ -164,12 +140,9 @@ export class KonaController {
     elsewhere: 0,
     noun: 'chat',
     items: [],
-    ticks: [],
-    viewport: null,
     undo: null,
     selection: null,
     card: null,
-    search: null,
     health: 'ok',
     activeSpace: null,
     dark: false,
@@ -542,64 +515,6 @@ export class KonaController {
     this.openCard(id, true);
   }
 
-  /** Opens the search box over everything saved, from any site. */
-  async openSearch(): Promise<void> {
-    this.allMarks = await loadAllMarks();
-    const recent = [...this.allMarks].sort((a, b) => b.createdAt - a.createdAt);
-    this.setState({
-      search: { query: '', results: recent.slice(0, SEARCH_RESULTS), active: 0, alsoMatched: [] },
-    });
-  }
-
-  searchFor(query: string): void {
-    if (!this.state.search) return;
-    const found = query.trim() ? searchLibrary(this.allMarks, query) : null;
-    const matches = found
-      ? found.marks
-      : [...this.allMarks].sort((a, b) => b.createdAt - a.createdAt);
-    this.setState({
-      search: {
-        query,
-        results: matches.slice(0, SEARCH_RESULTS),
-        active: 0,
-        alsoMatched: found?.alsoMatched ?? [],
-      },
-    });
-  }
-
-  moveSearch(delta: number): void {
-    const search = this.state.search;
-    if (!search?.results.length) return;
-    this.setState({
-      search: { ...search, active: clamp(search.active + delta, 0, search.results.length - 1) },
-    });
-  }
-
-  moveSearchTo(active: number): void {
-    const search = this.state.search;
-    if (search && search.active !== active) this.setState({ search: { ...search, active } });
-  }
-
-  closeSearch(): void {
-    if (this.state.search) this.setState({ search: null });
-  }
-
-  /** Opens the chosen result: jump if it's on this page, otherwise hand it to the background. */
-  openSearchResult(mark?: Mark): void {
-    const search = this.state.search;
-    const target = mark ?? search?.results[search.active];
-    if (!target) return;
-    this.closeSearch();
-
-    if (target.site === this.adapter.site && target.conversationId === this.state.conversationId) {
-      this.jump(target.id);
-      return;
-    }
-    void browser.runtime
-      .sendMessage({ type: 'open-mark', mark: target } satisfies RuntimeMessage)
-      .catch(() => undefined);
-  }
-
   /** Opens the library page listing highlights from every site. */
   openLibrary(site?: string): void {
     void browser.runtime
@@ -674,8 +589,7 @@ export class KonaController {
       items: [],
       selection: null,
       card: null,
-      search: null,
-      health: 'ok',
+        health: 'ok',
     });
     if (!conversationId) {
       this.refresh();
@@ -725,7 +639,7 @@ export class KonaController {
       this.resolved.clear();
       this.painter.paint([]);
       this.painter.clearFlash();
-      this.setState({ items: [], ticks: [], card: null, selection: null, search: null });
+      this.setState({ items: [], card: null, selection: null });
       return;
     }
     const messages = conversationId ? this.adapter.getMessages() : [];
@@ -743,30 +657,10 @@ export class KonaController {
     this.scroller = this.findScroller();
     this.setState({
       items: sortByOrder(this.marks).map((mark) => ({ mark, found: this.resolved.has(mark.id) })),
-      ticks: this.buildTicks(resolved),
-      viewport: viewportSlice(this.scroller),
       card: cardStillValid ? { ...card, position: this.cardPosition(card.markId) } : null,
       health: brokenLayout ? 'no-messages' : 'ok',
       // "System" means matching the page we're sitting on, which is what looks right in context.
       dark: this.theme === 'system' ? isDarkPage() : this.theme === 'dark',
-    });
-  }
-
-  /** Where each highlight sits in the whole page, as a fraction, for the ticks. */
-  private buildTicks(resolved: ResolvedMark[]): Tick[] {
-    const scroller = this.scroller;
-    if (!scroller) return [];
-    const scrollerTop = scroller === document.scrollingElement ? 0 : scroller.getBoundingClientRect().top;
-    const height = Math.max(scroller.scrollHeight, 1);
-
-    return resolved.map(({ mark, range }) => {
-      const offset = range.getBoundingClientRect().top - scrollerTop + scroller.scrollTop;
-      return {
-        id: mark.id,
-        color: mark.color,
-        at: clamp(offset / height, 0, 1),
-        label: mark.label || mark.snapshot,
-      };
     });
   }
 
@@ -860,8 +754,6 @@ export class KonaController {
     if (!this.state.enabled) return;
     if (event.altKey && event.shiftKey && (event.code === 'KeyH' || event.code === 'KeyN')) {
       void this.highlight('yellow', { withNote: event.code === 'KeyN' });
-    } else if (event.altKey && event.shiftKey && event.code === 'KeyF') {
-      void this.openSearch();
     } else if (event.altKey && event.shiftKey && (event.code === 'ArrowDown' || event.code === 'ArrowUp')) {
       this.step(event.code === 'ArrowDown' ? 1 : -1);
     } else if (event.shiftKey || event.key.startsWith('Arrow')) {
@@ -874,7 +766,6 @@ export class KonaController {
     this.clearSelectionDraft();
     const card = this.state.card;
     this.setState({
-      viewport: viewportSlice(this.scroller),
       card: card?.position ? { ...card, position: this.cardPosition(card.markId) } : card,
     });
   };
@@ -890,15 +781,6 @@ export class KonaController {
     this.state = { ...this.state, ...patch };
     for (const listener of this.listeners) listener();
   }
-}
-
-function viewportSlice(scroller: HTMLElement | null): ViewState['viewport'] {
-  if (!scroller) return null;
-  const height = Math.max(scroller.scrollHeight, 1);
-  return {
-    top: clamp(scroller.scrollTop / height, 0, 1),
-    height: clamp(scroller.clientHeight / height, 0.03, 1),
-  };
 }
 
 function delay(ctx: ContentScriptContext, ms: number): Promise<void> {

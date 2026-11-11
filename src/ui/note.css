@@ -1,0 +1,169 @@
+/**
+ * Your note on a highlight. The slab, like everything else Kona puts over
+ * somebody else's page (17).
+ *
+ * It sits where the highlight is, so it is the same dark as the panel and the
+ * bar rather than paper — a light card here would be a third thing to look at
+ * over an article, and would stop being legible over a dark page.
+ */
+
+.kona-note {
+  position: fixed;
+  z-index: 2147483647;
+  box-sizing: border-box;
+  width: 324px;
+  max-width: calc(100vw - var(--kona-space-24) * 2);
+  padding: var(--kona-space-12);
+  font-family: var(--kona-font-ui);
+  color: var(--kona-slab-ink);
+  background: linear-gradient(180deg, var(--kona-slab-top) 0%, var(--kona-slab-bottom) 100%);
+  border: 1px solid var(--kona-slab-line);
+  border-radius: var(--kona-radius-lg);
+  box-shadow: var(--kona-shadow-slab);
+}
+
+/* No highlight on screen to sit beside: the panel's corner, and the passage
+   said above the note so you know what you are writing about. */
+.kona-note--docked {
+  right: var(--kona-space-24);
+  bottom: var(--kona-space-24);
+}
+
+.kona-note-quote {
+  margin: 0 0 var(--kona-space-10);
+  padding-left: var(--kona-space-8);
+  font-size: var(--kona-text-sm);
+  line-height: var(--kona-leading-snug);
+  color: var(--kona-slab-ink-passage);
+  border-left: 2px solid var(--kona-slab-control-line);
+}
+
+.kona-note-text {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  padding: var(--kona-space-8) var(--kona-space-10);
+  font: inherit;
+  font-size: var(--kona-text-base);
+  line-height: var(--kona-leading-normal);
+  color: var(--kona-slab-ink);
+  background: var(--kona-slab-card);
+  border: 1px solid var(--kona-slab-card-line);
+  border-radius: var(--kona-radius-sm);
+  resize: vertical;
+}
+
+.kona-note-text:focus-visible {
+  outline: none;
+  /* The accent edge, the same one the passage core gives a note on the slab —
+     so the thing you are typing into is marked the way the result will be. */
+  border-color: var(--kona-accent);
+}
+
+.kona-note-text::placeholder {
+  color: var(--kona-slab-ink-note);
+}
+
+.kona-note-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kona-space-6);
+  margin-top: var(--kona-space-10);
+}
+
+.kona-note-tag {
+  padding: 3px var(--kona-space-8);
+  font: inherit;
+  font-size: var(--kona-text-xs);
+  color: var(--kona-slab-ink-chip);
+  background: var(--kona-slab-card);
+  border: 1px solid var(--kona-slab-control-line);
+  border-radius: var(--kona-radius-pill);
+  cursor: pointer;
+}
+
+.kona-note-tag:hover {
+  color: var(--kona-slab-ink);
+  border-color: var(--kona-slab-ink-note);
+}
+
+.kona-note-tag-input {
+  flex: 1 1 110px;
+  min-width: 0;
+  padding: 3px var(--kona-space-4);
+  font: inherit;
+  font-size: var(--kona-text-xs);
+  color: var(--kona-slab-ink);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.kona-note-tag-input::placeholder {
+  color: var(--kona-slab-ink-note);
+}
+
+.kona-note-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-8);
+  margin-top: var(--kona-space-12);
+}
+
+.kona-note-hint {
+  flex-grow: 1;
+  font-size: var(--kona-text-xs);
+  color: var(--kona-slab-ink-note);
+}
+
+.kona-note-save {
+  padding: var(--kona-space-6) var(--kona-space-12);
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  font-weight: var(--kona-weight-medium);
+  color: var(--kona-mark-ink);
+  background: var(--kona-slab-ink);
+  border: 0;
+  border-radius: var(--kona-radius-sm);
+  cursor: pointer;
+}
+
+/**
+ * What the undo strip and a notice look like. Both are the panel's voice
+ * saying one sentence, so they are the slab at its smallest.
+ *
+ * 23: a failed sync is the only thing Kona ever speaks up about, and that
+ * happens in the library. These two are not notifications — they are the
+ * consequence of something you just did, on the page you did it.
+ */
+.kona-say {
+  position: fixed;
+  left: 50%;
+  bottom: var(--kona-space-24);
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-10);
+  padding: var(--kona-space-8) var(--kona-space-12);
+  font-family: var(--kona-font-ui);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-slab-ink);
+  background: linear-gradient(180deg, var(--kona-slab-top) 0%, var(--kona-slab-bottom) 100%);
+  border: 1px solid var(--kona-slab-line);
+  border-radius: var(--kona-radius-pill);
+  box-shadow: var(--kona-shadow-pill);
+  transform: translateX(-50%);
+}
+
+.kona-say-do {
+  padding: 3px var(--kona-space-8);
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  font-weight: var(--kona-weight-medium);
+  color: var(--kona-slab-going-name);
+  background: transparent;
+  border: 1px solid var(--kona-slab-going-control);
+  border-radius: var(--kona-radius-sm);
+  cursor: pointer;
+}

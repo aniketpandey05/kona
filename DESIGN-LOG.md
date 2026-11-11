@@ -388,6 +388,42 @@ explains nothing reads as broken. It has to say where spaces come from.
 **Decided:** the picker switches between the spaces you have and setting none.
 Making one happens in the library. With no spaces yet, the picker says so.
 
+**2j. The minimap goes, and search was never the panel's — settled**
+
+Two things were on the page that no decision had ever asked for. They came to
+light only when the panel was rebuilt and they were the last of the old
+stylesheet still standing, which is its own small argument for rebuilding
+rather than patching.
+
+**Search in the panel was already decided against.** 15 says it in as many
+words: *no search in the panel* — a page's highlights are already in front of
+you, a search box over four rows is furniture, and the panel's job is *here*
+while the library's is *everything*. The palette was simply never removed.
+This is 3c and 3e again: a settled decision that the code had not been told
+about.
+
+**The minimap is a new decision, because nothing anywhere mentions it.** It
+drew ticks beside the scrollbar showing where this page's highlights are. It is
+not in `DIRECTION.md`, not in `DEFINITIONS.md`, not in any decision here, and
+not on any board. It is exactly what this document exists to catch: something
+that got built because it seemed nice while somebody was in the file.
+
+Taken on its merits it still goes. **2b settles three resting states** — out of
+the way, a small mark, open — and the minimap is a permanent fourth thing,
+present on every page you have ever highlighted, which none of the three
+describes. **2c says Kona is a guest on every page it appears on**, and a guest
+does not put two pieces of furniture in the room. And what it answered — *where
+are this page's highlights* — is already the panel's first tab, one click away,
+with the words as well as the position.
+
+What is given up, honestly: on a very long page, seeing at a glance that there
+are marks further down without opening anything. That is a real loss and a
+small one, and the count on the resting mark already says *that* there are
+some.
+
+**Decided:** both go. If the minimap is ever missed, it comes back as a
+decision rather than as a habit, and it has to answer 2b first.
+
 ### 3. Why the screens do not look like one product
 
 *Read 3a and 3b as rules for building, not as repairs.* They were written to
