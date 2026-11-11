@@ -345,6 +345,49 @@ The contested corner is accepted rather than engineered around.
 The 324 and the 840 are the panel's own measurements and live with the panel,
 not in the token file — the rule from *3a and 3b, as built*.
 
+**2i. The picker switches between spaces. It does not make one — settled**
+
+2f settled that picking the active space is a small control in the panel, a
+picker rather than a fifth screen. It did not say whether you can make a space
+from there, and the sketch could, so the question came up the moment the panel
+was rebuilt without it.
+
+**Switching belongs in the panel.** You are researching amoebas, you are on
+the sixth article, and the thing in front of you belongs in Housing instead.
+Leaving the page to re-aim breaks the reading, which 2f says in its own words
+is the thing Kona is supposed to protect. That is about *this moment, while
+reading*, so it belongs where you are.
+
+**Making one does not, and 25 is what settles it.** *Nothing in the extension
+is capped, so the extension sells nothing.* Free has a hard five spaces (11,
+and the cap is hard precisely because archiving a space is Pro). If a space can
+be made in the panel then the wall at five can be hit in the panel — and the
+panel then has to either refuse with no explanation, which is a dead end in the
+middle of somebody's article, or offer Pro on top of a page you are reading,
+which is the one thing 25 forbids the extension from doing. There is no third
+answer, and the right place for that conversation is the library, where 25
+already puts it: offered where the limit is felt and nowhere else.
+
+2f's own line points the same way. *The panel shows passages and never a
+space's machinery.* A space has a name, a question, a note, labels and a hand
+order. Asking only for the name still puts the front door of all that in a
+324px strip, and the field after the name is always the question.
+
+**What this costs, which is less than it looks.** Nothing is lost by not
+having a space: a highlight always goes to the library, so *I have found a new
+thread while reading* already has a good answer — mark it, carry on, make the
+space later when you know what the topic actually is. The active space exists
+to save twenty interruptions when you **already know** what you are gathering
+(DEFINITIONS, Active space). It was never the way to discover a topic, and
+building it into the panel would make it pretend to be.
+
+**One thing this obliges.** A fresh install has no spaces, so the picker opens
+on nothing but *the library only*. A control that offers one dead choice and
+explains nothing reads as broken. It has to say where spaces come from.
+
+**Decided:** the picker switches between the spaces you have and setting none.
+Making one happens in the library. With no spaces yet, the picker says so.
+
 ### 3. Why the screens do not look like one product
 
 *Read 3a and 3b as rules for building, not as repairs.* They were written to

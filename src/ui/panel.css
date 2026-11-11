@@ -352,3 +352,12 @@
   border: 1px solid var(--kona-slab-going-line);
   border-radius: var(--kona-radius-pill);
 }
+
+/* 2i: with no spaces yet, the picker says where they come from. */
+.kona-going-empty {
+  margin: 0;
+  padding: var(--kona-space-6) var(--kona-space-8);
+  font-size: var(--kona-text-sm);
+  line-height: var(--kona-leading-snug);
+  color: var(--kona-slab-ink-note);
+}

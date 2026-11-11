@@ -189,20 +189,32 @@ function GoingTo({ space, controller }: { space: ActiveSpaceState | null; contro
   if (picking) {
     return (
       <div class="kona-going kona-going--picking">
-        <ul class="kona-going-list">
-          {spaces.map((each) => (
-            <li key={each.id}>
-              <button type="button" class="kona-going-choice" onClick={() => choose(each.id)}>
-                {each.name}
+        {/* 2i. A picker that switches, and never makes one. The cap at five is
+            hard, and a wall hit here would have to either refuse with no
+            explanation or sell Pro on top of somebody's article, which 25
+            forbids the extension outright. So with none yet, it says where
+            they come from rather than offering one dead choice. */}
+        {spaces.length === 0 ? (
+          <p class="kona-going-empty">
+            No spaces yet. Make one in the library, then set it here and
+            everything you mark goes into it.
+          </p>
+        ) : (
+          <ul class="kona-going-list">
+            {spaces.map((each) => (
+              <li key={each.id}>
+                <button type="button" class="kona-going-choice" onClick={() => choose(each.id)}>
+                  {each.name}
+                </button>
+              </li>
+            ))}
+            <li>
+              <button type="button" class="kona-going-choice" onClick={() => choose(null)}>
+                The library only
               </button>
             </li>
-          ))}
-          <li>
-            <button type="button" class="kona-going-choice" onClick={() => choose(null)}>
-              The library only
-            </button>
-          </li>
-        </ul>
+          </ul>
+        )}
       </div>
     );
   }
