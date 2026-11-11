@@ -262,20 +262,79 @@ view rather than here.
 
 ---
 
+## The library, and clearing the decks
+
+### 3c and 3e — `f70615e`
+
+Two settled decisions that had never been implemented.
+
+**3c:** the extension's library, spaces and plans pages are gone — 4,698 lines
+with their stylesheets. The extension's library page was already a browser tab
+at a `chrome-extension://` address and the web app is a browser tab at an
+ordinary one, so to the person using it nothing changes. What goes is a second
+implementation that could come to disagree with the first.
+
+**3e:** `host_permissions` is empty. A fresh install raises no warning about
+anybody's site. **Verified in the built manifest**, not the source:
+`host_permissions: []`, and the only content script is the bridge on Kona's own
+origin.
+
+That needed the chat adapters registered at runtime like every other site.
+Which script owns which host lives in `core/sites.ts` under test, because this
+is the part that fails quietly — ChatGPT handed the plain-page adapter still
+highlights and stops understanding a conversation. One test covers a host that
+merely ends in the right letters.
+
+The soft switch went with it: `local:disabled-sites` was a second list that
+could disagree with the browser's. One background test asserted the old
+built-in filtering and now asserts the new truth.
+
+### The Highlights view — `cb3a2f3`
+
+The third piece of the loop, and the first screen to use the paper room the
+token file has had since stage 0 with nothing rendering it.
+
+17's three kinds of control in three places: the nav says where you are, the
+search box spans everything, the chips stack. Rows are the shared `<Passage>`,
+so the passage a person recognises in the panel is the one they read back here
+— Source Serif at 18px rather than Inter at 13.
+
+`app/src/source.ts` decides where the library reads from: the bridge when the
+extension is here, the app's own storage when it is not. One or the other and
+never both.
+
+**Checked in the browser** with four seeded highlights: the colour chip narrows
+to one and unpicking restores four; a search for *osmosis* finds the one;
+clearing restores four; the site chip finds the chatgpt.com one.
+
+### Loose ends — this commit
+
+`quote.ts` now says nine where it said seventeen, with the arithmetic beside
+it. `SHIPPED_AHEAD` is deleted rather than deferred: 3c left it with nowhere to
+be said. `conversationId` is deferred on purpose — it is the middle of every
+storage key, so it is a migration rather than a rename, and `DESIGN-LOG.md`
+now says so instead of implying it was forgotten.
+
+`REVIEW.md` collects every decision taken without asking, grouped by what it
+would cost to change.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
 | Tests | 437 |
 | `src/ui/App.tsx` | 766 → 279 lines |
-| Built | the token file, the passage core, the fonts, the panel, the bar, the active space, the bridge |
-| Not yet | the library's Highlights view, and the web app wired to the bridge |
+| Removed | 4,698 lines of duplicated screens, plus the soft switch |
+| Built | the token file, the passage core, the fonts, the panel, the bar, the active space, the bridge, the Highlights view |
+| Not yet | Spaces rebuilt, archiving, `team/` folded in (3d) |
 
-**Still carrying the old sketch:** `app/` and `team/` have not been touched, so
-the three oranges live on outside the extension. They adopt the tokens as each
-screen is rebuilt, which is the rule set in *3a and 3b, as built*.
+**Still carrying the old sketch:** `team/` has not been touched, so 3d — one
+web app, not two — is still only a decision. `app/`'s Spaces screen is still
+the old one, and the dead library branch beside it comes out when Spaces is
+rebuilt.
 
-**A settled decision not yet implemented:** 3e says nothing is built in and
-`host_permissions` is empty. The manifest still grants four origins at install.
-That is a behaviour change of its own and has a consequence for decision 4, so
-it has not been folded into unrelated work.
+**Kona has no domain.** The bridge's origin, the manifest match and the Library
+button all read `KONA_ORIGINS`, so there is one edit to make when there is a
+real one. Until then the Library button opens a page that does not exist.

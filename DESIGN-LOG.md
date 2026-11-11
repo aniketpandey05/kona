@@ -2709,7 +2709,7 @@ what is written, kept here so the definitions do not have to carry it.
 | **Telling everyone** | A space travels by shared folder or handed-over file, so a ping lands when the other copy next syncs. Real push needs the server. |
 | **Space has a note, labels, a position** | Only `createdAt`. Reordering by hand exists for highlights (`order.ts`) and not for spaces. |
 | **Attention list** | Nothing. `openQuestions` exists as a plain list and is not joined to anything. |
-| **Archived highlight** | Nothing. Neither the state nor the filter exists. |
+| **Archived highlight** | Nothing. Neither the state nor the filter exists. The rebuilt Highlights view says *Archived left out* and has nothing to leave out yet. |
 | **Page** | Correct as of today: tracking parameters are stripped and old highlights migrate. |
 | **Highlight survives an edited page** | Correct as of today. |
 
@@ -2719,18 +2719,21 @@ of what Kona now covers, and renaming is cheapest before more is built on it.
 
 ## Loose ends
 
-**A stale comment in `src/core/quote.ts`.** The note above `MAX_ERROR_RATE`
-says "nothing under 17 characters is allowed a single error". The arithmetic
-says nine: the budget is `floor(length * 0.12)`, which first reaches 1 at nine
-characters. Seventeen would be right for a rate of 0.06, so the rate was
-presumably raised and the comment left behind. Harmless today and exactly the
-kind of thing that misleads whoever reads it next.
+~~**A stale comment in `src/core/quote.ts`.**~~ Fixed. It said seventeen where
+the arithmetic says nine, and now says nine with the arithmetic beside it.
 
-**`SHIPPED_AHEAD` in `src/core/plans.ts`** promises, in the extension's Plans
-page and on the landing page, that sync and spaces will not be switched off
-later. The tier decision contradicts it. Nobody but the author uses Kona, so
-nobody is relying on that promise and it is not urgent: fold it into decision 8
-when the tier copy is rewritten, rather than treating it as its own job.
+~~**`SHIPPED_AHEAD` in `src/core/plans.ts`**~~ Removed. 3c took the Plans page
+out of the extension, which left the promise with nowhere to be said and nobody
+relying on it, and 11 contradicts it anyway. A promise the product no longer
+makes is worse than no promise.
+
+**`conversationId` is still what the code calls a page.** Deferred, with a
+reason rather than by omission: it is not only a type's field but the middle of
+every storage key (`marks:<site>:<conversationId>`), so renaming it is a data
+migration and not a rename. It wants doing on its own, with the migration
+tested against a library made before it — not folded into the end of a long
+session of other work. The word is wrong for most of what Kona now covers and
+every day it stays costs a little more.
 
 **The pen dot in `src/design/Passage.tsx` has no accessible name.** It is
 `aria-hidden`, as the boards draw it. DEFINITIONS says a colour is named by its

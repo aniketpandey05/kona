@@ -9,19 +9,13 @@
  * The honest part is `built`. Only Free exists, and `CURRENT_PLAN` says so:
  * there is no billing in here and nothing asks anyone for money.
  *
- * Which means something has to be said out loud rather than left to be
- * discovered. Sync and shared spaces are listed under Pro and Team, and both
- * are **built and running today**, ahead of any way to pay for them. They are
- * where the line will fall once the paid tiers exist, not a gate that is
- * closed now. `SHIPPED_AHEAD` is that sentence, kept here so the extension and
- * the site cannot tell two different stories about it.
+ * `SHIPPED_AHEAD` used to live here: a promise that sync and shared spaces
+ * would not be switched off later, shown on the extension's Plans page and the
+ * landing page. The tier decision (11) contradicts it -- limits exist on Free
+ * so that rung is felt -- and 3c took the Plans page out of the extension
+ * entirely, which left the sentence with nowhere to be said and nobody relying
+ * on it. Removed rather than left as a promise the product no longer makes.
  */
-
-/** Said wherever a paid tier lists something that already works. */
-export const SHIPPED_AHEAD =
-  'Sync and shared spaces are built and working today, ahead of any billing. ' +
-  'They are where the line will fall when Pro and Team exist, not something ' +
-  'switched off now, and nothing you have already made stops working.';
 
 export type PlanId = 'free' | 'pro' | 'team' | 'enterprise';
 

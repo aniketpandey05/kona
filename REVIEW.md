@@ -1,0 +1,178 @@
+# Decisions taken while building, for review
+
+Everything below I decided myself, without asking. They are grouped by how much
+they would cost to change, because that is what should decide how closely you
+read them.
+
+When you have been through these, the ones you agree with belong in
+`DESIGN-LOG.md` in their proper place and this file goes. Anything you disagree
+with, say so and I will unpick it — none of this is load-bearing in a way that
+makes reversal expensive, and where something *would* be expensive to reverse I
+have said so against it.
+
+The three numbered decisions I wrote into `DESIGN-LOG.md` as I went — **3g**
+(the panel's font), **3i** (the bridge), **2h** (where the panel sits) — are
+already in the document in full, so they are only summarised here.
+
+---
+
+## Expensive to reverse — read these first
+
+**Nothing is built in, and the manifest is empty (3e, implemented).** This was
+already settled; I implemented it. It ships to users as a permission change, so
+it is the one thing here that is awkward to take back: an install now asks for
+nothing, and ChatGPT stops working the second Kona is installed until you allow
+it. That is exactly what 3e argued for. Verified in the built manifest rather
+than the source.
+
+**The chat adapters are registered at runtime, not in the manifest.** Required
+by the above. The cost is a new failure mode: if the host→script table is
+wrong, ChatGPT gets the plain-page adapter, still highlights, and quietly stops
+understanding a conversation. That is why the table lives in `core/sites.ts`
+under test rather than in the background script, and why one test covers a host
+that merely *ends* in the right letters — `notclaude.ai` is not `claude.ai`.
+
+**The soft switch is gone.** `local:disabled-sites` was a second list that
+could disagree with the browser's: revoke a site from the browser's own screen
+and Kona's copy never heard. 3e said allowed and on collapse into one fact; I
+took that to its conclusion and deleted the module. The loss is turning Kona
+quiet on a site without handing the permission back. 3e calls that a small
+loss; I agree, but it is a real one.
+
+**The library leaves the extension (3c, implemented).** 4,698 lines deleted.
+Reversible only by reverting the commit.
+
+**The active space belongs to the device, not the space.** Written into
+`DEFINITIONS.md`. It is a storage choice with a product consequence: if
+"active" lived on the space, opening a shared space somebody sent you would
+quietly redirect where your own highlights go, which 25 calls the worst failure
+available here. Changing this later means a migration.
+
+---
+
+## Moderate — shape rather than substance
+
+**Decision 3g: the panel falls back to the system font.** Full text in the
+design log. Chosen because a font in the shadow root costs either ~64 KB of
+base64 on every page Kona is allowed on, or a manifest change — and
+`host_permissions` was just emptied precisely so the manifest asks for as
+little as it can. Explicitly reversible in one commit.
+
+**Decision 2h: where the panel sits.** Full text in the design log. The part
+worth your eye is the **840px** breakpoint, which I derived rather than found:
+324 of panel plus 24 either side leaves the article under 470, which is about
+as narrow as prose stays readable. If that number is wrong, the sheet appears
+at the wrong width.
+
+**Decision 3i: the bridge.** Full text in the design log. One origin, read and
+write, four refusals.
+
+**The passage core takes no prop for which room it is in.** A room is set once
+on an ancestor (`.kona-slab`, or nothing for paper). This is what keeps 3b(b)
+from sliding into the ten-prop component 3b(a) would have become, and it is the
+decision most likely to be inconvenient later — a third room would need a third
+class rather than a third value.
+
+**The library reads from the bridge or the device, never both.** Merging two
+stores on every read is how one highlight comes to exist twice with different
+notes. The cost: with the extension installed, highlights the web app made on
+its own are invisible. I think that is right on Free — there is one library and
+it is the extension's — but it is a visible consequence.
+
+**JSON, not TypeScript, as the token source.** A `.mjs` build script cannot
+import a `.ts` module without a dependency or Node 22, and `engines` says 20.
+Cost: JSON has no comments, so the reasons live in `note` arrays.
+
+**A scale, not the drawings.** Nine sizes, ten spacings, six radii. The boards
+hold twenty-four font sizes, two of them half a pixel apart in the same panel.
+The rebuilt screens sit a pixel off the drawings in places.
+
+**The boards' pen values over the code's**, so green is `#16a34a` and pink
+`#db2777`. The `JustMarked` board disagreed and used the old values; the later
+`Tapped` board agreed with me, which is why I think the boards drifted rather
+than that I picked wrong. **Existing highlights keep the colour they were made
+with**, so nothing already marked changes.
+
+**The in-page mark is flat, not the gradient the boards draw.** Not a
+preference: `::highlight()` takes a flat `background-color` and little else.
+Each mark is the value from the middle of the gradient it was drawn as.
+
+**Per-pen mark alphas, rather than one number.** Yellow is pale and needs more
+of itself; green and pink swamp the words if given the same. One number would
+have been tidier and wrong.
+
+---
+
+## Small — mechanical, say if you disagree and I will change them
+
+**`src/design/` as the folder**, because `src/core/tokens.ts` already means
+turning text into words a search can compare, and is tested under that name.
+
+**A component's own measurements stay with the component** — the pen dot's
+diameter is in `passage.css`, not the token file. Let every component's
+measurements in and the token file becomes the stylesheet it replaced.
+
+**Only latin, upright, one weight axis of each font** — 97 KB for the two. A
+passage in Greek or Japanese falls back to the system font.
+
+**OFL added to the licence rule**, in `DIRECTION.md` and the settled table.
+The rule said Apache-2.0 and MIT only, which was written about code; both
+fonts are OFL 1.1, which permits bundling outright.
+
+**`.gitattributes` pins the generated stylesheet to LF.** `core.autocrlf` made
+the drift test fail on a fresh clone over line endings rather than a value.
+
+**The harness mock honours the `anchor` option.** It appended to `body`
+whatever was asked, so it could never have shown the fixed-positioning hazard
+2h names.
+
+**The round-trip test restores spec `postMessage` behaviour.** happy-dom
+delivers `message` events whose `source` is an `EventTarget` rather than the
+sending window, which no browser does — I confirmed the real behaviour in
+Chrome. I fixed the environment rather than relaxing the check.
+
+**`SHIPPED_AHEAD` deleted rather than deferred.** 3c took the Plans page out of
+the extension, leaving the promise with nowhere to be said and nobody relying
+on it, and 11 contradicts it anyway.
+
+**The `quote.ts` comment now says nine, with the arithmetic beside it.**
+
+---
+
+## Deliberately not done, and why
+
+**`conversationId` is still what the code calls a page.** The design log says
+renaming is cheapest before more is built on it, and every day it stays costs a
+little more — but it is the middle of every storage key
+(`marks:<site>:<conversationId>`), so this is a data migration rather than a
+rename. It wants its own session, with the migration tested against a library
+made before it. Doing it blind at the end of a long run of other work is how a
+library gets lost.
+
+**The dead library branch in `app/src/App.tsx`.** Unreachable since the
+Highlights view took its route. It comes out when Spaces is rebuilt, which is
+the same file.
+
+**Archiving.** The Highlights view says *Archived left out* and has nothing to
+leave out: neither the state nor the filter exists. Decision 10 settles what it
+means; nothing is built.
+
+**`app/` and `team/` still carry their own `--accent`.** They adopt the tokens
+as each screen is rebuilt, which is the rule set in *3a and 3b, as built*.
+`team/` has not been touched at all, so 3d — one web app, not two — is still
+only a decision.
+
+**Kona has no domain.** `kona.example` is a placeholder in one mailto link. The
+bridge's origin, the manifest match, and the Library button all read one
+constant, `KONA_ORIGINS`, so there is one edit to make when there is a real
+one. Until then the Library button opens a page that does not exist.
+
+---
+
+## What I would look at first, if I were you
+
+1. The manifest change, because it ships and is awkward to take back.
+2. The 840px breakpoint, because I derived the number rather than found it.
+3. The pen colours, because I overrode a board on the evidence of another one.
+4. Whether the library reading from the bridge *or* the device — never both —
+   is the behaviour you want on Free.

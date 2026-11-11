@@ -47,8 +47,14 @@ const MAX_CANDIDATES = 500;
  * different in a sentence than in three pages. The cap keeps a very long quote
  * from being matched by almost anything, and the floor is there because
  * fuzzily matching a short string is how you land on the wrong one: at this
- * rate nothing under 17 characters is allowed a single error, which is about
+ * rate nothing under 9 characters is allowed a single error, which is about
  * where a phrase stops being distinctive enough to find by itself.
+ *
+ * Nine, because the budget is `floor(length * 0.12)` and that first reaches 1
+ * at nine. The comment said seventeen for a long time, which would have been
+ * right at a rate of 0.06 -- the rate was presumably raised and the sentence
+ * left behind. Harmless, and exactly the kind of thing that misleads whoever
+ * reads it next.
  */
 const MAX_ERROR_RATE = 0.12;
 const MAX_ERRORS = 24;
