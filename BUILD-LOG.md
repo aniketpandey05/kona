@@ -359,17 +359,68 @@ timer. The test waits for one rather than guessing.
 
 ---
 
+## Finishing the extension
+
+### Welcome becomes About, and the last two stylesheets — this commit
+
+**The main ability first.** The instruction was that it must never degrade, so
+before changing anything more I checked what the rebuild had actually touched
+in the matching core. `locate.ts`, `textIndex.ts`, `link.ts`, `pageUrl.ts`,
+`order.ts`, `search.ts`, `retrieve.ts`, `tags.ts`, `text.ts` — **zero changes**
+across the whole rebuild. `quote.ts` is a comment. `painter.ts` changed only
+where its values come from.
+
+That one exception had **no test at all**, which made it the only unguarded
+place in the thing Kona exists to do. `tests/painter.test.ts` now covers it:
+the rules it writes, the layers it registers, the ranges it hands over, that it
+repaints from scratch so a deleted highlight stops being drawn, and that it
+takes everything of its own away again. The CSS Custom Highlight API does not
+exist in happy-dom, so the two globals are stood up thinly.
+
+**Decision 4, built.** One place that changes role: Welcome once, About
+thereafter, flipping on reaching the end rather than on being opened. The
+background now asks the flag instead of the install reason, so a Welcome closed
+halfway comes back — the phone analogy, where only setup that finished stops
+returning.
+
+The round trip is **done rather than described**, which is the part of 4 that
+matters: pick a pen, select the passage, it is painted by the real
+`HighlightPainter`; scroll away; find it again and it flashes where it was.
+Every tool can colour text, so a page that stops at *you highlighted something*
+has demonstrated a yellow background.
+
+**Checked in a browser**, not only in tests: marking painted one range in
+`kona-yellow`, the three steps advanced, *Find it again* put a range in
+`kona-flash`, and finishing flipped the heading from *Kona* to *About Kona*,
+dropped the ladder and the demonstration, kept the releases, and persisted.
+
+The releases ship with the build (`src/core/releases.ts`), because 6 says a
+Free install sends nothing anywhere and fetching a changelog would reveal that
+somebody has Kona and when they opened it.
+
+**3a is now finished for the whole extension.** Every stylesheet in `src/`
+declares **zero** values of its own, and Kona's orange is one value living only
+in the token source. `#c2410c` and `#fb923c` are gone from the extension
+entirely.
+
+The build grew to 584 KB because the extension's own pages now carry the
+fonts. **Verified that did not leak into the content script** — no font
+reference in any `content-scripts/*.js`, which is 3g holding.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 445 |
+| Tests | 465 |
 | `src/ui/App.tsx` | 766 → 279 lines |
 | Removed | 4,698 lines of duplicated screens, plus the soft switch |
-| Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the Highlights view |
+| Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the Highlights view, Welcome/About |
 | Removed as decided | the extension's library, spaces and plans pages; the soft switch; the panel's search (15); the minimap (2j) |
-| In-page, on the tokens | all of it — `panel.css`, `bar.css`, `note.css` declare nothing of their own |
-| Not yet | Welcome/About (4), Spaces rebuilt, archiving, `team/` folded in (3d) |
+| The extension, on the tokens | **all of it.** Every stylesheet in `src/` declares nothing of its own |
+| Kona's orange | one value, in the token source alone |
+| Not yet | Spaces rebuilt, archiving, `team/` folded in (3d), the paid half |
 
 **Still carrying the old sketch:** `team/` has not been touched, so 3d — one
 web app, not two — is still only a decision. `app/`'s Spaces screen is still

@@ -1,104 +1,70 @@
-:root {
-  --pop-bg: #ffffff;
-  --pop-raised: #f6f6f7;
-  --pop-fg: #16181d;
-  --pop-muted: #6b7280;
-  --pop-border: rgba(16, 24, 40, 0.12);
-  --pop-hover: rgba(16, 24, 40, 0.05);
-  --pop-accent: #ea580c;
-  color-scheme: light dark;
-}
-
-/* Dark by system setting, unless the user asked for light. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --pop-bg: #232427;
-    --pop-raised: #2c2d31;
-    --pop-fg: #ececf1;
-    --pop-muted: #a1a1aa;
-    --pop-border: rgba(255, 255, 255, 0.11);
-    --pop-hover: rgba(255, 255, 255, 0.06);
-    --pop-accent: #fb923c;
-    color-scheme: dark;
-  }
-}
-
-/* Dark because the user chose it. */
-:root[data-theme='dark'] {
-  --pop-bg: #232427;
-  --pop-raised: #2c2d31;
-  --pop-fg: #ececf1;
-  --pop-muted: #a1a1aa;
-  --pop-border: rgba(255, 255, 255, 0.11);
-  --pop-hover: rgba(255, 255, 255, 0.06);
-  --pop-accent: #fb923c;
-  color-scheme: dark;
-}
+/**
+ * The popup: this site, and whether Kona may read it (3e).
+ *
+ * One of Kona's own rooms, so paper (17). It is small because there is very
+ * little left in it — the built-in sites went, the list of sites you had added
+ * went, and the soft switch went with them. What remains is the one thing that
+ * cannot live anywhere else: `permissions.request` must be called from an
+ * extension page on a gesture, so the toolbar button has to open something.
+ */
 
 body {
   margin: 0;
-  background: var(--pop-bg);
-  color: var(--pop-fg);
-  font: 13px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--kona-paper);
 }
 
 .pop {
-  width: 272px;
-  padding: 14px;
+  box-sizing: border-box;
+  width: 320px;
+  padding: var(--kona-space-16);
+  font-family: var(--kona-font-ui);
+  font-size: var(--kona-text-base);
+  line-height: var(--kona-leading-normal);
+  color: var(--kona-paper-ink-soft);
 }
 
 .pop h1 {
   display: flex;
   align-items: center;
-  gap: 7px;
-  margin: 0 0 12px;
-  font-size: 14px;
+  gap: var(--kona-space-10);
+  margin: 0 0 var(--kona-space-16);
+  font-size: var(--kona-text-lg);
+  font-weight: var(--kona-weight-semibold);
+  color: var(--kona-paper-ink-heading);
 }
 
-.pop h2 {
-  margin: 0 0 7px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--pop-muted);
+.pop-note {
+  margin: 0;
+  color: var(--kona-paper-ink-muted);
 }
 
-.pop-note,
-.pop-hint {
-  margin: 0 0 10px;
-  color: var(--pop-muted);
-}
-
-.pop-hint {
-  font-size: 12px;
-}
-
+/* The one switch, and it is the permission itself. */
 .pop-toggle {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: var(--pop-raised);
-  border: 1px solid var(--pop-border);
-  border-radius: 10px;
+  gap: var(--kona-space-10);
+  padding: var(--kona-space-10) var(--kona-space-12);
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-md);
   cursor: pointer;
 }
 
 .pop-toggle input {
   position: absolute;
+  width: 1px;
+  height: 1px;
   opacity: 0;
-  pointer-events: none;
 }
 
 .pop-switch {
-  flex: none;
   position: relative;
+  flex-shrink: 0;
   width: 34px;
   height: 20px;
-  background: var(--pop-border);
-  border-radius: 999px;
-  transition: background 0.15s ease;
+  background: var(--kona-paper-dot-empty);
+  border-radius: var(--kona-radius-pill);
+  transition: background 120ms ease;
 }
 
 .pop-switch::after {
@@ -108,131 +74,53 @@ body {
   left: 2px;
   width: 16px;
   height: 16px;
-  background: #fff;
-  border-radius: 50%;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  transition: transform 0.15s ease;
+  background: var(--kona-paper-raised);
+  border-radius: var(--kona-radius-pill);
+  transition: transform 120ms ease;
 }
 
-input:checked + .pop-switch {
-  background: var(--pop-accent);
+.pop-toggle input:checked + .pop-switch {
+  background: var(--kona-accent);
 }
 
-input:checked + .pop-switch::after {
+.pop-toggle input:checked + .pop-switch::after {
   transform: translateX(14px);
 }
 
-input:focus-visible + .pop-switch {
-  outline: 2px solid var(--pop-accent);
+.pop-toggle input:focus-visible + .pop-switch {
+  outline: 2px solid var(--kona-accent);
   outline-offset: 2px;
 }
 
-.pop-sites {
-  margin: 14px 0;
-  padding-top: 12px;
-  border-top: 1px solid var(--pop-border);
-}
-
-.pop-sites ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 150px;
-  overflow-y: auto;
-}
-
-.pop-sites li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 6px;
-  border-radius: 7px;
-}
-
-.pop-sites li:hover {
-  background: var(--pop-hover);
-}
-
-.pop-sites li span {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.pop-row-toggle {
-  flex: none;
-  margin-left: auto;
-  display: flex;
-  cursor: pointer;
-}
-
-.pop-row-toggle input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.pop-switch-small {
-  width: 28px;
-  height: 16px;
-}
-
-.pop-switch-small::after {
-  width: 12px;
-  height: 12px;
-}
-
-.pop-row-toggle input:checked + .pop-switch-small::after {
-  transform: translateX(12px);
-}
-
-.pop-forget {
-  flex: none;
-  padding: 0 2px;
-  font: inherit;
-  color: var(--pop-muted);
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-
-.pop-forget:hover {
-  color: var(--pop-fg);
+.pop-hint {
+  margin: var(--kona-space-10) 0 0;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
 }
 
 .pop-open {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--pop-border);
-}
-
-.pop-open-hint {
-  margin: 8px 0 0;
-  text-align: center;
+  margin-top: var(--kona-space-16);
+  padding-top: var(--kona-space-16);
+  border-top: 1px solid var(--kona-paper-line);
 }
 
 .pop-library {
-  display: block;
   width: 100%;
-  margin-top: 0;
-  padding: 8px;
+  padding: var(--kona-space-10);
   font: inherit;
-  font-weight: 600;
-  color: var(--pop-bg);
-  background: var(--pop-fg);
-  border: 0;
-  border-radius: 9px;
+  font-size: var(--kona-text-md);
+  font-weight: var(--kona-weight-medium);
+  color: var(--kona-paper-ink-heading);
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-md);
   cursor: pointer;
-  transition: opacity 0.12s ease;
 }
 
 .pop-library:hover {
-  opacity: 0.88;
+  background: var(--kona-paper-sunken);
 }
 
-button:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--pop-accent);
-  outline-offset: 2px;
+.pop-open-hint {
+  text-align: center;
 }

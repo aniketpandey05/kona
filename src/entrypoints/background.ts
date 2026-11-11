@@ -1,5 +1,5 @@
 import { konaAppUrl } from '../core/bridge';
-import { browser, defineBackground } from '#imports';
+import { browser, defineBackground, storage } from '#imports';
 import type { PendingJump, RuntimeMessage } from '../core/messages';
 import { SITE_SCRIPTS, WEB_SCRIPT, scriptsForOrigins } from '../core/sites';
 import { mergeDuplicatePages } from '../core/store';
@@ -25,10 +25,12 @@ export default defineBackground(() => {
   // Keep the list of user-enabled sites and the script registered for them in step.
   browser.runtime.onInstalled.addListener((details) => {
     void syncWebSites();
-    // A fresh install lands on a page explaining what just appeared in the toolbar.
-    if (details.reason === 'install') {
-      void browser.tabs.create({ url: browser.runtime.getURL(WELCOME_PAGE) });
-    }
+    // 4: it opens until it has been *finished*, not until it has been opened.
+    // Setup abandoned halfway resumes, the way a phone's does; only setup that
+    // reached the end stops coming back. So this asks the flag rather than the
+    // reason, and an install that was closed early is met again on the next
+    // update rather than never.
+    void openWelcomeUnlessFinished();
     // Page identity stopped counting tracking parameters, so highlights saved
     // under `?utm_source=...` belong somewhere else now. Nothing was lost when
     // the rule changed, but it stays unreachable until this has run.
@@ -200,6 +202,12 @@ async function takePendingJump(tabId: number | undefined): Promise<PendingJump |
  * a tab either way, so nothing about the gesture changes -- what changes is
  * that there is one library instead of two that can come to disagree.
  */
+/** Opens Welcome unless it has been seen through to the end (4). */
+async function openWelcomeUnlessFinished(): Promise<void> {
+  if ((await storage.getItem<boolean>('local:welcome-finished')) === true) return;
+  await browser.tabs.create({ url: browser.runtime.getURL(WELCOME_PAGE) });
+}
+
 async function openLibrary(site?: string): Promise<null> {
   const base = konaAppUrl('', import.meta.env.DEV);
   const url = site ? `${base}?site=${encodeURIComponent(site)}` : base;
