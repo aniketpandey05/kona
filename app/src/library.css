@@ -318,3 +318,90 @@
   font-size: var(--kona-text-sm);
   color: var(--kona-paper-ink-muted);
 }
+
+/* The nav rows are buttons now, since Highlights and Archived are two views of
+   one list rather than two addresses. */
+.lib-nav-item {
+  width: 100%;
+  font: inherit;
+  font-size: var(--kona-text-base);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.lib-chips-gap {
+  flex-grow: 1;
+}
+
+.lib-chip--on {
+  font-weight: var(--kona-weight-medium);
+  color: var(--kona-paper-ink-heading);
+  background: var(--kona-paper-sunken);
+}
+
+/* 10a: the wall at fifteen. Bring one back, or Pro. No delete here. */
+.lib-wall {
+  margin: 0 0 var(--kona-space-16);
+  padding: var(--kona-space-12);
+  font-size: var(--kona-text-base);
+  color: var(--kona-paper-ink-note);
+  background: var(--kona-paper-note);
+  border-left: 2px solid var(--kona-paper-note-edge);
+  border-radius: 0 var(--kona-radius-sm) var(--kona-radius-sm) 0;
+}
+
+.lib-wall-close,
+.lib-chosen-do,
+.lib-row-do {
+  margin-left: var(--kona-space-8);
+  padding: 2px var(--kona-space-8);
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-accent-link);
+  background: transparent;
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-sm);
+  cursor: pointer;
+}
+
+.lib-row-do {
+  opacity: 0;
+}
+
+.lib-row:hover .lib-row-do,
+.lib-row-do:focus-visible {
+  opacity: 1;
+}
+
+.lib-chosen {
+  display: flex;
+  align-items: center;
+  margin: 0 0 var(--kona-space-16);
+  padding: var(--kona-space-8) var(--kona-space-12);
+  font-size: var(--kona-text-base);
+  color: var(--kona-paper-ink-heading);
+  background: var(--kona-paper-sunken);
+  border-radius: var(--kona-radius-md);
+}
+
+.lib-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--kona-space-10);
+}
+
+.lib-row > :not(.lib-pick) {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.lib-pick {
+  flex-shrink: 0;
+  padding-top: var(--kona-space-6);
+}
+
+.lib-archived {
+  color: var(--kona-accent-link);
+}

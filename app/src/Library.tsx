@@ -1,7 +1,17 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { KonaMark } from '../../src/ui/KonaMark';
 import { Passage } from '../../src/design/Passage';
 import { PEN_COLORS } from '../../src/design/tokens';
+import {
+  archive,
+  archivedOnly,
+  countArchived,
+  FREE_ARCHIVE_LIMIT,
+  isArchived,
+  notArchived,
+  roomToArchive,
+  unarchive,
+} from '../../src/core/archive';
 import { linkToMark } from '../../src/core/link';
 import { searchLibrary } from '../../src/core/search';
 import { siteLabel } from '../../src/core/sites';
@@ -54,6 +64,24 @@ export function Library() {
   const [site, setSite] = useState<string | null>(null);
   const [when, setWhen] = useState<When>('any');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [view, setView] = useState<'highlights' | 'archived'>('highlights');
+  const [picking, setPicking] = useState(false);
+  const [chosen, setChosen] = useState<Set<string>>(new Set());
+  const [wall, setWall] = useState(false);
+  // No entitlement system exists yet, so everyone is Free. When one does, this
+  // is the single place the library asks.
+  const pro = false;
+
+  /**
+   * Which read is the newest one asked for.
+   *
+   * Every save tells the store, and the store tells us, so archiving fifteen
+   * highlights starts fifteen reads at once. They do not come back in the
+   * order they went out, and without this an early one can land last and put
+   * a stale library on the screen — the data right, the counts wrong, which
+   * is the worst version of being wrong because nothing looks broken.
+   */
+  const reading = useRef(0);
 
   useEffect(() => {
     let stop: (() => void) | undefined;
@@ -61,8 +89,11 @@ export function Library() {
       const opened = await openLibrary();
       setSource(opened);
       const read = async () => {
-        setMarks(await opened.marks());
-        setSpaces(await opened.spaces());
+        const mine = ++reading.current;
+        const [found, spacesFound] = await Promise.all([opened.marks(), opened.spaces()]);
+        if (mine !== reading.current) return;
+        setMarks(found);
+        setSpaces(spacesFound);
       };
       await read();
       stop = opened.watch(() => void read());
@@ -82,11 +113,17 @@ export function Library() {
   const { shown, alsoMatched } = useMemo(() => {
     let found = marks ?? [];
     let also: string[] = [];
-    // Search spans everything (15), so it runs before the chips narrow it.
+    // Search spans everything (15) and must never lose an archived highlight:
+    // an archive that hides things from search is a bin with extra steps. So
+    // searching looks at the whole library, and the rows say which are put
+    // away rather than leaving them out.
     if (query.trim()) {
       const result = searchLibrary(found, query);
       found = result.marks;
       also = result.alsoMatched;
+    } else {
+      // 10: the only thing archiving changes is the default view of one list.
+      found = view === 'archived' ? archivedOnly(found) : notArchived(found);
     }
     if (colours.length) found = found.filter((mark) => colours.includes(mark.color));
     if (site) found = found.filter((mark) => siteLabel(mark) === site);
@@ -96,7 +133,7 @@ export function Library() {
     }
     // Newest first, as the board says under the heading.
     return { shown: [...found].sort((a, b) => b.createdAt - a.createdAt), alsoMatched: also };
-  }, [marks, query, colours, site, when]);
+  }, [marks, query, colours, site, when, view]);
 
   const toggleColour = (pen: HighlightColor) =>
     setColours((current) =>
@@ -104,6 +141,30 @@ export function Library() {
     );
 
   const filtered = query.trim() !== '' || colours.length > 0 || site !== null || when !== 'any';
+  const archivedCount = countArchived(marks ?? []);
+  const room = roomToArchive(marks ?? [], pro);
+
+  const apply = async (ids: string[], put: boolean) => {
+    if (!source || ids.length === 0) return;
+    const all = marks ?? [];
+    const changed = put ? archive(all, ids, pro).changed : unarchive(all, ids);
+    if (put && changed.length < ids.length) setWall(true);
+    for (const each of changed) await source.save(each);
+    // Read once at the end, and let the sequence guard drop the reads the
+    // saves kicked off on the way.
+    const mine = ++reading.current;
+    const found = await source.marks();
+    if (mine === reading.current) setMarks(found);
+    setChosen(new Set());
+  };
+
+  const choose = (id: string) =>
+    setChosen((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
 
   return (
     <div class="lib">
@@ -139,9 +200,22 @@ export function Library() {
 
       <div class="lib-body">
         <nav class={menuOpen ? 'lib-nav lib-nav--open' : 'lib-nav'} aria-label="Library">
-          <a class="lib-nav-item lib-nav-item--on" href="#" aria-current="page">
-            Highlights <span class="lib-nav-count">{(marks ?? []).length}</span>
-          </a>
+          <button
+            type="button"
+            class={view === 'highlights' ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
+            aria-current={view === 'highlights' ? 'page' : undefined}
+            onClick={() => setView('highlights')}
+          >
+            Highlights <span class="lib-nav-count">{notArchived(marks ?? []).length}</span>
+          </button>
+          <button
+            type="button"
+            class={view === 'archived' ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
+            aria-current={view === 'archived' ? 'page' : undefined}
+            onClick={() => setView('archived')}
+          >
+            Archived <span class="lib-nav-count">{archivedCount}</span>
+          </button>
 
           {/* Spaces are the library's other view (3f), still the old screen. */}
           <p class="lib-nav-head">Spaces · {spaces.length}</p>
@@ -166,8 +240,12 @@ export function Library() {
 
         <main class="lib-main">
           <div class="lib-head">
-            <h1>Highlights</h1>
-            <p>Newest first. Archived left out.</p>
+            <h1>{view === 'archived' ? 'Archived' : 'Highlights'}</h1>
+            <p>
+              {view === 'archived'
+                ? `Out of the way, still searchable. ${archivedCount} of ${FREE_ARCHIVE_LIMIT} put away.`
+                : 'Newest first. Archived left out.'}
+            </p>
           </div>
 
           <div class="lib-chips">
@@ -212,7 +290,47 @@ export function Library() {
                 </option>
               ))}
             </select>
+            <span class="lib-chips-gap" />
+            <button
+              type="button"
+              class={picking ? 'lib-chip lib-chip--on' : 'lib-chip'}
+              aria-pressed={picking}
+              onClick={() => {
+                setPicking((on) => !on);
+                setChosen(new Set());
+              }}
+            >
+              Select
+            </button>
           </div>
+
+          {/* 10a: the wall at fifteen. Bring one back, or Pro — and no delete
+              in this notice, because offering it here would teach people to
+              delete when they meant to tidy. */}
+          {wall && (
+            <p class="lib-wall" role="status">
+              Fifteen is as many as Free puts away at once. Bring one back and
+              the slot returns, or Pro archives without limit.{' '}
+              <button type="button" class="lib-wall-close" onClick={() => setWall(false)}>
+                Close
+              </button>
+            </p>
+          )}
+
+          {/* Bulk, or it is not a feature: archiving two hundred one at a time
+              is a punishment. */}
+          {picking && chosen.size > 0 && (
+            <p class="lib-chosen" role="status">
+              {chosen.size} chosen
+              <button
+                type="button"
+                class="lib-chosen-do"
+                onClick={() => void apply([...chosen], view !== 'archived')}
+              >
+                {view === 'archived' ? 'Bring back' : 'Archive'}
+              </button>
+            </p>
+          )}
 
           {/* Words nobody typed that earned a result its place, so a hit using
               none of your words does not read as a bug (15). */}
@@ -226,12 +344,24 @@ export function Library() {
             <p class="lib-none">
               {filtered
                 ? 'Nothing matches that.'
-                : 'Nothing kept yet. Highlight something and it lands here.'}
+                : view === 'archived'
+                  ? 'Nothing put away. Archiving takes a highlight out of this list and leaves it everywhere else.'
+                  : 'Nothing kept yet. Highlight something and it lands here.'}
             </p>
           ) : (
             <ul class="lib-list">
               {shown.map((mark) => (
                 <li key={mark.id} class="lib-row">
+                  {picking && (
+                    <label class="lib-pick">
+                      <input
+                        type="checkbox"
+                        checked={chosen.has(mark.id)}
+                        aria-label={`Choose ${mark.label || mark.snapshot}`}
+                        onChange={() => choose(mark.id)}
+                      />
+                    </label>
+                  )}
                   <a class="lib-row-link" href={linkToMark(mark)} target="_blank" rel="noopener">
                     <Passage
                       color={mark.color}
@@ -244,6 +374,16 @@ export function Library() {
                       favicon would tell that site you kept something. */}
                   <p class="lib-row-where">
                     {siteLabel(mark)} · {ago(mark.createdAt)}
+                    {/* Search spans everything, so a hit that is put away says
+                        so rather than being left out (10). */}
+                    {isArchived(mark) && <span class="lib-archived"> · archived</span>}
+                    <button
+                      type="button"
+                      class="lib-row-do"
+                      onClick={() => void apply([mark.id], !isArchived(mark))}
+                    >
+                      {isArchived(mark) ? 'Bring back' : 'Archive'}
+                    </button>
                   </p>
                 </li>
               ))}

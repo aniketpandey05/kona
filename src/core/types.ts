@@ -37,6 +37,16 @@ export interface Mark {
   tags?: string[];
   /** Copy of the marked text, kept even if the chat is edited or deleted. */
   snapshot: string;
+  /**
+   * When this was put out of the way, if it has been (10).
+   *
+   * Archived is a filter on the library's default view and nothing else: the
+   * highlight is still searchable, still painted on its page, still in the
+   * panel for that page, and still in every space it was added to. Absent
+   * means not archived, so every highlight ever saved is correct without a
+   * migration.
+   */
+  archivedAt?: number;
   createdAt: number;
   updatedAt: number;
 }
