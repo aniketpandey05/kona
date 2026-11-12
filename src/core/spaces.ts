@@ -92,6 +92,15 @@ export interface Space {
   name: string;
   /** What this space is trying to settle. Without one it is a shelf, which is a fine thing to be. */
   question?: string;
+  /**
+   * Anything else worth saying about the space that is not the topic (1e).
+   *
+   * This is where a conclusion goes. 20 took the write-up out of the
+   * definitions entirely — a space produces no document, because 3d already
+   * puts the shared space on the web with every highlight linking to the exact
+   * words, and that *is* the document.
+   */
+  note?: string;
   /** Highlights gathered here, by id. The highlight itself stays in the library. */
   markIds: string[];
   findings: Finding[];

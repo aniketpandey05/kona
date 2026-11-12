@@ -18,6 +18,7 @@ import { siteLabel } from '../../src/core/sites';
 import type { Space } from '../../src/core/spaces';
 import type { HighlightColor, Mark } from '../../src/core/types';
 import { openLibrary, type LibrarySource } from './source';
+import { SpacesView } from './SpacesView';
 
 /**
  * The library: Highlights, which is everything you kept, organised by where
@@ -55,7 +56,10 @@ const SINCE: Record<Exclude<When, 'any'>, number> = {
   month: 30 * 86_400_000,
 };
 
-export function Library() {
+export function Library({ route = '' }: { route?: string }) {
+  // 3f: the library is the place, and Highlights and Spaces are two ways in.
+  const inSpaces = route.startsWith('#/spaces');
+  const openSpaceId = route.startsWith('#/spaces/') ? route.slice('#/spaces/'.length) : null;
   const [source, setSource] = useState<LibrarySource | null>(null);
   const [marks, setMarks] = useState<Mark[] | null>(null);
   const [spaces, setSpaces] = useState<Space[]>([]);
@@ -144,6 +148,15 @@ export function Library() {
   const archivedCount = countArchived(marks ?? []);
   const room = roomToArchive(marks ?? [], pro);
 
+  const reread = async () => {
+    if (!source) return;
+    const mine = ++reading.current;
+    const [found, spacesFound] = await Promise.all([source.marks(), source.spaces()]);
+    if (mine !== reading.current) return;
+    setMarks(found);
+    setSpaces(spacesFound);
+  };
+
   const apply = async (ids: string[], put: boolean) => {
     if (!source || ids.length === 0) return;
     const all = marks ?? [];
@@ -218,9 +231,15 @@ export function Library() {
           </button>
 
           {/* Spaces are the library's other view (3f), still the old screen. */}
-          <p class="lib-nav-head">Spaces · {spaces.length}</p>
+          <p class="lib-nav-head">
+            <a href="#/spaces">Spaces · {spaces.length}</a>
+          </p>
           {spaces.map((space) => (
-            <a class="lib-nav-item" key={space.id} href={`#/spaces/${space.id}`}>
+            <a
+              class={openSpaceId === space.id ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
+              key={space.id}
+              href={`#/spaces/${space.id}`}
+            >
               <span class="lib-nav-dot" aria-hidden="true" />
               {space.name} <span class="lib-nav-count">{space.markIds.length}</span>
             </a>
@@ -247,6 +266,19 @@ export function Library() {
         </nav>
 
         <main class="lib-main">
+          {inSpaces && source ? (
+            <SpacesView
+              source={source}
+              spaces={spaces}
+              marks={marks ?? []}
+              openId={openSpaceId}
+              onOpen={(id) => {
+                location.hash = id ? `#/spaces/${id}` : '#/spaces';
+              }}
+              onChanged={() => void reread()}
+            />
+          ) : (
+          <>
           <div class="lib-head">
             <h1>{view === 'archived' ? 'Archived' : 'Highlights'}</h1>
             <p>
@@ -396,6 +428,8 @@ export function Library() {
                 </li>
               ))}
             </ul>
+          )}
+          </>
           )}
         </main>
       </div>

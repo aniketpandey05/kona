@@ -37,8 +37,11 @@ function Kona() {
   // be recognised by what it carries rather than where it points.
   if (readShare(location.search)) return <App />;
 
-  if (route.startsWith('#/spaces') || route.startsWith('#/settings')) return <App />;
-  return <Library />;
+  // Settings, sync and backups are still the old screen. Spaces is not: the
+  // library is the place and holds both of its views (3f), so it takes its own
+  // route rather than living beside it.
+  if (route.startsWith('#/settings')) return <App />;
+  return <Library route={route} />;
 }
 
 render(<Kona />, document.getElementById('app')!);
