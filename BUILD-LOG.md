@@ -409,18 +409,74 @@ reference in any `content-scripts/*.js`, which is 3g holding.
 
 ---
 
+## Archiving, the caps, and a regression
+
+### Archiving and the two Free limits — `234a364`
+
+Decision 10, and the shape is the whole of it: **archived is a filter on one
+list, not a place.** A place has to be known about by everything — search
+whether to look there, counts whether to count it, spaces whether to show it,
+export whether to include it — and each is a chance for two surfaces to
+disagree about where something is. A filter is known about by one list.
+
+`Mark` gains `archivedAt`, absent until it happens, so every highlight ever
+saved is already correct with no migration.
+
+Both caps are per device, because Free has no sync and its counts are local
+(10a). **Fifteen archived at a time**, a working set rather than a quota —
+un-archiving hands the slot straight back, and reaching the cap never deletes
+or un-archives anything on its own (7). **Five spaces, a hard five**, because
+archiving a space is Pro and so nothing defeats it.
+
+Bulk, because 10 says otherwise it is not a feature. Asking for more than there
+is room for archives what fits and says so. The notice offers bringing one back
+or Pro, with **no delete in it** — offering delete there teaches people to
+delete when they meant to tidy.
+
+**Two bugs, both found by driving it rather than reading it.**
+
+The Archived view showed the *unarchived* rows: the filter's `useMemo` did not
+depend on the view, so switching never recomputed. It looked entirely fine.
+
+Then the counts disagreed with the data — storage held exactly fifteen archived
+and the nav said six. Every save tells the store and the store tells the
+library, so archiving fifteen starts fifteen reads at once; they do not return
+in the order they went out, and an early one landed last and put a stale
+library on screen. Reads are sequence-guarded now. That is the worst kind of
+wrong, because the data was right and nothing looked broken.
+
+### A regression I caused, and did not notice — `d7d4991`
+
+Worth recording as a failure rather than a fix. When the rebuilt Highlights
+view took the default route two commits earlier, everything in the old screen's
+default branch stopped being reachable: the install prompt (24), folder sync,
+the backup, the theme — and the **Android share target** (1h).
+
+The share one was the worst. A share arrives on a plain URL with no fragment at
+all, so it was landing on the library and capturing nothing, silently. It is
+now recognised by what it carries rather than where it points, and checked
+before any routing, because it is the one arrival that cannot say where it
+wants to go. Settings and sync are reachable at `#/settings`, linked from the
+nav.
+
+**The lesson for the rest of the rebuild:** replacing a screen's route is not
+the same as replacing a screen. Everything that screen was also doing has to be
+found first. The next one to watch is Spaces, which is in the same file.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 465 |
+| Tests | 476 |
 | `src/ui/App.tsx` | 766 → 279 lines |
 | Removed | 4,698 lines of duplicated screens, plus the soft switch |
-| Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the Highlights view, Welcome/About |
+| Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the Highlights view, Welcome/About, archiving and both Free caps |
 | Removed as decided | the extension's library, spaces and plans pages; the soft switch; the panel's search (15); the minimap (2j) |
 | The extension, on the tokens | **all of it.** Every stylesheet in `src/` declares nothing of its own |
 | Kona's orange | one value, in the token source alone |
-| Not yet | Spaces rebuilt, archiving, `team/` folded in (3d), the paid half |
+| Not yet | Spaces rebuilt, the settings screen rebuilt, `team/` folded in (3d), the paid half |
 
 **Still carrying the old sketch:** `team/` has not been touched, so 3d — one
 web app, not two — is still only a decision. `app/`'s Spaces screen is still

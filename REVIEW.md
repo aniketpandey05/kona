@@ -61,6 +61,18 @@ deletion, so it is here rather than lower down.
 editor opens from the bar, so they were the same control twice. If you think
 the editor should still be able to delete, that is a one-line change.
 
+**Archiving is a timestamp on the highlight, not a list.** `Mark.archivedAt`,
+absent until it happens. It follows decision 10's shape — a filter on one list
+— and means no migration for anything already saved. The alternative, a
+separate archived list, is what 10 argues against, so this is implementing a
+decision rather than taking one. Flagged here only because it changes the
+stored shape of a highlight, which is expensive to undo later.
+
+**Everyone is Free.** There is no entitlement system, so the library asks
+`const pro = false` in one place. Both caps therefore bite for everybody,
+including you. When there is an account, that constant is the single thing to
+replace.
+
 ---
 
 ## Moderate — shape rather than substance
@@ -152,6 +164,26 @@ on it, and 11 contradicts it anyway.
 
 ---
 
+## A mistake I made, which you should know about
+
+**I stranded four features and did not notice for two commits.** When the
+rebuilt Highlights view took the web app's default route, everything in the old
+screen's default branch became unreachable: the install prompt (24), folder
+sync, the backup, the theme, and the Android share target (1h).
+
+The share one was silent and the worst. A share arrives on a plain URL with no
+fragment, so `Share › Kona` was landing on the library and capturing nothing at
+all. Fixed in `d7d4991` — a share is now recognised by what it carries and
+checked before any routing — but it was live for two commits and I only found
+it because I went looking for what else the old screen was doing before
+replacing it.
+
+The general lesson, which applies to what is left: **replacing a screen's route
+is not the same as replacing a screen.** Spaces is in the same file and will
+have the same problem.
+
+---
+
 ## Deliberately not done, and why
 
 **`conversationId` is still what the code calls a page.** The design log says
@@ -185,7 +217,8 @@ one. Until then the Library button opens a page that does not exist.
 ## What I would look at first, if I were you
 
 1. The manifest change, because it ships and is awkward to take back.
-2. The 840px breakpoint, because I derived the number rather than found it.
-3. The pen colours, because I overrode a board on the evidence of another one.
-4. Whether the library reading from the bridge *or* the device — never both —
+2. The minimap deletion, because it removed something that worked.
+3. The 840px breakpoint, because I derived the number rather than found it.
+4. The pen colours, because I overrode a board on the evidence of another one.
+5. Whether the library reading from the bridge *or* the device — never both —
    is the behaviour you want on Free.
