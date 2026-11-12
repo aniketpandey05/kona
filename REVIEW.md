@@ -184,6 +184,23 @@ have the same problem.
 
 ---
 
+**Findings and the write-up are gone from the Spaces view.** This is 20 being
+implemented rather than a decision of mine — it says both leave the definitions
+entirely — but it is the second-largest removal in the rebuild after the
+extension's library, and the old screen's findings, stances, decisions and memo
+are no longer reachable. The data is untouched in storage and the code is still
+in `src/core/spaces.ts`, so nothing is lost; it is the view that stopped
+offering them.
+
+**`team/` is left standing.** 3d says the Team demo folds into the web app, and
+I did not do it. Folding needs somewhere to fold into and there are no shared
+spaces in `app/`; deleting `team/` would have removed a working demo and broken
+five links on the landing page while implementing nothing. The duplication 3d
+objects to is real and still there. If you would rather it went now, it is one
+`git rm` plus the site links.
+
+---
+
 ## Deliberately not done, and why
 
 **`conversationId` is still what the code calls a page.** The design log says

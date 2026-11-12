@@ -465,6 +465,50 @@ found first. The next one to watch is Spaces, which is in the same file.
 
 ---
 
+## Spaces
+
+### Rebuilt as 20 settled it — `7571299`
+
+**A space is a place to put highlights together. That is the whole of it.**
+Everything else on that screen was what had quietly grown on top.
+
+So findings and the write-up are gone from the view, because 20 took them out
+of the definitions entirely: a finding was only ever a highlight with a note on
+it, and the write-up was a second way to make a page 3d already provides —
+shared spaces live on the web, openable by somebody who has installed nothing,
+every highlight linking to the exact words. *That* is the document.
+
+`Space` gains the `note` field it was supposed to have (1e), which the gap
+table had been reporting as missing for a while. Spaces now lives **inside**
+the library rather than beside it, which is 3f — the library is the place and
+holds two views of what you keep.
+
+That also avoided repeating the stranding mistake: nothing had to be re-routed
+away from, because the library already owned the address.
+
+**The five-space cap is enforced where spaces are made.** At five the button is
+gone and the notice says what 7 says: delete one you have finished with, or
+pay. Kona itself never removes or hides anything.
+
+**Checked by driving it:** five made one after another, the sixth refused with
+the wall, a space opened from the nav, and removing a highlight took the space
+from three to two while the library stayed at twenty-one — the third verb
+working, out of this space and nowhere else.
+
+### `team/` is left alone, deliberately
+
+3d says the Team demo **folds into** the web app rather than standing beside
+it. Folding needs somewhere to fold into, and the web app has no shared spaces
+— none of Team is built, and it is frozen.
+
+Deleting `team/` would therefore not be folding, it would be removing a working
+demo and breaking five links on the landing page for no gain. The duplication
+3d objects to (a third `memo.ts`, `types.ts`, `store.ts`) is real and is
+**still there**, and it is the thing to fix when Team thaws, by building shared
+spaces in `app/` rather than by deleting the demo first.
+
+---
+
 ## Where it stands
 
 | | |
@@ -472,11 +516,11 @@ found first. The next one to watch is Spaces, which is in the same file.
 | Tests | 476 |
 | `src/ui/App.tsx` | 766 → 279 lines |
 | Removed | 4,698 lines of duplicated screens, plus the soft switch |
-| Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the Highlights view, Welcome/About, archiving and both Free caps |
+| Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the Highlights view, Spaces, Welcome/About, archiving and both Free caps |
 | Removed as decided | the extension's library, spaces and plans pages; the soft switch; the panel's search (15); the minimap (2j) |
 | The extension, on the tokens | **all of it.** Every stylesheet in `src/` declares nothing of its own |
 | Kona's orange | one value, in the token source alone |
-| Not yet | Spaces rebuilt, the settings screen rebuilt, `team/` folded in (3d), the paid half |
+| Not yet | the settings screen rebuilt, `team/` folded in (3d), the paid half |
 
 **Still carrying the old sketch:** `team/` has not been touched, so 3d — one
 web app, not two — is still only a decision. `app/`'s Spaces screen is still
