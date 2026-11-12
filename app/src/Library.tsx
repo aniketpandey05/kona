@@ -226,6 +226,14 @@ export function Library() {
             </a>
           ))}
 
+          {/* Sync, backups and installing are still the old screen. Linked
+              rather than left stranded, which is what happened when Highlights
+              took the default route. */}
+          <p class="lib-nav-head">More</p>
+          <a class="lib-nav-item" href="#/settings">
+            Settings &amp; sync
+          </a>
+
           <div class="lib-nav-foot">
             {/* 17a: the account row sits at the foot, quiet. It says where this
                 library is reading from, because on Free that is the one thing

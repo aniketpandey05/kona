@@ -2,6 +2,7 @@ import { render } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { App } from './App';
 import { Library } from './Library';
+import { readShare } from './share';
 // The tokens first, then the two rooms that read them. app.css is what is left
 // of the old screens and goes as each is rebuilt.
 import '../../src/design/fonts.css';
@@ -11,9 +12,18 @@ import './library.css';
 import './app.css';
 
 /**
- * Spaces are still the old screen; Highlights is the rebuilt one (3f). Both
- * are views of the one library, so they share the address and differ by the
- * fragment, which is also how the extension links to a space.
+ * Highlights is the rebuilt view (3f). Spaces, settings, folder sync, the
+ * install prompt and the share target are still the old screen, and they are
+ * routed to deliberately rather than left stranded.
+ *
+ * That stranding is a mistake worth naming: when Highlights took the default
+ * route, everything in the old screen's default branch stopped being reachable
+ * — the install prompt (24), folder sync, the backup, and the Android share
+ * target (1h), which arrives on a plain URL with no fragment at all and so was
+ * silently landing on the library instead of capturing anything.
+ *
+ * So a share is checked for first, before any routing, because it is the one
+ * arrival that cannot say where it wants to go.
  */
 function Kona() {
   const [route, setRoute] = useState(location.hash);
@@ -22,7 +32,13 @@ function Kona() {
     addEventListener('hashchange', read);
     return () => removeEventListener('hashchange', read);
   }, []);
-  return route.startsWith('#/spaces') ? <App /> : <Library />;
+
+  // Share › Kona, from an Android share sheet (1h). No fragment, so it has to
+  // be recognised by what it carries rather than where it points.
+  if (readShare(location.search)) return <App />;
+
+  if (route.startsWith('#/spaces') || route.startsWith('#/settings')) return <App />;
+  return <Library />;
 }
 
 render(<Kona />, document.getElementById('app')!);
