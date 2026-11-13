@@ -164,6 +164,14 @@ on it, and 11 contradicts it anyway.
 
 ---
 
+**The desktop app now renders the library directly.** It used to render the old
+web app screen and hand it a folder source; it renders `Library` and hands it
+the same thing. The Electron app is frozen, so this was about not breaking it
+rather than improving it — but it does mean the desktop app's one screen is now
+the rebuilt library, which nobody has looked at on a desktop build.
+
+---
+
 ## A mistake I made, which you should know about
 
 **I stranded four features and did not notice for two commits.** When the
@@ -178,9 +186,12 @@ checked before any routing — but it was live for two commits and I only found
 it because I went looking for what else the old screen was doing before
 replacing it.
 
-The general lesson, which applies to what is left: **replacing a screen's route
-is not the same as replacing a screen.** Spaces is in the same file and will
-have the same problem.
+The general lesson: **replacing a screen's route is not the same as replacing a
+screen.** I then came within one draft of doing it again — the first version of
+the rebuilt Settings replaced working folder sync with a paragraph explaining
+that hosted sync does not exist yet, which would have removed the only way a
+Free library reaches a second device today. Caught before committing, but by
+noticing rather than by any process.
 
 ---
 

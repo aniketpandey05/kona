@@ -509,6 +509,55 @@ spaces in `app/` rather than by deleting the demo first.
 
 ---
 
+## Finishing the web app
+
+### Settings, and every view a route — `e896da3`
+
+Export is the part of this that matters, and decision 6 is why: Kona cannot
+read your library, so if you lose every device the data is genuinely gone. A
+file you keep is **the only backup that exists**, which turns export from a
+courtesy into a safety feature — and nothing that is a safety feature goes
+behind a tier. Free, always, both formats (14). Checked both: the backup
+round-trips four out and four back, and the Markdown carries the passage and
+the note.
+
+**I nearly repeated the stranding mistake in the same week I wrote it up.** The
+first draft of this screen replaced folder sync with a paragraph saying there
+is no server yet. True, and it would have removed the only way a Free library
+reaches a second device today. Folder sync is here, on the same
+`useFolderSync`, saying plainly that it is not decision 6's hosted sync and
+does not run itself.
+
+**A bug the move exposed:** the nav said *Highlights* while *Settings* was
+showing. The view was held in state beside the route, so clearing one did not
+clear the other — and `replaceState` fires no `hashchange`, so the pane never
+heard. Every view is a route now, which makes that disagreement impossible
+rather than fixed.
+
+### A share gets its own screen — `62bc20f`
+
+`App.tsx`, `Spaces.tsx` and `app.css` are gone: **1,971 lines**, and the 27
+values that were keeping two of the three oranges alive.
+
+A share gets a screen of its own because a share has no route — a plain URL
+with a query and nothing else, which is how it went unnoticed for two commits.
+Recognising it by what it carries is now the first thing `main.tsx` does, and
+the only thing left that is not the library. It keeps the adoption rule: a
+phone shares in two goes, text then link, so a passage kept moments ago with no
+page is waiting for this URL rather than being a second thing.
+
+**The desktop app keeps its reason to exist.** Its whole purpose is handing the
+library a folder source that is a real path rather than a handle the browser
+may forget, plus the tray's sync-now. Both are threaded through `Library` into
+`Settings` rather than dropped with the screen that used to take them. Frozen,
+not broken.
+
+**Measured:** the only stylesheets still declaring values of their own are the
+landing page and the frozen Team demo. Everything in the extension and
+everything in the web app reads from `src/design/tokens.json`.
+
+---
+
 ## Where it stands
 
 | | |
@@ -516,11 +565,11 @@ spaces in `app/` rather than by deleting the demo first.
 | Tests | 476 |
 | `src/ui/App.tsx` | 766 → 279 lines |
 | Removed | 4,698 lines of duplicated screens, plus the soft switch |
-| Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the Highlights view, Spaces, Welcome/About, archiving and both Free caps |
+| Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the whole library — Highlights, Archived, Spaces, Settings — the share screen, Welcome/About, archiving and both Free caps |
 | Removed as decided | the extension's library, spaces and plans pages; the soft switch; the panel's search (15); the minimap (2j) |
-| The extension, on the tokens | **all of it.** Every stylesheet in `src/` declares nothing of its own |
-| Kona's orange | one value, in the token source alone |
-| Not yet | the settings screen rebuilt, `team/` folded in (3d), the paid half |
+| On the tokens | **the extension and the web app, entirely.** Only the landing page and the frozen Team demo still decide their own |
+| Kona's orange | one value in both products; the stragglers are `site/` and `team/` |
+| Not yet | `team/` folded in (3d), the landing page, the paid half |
 
 **Still carrying the old sketch:** `team/` has not been touched, so 3d — one
 web app, not two — is still only a decision. `app/`'s Spaces screen is still
