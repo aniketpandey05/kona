@@ -41,6 +41,16 @@
      need less before they swamp the text. The boards were drawn that way
      and they are right.
 
+     A mark is transparent, so what the words end up sitting on is the
+     mark *and the page under it*. On a light page the dark ink reads at
+     9.5:1 or better; on a dark page the same ink lands on a dark
+     composite and falls to 1.5:1, which is a highlight that makes text
+     harder to read than not highlighting it. So there are two inks, and
+     the painter picks by how dark the page is. Measured worst pen: 9.52
+     with the dark ink on white, 5.02 with the light ink on near-black.
+     A mid-grey page is the one neither can fix, and the light ink is the
+     better of the two there.
+
      The boards paint the in-page mark as a vertical gradient. The CSS
      Custom Highlight API cannot render one -- ::highlight() takes a flat
      background-color and little else -- so each mark is the flat value at
@@ -55,6 +65,7 @@
   --kona-pen-pink: #db2777;
   --kona-pen-pink-mark: rgba(219, 39, 119, 0.4);
   --kona-mark-ink: #16181d;
+  --kona-mark-ink-dark: #f7f7f8;
   --kona-mark-noted: rgba(234, 88, 12, 0.9);
   --kona-mark-flash: rgba(249, 115, 22, 0.85);
 
@@ -62,10 +73,23 @@
 
      The link is a darker orange than the accent because it is text on
      paper and has to be readable as text; the accent is for a shape.
+
+     The fill is a third value, and it exists because the accent as a
+     *background* is a different problem from the accent as a line or a
+     word. Measured: white on #ea580c is 3.50:1, which fails AA for normal
+     text; on #c2410c it is 5.09:1, which passes. Any button, chip or badge
+     that puts text *on* the accent uses the fill and its ink, not the
+     accent itself.
+
+     This was known once and then lost: it was a comment in the stylesheet
+     the rebuild deleted, and three filled buttons went out at 3.50:1
+     before it was noticed again. It is a token now so that it cannot be.
   */
   --kona-accent: #ea580c;
   --kona-accent-link: #b45309;
   --kona-accent-link-hover: #92400e;
+  --kona-accent-fill: #c2410c;
+  --kona-accent-fill-ink: #fffdf8;
 
   /* The library, and every room of Kona's own. Light, because it is not
      sitting on top of anybody else's page (decision 17).

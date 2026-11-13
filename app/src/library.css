@@ -433,8 +433,10 @@
 
 .sp-do {
   font-weight: var(--kona-weight-medium);
-  color: var(--kona-paper-raised);
-  background: var(--kona-accent);
+  /* Text on the accent, so the fill and its ink -- white on --kona-accent is
+     3.50:1 and fails AA. */
+  color: var(--kona-accent-fill-ink);
+  background: var(--kona-accent-fill);
   border-color: transparent;
 }
 

@@ -194,8 +194,9 @@ body {
   font: inherit;
   font-size: var(--kona-text-md);
   font-weight: var(--kona-weight-medium);
-  color: var(--kona-paper-raised);
-  background: var(--kona-accent);
+  /* Text on the accent, so the fill and its ink (see tokens.json, Accent). */
+  color: var(--kona-accent-fill-ink);
+  background: var(--kona-accent-fill);
   border: 0;
   border-radius: var(--kona-radius-md);
   cursor: pointer;

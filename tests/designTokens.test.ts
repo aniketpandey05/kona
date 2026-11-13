@@ -66,3 +66,59 @@ describe('the pens', () => {
     expect(MARK_INK).toMatch(/^#[0-9a-f]{6}$/);
   });
 });
+
+/**
+ * Contrast, computed rather than eyeballed.
+ *
+ * This exists because the knowledge was had and then lost. A comment in the
+ * stylesheet the rebuild deleted said that the accent as a *fill* is a
+ * different problem from the accent as a line, and three filled buttons went
+ * out at 3.50:1 before anybody noticed again.
+ */
+function luminance(hex: string): number {
+  const channel = (pair: string) => {
+    const value = parseInt(pair, 16) / 255;
+    return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  };
+  const clean = hex.replace('#', '');
+  return (
+    0.2126 * channel(clean.slice(0, 2)) +
+    0.7152 * channel(clean.slice(2, 4)) +
+    0.0722 * channel(clean.slice(4, 6))
+  );
+}
+
+function contrast(a: string, b: string): number {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi! + 0.05) / (lo! + 0.05);
+}
+
+describe('text you have to be able to read', () => {
+  it('carries its ink on the accent fill, at AA', () => {
+    // 4.5:1 is AA for normal text. Anything that puts words on the accent uses
+    // these two and never --kona-accent, which is for a shape.
+    expect(contrast(token('accent-fill'), token('accent-fill-ink'))).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('is why the plain accent is not a background for text', () => {
+    // Recorded as a fact rather than a rule nobody can check: this is the
+    // value that fails, and the reason the fill exists at all.
+    expect(contrast(token('accent'), token('accent-fill-ink'))).toBeLessThan(4.5);
+  });
+
+  it('reads a passage comfortably in both rooms', () => {
+    expect(contrast(token('paper-ink'), token('paper'))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(token('slab-ink-passage'), token('slab-card'))).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('keeps even the quietest text legible', () => {
+    // The source line under a passage, and a note on the slab. Quiet is not an
+    // excuse: these are still words somebody has to read.
+    expect(contrast(token('paper-ink-muted'), token('paper'))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(token('slab-ink-note'), token('slab-card'))).toBeGreaterThanOrEqual(4.5);
+  });
+
+  // What a mark's ink actually sits on is the mark composited over the page,
+  // not the pen at full strength -- measuring the wrong pair is what hid the
+  // dark-page defect. It is measured properly in tests/painter.test.ts.
+});

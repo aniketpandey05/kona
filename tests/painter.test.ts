@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { HighlightPainter, HIGHLIGHT_COLORS, UI_COLORS } from '../src/core/painter';
-import { MARK_FLASH, MARK_INK, MARK_NOTED, PEN_COLORS, PEN_MARKS } from '../src/design/tokens';
+import {
+  MARK_FLASH,
+  MARK_INK,
+  MARK_INK_DARK,
+  MARK_NOTED,
+  PEN_COLORS,
+  PEN_MARKS,
+} from '../src/design/tokens';
 import type { HighlightColor } from '../src/core/types';
 
 /**
@@ -135,5 +142,82 @@ describe('painting a highlight', () => {
     painter.dispose();
     expect(registry.size).toBe(0);
     expect(document.querySelector('style[data-kona-ui]')).toBeNull();
+  });
+});
+
+/**
+ * What the words actually sit on.
+ *
+ * A mark is transparent, so the readable colour is the mark composited over
+ * whatever the page puts behind it — not the mark alone. Measuring the mark
+ * on its own is what hid this: dark ink over a dark page falls to 1.5:1, and a
+ * highlight that makes text harder to read than not highlighting it is a
+ * defect in the one thing Kona does.
+ */
+function luminance(rgb: [number, number, number]): number {
+  const channel = (value: number) => {
+    const c = value / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2]);
+}
+
+function contrast(a: [number, number, number], b: [number, number, number]): number {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi! + 0.05) / (lo! + 0.05);
+}
+
+const asRgb = (hex: string): [number, number, number] => {
+  const clean = hex.replace('#', '');
+  return [
+    parseInt(clean.slice(0, 2), 16),
+    parseInt(clean.slice(2, 4), 16),
+    parseInt(clean.slice(4, 6), 16),
+  ];
+};
+
+/** A mark laid over a page background, as the browser would composite it. */
+function markOver(mark: string, page: [number, number, number]): [number, number, number] {
+  const parts = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/.exec(mark)!;
+  const alpha = Number(parts[4]);
+  return [0, 1, 2].map((i) =>
+    Math.round(Number(parts[i + 1]) * alpha + page[i]! * (1 - alpha)),
+  ) as [number, number, number];
+}
+
+const WHITE: [number, number, number] = [255, 255, 255];
+const NEAR_BLACK: [number, number, number] = [23, 24, 26];
+
+describe('a highlight you can still read', () => {
+  it('is legible on a light page, with the dark ink', () => {
+    for (const pen of PENS) {
+      const on = markOver(PEN_MARKS[pen], WHITE);
+      expect(contrast(asRgb(MARK_INK), on)).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  it('is legible on a dark page, with the light one', () => {
+    // The case that was broken: ChatGPT and most documentation sites in dark
+    // mode, which is a lot of where Kona is meant to be used.
+    for (const pen of PENS) {
+      const on = markOver(PEN_MARKS[pen], NEAR_BLACK);
+      expect(contrast(asRgb(MARK_INK_DARK), on)).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  it('would have been unreadable on a dark page with the dark ink', () => {
+    // Kept as the record of the defect, so switching the ink back cannot look
+    // like a tidy-up.
+    const on = markOver(PEN_MARKS.pink, NEAR_BLACK);
+    expect(contrast(asRgb(MARK_INK), on)).toBeLessThan(3);
+  });
+
+  it('switches ink when the page says it is dark', () => {
+    const painter = new HighlightPainter(document);
+    expect(rules()).toContain(MARK_INK);
+    painter.setPageDark(true);
+    expect(rules()).toContain(MARK_INK_DARK);
+    painter.setPageDark(false);
+    expect(rules()).toContain(MARK_INK);
   });
 });

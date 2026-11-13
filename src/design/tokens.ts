@@ -54,8 +54,21 @@ export const PEN_MARKS: Record<HighlightColor, string> = Object.fromEntries(
   PENS.map((pen) => [pen, token(`pen-${pen}-mark`)]),
 ) as Record<HighlightColor, string>;
 
-/** Dark text on every mark, so a pale pen stays readable on a dark page. */
+/**
+ * The ink written on a mark, which depends on the page under it.
+ *
+ * A mark is transparent, so the words end up on the mark *and* whatever the
+ * page puts behind it. Dark ink reads at 9.5:1 or better over a light page and
+ * collapses to 1.5:1 over a dark one -- a highlight that makes text harder to
+ * read than leaving it alone. So the painter asks the page first.
+ */
 export const MARK_INK = token('mark-ink');
+export const MARK_INK_DARK = token('mark-ink-dark');
+
+/** The ink to write on a mark, given how dark the page behind it is. */
+export function markInk(pageIsDark: boolean): string {
+  return pageIsDark ? MARK_INK_DARK : MARK_INK;
+}
 
 /** The dotted underline that says a highlight carries a note. */
 export const MARK_NOTED = token('mark-noted');

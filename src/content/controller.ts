@@ -651,6 +651,12 @@ export class KonaController {
         .map((r) => ({ color: r.mark.color, range: r.range, noted: !!r.mark.note })),
     );
 
+    // The ink on a mark depends on the page under it, because a mark is
+    // transparent and the words end up sitting on both. Told here rather than
+    // read by the painter, so there is one answer to how dark the page is.
+    const pageDark = this.theme === 'system' ? isDarkPage() : this.theme === 'dark';
+    this.painter.setPageDark(pageDark);
+
     const brokenLayout =
       !!conversationId && messages.length === 0 && Date.now() - this.openedAt > BROKEN_AFTER_MS;
     const cardStillValid = card && this.marks.some((m) => m.id === card.markId);
@@ -660,7 +666,7 @@ export class KonaController {
       card: cardStillValid ? { ...card, position: this.cardPosition(card.markId) } : null,
       health: brokenLayout ? 'no-messages' : 'ok',
       // "System" means matching the page we're sitting on, which is what looks right in context.
-      dark: this.theme === 'system' ? isDarkPage() : this.theme === 'dark',
+      dark: pageDark,
     });
   }
 

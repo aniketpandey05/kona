@@ -1,4 +1,4 @@
-import { MARK_FLASH, MARK_INK, MARK_NOTED, PEN_COLORS, PEN_MARKS } from '../design/tokens';
+import { MARK_FLASH, MARK_NOTED, PEN_COLORS, PEN_MARKS, markInk } from '../design/tokens';
 import type { HighlightColor } from './types';
 
 /**
@@ -32,6 +32,8 @@ export class HighlightPainter {
   private readonly noted = new Highlight();
   private readonly flash = new Highlight();
   private readonly style: HTMLStyleElement;
+  /** How dark the page under the marks is, which decides the ink on them. */
+  private pageIsDark = false;
   private flashTimer: ReturnType<typeof setTimeout> | undefined;
 
   static isSupported(): boolean {
@@ -42,16 +44,7 @@ export class HighlightPainter {
     const colors = Object.keys(PEN_MARKS) as HighlightColor[];
     this.style = doc.createElement('style');
     this.style.setAttribute('data-kona-ui', '');
-    this.style.textContent = [
-      // Dark text on every highlight, so pale colors stay readable on dark pages and in code blocks.
-      ...colors.map(
-        (c) => `::highlight(${layerName(c)}) { background-color: ${PEN_MARKS[c]}; color: ${MARK_INK}; }`,
-      ),
-      // Firefox does not apply text-decoration inside ::highlight(), so a noted
-      // highlight simply looks unmarked there. The panel still shows the note.
-      `::highlight(${NOTED}) { text-decoration: underline dotted ${MARK_NOTED}; text-decoration-thickness: 2px; }`,
-      `::highlight(${FLASH}) { background-color: ${MARK_FLASH}; color: ${MARK_INK}; }`,
-    ].join('\n');
+    this.writeRules();
     doc.head.append(this.style);
 
     for (const color of colors) {
@@ -63,6 +56,35 @@ export class HighlightPainter {
     CSS.highlights.set(NOTED, this.noted);
     this.flash.priority = 2;
     CSS.highlights.set(FLASH, this.flash);
+  }
+
+  /**
+   * Tell the painter how dark the page is.
+   *
+   * A mark is transparent, so the words sit on the mark *and* the page under
+   * it. Dark ink over a light page reads at 9.5:1 or better; the same ink over
+   * a dark page lands on a dark composite and falls to 1.5:1, which is a
+   * highlight that makes the text harder to read than not highlighting it at
+   * all. Measured in `tests/painter.test.ts`.
+   */
+  setPageDark(dark: boolean): void {
+    if (dark === this.pageIsDark) return;
+    this.pageIsDark = dark;
+    this.writeRules();
+  }
+
+  private writeRules(): void {
+    const colors = Object.keys(PEN_MARKS) as HighlightColor[];
+    const ink = markInk(this.pageIsDark);
+    this.style.textContent = [
+      ...colors.map(
+        (c) => `::highlight(${layerName(c)}) { background-color: ${PEN_MARKS[c]}; color: ${ink}; }`,
+      ),
+      // Firefox does not apply text-decoration inside ::highlight(), so a noted
+      // highlight simply looks unmarked there. The panel still shows the note.
+      `::highlight(${NOTED}) { text-decoration: underline dotted ${MARK_NOTED}; text-decoration-thickness: 2px; }`,
+      `::highlight(${FLASH}) { background-color: ${MARK_FLASH}; color: ${ink}; }`,
+    ].join('\n');
   }
 
   paint(entries: PaintEntry[]): void {
