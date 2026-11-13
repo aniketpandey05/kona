@@ -8,6 +8,7 @@ Three documents, one job each, and two sets of drawings.
 | **`DEFINITIONS.md`** | What every word means, in the present tense of the finished product. |
 | **`DESIGN-LOG.md`** | Every decision, why it was made, and the few still open. |
 | **`BUILD-LOG.md`** | What has actually been built, in the order it was built. |
+| **`TO-PRODUCTION.md`** | What is left, and what shipping each piece costs. |
 | **`design/MOCKUPS.md`** | Eighteen boards, what each one shows, and the links. The source is in `design/mockups/`, so this does not depend on claude.ai. |
 
 This file is the design drawn together. Where it says *(2e)* it is naming the

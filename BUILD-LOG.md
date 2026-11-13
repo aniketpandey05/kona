@@ -558,11 +558,64 @@ everything in the web app reads from `src/design/tokens.json`.
 
 ---
 
+## Contrast, and the listing
+
+### Two contrast defects — `4ec23ed`
+
+Both found by computing ratios rather than looking at them.
+
+**The serious one was in the main ability.** A mark is transparent, so the words
+end up sitting on the mark *and the page under it* — and the painter wrote dark
+ink on every mark regardless. Over a light page that reads at 9.5:1 or better.
+Over a dark one it lands on a dark composite and falls to **1.5:1**, which means
+the highlight made the text harder to read than not highlighting it. That is
+most documentation sites in dark mode and ChatGPT in dark mode, which is a lot
+of where Kona is meant to be used.
+
+Two inks now, and the painter asks the page — which the controller already knew.
+Worst pen measured: 9.52 with the dark ink on white, 5.02 with the light ink on
+near-black. A mid-grey page is the one neither can fix, and the light ink is the
+better of the two there.
+
+**The test that should have caught it measured the wrong pair**: the ink against
+the pen at full strength, which is a dot in Kona's own rooms and not what any
+word sits on. It composites the mark over a page now, both ways, and keeps the
+broken case as a record so switching the ink back cannot look like a tidy-up.
+
+**The second one was mine.** White on `--kona-accent` is 3.50:1 and fails AA.
+The deleted stylesheet had said so in a comment; the knowledge went with the
+file, and three filled buttons shipped at 3.50 before it came up again. There is
+an `accent-fill` token now at 5.09:1, and the ratio is computed in a test rather
+than trusted to a comment.
+
+### The listing described a product that no longer exists — `6b650ea`
+
+An audit of what a store submission needs, and most of what it found was copy.
+
+The **permission justifications** named three host permissions that no longer
+exist — the first thing a reviewer compares against the manifest — and said
+nothing about the one content script that does. The **privacy policy** listed
+data Kona stopped storing when 3e deleted the soft switch. The **landing page**
+was still selling findings, write-ups and a citing memo, all of which 20
+removed, and put hybrid search in the Free tier where 11 makes it Pro's. And the
+**prices were wrong in both places**: `plans.ts` said Pro was $7 a month and
+Team $14 a seat, where 8 settled $30 a year or $3 a month and left Team's price
+open.
+
+The pricing test caught half of this on me, which is exactly what it is for: it
+compares the site against `plans.ts` and fails when the price of the product
+changes in one place only.
+
+`TO-PRODUCTION.md` is new: what is left, in the order it has to happen, with
+what each piece costs.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 476 |
+| Tests | 484 |
 | `src/ui/App.tsx` | 766 → 279 lines |
 | Removed | 4,698 lines of duplicated screens, plus the soft switch |
 | Built | the token file, the passage core, the fonts, the panel, the bar, the note editor, the active space, the bridge, the whole library — Highlights, Archived, Spaces, Settings — the share screen, Welcome/About, archiving and both Free caps |
