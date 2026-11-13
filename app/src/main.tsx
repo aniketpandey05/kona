@@ -1,15 +1,13 @@
 import { render } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
-import { App } from './App';
 import { Library } from './Library';
-import { readShare } from './share';
+import { Shared, sharedNow } from './Shared';
 // The tokens first, then the two rooms that read them. app.css is what is left
 // of the old screens and goes as each is rebuilt.
 import '../../src/design/fonts.css';
 import '../../src/design/tokens.css';
 import '../../src/design/passage.css';
 import './library.css';
-import './app.css';
 
 /**
  * Highlights is the rebuilt view (3f). Spaces, settings, folder sync, the
@@ -33,13 +31,15 @@ function Kona() {
     return () => removeEventListener('hashchange', read);
   }, []);
 
-  // Share › Kona, from an Android share sheet (1h). No fragment, so it has to
-  // be recognised by what it carries rather than where it points.
-  if (readShare(location.search)) return <App />;
+  // Share › Kona, from an Android share sheet (1h). No fragment at all, so it
+  // has to be recognised by what it carries rather than where it points —
+  // which is exactly how it went unnoticed when the library took the default
+  // route and this was landing there, capturing nothing.
+  const shared = sharedNow();
+  if (shared) return <Shared payload={shared} />;
 
   // Everything else is the library, which is the place (3f): Highlights,
-  // Spaces and Settings are all views of it. The old screen is now reached
-  // only by a share arriving, which is the one thing it still owns.
+  // Archived, Spaces and Settings are all views of it.
   return <Library route={route} />;
 }
 

@@ -18,6 +18,7 @@ import { siteLabel } from '../../src/core/sites';
 import type { Space } from '../../src/core/spaces';
 import type { HighlightColor, Mark } from '../../src/core/types';
 import { openLibrary, type LibrarySource } from './source';
+import type { FolderSource } from '../../src/core/folder';
 import { Settings } from './Settings';
 import { SpacesView } from './SpacesView';
 
@@ -57,7 +58,15 @@ const SINCE: Record<Exclude<When, 'any'>, number> = {
   month: 30 * 86_400_000,
 };
 
-export function Library({ route = '' }: { route?: string }) {
+export function Library({
+  route = '',
+  folders,
+  syncOnDemand,
+}: {
+  route?: string;
+  folders?: FolderSource;
+  syncOnDemand?: (run: () => void) => void;
+}) {
   // 3f: the library is the place, and Highlights and Spaces are two ways in.
   const inSpaces = route.startsWith('#/spaces');
   const inSettings = route.startsWith('#/settings');
@@ -283,7 +292,13 @@ export function Library({ route = '' }: { route?: string }) {
 
         <main class="lib-main">
           {inSettings ? (
-            <Settings marks={marks ?? []} spaces={spaces} onChanged={() => void reread()} />
+            <Settings
+              marks={marks ?? []}
+              spaces={spaces}
+              onChanged={() => void reread()}
+              folders={folders}
+              syncOnDemand={syncOnDemand}
+            />
           ) : inSpaces && source ? (
             <SpacesView
               source={source}

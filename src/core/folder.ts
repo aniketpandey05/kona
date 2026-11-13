@@ -22,6 +22,7 @@ import {
 } from './sync';
 
 export type { Chosen };
+export type { FolderSource };
 
 /** A directory handle is a live object, so it cannot live in JSON storage. */
 const DB_NAME = 'kona-folder';

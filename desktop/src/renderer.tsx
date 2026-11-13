@@ -1,7 +1,10 @@
 import { render } from 'preact';
-import { App } from '../../app/src/App';
+import { Library } from '../../app/src/Library';
 import { diskFolders, onSyncNow } from './folders';
-import '../../app/src/app.css';
+import '../../src/design/fonts.css';
+import '../../src/design/tokens.css';
+import '../../src/design/passage.css';
+import '../../app/src/library.css';
 import './desktop.css';
 
 /**
@@ -12,4 +15,7 @@ import './desktop.css';
  * now". Everything else, the library, the search, the spaces, the signing,
  * is the code the extension and the phone already run.
  */
-render(<App folders={diskFolders} syncOnDemand={onSyncNow} />, document.getElementById('app')!);
+render(
+  <Library folders={diskFolders} syncOnDemand={onSyncNow} />,
+  document.getElementById('app')!,
+);

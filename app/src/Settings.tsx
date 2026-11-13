@@ -4,7 +4,7 @@ import { toMarkdown } from '../../src/core/markdown';
 import type { Space } from '../../src/core/spaces';
 import type { Theme } from '../../src/core/theme';
 import type { Mark } from '../../src/core/types';
-import { browserFolders } from '../../src/core/folder';
+import { browserFolders, type FolderSource } from '../../src/core/folder';
 import { useFolderSync } from '../../src/ui/useFolderSync';
 import { Install } from './Install';
 import {
@@ -42,9 +42,17 @@ interface Props {
   marks: Mark[];
   spaces: Space[];
   onChanged: () => void;
+  /**
+   * Where a sync folder comes from. In a browser that is a handle the user
+   * picks and the browser may forget; on the desktop it is a real path that
+   * does not expire, which is the Electron app's entire reason to exist.
+   */
+  folders?: FolderSource;
+  /** The desktop tray's "sync now", handed a function to call. */
+  syncOnDemand?: (run: () => void) => void;
 }
 
-export function Settings({ marks, spaces, onChanged }: Props) {
+export function Settings({ marks, spaces, onChanged, folders, syncOnDemand }: Props) {
   const [theme, setTheme] = useState<Theme>('system');
   const [name, setName] = useState('');
   const [said, setSaid] = useState<string | null>(null);
@@ -197,7 +205,7 @@ export function Settings({ marks, spaces, onChanged }: Props) {
         </div>
       </section>
 
-      <FolderSync onChanged={onChanged} say={say} />
+      <FolderSync onChanged={onChanged} say={say} folders={folders} syncOnDemand={syncOnDemand} />
     </>
   );
 }
@@ -213,9 +221,24 @@ export function Settings({ marks, spaces, onChanged }: Props) {
  * Kept because it is how a Free library reaches a second device today, and
  * taking it away before the real one exists would leave nothing in its place.
  */
-function FolderSync({ onChanged, say }: { onChanged: () => void; say: (m: string) => void }) {
-  const sync = useFolderSync(browserFolders, syncStore);
+function FolderSync({
+  onChanged,
+  say,
+  folders = browserFolders,
+  syncOnDemand,
+}: {
+  onChanged: () => void;
+  say: (m: string) => void;
+  folders?: FolderSource;
+  syncOnDemand?: (run: () => void) => void;
+}) {
+  const sync = useFolderSync(folders, syncStore);
   const state = sync.state;
+
+  // The tray asks for a pass; the screen is what knows how to do one.
+  useEffect(() => {
+    syncOnDemand?.(() => void sync.now().then(() => onChanged()));
+  }, [syncOnDemand]);
 
   return (
     <section class="set-section">
