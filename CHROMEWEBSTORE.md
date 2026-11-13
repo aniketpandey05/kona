@@ -20,7 +20,8 @@ Kona lets you highlight what matters as you read and takes you back to it later.
 
 Switch Kona on for any site, a paper, documentation, Stack Overflow, a blog you keep
 coming back to, select some text and pick a colour. It works inside a ChatGPT, Claude or
-Gemini conversation too, which is the hard case. Add a note to any highlight, tag it, and
+Gemini conversation too, which is the hard case. Kona arrives able to read nothing at
+all — you allow one site at a time, from the toolbar, while standing on it. Add a note to any highlight, tag it, and
 it joins one searchable library covering everything you have ever marked.
 
 Highlights come back where you left them. Kona finds a passage again by its words and the
@@ -75,7 +76,7 @@ Productivity
 
 **Single Purpose**
 Highlights text on web pages and in AI chats, saves it with the user's notes, and navigates
-back to the highlighted passage. Spaces, write-ups and sharing are all views over those
+back to the highlighted passage. Spaces and sharing are views over those
 same saved highlights, organising and citing what the user has already marked, not a
 second feature.
 
@@ -122,14 +123,21 @@ it is still true that the extension makes no network request of any kind.
 | `unlimitedStorage` | A heavy reader accumulates thousands of highlights, each keeping a copy of its text so it survives the source being deleted. The default quota would silently start failing writes. |
 | `activeTab` | When the toolbar button is clicked, the popup needs the current tab's address to show whether Kona is switched on for this site and to offer to switch it on. It is used only for that, only on a click. |
 | `scripting` | After the user allows a new site, highlighting starts on the page they are already looking at instead of requiring a reload. |
-| `contextMenus` | Adds a single "Highlight with Kona" item on a text selection, for sites whose own selection popup covers Kona's colour bar. |
+| `contextMenus` | Adds a single "Highlight with Kona" item on a text selection, for sites whose own selection popup covers Kona's colour bar. Offered only on sites the user has already allowed. Safari on iPhone ships no such API and Kona treats it as optional rather than failing. |
+
+**`host_permissions` is empty.** Kona is granted access to no site at install,
+including the AI chats, and the browser therefore raises no warning when it is
+installed. This is deliberate and is the single most important thing about the
+package: the first sentence an extension says about itself should not be a
+demand.
 
 | Host permission | Why it is needed |
 |---|---|
-| `https://*.chatgpt.com/*`, `https://chat.openai.com/*` | Reads message text to place highlights in a ChatGPT conversation and find them again on return. |
-| `https://*.claude.ai/*` | The same, for Claude. |
-| `https://gemini.google.com/*` | The same, for Gemini. |
-| `optional_host_permissions: *://*/*` | **Never requested on install.** Only requested for one specific site at a time, when the user explicitly switches Kona on for the site they are looking at. The popup lists everything granted this way and can hand each one back. |
+| `optional_host_permissions: *://*/*` | **Never requested on install, and never requested in bulk.** Requested for exactly one site at a time, from the popup, on a click, while the user is looking at the page they want to keep something from. A site Kona has not been granted runs no Kona code at all — there is no content script on it. The browser's own extensions screen lists every site granted and takes any of them back; Kona keeps no second list that could disagree with it. |
+
+| Content script | Why it is needed |
+|---|---|
+| `https://kona.example/*` | Kona's own web app, and the only match in the manifest. On a free account there is no sync, so the library on the web has to read what the extension saved on the same machine; this script is the bridge between the two. It runs on no other origin, only at the top level, and answers nothing that did not come from the page itself. |
 
 **Remote code:** none. All code is bundled in the package; nothing is fetched or evaluated
 at runtime.
@@ -163,9 +171,11 @@ creditworthiness or for lending.
 - [x] Every permission has a specific justification above
 - [x] Privacy policy written and served over HTTPS
 - [x] No remote code, no analytics, no network requests
-- [x] Builds clean, 285 tests pass
-- [x] Screenshots captured at 1280×800
-- [ ] Privacy policy URL confirmed live after Pages deploy
+- [x] Builds clean, 484 tests pass
+- [ ] Screenshots **re-captured** — every one of them shows the old interface
+- [ ] Listing copy re-read against the rebuilt product
+- [ ] A real domain, replacing `kona.example` in `src/design/tokens.json`
+- [ ] Privacy policy URL confirmed live
 - [ ] $5 one-off developer registration paid
 - [ ] ZIP uploaded from `.output/kona-1.2.0-chrome.zip` (`npm run zip`)
 
@@ -176,6 +186,6 @@ The ZIP produced by `npm run zip` contains only the built extension, no `.git`, 
 
 | Version | Date | Summary |
 |---|---|---|
-| 1.2.0 | 2026-11-01 | Spaces: a question, the highlights that bear on it, what was concluded, and a write-up citing the exact sentence behind every claim. A space can be handed over as a file and merged back with the other person's replies and conclusions in it. Search now finds the passage that says the thing in other words, learned from the user's own library. Contributions are signed with a key made on the user's computer and checked when a space comes back. Notes and tags editable from the library; backups now carry spaces as well as highlights. |
+| 1.2.0 | unreleased | Rebuilt from the design documents. Kona installs asking for nothing: no site is read until it is allowed, the AI chats included. One set of colours and type across the whole product. Spaces can be set from the panel, and while one is active the panel says in words where highlights are going; a highlight that does not belong comes back out in one tap. A space is the highlights gathered in it — the write-up and findings are gone. Archiving puts a highlight out of the way of the list without losing it. The library moved to the web, so there is one library rather than two. Highlights stay readable on dark pages, which they were not. |
 | 1.1.0 | 2026-10-23 | Colour on phone captures, with filtering to match. Backups and appearance reachable from the header rather than the foot of the list. Shared text is tidied as it is stored. A conversation link shared to the app attaches itself to everything kept from that conversation. |
 | 1.0.0 | 2026-10-21 | First public release. Highlighting with notes and tags on ChatGPT, Claude, Gemini and any site the user switches on; side panel; cross-chat search; one library with Markdown and backup export; light and dark themes. |
