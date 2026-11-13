@@ -37,10 +37,9 @@ function Kona() {
   // be recognised by what it carries rather than where it points.
   if (readShare(location.search)) return <App />;
 
-  // Settings, sync and backups are still the old screen. Spaces is not: the
-  // library is the place and holds both of its views (3f), so it takes its own
-  // route rather than living beside it.
-  if (route.startsWith('#/settings')) return <App />;
+  // Everything else is the library, which is the place (3f): Highlights,
+  // Spaces and Settings are all views of it. The old screen is now reached
+  // only by a share arriving, which is the one thing it still owns.
   return <Library route={route} />;
 }
 

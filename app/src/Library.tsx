@@ -18,6 +18,7 @@ import { siteLabel } from '../../src/core/sites';
 import type { Space } from '../../src/core/spaces';
 import type { HighlightColor, Mark } from '../../src/core/types';
 import { openLibrary, type LibrarySource } from './source';
+import { Settings } from './Settings';
 import { SpacesView } from './SpacesView';
 
 /**
@@ -59,6 +60,13 @@ const SINCE: Record<Exclude<When, 'any'>, number> = {
 export function Library({ route = '' }: { route?: string }) {
   // 3f: the library is the place, and Highlights and Spaces are two ways in.
   const inSpaces = route.startsWith('#/spaces');
+  const inSettings = route.startsWith('#/settings');
+  // Every view is a route, so the nav and the pane cannot disagree about which
+  // one is showing. Holding a view in state beside the route meant clearing
+  // one without the other, and the nav said Highlights while Settings showed.
+  const view: 'highlights' | 'archived' = route.startsWith('#/archived')
+    ? 'archived'
+    : 'highlights';
   const openSpaceId = route.startsWith('#/spaces/') ? route.slice('#/spaces/'.length) : null;
   const [source, setSource] = useState<LibrarySource | null>(null);
   const [marks, setMarks] = useState<Mark[] | null>(null);
@@ -68,7 +76,6 @@ export function Library({ route = '' }: { route?: string }) {
   const [site, setSite] = useState<string | null>(null);
   const [when, setWhen] = useState<When>('any');
   const [menuOpen, setMenuOpen] = useState(false);
-  const [view, setView] = useState<'highlights' | 'archived'>('highlights');
   const [picking, setPicking] = useState(false);
   const [chosen, setChosen] = useState<Set<string>>(new Set());
   const [wall, setWall] = useState(false);
@@ -213,22 +220,28 @@ export function Library({ route = '' }: { route?: string }) {
 
       <div class="lib-body">
         <nav class={menuOpen ? 'lib-nav lib-nav--open' : 'lib-nav'} aria-label="Library">
-          <button
-            type="button"
-            class={view === 'highlights' ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
-            aria-current={view === 'highlights' ? 'page' : undefined}
-            onClick={() => setView('highlights')}
+          <a
+            class={
+              !inSpaces && !inSettings && view === 'highlights'
+                ? 'lib-nav-item lib-nav-item--on'
+                : 'lib-nav-item'
+            }
+            aria-current={!inSpaces && !inSettings && view === 'highlights' ? 'page' : undefined}
+            href="#/"
           >
             Highlights <span class="lib-nav-count">{notArchived(marks ?? []).length}</span>
-          </button>
-          <button
-            type="button"
-            class={view === 'archived' ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
-            aria-current={view === 'archived' ? 'page' : undefined}
-            onClick={() => setView('archived')}
+          </a>
+          <a
+            class={
+              !inSpaces && !inSettings && view === 'archived'
+                ? 'lib-nav-item lib-nav-item--on'
+                : 'lib-nav-item'
+            }
+            aria-current={!inSpaces && !inSettings && view === 'archived' ? 'page' : undefined}
+            href="#/archived"
           >
             Archived <span class="lib-nav-count">{archivedCount}</span>
-          </button>
+          </a>
 
           {/* Spaces are the library's other view (3f), still the old screen. */}
           <p class="lib-nav-head">
@@ -249,8 +262,11 @@ export function Library({ route = '' }: { route?: string }) {
               rather than left stranded, which is what happened when Highlights
               took the default route. */}
           <p class="lib-nav-head">More</p>
-          <a class="lib-nav-item" href="#/settings">
-            Settings &amp; sync
+          <a
+            class={inSettings ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
+            href="#/settings"
+          >
+            Settings &amp; backups
           </a>
 
           <div class="lib-nav-foot">
@@ -266,7 +282,9 @@ export function Library({ route = '' }: { route?: string }) {
         </nav>
 
         <main class="lib-main">
-          {inSpaces && source ? (
+          {inSettings ? (
+            <Settings marks={marks ?? []} spaces={spaces} onChanged={() => void reread()} />
+          ) : inSpaces && source ? (
             <SpacesView
               source={source}
               spaces={spaces}

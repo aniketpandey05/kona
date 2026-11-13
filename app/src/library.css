@@ -548,3 +548,64 @@
   color: inherit;
   text-decoration: none;
 }
+
+/* Settings: export first, because 6 makes a file you keep the only backup
+   there is, and nothing that is a safety feature hides behind a tier. */
+.set-section {
+  max-width: 62ch;
+  margin-bottom: var(--kona-space-32);
+}
+
+.set-section h2 {
+  margin: 0 0 var(--kona-space-8);
+  font-size: var(--kona-text-lg);
+  font-weight: var(--kona-weight-semibold);
+  color: var(--kona-paper-ink-heading);
+}
+
+.set-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kona-space-8);
+  margin: var(--kona-space-12) 0;
+}
+
+.set-quiet {
+  margin: 0;
+  font-size: var(--kona-text-base);
+  line-height: var(--kona-leading-normal);
+  color: var(--kona-paper-ink-muted);
+}
+
+.set-input {
+  flex: 1 1 200px;
+  min-width: 0;
+  padding: var(--kona-space-8) var(--kona-space-10);
+  font: inherit;
+  font-size: var(--kona-text-md);
+  color: var(--kona-paper-ink);
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-sm);
+}
+
+.set-said {
+  margin: 0 0 var(--kona-space-16);
+  padding: var(--kona-space-8) var(--kona-space-12);
+  font-size: var(--kona-text-base);
+  color: var(--kona-paper-ink-note);
+  background: var(--kona-paper-sunken);
+  border-radius: var(--kona-radius-md);
+}
+
+/* 23: a sync that stopped is the only thing Kona ever speaks up about. */
+.set-trouble {
+  margin: var(--kona-space-8) 0;
+  padding: var(--kona-space-8) var(--kona-space-12);
+  font-size: var(--kona-text-base);
+  color: var(--kona-paper-ink-note);
+  background: var(--kona-paper-note);
+  border-left: 2px solid var(--kona-accent);
+  border-radius: 0 var(--kona-radius-sm) var(--kona-radius-sm) 0;
+}
