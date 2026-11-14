@@ -13,19 +13,19 @@ import {
 /** A window-shaped stand-in, so "our window" and "some other window" are both nameable. */
 const windowAt = (origin: string) => ({ location: { origin } }) as unknown as Window;
 
-const ours = windowAt('https://kona.example');
-const theirs = windowAt('https://kona.example');
+const ours = windowAt('https://aniketpandey05.github.io');
+const theirs = windowAt('https://aniketpandey05.github.io');
 
 describe('what the bridge refuses', () => {
   it('answers the page it is running in', () => {
-    expect(fromThisPage({ source: ours, origin: 'https://kona.example' }, ours)).toBe(true);
+    expect(fromThisPage({ source: ours, origin: 'https://aniketpandey05.github.io' }, ours)).toBe(true);
   });
 
   it('refuses a same-origin parent that framed Kona and posted in', () => {
     // Measured in a real browser: the event arrives carrying Kona's own origin,
     // identical to location.origin, with the parent as its source. An origin
     // check alone cannot see this one. Only the source tells them apart.
-    expect(fromThisPage({ source: theirs, origin: 'https://kona.example' }, ours)).toBe(false);
+    expect(fromThisPage({ source: theirs, origin: 'https://aniketpandey05.github.io' }, ours)).toBe(false);
   });
 
   it('refuses a cross-origin sender, which is the other half of the job', () => {
@@ -33,7 +33,7 @@ describe('what the bridge refuses', () => {
   });
 
   it('refuses a message with no source at all', () => {
-    expect(fromThisPage({ source: null, origin: 'https://kona.example' }, ours)).toBe(false);
+    expect(fromThisPage({ source: null, origin: 'https://aniketpandey05.github.io' }, ours)).toBe(false);
   });
 });
 
@@ -93,7 +93,7 @@ describe('where the bridge is allowed to run', () => {
   it('is Kona own origin, and only that, in a shipped build', () => {
     // 3i: exactly one origin, and "just one more" is how a manifest grows back
     // to four. If this ever has to change, the decision changes first.
-    expect(bridgeMatches(false)).toEqual(['https://kona.example/*']);
+    expect(bridgeMatches(false)).toEqual(['https://aniketpandey05.github.io/kona/*']);
   });
 
   it('adds the dev server only when asked', () => {

@@ -629,6 +629,7 @@ web app, not two — is still only a decision. `app/`'s Spaces screen is still
 the old one, and the dead library branch beside it comes out when Spaces is
 rebuilt.
 
-**Kona has no domain.** The bridge's origin, the manifest match and the Library
-button all read `KONA_ORIGINS`, so there is one edit to make when there is a
-real one. Until then the Library button opens a page that does not exist.
+**Kona's address is `https://aniketpandey05.github.io/kona`**, which it has
+been publishing to on every push the whole time — the placeholder was the only
+thing missing. The bridge's content script, the Library button and the page
+client all read `KONA_ORIGINS`, so a custom domain later is one line.

@@ -19,20 +19,21 @@ machine.** That is what is built.
 
 | Needed | Cost | Blocked on |
 | --- | --- | --- |
-| **A domain** | an afternoon | nothing but choosing one |
+| ~~A domain~~ | **done** | it already existed |
 | Chrome developer registration | $5, once | nothing |
-| New screenshots | half a day | the domain, so the library has a real address |
+| New screenshots | half a day | nothing |
 | Listing copy re-read | an hour | nothing |
 
-**The domain is the one real blocker, and it is small.** `kona.example` is a
-placeholder. One constant — `KONA_ORIGINS` in `src/design/tokens.json` — feeds
-the manifest's content script, the bridge, and the Library button, so it is one
-edit and a rebuild. Until it is real:
+**The domain turned out not to be a blocker at all.** Kona has been publishing
+to GitHub Pages on every push to `main` this whole time — the landing page, the
+web app at `/kona/app/`, and the privacy policy, all live over HTTPS. The
+placeholder was the only thing missing, and `KONA_ORIGINS` in
+`src/core/bridge.ts` now points at the real address.
 
-- the Library button in the panel and the popup opens a page that does not exist
-- the bridge matches an origin nobody can visit, so the web app cannot read the
-  extension's storage on the same machine
-- the privacy policy has no URL to give the store
+It is a base rather than a bare origin, because Pages serves a project from a
+subpath — which also scopes the bridge's content script to `/kona/*` rather
+than to everything published under that account. A custom domain later is one
+line and nothing else moves.
 
 **Screenshots are not optional and not quick.** Every one in `docs/screenshots`
 shows the interface that was just replaced. The store listing shows them at

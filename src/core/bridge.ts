@@ -26,12 +26,17 @@ export const BRIDGE = 'kona-bridge' as const;
 /**
  * Where Kona's web app lives.
  *
- * **There is no real domain yet.** When there is one it is changed here, and
- * only here: the manifest, the content script and the page client all read
- * this. A placeholder copied into three files is how a domain gets missed at
- * launch.
+ * Changed here and only here: the manifest's content-script match, the Library
+ * button in the panel and the popup, and the page client all read this. A
+ * placeholder copied into three files is how a domain gets missed at launch.
+ *
+ * **It is a base, not a bare origin.** GitHub Pages serves a project from a
+ * subpath, so this carries `/kona` and the match pattern becomes
+ * `https://aniketpandey05.github.io/kona/*` — which is also what scopes the
+ * bridge to Kona rather than to every project published under that account.
+ * A custom domain later is one line, and nothing else moves.
  */
-export const KONA_ORIGINS = ['https://kona.example'] as const;
+export const KONA_ORIGINS = ['https://aniketpandey05.github.io/kona'] as const;
 
 /** The dev server the web app runs on, allowed only in a development build. */
 export const KONA_DEV_ORIGINS = ['http://localhost:5179'] as const;
