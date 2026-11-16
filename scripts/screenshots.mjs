@@ -38,21 +38,24 @@ const HARNESS = process.env.HARNESS_URL ?? 'http://localhost:5178';
 // Pages a headless run can photograph on its own, because everything worth
 // seeing on them is there as soon as they load.
 const SHOTS = [
-  ['library.png', '/library.html'],
-  ['spaces.png', '/spaces.html'],
-  ['space.png', '/spaces.html#/demo-postgres'],
+  // The product's own surfaces, each seeded by the page so a headless run that
+  // cannot click still arrives at something worth photographing.
+  ['web-page.png', '/shot-page.html'],
+  ['chat-panel.png', '/shot-page.html?open=panel'],
+  ['library.png', '/shots.html#/'],
+  ['space.png', '/shots.html#/spaces/amoebas'],
+  ['spaces.png', '/shots.html#/spaces'],
+  ['archived.png', '/shots.html#/archived'],
+  ['welcome.png', '/welcome.html'],
 ];
 
 /**
- * The two that cannot be: a highlight being made needs the note card open and
- * the panel needs a click, and the harness pages carry a debug box a store
- * listing should not show. Those two are captured by hand and only padded out
- * to store size here, at their own scale rather than stretched.
+ * Nothing needs padding any more. The two that used to be captured by hand —
+ * a page being marked up, and the panel open — are seeded and driven by
+ * `shot-page.html`, which makes the marks the way a person does: select, then
+ * pick a pen.
  */
-const PAD = [
-  ['web-page.png', 'web-page.jpg'],
-  ['chat-panel.png', 'chat-panel.jpg'],
-];
+const PAD = [];
 
 // One profile for the whole run, so the harness seeds itself once and every
 // shot afterwards sees the same library, the same spaces and the same people.
@@ -69,8 +72,8 @@ for (const [name, path] of SHOTS) {
       '--hide-scrollbars',
       '--force-device-scale-factor=1',
       '--window-size=1280,800',
-      // Long enough for the seed to make two keypairs and sign with them.
-      '--virtual-time-budget=8000',
+      // Long enough for the page to seed itself, mount, and make its marks.
+      '--virtual-time-budget=9000',
       `--user-data-dir=${profile}`,
       `--screenshot=${out}`,
       `${HARNESS}${path}`,

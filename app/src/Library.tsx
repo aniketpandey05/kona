@@ -62,10 +62,20 @@ export function Library({
   route = '',
   folders,
   syncOnDemand,
+  source: given,
 }: {
   route?: string;
   folders?: FolderSource;
   syncOnDemand?: (run: () => void) => void;
+  /**
+   * Where to read from, when the caller already knows.
+   *
+   * The library normally asks `openLibrary()` once and is told the bridge or
+   * the device. Handing one in is for the cases that cannot wait to be asked:
+   * a test, and the screenshot pages, where a headless browser photographs the
+   * page before any storage has answered.
+   */
+  source?: LibrarySource;
 }) {
   // 3f: the library is the place, and Highlights and Spaces are two ways in.
   const inSpaces = route.startsWith('#/spaces');
@@ -106,7 +116,7 @@ export function Library({
   useEffect(() => {
     let stop: (() => void) | undefined;
     void (async () => {
-      const opened = await openLibrary();
+      const opened = given ?? (await openLibrary());
       setSource(opened);
       const read = async () => {
         const mine = ++reading.current;
@@ -119,7 +129,7 @@ export function Library({
       stop = opened.watch(() => void read());
     })();
     return () => stop?.();
-  }, []);
+  }, [given]);
 
   const sites = useMemo(() => {
     const seen = new Map<string, number>();
