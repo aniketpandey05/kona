@@ -5,6 +5,7 @@ import type { SyncStore } from './sync';
 import { pageId } from './pageUrl';
 import { makePerson, type Person } from './people';
 import type { Space } from './spaces';
+import { imageKey } from './image';
 import type { Mark, SiteId } from './types';
 
 // Prototype storage: one array per conversation in chrome.storage.local.
@@ -93,10 +94,15 @@ export function upsertMark(mark: Mark): Promise<void> {
 export function removeMark(site: SiteId, conversationId: string, id: string): Promise<void> {
   return serialized(async () => {
     const marks = await loadMarks(site, conversationId);
+    const going = marks.find((m) => m.id === id);
     await storage.setItem(
       marksKey(site, conversationId),
       marks.filter((m) => m.id !== id),
     );
+    // A kept picture goes with the highlight that held it (18). Nothing else
+    // points at those bytes, so leaving them would be a megabyte nobody can
+    // reach and nobody can clear.
+    if (going?.image?.kept) await storage.removeItem(imageKey(id));
   });
 }
 

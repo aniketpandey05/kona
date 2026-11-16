@@ -117,6 +117,10 @@ export function Library({
   const [me, setMe] = useState('');
   const [tag, setTag] = useState<string | null>(null);
   const [menuAt, setMenuAt] = useState(false);
+  /** A highlight whose delete has not been written yet, while undo is offered. */
+  const [goneForNow, setGoneForNow] = useState<Mark | null>(null);
+  const [asking, setAsking] = useState(false);
+  const undoWindow = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [site, setSite] = useState<string | null>(null);
   const [when, setWhen] = useState<When>('any');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -253,6 +257,7 @@ export function Library({
   // The pictures for the rows actually on screen (18), asked for one at a
   // time and then held.
   const pictures = usePictures(shown, source);
+  const rows = goneForNow ? shown.filter((mark) => mark.id !== goneForNow.id) : shown;
 
   const toggleColour = (pen: PenId) =>
     setColours((current) =>
@@ -303,6 +308,47 @@ export function Library({
     const found = await source.marks();
     if (mine === reading.current) setMarks(found);
     setChosen(new Set());
+  };
+
+  /**
+   * Deleting, which the library had no way to do at all (DEFINITIONS, Delete).
+   *
+   * The row goes at once and the deed waits, which is what *a single delete
+   * can be undone immediately afterwards* means here: nothing is written
+   * until the offer to take it back has expired, so closing the tab in the
+   * middle leaves the highlight standing rather than half-gone.
+   *
+   * It is quieter than Archive wherever both are offered, because archive is
+   * the one you want nine times out of ten and the other cannot be undone
+   * once it has happened.
+   */
+  const forget = (mark: Mark) => {
+    clearTimeout(undoWindow.current);
+    const earlier = goneForNow;
+    setGoneForNow(mark);
+    // A second delete while the first is still undoable commits the first:
+    // one offer at a time, and the older one has had its moment.
+    if (earlier && source) void source.remove(earlier).then(() => void reread());
+    undoWindow.current = setTimeout(() => {
+      setGoneForNow(null);
+      if (source) void source.remove(mark).then(() => void reread());
+    }, 6000);
+  };
+
+  const keepAfterAll = () => {
+    clearTimeout(undoWindow.current);
+    setGoneForNow(null);
+  };
+
+  const deleteChosen = async () => {
+    if (!source) return;
+    for (const id of chosen) {
+      const mark = (marks ?? []).find((each) => each.id === id);
+      if (mark) await source.remove(mark);
+    }
+    setChosen(new Set());
+    setAsking(false);
+    await reread();
   };
 
   const choose = (id: string) =>
@@ -571,6 +617,39 @@ export function Library({
                   >
                     {view === 'archived' ? 'Bring back' : 'Archive'}
                   </button>
+                  {/* Several at once asks first, because there is no undoing
+                      it afterwards (DEFINITIONS, Delete). */}
+                  {asking ? (
+                    <>
+                      <span class="lib-chosen-sure">
+                        Delete {chosen.size}? They go from every space too, and
+                        this cannot be undone.
+                      </span>
+                      <button
+                        type="button"
+                        class="lib-chosen-do lib-chosen-do--danger"
+                        onClick={() => void deleteChosen()}
+                      >
+                        Delete them
+                      </button>
+                      <button type="button" class="lib-row-do" onClick={() => setAsking(false)}>
+                        Keep them
+                      </button>
+                    </>
+                  ) : (
+                    <button type="button" class="lib-row-delete" onClick={() => setAsking(true)}>
+                      Delete
+                    </button>
+                  )}
+                </p>
+              )}
+
+              {goneForNow && (
+                <p class="lib-chosen" role="status">
+                  Deleted “{(goneForNow.label || goneForNow.snapshot).slice(0, 60)}”
+                  <button type="button" class="lib-chosen-do" onClick={keepAfterAll}>
+                    Undo
+                  </button>
                 </p>
               )}
 
@@ -582,7 +661,7 @@ export function Library({
 
               {marks === null ? (
                 <p class="lib-none">Reading your library…</p>
-              ) : shown.length === 0 ? (
+              ) : rows.length === 0 ? (
                 <p class="lib-none">
                   {filtered
                     ? 'Nothing matches that.'
@@ -592,7 +671,7 @@ export function Library({
                 </p>
               ) : (
                 <ul class="lib-list">
-                  {shown.map((mark) => (
+                  {rows.map((mark) => (
                     <li key={mark.id} class="lib-row">
                       {picking && (
                         <label class="lib-pick">
@@ -641,6 +720,17 @@ export function Library({
                           onClick={() => void apply([mark.id], !isArchived(mark))}
                         >
                           {isArchived(mark) ? 'Bring back' : 'Archive'}
+                        </button>
+                        {/* Quieter than Archive, deliberately: archive is what
+                            you want nine times out of ten, and this is the one
+                            that cannot be undone once the moment has passed. */}
+                        <button
+                          type="button"
+                          class="lib-row-delete"
+                          aria-label={`Delete ${mark.label || mark.snapshot}`}
+                          onClick={() => forget(mark)}
+                        >
+                          Delete
                         </button>
                       </p>
                     </li>

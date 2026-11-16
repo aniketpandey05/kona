@@ -9,9 +9,11 @@ import {
   inOrder,
   moveSpace,
   removeLink,
+  labelSpace,
   removeMark as takeOutOfSpace,
   rename,
   samePage,
+  unlabelSpace,
   type Space,
 } from '../../src/core/spaces';
 import type { Mark } from '../../src/core/types';
@@ -186,6 +188,7 @@ function AllSpaces({
                 <span class="sp-card-count">
                   {space.markIds.length === 1 ? '1 highlight' : `${space.markIds.length} highlights`}
                   {space.links?.length ? ` · ${space.links.length} to read` : ''}
+                  {space.labels?.length ? ` · ${space.labels.join(', ')}` : ''}
                 </span>
               </button>
               <div class="sp-card-do">
@@ -255,6 +258,7 @@ function OneSpace({
 }) {
   const [note, setNote] = useState(space.note ?? '');
   const [link, setLink] = useState('');
+  const [label, setLabel] = useState('');
 
   // A space points at highlights; the highlight stays in the library and stays
   // one highlight. Nothing is copied and nothing is moved.
@@ -306,6 +310,39 @@ function OneSpace({
       <div class="lib-head">
         <h1>{space.name}</h1>
         {space.question && <p>{space.question}</p>}
+      </div>
+
+      {/* Its own labels, working the way a highlight's tags do and never mixed
+          with them: a tag says something about a passage, a label says
+          something about a project (1e, 1c). */}
+      <div class="sp-labels">
+        {(space.labels ?? []).map((each) => (
+          <span class="sp-label" key={each}>
+            {each}
+            <button
+              type="button"
+              aria-label={`Take the label ${each} off this space`}
+              onClick={() => void save(unlabelSpace(space, each)).then(onChanged)}
+            >
+              ×
+            </button>
+          </span>
+        ))}
+        <input
+          class="sp-label-add"
+          type="text"
+          value={label}
+          placeholder={(space.labels ?? []).length ? 'Another label…' : 'Add a label…'}
+          aria-label="Add a label to this space"
+          onInput={(event) => setLabel(event.currentTarget.value)}
+          onKeyDown={(event) => {
+            if (event.key !== 'Enter' || !label.trim()) return;
+            void save(labelSpace(space, label)).then(() => {
+              setLabel('');
+              onChanged();
+            });
+          }}
+        />
       </div>
 
       {/* The note is where a conclusion goes. Nothing in a space is required,

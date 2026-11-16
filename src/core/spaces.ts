@@ -1,5 +1,6 @@
 import { joinPeople, personIn, type Person } from './people';
 import { pageId } from './pageUrl';
+import { addTags, removeTag } from './tags';
 import type { Mark } from './types';
 
 /**
@@ -124,6 +125,16 @@ export interface Space {
   links?: SpaceLink[];
   /** Where you put this space in your own list (1e). Absent on spaces made before. */
   position?: number;
+  /**
+   * Its own short labels, working the way tags do on a highlight, for pulling
+   * related spaces together (1e).
+   *
+   * Not the same list as a highlight's tags and never mixed with it: a tag
+   * says something about a passage, a label says something about a project.
+   * 1c settled that tags and spaces are independent axes, and this is the same
+   * distinction one level up.
+   */
+  labels?: string[];
   createdAt: number;
   updatedAt: number;
 }
@@ -493,6 +504,17 @@ export interface SpaceLink {
   /** What to call it. The page's own title where one was known, else the host. */
   title?: string;
   addedAt: number;
+}
+
+/** Labelling a space, by the same rules a highlight's tags follow. */
+export function labelSpace(space: Space, input: string, now = Date.now()): Space {
+  const labels = addTags(space.labels ?? [], input);
+  return labels.length === (space.labels ?? []).length ? space : touched(space, { labels }, now);
+}
+
+export function unlabelSpace(space: Space, label: string, now = Date.now()): Space {
+  const labels = removeTag(space.labels ?? [], label);
+  return labels.length === (space.labels ?? []).length ? space : touched(space, { labels }, now);
 }
 
 /** Putting a page in a space to read later. Adding the same one twice is not an error. */

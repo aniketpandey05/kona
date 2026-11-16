@@ -1238,3 +1238,82 @@
 .ab-list li {
   margin-bottom: var(--kona-space-6);
 }
+
+/* A space's own labels (1e). The same shape a highlight's tags take in the
+   note editor, because they work the same way; a different list, because a
+   tag is about a passage and a label is about a project. */
+.sp-labels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kona-space-6);
+  margin: var(--kona-space-12) 0;
+}
+
+.sp-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kona-space-6);
+  padding: var(--kona-space-4) var(--kona-space-6) var(--kona-space-4) var(--kona-space-10);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-note);
+  background: var(--kona-paper-sunken);
+  border-radius: var(--kona-radius-pill);
+}
+
+.sp-label button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  font: inherit;
+  line-height: 1;
+  color: var(--kona-paper-ink-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.sp-label-add {
+  min-width: 140px;
+  padding: var(--kona-space-4) var(--kona-space-8);
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink);
+  background: transparent;
+  border: 1px dashed var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-pill);
+}
+
+/* Delete, wherever archive is also offered: present, and quieter. Archive is
+   what you want nine times out of ten, and this is the one that cannot be
+   undone once the moment has passed (DEFINITIONS, Delete). */
+.lib-row-delete {
+  margin-left: var(--kona-space-8);
+  padding: 0;
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-faint);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.lib-row-delete:hover,
+.lib-row-delete:focus-visible {
+  color: var(--kona-accent-link-hover);
+  text-decoration: underline;
+}
+
+.lib-chosen-sure {
+  font-size: var(--kona-text-base);
+  color: var(--kona-paper-ink-note);
+}
+
+.lib-chosen-do--danger {
+  color: var(--kona-accent-fill-ink);
+  background: var(--kona-accent-fill);
+}
