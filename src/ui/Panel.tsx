@@ -42,7 +42,7 @@ export function Panel({ state, controller }: Props) {
         type="button"
         class={count > 0 ? 'kona-rest kona-rest--counted' : 'kona-rest'}
         onClick={() => setOpen(true)}
-        aria-label={count > 0 ? `Kona — ${count} on this page` : 'Kona'}
+        aria-label={count > 0 ? `Kona, ${count} on this page` : 'Kona'}
       >
         <KonaMark size={count > 0 ? 20 : 17} />
         {count > 0 && <span class="kona-rest-count">{count}</span>}
@@ -56,7 +56,7 @@ export function Panel({ state, controller }: Props) {
 
   return (
     // kona-slab is what tells the shared passage which room it is in. It is set
-    // here, once, rather than passed to every passage -- see design/passage.css.
+    // here, once, rather than passed to every passage, see design/passage.css.
     <div class="kona-panel kona-slab" role="dialog" aria-label="Kona, on this page">
       <div class="kona-panel-head">
         <KonaMark size={19} />
@@ -165,7 +165,7 @@ function GoingChip({ space }: { space: ActiveSpaceState }) {
 
 /**
  * 2e. The panel always says where highlights are going, in words, whenever a
- * space is active -- and when that space is shared it says that too, with the
+ * space is active: and when that space is shared it says that too, with the
  * number of people, because a passage going somewhere other people can see it
  * is a different act from one going into your own library (25).
  */
@@ -220,7 +220,7 @@ function GoingTo({ space, controller }: { space: ActiveSpaceState | null; contro
   }
 
   // 2d and 2b: with no space set the panel is this page and nothing more, so
-  // there is no strip at all -- only the quiet way to set one.
+  // there is no strip at all, only the quiet way to set one.
   if (!space) {
     return (
       <div class="kona-going kona-going--none">

@@ -149,7 +149,7 @@ describe('painting a highlight', () => {
  * What the words actually sit on.
  *
  * A mark is transparent, so the readable colour is the mark composited over
- * whatever the page puts behind it — not the mark alone. Measuring the mark
+ * whatever the page puts behind it, not the mark alone. Measuring the mark
  * on its own is what hid this: dark ink over a dark page falls to 1.5:1, and a
  * highlight that makes text harder to read than not highlighting it is a
  * defect in the one thing Kona does.

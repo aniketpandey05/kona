@@ -17,7 +17,7 @@ import type { Mark } from '../src/core/types';
  * be exercised here at all.
  *
  * This restores the one thing the environment gets wrong. It is not a relaxed
- * check -- the real `fromThisPage` still runs, and still decides. Weakening
+ * check: the real `fromThisPage` still runs, and still decides. Weakening
  * the check to make a test pass would be the wrong way round: the check is the
  * reason a framed Kona cannot be made to hand over the library.
  */
@@ -36,8 +36,8 @@ beforeAll(() => {
 /**
  * The extension's half, standing in for the content script.
  *
- * It is the same listener `bridge.content.ts` installs -- the same refusals,
- * from the same function -- with the storage replaced by a list. What is being
+ * It is the same listener `bridge.content.ts` installs: the same refusals,
+ * from the same function, with the storage replaced by a list. What is being
  * checked here is that the two halves talk: that an id comes back on its own
  * reply, that a page with no extension behind it finds out rather than hanging,
  * and that a message from somewhere else is never answered.

@@ -5,9 +5,9 @@ import type { Mark } from './types';
  *
  * **Archived is a filter on one list, not a place.** That is the whole of
  * decision 10 and everything else follows from it. A *place* has to be known
- * about by everything — search has to decide whether to look there, counts
+ * about by everything: search has to decide whether to look there, counts
  * whether to count it, spaces whether to show it, export whether to include
- * it — and each of those is a chance for two surfaces to disagree about where
+ * it, and each of those is a chance for two surfaces to disagree about where
  * something is. A *filter* is known about by one list.
  *
  * So exhaustively, and this is the list to check any new surface against:
@@ -23,7 +23,7 @@ import type { Mark } from './types';
  *
  * **Search must never lose it.** Kona promises one thing: that you can find it
  * again. An archive that hides things from search is a bin with extra steps,
- * and it turns archiving into a decision rather than tidying — which is how
+ * and it turns archiving into a decision rather than tidying, which is how
  * people end up deleting instead, because at least deleting is honest.
  */
 
@@ -34,7 +34,7 @@ import type { Mark } from './types';
  * so this limits how many can be out of the way at a time rather than how many
  * ever can be. Reaching it never deletes or un-archives anything on its own.
  *
- * Per device, because Free has no sync and its counts are local (10a) — the
+ * Per device, because Free has no sync and its counts are local (10a), the
  * cap is enforced on the machine it happens on, by code that needs to know
  * nothing at all about you.
  */

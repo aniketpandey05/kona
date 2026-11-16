@@ -21,7 +21,7 @@ import {
  *
  * It runs only inside Kona's own page, where it can see both the extension's
  * storage and the page's `window`, and it hands the one to the other. That is
- * the whole job. It holds no logic about what a highlight is -- if it ever
+ * the whole job. It holds no logic about what a highlight is, if it ever
  * needs to, something has been put on the wrong side of this line.
  *
  * `all_frames` is left off on purpose, so this is the top-level document or
@@ -53,7 +53,7 @@ export default defineContentScript({
         .catch((error: unknown) => reply(id, { kind: 'error', message: String(error) }));
     });
 
-    // Storage changed under the page -- another tab, or the panel on an
+    // Storage changed under the page: another tab, or the panel on an
     // article the user is reading in the next window. The page is told that
     // something moved and reads again; sending the change itself would mean
     // this file knowing what a change means.

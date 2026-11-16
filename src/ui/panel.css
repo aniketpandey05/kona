@@ -2,7 +2,7 @@
  * The panel in the page: three resting states and the open strip.
  *
  * Decision 2 says what it shows, 2h says where it sits. Everything here is
- * token values -- the slab's colours, the type scale, the two shadows -- so
+ * token values: the slab's colours, the type scale, the two shadows -- so
  * that the panel and the library cannot drift apart again, which is the whole
  * of 3a.
  *
@@ -13,7 +13,7 @@
 
 /**
  * 2h. Fixed to the viewport, docked right at 24px, and above the page's own
- * furniture -- a panel that loses a stacking fight is invisible, which is
+ * furniture: a panel that loses a stacking fight is invisible, which is
  * worse than one that overlaps something.
  *
  * `fixed` is not as safe as it looks. A transformed, filtered or will-change
@@ -62,7 +62,7 @@
 /**
  * At rest on a page that has something: the same mark, grown into a pill that
  * says how much (2b). This is the middle of the three states, and the reason
- * there are three rather than two -- you can tell a page has highlights on it
+ * there are three rather than two, you can tell a page has highlights on it
  * without opening anything.
  */
 .kona-rest--counted {
@@ -82,7 +82,7 @@
 
 /**
  * Open. 324 wide and as tall as its content, up to the viewport less the inset
- * at each end -- the two heights the boards draw are this one rule with three
+ * at each end, the two heights the boards draw are this one rule with three
  * highlights and with twelve.
  */
 .kona-panel {
@@ -219,7 +219,7 @@
 }
 
 /**
- * Decision 13. The passage is still yours -- it was copied when you kept it --
+ * Decision 13. The passage is still yours, it was copied when you kept it --
  * so this says the landing is gone and nothing more alarming than that.
  */
 .kona-panel-lost {

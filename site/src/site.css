@@ -806,3 +806,17 @@ section {
 .build .fine {
   margin-top: 20px;
 }
+
+/* The line under a download that says where the build is up to. */
+.get article .get-note {
+  margin-top: -6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.get .act {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}

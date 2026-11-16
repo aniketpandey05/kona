@@ -22,7 +22,7 @@ async function aSpace(name: string) {
 describe('which space is active', () => {
   it('is none to begin with, which is normal', () => {
     // DEFINITIONS: one space is active at a time, and none being active is
-    // normal -- highlights then go to the library only.
+    // normal, highlights then go to the library only.
     return expect(loadActiveSpaceId()).resolves.toBeNull();
   });
 

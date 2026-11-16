@@ -23,7 +23,7 @@
 /* Three selectors, because the tokens have to land in two kinds of place.
 
    :root is the web app and the extension's own pages. :host is the panel,
-   which lives in a shadow root with this stylesheet inlined into it -- a
+   which lives in a shadow root with this stylesheet inlined into it, a
    custom property on the page's :root would mean writing Kona's tokens into
    somebody else's document, and the panel would then inherit whatever that
    page had set. .kona-tokens is for anything mounted deeper than either.
@@ -52,8 +52,8 @@
      better of the two there.
 
      The boards paint the in-page mark as a vertical gradient. The CSS
-     Custom Highlight API cannot render one -- ::highlight() takes a flat
-     background-color and little else -- so each mark is the flat value at
+     Custom Highlight API cannot render one: ::highlight() takes a flat
+     background-color and little else, so each mark is the flat value at
      the middle of the gradient it was drawn as.
   */
   --kona-pen-yellow: #eab308;

@@ -87,7 +87,7 @@ export const browser = {
 
 interface UiOptions<T> {
   name: string;
-  /** A selector WXT resolves to mount against. Kona uses 'html' -- see 2h. */
+  /** A selector WXT resolves to mount against. Kona uses 'html', see 2h. */
   anchor?: string;
   onMount: (container: HTMLElement) => T;
   onRemove?: (mounted: T | undefined) => void;

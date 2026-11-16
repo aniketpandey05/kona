@@ -202,7 +202,7 @@ describe('the write-up', () => {
     expect(text).toContain('> Link mode is faster');
     expect(text).toContain('> But it is destructive');
     // Each passage still names where it came from and carries its footnote.
-    expect(text).toContain('— example.com[^1]');
+    expect(text).toContain('example.com[^1]');
     expect(text).toContain('[^2]: example.com, A page. <https://example.com/page#:~:text=');
   });
 

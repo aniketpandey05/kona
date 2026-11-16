@@ -34,7 +34,7 @@ function hostnameOf(url: string): string {
  * 3e: nothing is built in, so none of these are in the manifest and none is
  * granted at install. Kona asks for a site while you are standing on it, and
  * when a site is allowed the background registers the script that knows it.
- * The chat sites are not special -- they are simply sites Kona happens to have
+ * The chat sites are not special, they are simply sites Kona happens to have
  * an adapter for, and until you allow one, Kona cannot read it.
  *
  * Keeping the table here rather than in the background script is what makes it

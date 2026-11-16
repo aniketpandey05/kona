@@ -2,7 +2,7 @@
  * The popup: this site, and whether Kona may read it (3e).
  *
  * One of Kona's own rooms, so paper (17). It is small because there is very
- * little left in it — the built-in sites went, the list of sites you had added
+ * little left in it: the built-in sites went, the list of sites you had added
  * went, and the soft switch went with them. What remains is the one thing that
  * cannot live anywhere else: `permissions.request` must be called from an
  * extension page on a gesture, so the toolbar button has to open something.

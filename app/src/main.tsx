@@ -16,7 +16,7 @@ import './library.css';
  *
  * That stranding is a mistake worth naming: when Highlights took the default
  * route, everything in the old screen's default branch stopped being reachable
- * — the install prompt (24), folder sync, the backup, and the Android share
+ *: the install prompt (24), folder sync, the backup, and the Android share
  * target (1h), which arrives on a plain URL with no fragment at all and so was
  * silently landing on the library instead of capturing anything.
  *
@@ -32,7 +32,7 @@ function Kona() {
   }, []);
 
   // Share › Kona, from an Android share sheet (1h). No fragment at all, so it
-  // has to be recognised by what it carries rather than where it points —
+  // has to be recognised by what it carries rather than where it points,
   // which is exactly how it went unnoticed when the library took the default
   // route and this was landing there, capturing nothing.
   const shared = sharedNow();

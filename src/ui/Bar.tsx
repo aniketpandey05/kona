@@ -59,7 +59,7 @@ function Bar({ top, left, inUse, onPick, onNote, onDelete, inSpace }: BarProps):
       )}
       {/* 2g. Where it went, and the one control that takes it back out. The
           same element doing the safety job and the escape hatch, rather than
-          two -- and one tap, never a modifier key, because a phone has none. */}
+          two: and one tap, never a modifier key, because a phone has none. */}
       {inSpace && (
         <>
           <span class="kona-bar-divider" aria-hidden="true" />
@@ -118,7 +118,7 @@ export function SelectionBar({
 /**
  * 10c. Tapping a highlight you already made brings up the same bar, now with
  * delete. Not archive: archiving leaves a highlight painted, so doing it here
- * would change nothing you can see -- it belongs in the library, which is the
+ * would change nothing you can see: it belongs in the library, which is the
  * list it affects (DEFINITIONS, Archive).
  */
 export function MarkBar({

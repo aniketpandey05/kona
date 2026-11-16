@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-// @ts-expect-error -- a plain .mjs script, deliberately not part of the typed build
+// @ts-expect-error: a plain .mjs script, deliberately not part of the typed build
 import { read, render } from '../scripts/tokens-css.mjs';
 import { MARK_INK, PEN_COLORS, PEN_MARKS, cssVar, token } from '../src/design/tokens';
 import type { HighlightColor } from '../src/core/types';
@@ -119,6 +119,6 @@ describe('text you have to be able to read', () => {
   });
 
   // What a mark's ink actually sits on is the mark composited over the page,
-  // not the pen at full strength -- measuring the wrong pair is what hid the
+  // not the pen at full strength, measuring the wrong pair is what hid the
   // dark-page defect. It is measured properly in tests/painter.test.ts.
 });

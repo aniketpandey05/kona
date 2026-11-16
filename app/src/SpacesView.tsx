@@ -11,7 +11,7 @@ import type { LibrarySource } from './source';
  * Spaces, as decision 20 settled them.
  *
  * **A space is a place to put highlights together. That is the whole of it.**
- * Findings and the write-up left the definitions entirely — a finding was only
+ * Findings and the write-up left the definitions entirely, a finding was only
  * ever a highlight with a note on it, and the write-up was a second way to
  * make the page 3d already provides. So what is here is the gathering, its
  * question, and its note, and nothing that grew on top.
@@ -21,8 +21,8 @@ import type { LibrarySource } from './source';
  * space is where they sit in one.
  *
  * Taking something out of a space is the third verb and the gentlest thing in
- * the product — out of this space, still in the library, still in every other
- * space — so it is the easiest thing here to reach.
+ * the product: out of this space, still in the library, still in every other
+ * space, so it is the easiest thing here to reach.
  */
 interface Props {
   source: LibrarySource;
@@ -245,7 +245,7 @@ function OneSpace({
  * Spaces are written straight to the device.
  *
  * The bridge carries them for reading, but a space edited here is edited on
- * the machine you are on — the extension and the web app share one store on
+ * the machine you are on, the extension and the web app share one store on
  * that machine, so there is nothing to reconcile.
  */
 async function saveSpaceVia(space: Space): Promise<void> {

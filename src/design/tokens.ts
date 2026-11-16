@@ -20,7 +20,7 @@ const vars: Record<string, string> = Object.fromEntries(
 );
 
 /**
- * One token, by the name it has in `tokens.json` — so `token('accent')` for
+ * One token, by the name it has in `tokens.json`, so `token('accent')` for
  * what CSS calls `--kona-accent`. Throws rather than returning undefined,
  * because a missing token is a typo and silently painting nothing is worse
  * than stopping.
@@ -39,8 +39,8 @@ export function cssVar(name: string): string {
 const PENS: HighlightColor[] = ['yellow', 'green', 'blue', 'pink'];
 
 /**
- * The pens at full strength, for Kona's own rooms — a dot in the panel, a
- * dot in the library — where the colour sits on a plain background.
+ * The pens at full strength, for Kona's own rooms: a dot in the panel, a
+ * dot in the library, where the colour sits on a plain background.
  */
 export const PEN_COLORS: Record<HighlightColor, string> = Object.fromEntries(
   PENS.map((pen) => [pen, token(`pen-${pen}`)]),
@@ -59,7 +59,7 @@ export const PEN_MARKS: Record<HighlightColor, string> = Object.fromEntries(
  *
  * A mark is transparent, so the words end up on the mark *and* whatever the
  * page puts behind it. Dark ink reads at 9.5:1 or better over a light page and
- * collapses to 1.5:1 over a dark one -- a highlight that makes text harder to
+ * collapses to 1.5:1 over a dark one, a highlight that makes text harder to
  * read than leaving it alone. So the painter asks the page first.
  */
 export const MARK_INK = token('mark-ink');

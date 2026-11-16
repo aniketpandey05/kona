@@ -2,7 +2,7 @@
  * What changed, shipped with the build.
  *
  * Decision 4, and it is decision 6 that forces it. **Free sends nothing
- * anywhere** — no account, no server. Fetching a changelog would mean every
+ * anywhere**: no account, no server. Fetching a changelog would mean every
  * Free install contacting us, which reveals that somebody has Kona and when
  * they opened it, for the sake of a list of features. An extension updates
  * anyway, so the notes arrive with the update they describe, and they are

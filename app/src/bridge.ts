@@ -117,7 +117,7 @@ export async function removeExtensionSpace(id: string): Promise<void> {
 }
 
 /**
- * Something changed in the extension's storage -- another tab, or the panel on
+ * Something changed in the extension's storage: another tab, or the panel on
  * an article being read in the next window. What changed is not sent, only
  * that something did, so the page reads again rather than trying to apply a
  * diff it did not make.

@@ -11,7 +11,7 @@ import { loadAll, save } from './storage';
  * **Android, mostly** (1h). Chrome there has no extensions for anyone, so
  * capture is the share sheet: *Share › Kona* from any app, and what Chrome
  * hands over for a selection is already a link to the highlighted text, which
- * is Kona's own format. The app captures by *being handed* something — that
+ * is Kona's own format. The app captures by *being handed* something, that
  * is as far as an app can go, since it never runs inside the page you are
  * reading.
  *
@@ -20,8 +20,8 @@ import { loadAll, save } from './storage';
  * commits when the library took the default route: it was landing on the
  * library and capturing nothing, silently.
  *
- * **Adopting an orphan.** A phone shares in two goes — the text first, then
- * the link — so a passage kept moments ago with no page attached is almost
+ * **Adopting an orphan.** A phone shares in two goes: the text first, then
+ * the link, so a passage kept moments ago with no page attached is almost
  * certainly waiting for this URL rather than being a second thing. `planShare`
  * decides; this only says what happened.
  */

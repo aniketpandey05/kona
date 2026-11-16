@@ -7,7 +7,7 @@ import { KonaMark } from '../../ui/KonaMark';
  * The popup, as 3e leaves it: **this site, and whether Kona may read it.**
  *
  * It survives for one reason. `browser.permissions.request` must be called
- * from an extension page on a user gesture — a content script cannot ask, and
+ * from an extension page on a user gesture: a content script cannot ask, and
  * on a site Kona is not yet allowed on there is no content script at all, so
  * the toolbar button has to open *something*.
  *
@@ -19,7 +19,7 @@ import { KonaMark } from '../../ui/KonaMark';
  *   highlighted anything.
  * - **The list of sites you have added.** Fine at three and unreadable at
  *   twenty, and twenty is the success case. A list that gets worse the more
- *   you use the product is the wrong list — and the browser already draws it,
+ *   you use the product is the wrong list: and the browser already draws it,
  *   authoritatively, on its own extensions screen.
  * - **The soft switch.** `local:disabled-sites` was a second list that could
  *   disagree with the browser's: revoke a site from the browser's screen and
@@ -103,7 +103,7 @@ export function Popup() {
       {/*
         One way in, and it has to go through the background. A plain <a> here
         navigates the popup itself, which is a 380px window. `open-library`
-        opens a real tab, or focuses the one already open — and since 3c the
+        opens a real tab, or focuses the one already open, and since 3c the
         library is the web app, at an ordinary address.
       */}
       <section class="pop-open">

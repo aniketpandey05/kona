@@ -6,17 +6,17 @@ read them.
 
 When you have been through these, the ones you agree with belong in
 `DESIGN-LOG.md` in their proper place and this file goes. Anything you disagree
-with, say so and I will unpick it — none of this is load-bearing in a way that
+with, say so and I will unpick it, none of this is load-bearing in a way that
 makes reversal expensive, and where something *would* be expensive to reverse I
 have said so against it.
 
-The three numbered decisions I wrote into `DESIGN-LOG.md` as I went — **3g**
-(the panel's font), **3i** (the bridge), **2h** (where the panel sits) — are
+The three numbered decisions I wrote into `DESIGN-LOG.md` as I went, **3g**
+(the panel's font), **3i** (the bridge), **2h** (where the panel sits), are
 already in the document in full, so they are only summarised here.
 
 ---
 
-## Expensive to reverse — read these first
+## Expensive to reverse, read these first
 
 **Nothing is built in, and the manifest is empty (3e, implemented).** This was
 already settled; I implemented it. It ships to users as a permission change, so
@@ -30,7 +30,7 @@ by the above. The cost is a new failure mode: if the host→script table is
 wrong, ChatGPT gets the plain-page adapter, still highlights, and quietly stops
 understanding a conversation. That is why the table lives in `core/sites.ts`
 under test rather than in the background script, and why one test covers a host
-that merely *ends* in the right letters — `notclaude.ai` is not `claude.ai`.
+that merely *ends* in the right letters, `notclaude.ai` is not `claude.ai`.
 
 **The soft switch is gone.** `local:disabled-sites` was a second list that
 could disagree with the browser's: revoke a site from the browser's own screen
@@ -54,7 +54,7 @@ to remove. My argument is in the log: 2b settles three resting states and the
 minimap was a permanent fourth; 2c says Kona is a guest on every page; and what
 it answered is the panel's first tab, one click away, with the words as well as
 the position. What is lost is seeing at a glance that a long page has marks
-further down. Reversible — it was a self-contained component — but it is a
+further down. Reversible, it was a self-contained component, but it is a
 deletion, so it is here rather than lower down.
 
 **The note editor lost its pens and its Delete.** They are on the bar, and the
@@ -62,8 +62,8 @@ editor opens from the bar, so they were the same control twice. If you think
 the editor should still be able to delete, that is a one-line change.
 
 **Archiving is a timestamp on the highlight, not a list.** `Mark.archivedAt`,
-absent until it happens. It follows decision 10's shape — a filter on one list
-— and means no migration for anything already saved. The alternative, a
+absent until it happens. It follows decision 10's shape, a filter on one list
+and means no migration for anything already saved. The alternative, a
 separate archived list, is what 10 argues against, so this is implementing a
 decision rather than taking one. Flagged here only because it changes the
 stored shape of a highlight, which is expensive to undo later.
@@ -75,11 +75,11 @@ replace.
 
 ---
 
-## Moderate — shape rather than substance
+## Moderate, shape rather than substance
 
 **Decision 3g: the panel falls back to the system font.** Full text in the
 design log. Chosen because a font in the shadow root costs either ~64 KB of
-base64 on every page Kona is allowed on, or a manifest change — and
+base64 on every page Kona is allowed on, or a manifest change, and
 `host_permissions` was just emptied precisely so the manifest asks for as
 little as it can. Explicitly reversible in one commit.
 
@@ -95,14 +95,14 @@ write, four refusals.
 **The passage core takes no prop for which room it is in.** A room is set once
 on an ancestor (`.kona-slab`, or nothing for paper). This is what keeps 3b(b)
 from sliding into the ten-prop component 3b(a) would have become, and it is the
-decision most likely to be inconvenient later — a third room would need a third
+decision most likely to be inconvenient later, a third room would need a third
 class rather than a third value.
 
 **The library reads from the bridge or the device, never both.** Merging two
 stores on every read is how one highlight comes to exist twice with different
 notes. The cost: with the extension installed, highlights the web app made on
-its own are invisible. I think that is right on Free — there is one library and
-it is the extension's — but it is a visible consequence.
+its own are invisible. I think that is right on Free, there is one library and
+it is the extension's, but it is a visible consequence.
 
 **JSON, not TypeScript, as the token source.** A `.mjs` build script cannot
 import a `.ts` module without a dependency or Node 22, and `engines` says 20.
@@ -128,16 +128,16 @@ have been tidier and wrong.
 
 ---
 
-## Small — mechanical, say if you disagree and I will change them
+## Small: mechanical, say if you disagree and I will change them
 
 **`src/design/` as the folder**, because `src/core/tokens.ts` already means
 turning text into words a search can compare, and is tested under that name.
 
-**A component's own measurements stay with the component** — the pen dot's
+**A component's own measurements stay with the component**, the pen dot's
 diameter is in `passage.css`, not the token file. Let every component's
 measurements in and the token file becomes the stylesheet it replaced.
 
-**Only latin, upright, one weight axis of each font** — 97 KB for the two. A
+**Only latin, upright, one weight axis of each font**, 97 KB for the two. A
 passage in Greek or Japanese falls back to the system font.
 
 **OFL added to the licence rule**, in `DIRECTION.md` and the settled table.
@@ -153,7 +153,7 @@ whatever was asked, so it could never have shown the fixed-positioning hazard
 
 **The round-trip test restores spec `postMessage` behaviour.** happy-dom
 delivers `message` events whose `source` is an `EventTarget` rather than the
-sending window, which no browser does — I confirmed the real behaviour in
+sending window, which no browser does, I confirmed the real behaviour in
 Chrome. I fixed the environment rather than relaxing the check.
 
 **`SHIPPED_AHEAD` deleted rather than deferred.** 3c took the Plans page out of
@@ -167,7 +167,7 @@ on it, and 11 contradicts it anyway.
 **The desktop app now renders the library directly.** It used to render the old
 web app screen and hand it a folder source; it renders `Library` and hands it
 the same thing. The Electron app is frozen, so this was about not breaking it
-rather than improving it — but it does mean the desktop app's one screen is now
+rather than improving it, but it does mean the desktop app's one screen is now
 the rebuilt library, which nobody has looked at on a desktop build.
 
 ---
@@ -181,13 +181,13 @@ sync, the backup, the theme, and the Android share target (1h).
 
 The share one was silent and the worst. A share arrives on a plain URL with no
 fragment, so `Share › Kona` was landing on the library and capturing nothing at
-all. Fixed in `d7d4991` — a share is now recognised by what it carries and
-checked before any routing — but it was live for two commits and I only found
+all. Fixed in `d7d4991`, a share is now recognised by what it carries and
+checked before any routing, but it was live for two commits and I only found
 it because I went looking for what else the old screen was doing before
 replacing it.
 
 The general lesson: **replacing a screen's route is not the same as replacing a
-screen.** I then came within one draft of doing it again — the first version of
+screen.** I then came within one draft of doing it again, the first version of
 the rebuilt Settings replaced working folder sync with a paragraph explaining
 that hosted sync does not exist yet, which would have removed the only way a
 Free library reaches a second device today. Caught before committing, but by
@@ -196,8 +196,8 @@ noticing rather than by any process.
 ---
 
 **Findings and the write-up are gone from the Spaces view.** This is 20 being
-implemented rather than a decision of mine — it says both leave the definitions
-entirely — but it is the second-largest removal in the rebuild after the
+implemented rather than a decision of mine, it says both leave the definitions
+entirely, but it is the second-largest removal in the rebuild after the
 extension's library, and the old screen's findings, stances, decisions and memo
 are no longer reachable. The data is untouched in storage and the code is still
 in `src/core/spaces.ts`, so nothing is lost; it is the view that stopped
@@ -216,7 +216,7 @@ objects to is real and still there. If you would rather it went now, it is one
 
 **`conversationId` is still what the code calls a page.** The design log says
 renaming is cheapest before more is built on it, and every day it stays costs a
-little more — but it is the middle of every storage key
+little more, but it is the middle of every storage key
 (`marks:<site>:<conversationId>`), so this is a data migration rather than a
 rename. It wants its own session, with the migration tested against a library
 made before it. Doing it blind at the end of a long run of other work is how a
@@ -232,7 +232,7 @@ means; nothing is built.
 
 **`app/` and `team/` still carry their own `--accent`.** They adopt the tokens
 as each screen is rebuilt, which is the rule set in *3a and 3b, as built*.
-`team/` has not been touched at all, so 3d — one web app, not two — is still
+`team/` has not been touched at all, so 3d: one web app, not two, is still
 only a decision.
 
 **Kona has no domain.** `kona.example` is a placeholder in one mailto link. The
@@ -248,5 +248,5 @@ one. Until then the Library button opens a page that does not exist.
 2. The minimap deletion, because it removed something that worked.
 3. The 840px breakpoint, because I derived the number rather than found it.
 4. The pen colours, because I overrode a board on the evidence of another one.
-5. Whether the library reading from the bridge *or* the device — never both —
+5. Whether the library reading from the bridge *or* the device, never both,
    is the behaviour you want on Free.

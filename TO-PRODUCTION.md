@@ -6,7 +6,7 @@ remaining thing actually costs.
 
 **The short version.** Kona can ship as a Free product. Everything a Free user
 touches is built, rebuilt from the decisions, and under 484 tests. What stands
-between it and the Chrome Web Store is not code — it is a domain, a $5
+between it and the Chrome Web Store is not code: it is a domain, a $5
 registration, and new screenshots. The paid half does not exist at all, and is
 the larger half of the work.
 
@@ -21,23 +21,35 @@ machine.** That is what is built.
 | --- | --- | --- |
 | ~~A domain~~ | **done** | it already existed |
 | Chrome developer registration | $5, once | nothing |
-| New screenshots | half a day | nothing |
-| Listing copy re-read | an hour | nothing |
+| ~~New screenshots~~ | **done** | seven, at 1280×800, from the rebuilt product |
+| ~~Listing copy re-read~~ | **done** | including reviewer test instructions |
+| **Cut a GitHub release** | ten minutes | nothing, the three zips are built |
+| **Set `CHROME_STORE_URL`** | one line | the listing going live |
 
 **The domain turned out not to be a blocker at all.** Kona has been publishing
-to GitHub Pages on every push to `main` this whole time — the landing page, the
+to GitHub Pages on every push to `main` this whole time: the landing page, the
 web app at `/kona/app/`, and the privacy policy, all live over HTTPS. The
 placeholder was the only thing missing, and `KONA_ORIGINS` in
 `src/core/bridge.ts` now points at the real address.
 
 It is a base rather than a bare origin, because Pages serves a project from a
-subpath — which also scopes the bridge's content script to `/kona/*` rather
+subpath, which also scopes the bridge's content script to `/kona/*` rather
 than to everything published under that account. A custom domain later is one
 line and nothing else moves.
 
-**Screenshots are not optional and not quick.** Every one in `docs/screenshots`
-shows the interface that was just replaced. The store listing shows them at
-1280×800 and a reviewer compares them to what installs.
+**Two small things are now the only loose ends on the listing.** There is no
+GitHub release, so the landing page's *Packaged builds* link lands on an empty
+page, `npm run zip && npm run zip:firefox && npm run zip:safari` produces the
+three files and attaching them is a two-minute job. And `CHROME_STORE_URL` in
+`src/core/plans.ts` is empty until the listing is live; setting it is what
+turns the Chrome card's call to action into *Add to Chrome*.
+
+**The reviewer instructions matter more here than for most extensions.**
+Because nothing is built in, a fresh install can read no site at all, so a
+reviewer who installs Kona and opens a page sees nothing happen, and the honest
+conclusion is that it does not work. `CHROMEWEBSTORE.md` now carries a
+numbered walkthrough to paste into the submission form. That idea came from
+reading a real published listing, which included exactly such a section.
 
 **What a reviewer will actually check**, and where it now stands: the manifest
 asks for no host permissions at all, every permission in it has a justification
@@ -49,13 +61,13 @@ was wrong in four places and is now not.
 
 ## 2. iOS. Needs a Mac, and nothing else is in the way.
 
-The Safari extension **builds today** — `npm run build:safari` runs in CI on
+The Safari extension **builds today**, `npm run build:safari` runs in CI on
 every push, and the same source produces it. What needs a Mac is the wrap:
 `apple/package.sh` drives Xcode's packager, which does not exist on Windows.
 
 | Needed | Cost | Note |
 | --- | --- | --- |
-| A Mac with Xcode | — | borrowed is enough for the first run |
+| A Mac with Xcode |, | borrowed is enough for the first run |
 | First run of `apple/package.sh` | a day, allowing for it failing | **it has never been run**; expect to correct the generated target's `Resources` path, which the script checks for by name |
 | Signing to your own device | an hour | free Apple ID; the signature **expires after seven days** |
 | TestFlight or App Store | $99/year | Apple Developer Program |
@@ -76,7 +88,7 @@ because each rung needs the one under it.
 
 **An account.** Sign-in by emailed link, in the web app, never in the
 extension. Needed before anything else, and it is the thing 5 says is *for
-keeping devices in step and nothing else* — so it must be possible to use Kona
+keeping devices in step and nothing else*, so it must be possible to use Kona
 for months and then make one without losing anything, which is a migration
 path, not just a login form.
 
@@ -95,7 +107,7 @@ library.
 
 **Team.** Frozen, and should stay frozen until Pro has users. It needs the same
 server Pro needs, and 3d says it folds into the one web app rather than
-standing beside it — which is still only a decision. `team/` is a working demo
+standing beside it, which is still only a decision. `team/` is a working demo
 sharing nothing with the rest of the code.
 
 ---
@@ -105,7 +117,7 @@ sharing nothing with the rest of the code.
 - **`conversationId` is still what the code calls a page.** It is the middle of
   every storage key, so it is a migration and not a rename. It wants its own
   session with the migration tested against a library made before it.
-- **`team/` still carries its own `memo.ts`, `types.ts` and `store.ts`** — the
+- **`team/` still carries its own `memo.ts`, `types.ts` and `store.ts`**, the
   duplication 3d objects to.
 - **The landing page still decides its own colours**, the last stylesheet
   outside the token file apart from `team/`.
@@ -132,6 +144,6 @@ sharing nothing with the rest of the code.
 5. **Then the account**, and only then sync.
 
 Free first is not a compromise. 25 says the free tier is the adoption lever and
-the upgrade is offered where the limit is felt — which needs people to be using
+the upgrade is offered where the limit is felt, which needs people to be using
 it and feeling the limit. Shipping Free is how the paid half gets designed
 against something real instead of against a guess.

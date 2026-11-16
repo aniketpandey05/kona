@@ -16,7 +16,7 @@ import type { Space } from './spaces';
  * Firefox has never implemented it, and Kona ships on Firefox and Safari.
  *
  * This file is the protocol and nothing else, so that the page side and the
- * extension side cannot come to disagree about it -- they import the same
+ * extension side cannot come to disagree about it, they import the same
  * names or they do not compile.
  */
 
@@ -32,7 +32,7 @@ export const BRIDGE = 'kona-bridge' as const;
  *
  * **It is a base, not a bare origin.** GitHub Pages serves a project from a
  * subpath, so this carries `/kona` and the match pattern becomes
- * `https://aniketpandey05.github.io/kona/*` — which is also what scopes the
+ * `https://aniketpandey05.github.io/kona/*`, which is also what scopes the
  * bridge to Kona rather than to every project published under that account.
  * A custom domain later is one line, and nothing else moves.
  */
@@ -52,7 +52,7 @@ export function bridgeMatches(includeDev: boolean): string[] {
  *
  * 3c: the library leaves the extension entirely. The extension's library page
  * was already just a browser tab at a `chrome-extension://` address, and the
- * web app is a browser tab at an ordinary one -- to the person using it there
+ * web app is a browser tab at an ordinary one, to the person using it there
  * is no difference at all, same gesture, same place. So moving it costs
  * nothing anybody can perceive and removes a whole second implementation.
  *
@@ -105,7 +105,7 @@ export type BridgeMessage =
  *   Kona and posting in arrives carrying their origin, not ours.
  * - `source` catches a *same-origin* one, which origin cannot see at all.
  *   Measured: a parent posting into a framed Kona page delivers an event whose
- *   `origin` is Kona's own -- identical to `location.origin` -- and whose
+ *   `origin` is Kona's own, identical to `location.origin` -- and whose
  *   `source` is the parent rather than the framed window. Only the source
  *   tells those apart.
  *

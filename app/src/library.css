@@ -7,7 +7,7 @@
  * tokens.
  *
  * Every value here comes from design/tokens.css. The passage itself is the
- * shared core and is not styled here at all -- only the frame around it is,
+ * shared core and is not styled here at all: only the frame around it is,
  * which is 3b's whole division of labour.
  */
 
@@ -199,7 +199,7 @@
   color: var(--kona-paper-ink-muted);
 }
 
-/* The chips. Colour, site, when — and they stack, which is what makes them a
+/* The chips. Colour, site, when: and they stack, which is what makes them a
    different kind of control from the nav (17). */
 .lib-chips {
   display: flex;
@@ -410,7 +410,7 @@
  * Spaces, the library's other view (3f).
  *
  * A space is a place to put highlights together, and that is the whole of it
- * (20) — so there is nothing here but the gathering, its question and its
+ * (20): so there is nothing here but the gathering, its question and its
  * note. Findings and the write-up left the definitions entirely.
  */
 .sp-add,
@@ -433,7 +433,7 @@
 
 .sp-do {
   font-weight: var(--kona-weight-medium);
-  /* Text on the accent, so the fill and its ink -- white on --kona-accent is
+  /* Text on the accent, so the fill and its ink, white on --kona-accent is
      3.50:1 and fails AA. */
   color: var(--kona-accent-fill-ink);
   background: var(--kona-accent-fill);

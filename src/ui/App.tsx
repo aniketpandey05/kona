@@ -13,7 +13,7 @@ import { Panel } from './Panel';
  *
  * Two things that used to be here are gone rather than rebuilt. **Search**,
  * because 15 says there is none in the panel: a page's highlights are already
- * in front of you, and a search box over four rows is furniture — the panel's
+ * in front of you, and a search box over four rows is furniture, the panel's
  * job is *here* and the library's is *everything*. **The minimap**, for the
  * reason in 2j.
  */

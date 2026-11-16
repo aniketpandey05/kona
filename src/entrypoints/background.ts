@@ -79,7 +79,7 @@ async function handle(message: RuntimeMessage, senderTabId: number | undefined) 
  *
  * 3e: every one of them, with nothing filtered out, because nothing is built
  * in any more. What the browser has granted is the whole truth about where
- * Kona may run -- there is no second list for it to disagree with.
+ * Kona may run, there is no second list for it to disagree with.
  */
 async function enabledSites(): Promise<string[]> {
   const granted = await browser.permissions.getAll();
@@ -92,8 +92,8 @@ async function enabledSites(): Promise<string[]> {
  * Every content script is registered at runtime now (3e), including the three
  * that know the chat sites. A site Kona has an adapter for gets that adapter;
  * everything else gets the plain-page one. Registering the wrong one is the
- * quiet failure here -- ChatGPT would still highlight, but as an ordinary
- * page, and stop understanding a conversation -- so which script owns which
+ * quiet failure here: ChatGPT would still highlight, but as an ordinary
+ * page, and stop understanding a conversation, so which script owns which
  * host is decided in `core/sites.ts`, under test.
  */
 async function syncWebSites(startOnActiveTab = false): Promise<null> {
@@ -199,7 +199,7 @@ async function takePendingJump(tabId: number | undefined): Promise<PendingJump |
 
 /**
  * 3c. The library is the web app now, not a page of the extension's. A tab is
- * a tab either way, so nothing about the gesture changes -- what changes is
+ * a tab either way, so nothing about the gesture changes, what changes is
  * that there is one library instead of two that can come to disagree.
  */
 /** Opens Welcome unless it has been seen through to the end (4). */

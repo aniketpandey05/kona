@@ -23,7 +23,7 @@ import { applyTheme, loadTheme, saveTheme } from './theme';
  *
  * **Export is the part that matters most, and 6 is why.** If the server cannot
  * read your library, and you lose every device and the recovery phrase, then
- * the data is genuinely gone — Kona says so plainly rather than pretending
+ * the data is genuinely gone, Kona says so plainly rather than pretending
  * otherwise. A file you keep is therefore *the only backup that exists*.
  * End-to-end encryption turns export from a courtesy into a safety feature,
  * and nothing that is a safety feature goes behind a tier. So it is free, on
@@ -213,7 +213,7 @@ export function Settings({ marks, spaces, onChanged, folders, syncOnDemand }: Pr
 /**
  * Syncing through a folder you already sync.
  *
- * Not the sync of decision 6 — that is hosted, encrypted and Pro, and it does
+ * Not the sync of decision 6: that is hosted, encrypted and Pro, and it does
  * not exist yet. This is the other thing DEFINITIONS names and keeps separate:
  * *syncing through a folder you own, or a file you carry between machines, is
  * a different thing and is not this.* It is driven by hand and says so.
@@ -246,7 +246,7 @@ function FolderSync({
       <p class="set-quiet">
         Not the hosted sync, which does not exist yet. This writes your library
         into a folder on this machine, so anything that already keeps that
-        folder in step — a drive, a shared folder — carries it to your other
+        folder in step, a drive or a shared folder, carries it to your other
         devices. You run it; it does not run itself.
       </p>
 

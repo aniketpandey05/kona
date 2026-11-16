@@ -31,14 +31,14 @@ import { SpacesView } from './SpacesView';
  *
  *   the nav     where you are, one at a time
  *   the search  across all of it (15)
- *   the chips   colour, site, when -- they stack
+ *   the chips   colour, site, when, they stack
  *
  * The nav is what makes Pro's unlimited spaces survivable: forty rows scan,
  * forty tabs do not.
  *
  * This is paper, not the slab. It is your own room rather than something
  * floating over somebody else's article (17), so it takes the paper tokens and
- * the passage reads back as prose in Source Serif at 18px -- which is the
+ * the passage reads back as prose in Source Serif at 18px, which is the
  * whole reason for reading it here rather than in the panel's strip.
  */
 const PENS = Object.keys(PEN_COLORS) as HighlightColor[];
@@ -108,7 +108,7 @@ export function Library({
    * Every save tells the store, and the store tells us, so archiving fifteen
    * highlights starts fifteen reads at once. They do not come back in the
    * order they went out, and without this an early one can land last and put
-   * a stale library on the screen — the data right, the counts wrong, which
+   * a stale library on the screen: the data right, the counts wrong, which
    * is the worst version of being wrong because nothing looks broken.
    */
   const reading = useRef(0);
@@ -387,7 +387,7 @@ export function Library({
             </button>
           </div>
 
-          {/* 10a: the wall at fifteen. Bring one back, or Pro — and no delete
+          {/* 10a: the wall at fifteen. Bring one back, or Pro, and no delete
               in this notice, because offering it here would teach people to
               delete when they meant to tidy. */}
           {wall && (
@@ -453,7 +453,7 @@ export function Library({
                     />
                   </a>
                   {/* The frame's own extras (3b): where it came from, and when.
-                      The domain is text and nothing is fetched for it -- a
+                      The domain is text and nothing is fetched for it, a
                       favicon would tell that site you kept something. */}
                   <p class="lib-row-where">
                     {siteLabel(mark)} · {ago(mark.createdAt)}

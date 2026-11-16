@@ -3,7 +3,7 @@
  * somebody else's page (17).
  *
  * It sits where the highlight is, so it is the same dark as the panel and the
- * bar rather than paper — a light card here would be a third thing to look at
+ * bar rather than paper, a light card here would be a third thing to look at
  * over an article, and would stop being legible over a dark page.
  */
 
@@ -55,7 +55,7 @@
 
 .kona-note-text:focus-visible {
   outline: none;
-  /* The accent edge, the same one the passage core gives a note on the slab —
+  /* The accent edge, the same one the passage core gives a note on the slab,
      so the thing you are typing into is marked the way the result will be. */
   border-color: var(--kona-accent);
 }
@@ -134,7 +134,7 @@
  * saying one sentence, so they are the slab at its smallest.
  *
  * 23: a failed sync is the only thing Kona ever speaks up about, and that
- * happens in the library. These two are not notifications — they are the
+ * happens in the library. These two are not notifications, they are the
  * consequence of something you just did, on the page you did it.
  */
 .kona-say {

@@ -11,7 +11,7 @@ import type { Person } from './people';
  * twenty things across five pages, and filing each one separately is twenty
  * interruptions in the middle of reading; setting the topic once is one.
  *
- * One at a time, and none is normal -- highlights then go to the library only.
+ * One at a time, and none is normal, highlights then go to the library only.
  *
  * **It is per device, and it does not sync.** The id lives under `local:`
  * beside the palette and the disabled sites, not in the space itself. Two
@@ -59,7 +59,7 @@ export async function loadActiveSpace(): Promise<Space | null> {
 /**
  * Put a new highlight into the active space as well as the library.
  *
- * Returns the space it went to, so whatever called this can say so -- which is
+ * Returns the space it went to, so whatever called this can say so, which is
  * 2e's requirement, and the only reason this returns anything.
  */
 export async function fileIntoActiveSpace(markId: string, me: Person | null = null): Promise<Space | null> {

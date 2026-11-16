@@ -21,7 +21,7 @@ Kona lets you highlight what matters as you read and takes you back to it later.
 Switch Kona on for any site, a paper, documentation, Stack Overflow, a blog you keep
 coming back to, select some text and pick a colour. It works inside a ChatGPT, Claude or
 Gemini conversation too, which is the hard case. Kona arrives able to read nothing at
-all — you allow one site at a time, from the toolbar, while standing on it. Add a note to any highlight, tag it, and
+all: you allow one site at a time, from the toolbar, while standing on it. Add a note to any highlight, tag it, and
 it joins one searchable library covering everything you have ever marked.
 
 Highlights come back where you left them. Kona finds a passage again by its words and the
@@ -133,7 +133,7 @@ demand.
 
 | Host permission | Why it is needed |
 |---|---|
-| `optional_host_permissions: *://*/*` | **Never requested on install, and never requested in bulk.** Requested for exactly one site at a time, from the popup, on a click, while the user is looking at the page they want to keep something from. A site Kona has not been granted runs no Kona code at all — there is no content script on it. The browser's own extensions screen lists every site granted and takes any of them back; Kona keeps no second list that could disagree with it. |
+| `optional_host_permissions: *://*/*` | **Never requested on install, and never requested in bulk.** Requested for exactly one site at a time, from the popup, on a click, while the user is looking at the page they want to keep something from. A site Kona has not been granted runs no Kona code at all, there is no content script on it. The browser's own extensions screen lists every site granted and takes any of them back; Kona keeps no second list that could disagree with it. |
 
 | Content script | Why it is needed |
 |---|---|
@@ -143,6 +143,22 @@ demand.
 at runtime.
 
 ## Privacy & Data Use
+
+**What to tick on the data-use form.** The store asks you to declare what the
+extension handles, and the honest answers are:
+
+| Category | Declare | Why |
+| --- | --- | --- |
+| **Website content** | **Yes** | The passage you highlight, and a copy of it, are page content |
+| **Personal communications** | **Yes** | A highlight taken from an AI chat is a message you wrote or received |
+| Authentication information | No | Kona has no account and reads no credentials |
+| Personally identifiable information | No | No name, address or identifier is collected |
+| Location, health, financial, activity | No | None is read or stored |
+
+Then the three affirmations, all of which are true: the data is **not sold** to
+third parties, **not used** for anything unrelated to the single purpose, and
+**not used** for creditworthiness or lending. Everything stays in the browser's
+own storage on the device; there is no server to send it to.
 
 **Privacy policy URL:** https://aniketpandey05.github.io/kona/privacy.html
 
@@ -164,6 +180,37 @@ Three certifications to accept: data is not sold to third parties; data is not u
 purpose unrelated to the single purpose above; data is not used to determine
 creditworthiness or for lending.
 
+## Test instructions for the reviewer
+
+**Paste this into the "Instructions for reviewers" box on the submission form.**
+It matters more for Kona than for most extensions: because nothing is built in,
+a fresh install can read **no site at all**, so a reviewer who installs it and
+opens a page will see nothing happen. Without these steps the honest conclusion
+is that the extension does not work.
+
+> Kona asks for no site access when it is installed, so there is one step
+> before it does anything. That is deliberate, it is why installing raises no
+> permission warning.
+>
+> 1. Install Kona and open any article, blog post or documentation page.
+> 2. Click the Kona icon in the toolbar.
+> 3. Turn on **Highlight on <this site>**. Chrome will ask you to allow the
+>    site; allow it. Nothing happens before this.
+> 4. Select a sentence on the page. A small dark bar appears beside it.
+> 5. Click one of the four coloured dots. The sentence is highlighted and a
+>    small Kona mark appears at the bottom right with a count.
+> 6. Click that mark to open the panel. It lists what you have kept on this
+>    page; clicking a row scrolls back to the passage and flashes it.
+> 7. Reload the page. The highlight is still there, finding it again is what
+>    Kona is for.
+> 8. Click **Library** in the panel to open the web library at
+>    `https://aniketpandey05.github.io/kona/app/`.
+>
+> To test a chat site, do the same on chatgpt.com, claude.ai or
+> gemini.google.com. They are not special and are not granted at install.
+
+---
+
 ## Pre-Submission Checklist
 
 - [x] Manifest V3, no V2 APIs
@@ -172,7 +219,7 @@ creditworthiness or for lending.
 - [x] Privacy policy written and served over HTTPS
 - [x] No remote code, no analytics, no network requests
 - [x] Builds clean, 484 tests pass
-- [ ] Screenshots **re-captured** — every one of them shows the old interface
+- [ ] Screenshots **re-captured**, every one of them shows the old interface
 - [ ] Listing copy re-read against the rebuilt product
 - [ ] A real domain, replacing `kona.example` in `src/design/tokens.json`
 - [ ] Privacy policy URL confirmed live
@@ -186,6 +233,6 @@ The ZIP produced by `npm run zip` contains only the built extension, no `.git`, 
 
 | Version | Date | Summary |
 |---|---|---|
-| 1.2.0 | unreleased | Rebuilt from the design documents. Kona installs asking for nothing: no site is read until it is allowed, the AI chats included. One set of colours and type across the whole product. Spaces can be set from the panel, and while one is active the panel says in words where highlights are going; a highlight that does not belong comes back out in one tap. A space is the highlights gathered in it — the write-up and findings are gone. Archiving puts a highlight out of the way of the list without losing it. The library moved to the web, so there is one library rather than two. Highlights stay readable on dark pages, which they were not. |
+| 1.2.0 | unreleased | Rebuilt from the design documents. Kona installs asking for nothing: no site is read until it is allowed, the AI chats included. One set of colours and type across the whole product. Spaces can be set from the panel, and while one is active the panel says in words where highlights are going; a highlight that does not belong comes back out in one tap. A space is the highlights gathered in it, the write-up and findings are gone. Archiving puts a highlight out of the way of the list without losing it. The library moved to the web, so there is one library rather than two. Highlights stay readable on dark pages, which they were not. |
 | 1.1.0 | 2026-10-23 | Colour on phone captures, with filtering to match. Backups and appearance reachable from the header rather than the foot of the list. Shared text is tidied as it is stored. A conversation link shared to the app attaches itself to everything kept from that conversation. |
 | 1.0.0 | 2026-10-21 | First public release. Highlighting with notes and tags on ChatGPT, Claude, Gemini and any site the user switches on; side panel; cross-chat search; one library with Markdown and backup export; light and dark themes. |

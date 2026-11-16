@@ -74,7 +74,7 @@ export interface NoteCardState {
  *
  * 2e: the panel always says where highlights are going, in words, whenever a
  * space is active. A quiet mode that silently changes where your work goes is
- * a bad trade for a saved click -- you set a space on Monday, forget, and
+ * a bad trade for a saved click: you set a space on Monday, forget, and
  * spend Thursday filing amoeba research into it.
  */
 export interface ActiveSpaceState {
@@ -293,7 +293,7 @@ export class KonaController {
       await this.syncActiveSpace();
       // 2e and 2g together: the thing that says where it went is the same
       // thing that takes it back out, so marking opens the bar. Only while a
-      // space is active -- with none set there is nothing to confirm, and a
+      // space is active: with none set there is nothing to confirm, and a
       // page you are reading stays quiet.
       if (!withNote) this.openCard(mark.id, false);
     }

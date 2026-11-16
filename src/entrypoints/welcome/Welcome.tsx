@@ -12,7 +12,7 @@ import type { HighlightColor } from '../../core/types';
  *
  * **Welcome**, once, when Kona is installed: what it does, and the ladder in a
  * sentence. **About**, forever after: the releases, what is coming, and the
- * questions. Not two pages and not the same page twice — the welcome framing
+ * questions. Not two pages and not the same page twice, the welcome framing
  * is spent after it is used, and the reference framing takes over.
  *
  * **It flips on reaching the end, not on being opened.** The phone analogy is
@@ -25,7 +25,7 @@ import type { HighlightColor } from '../../core/types';
  *
  * **AI chats are named here and nowhere else.** With no site granted at
  * install and no `tabs` permission (3e), Kona cannot tell that you have opened
- * ChatGPT — so there is no later moment for the panel to introduce itself on a
+ * ChatGPT, so there is no later moment for the panel to introduce itself on a
  * chat. This page says it, or nobody finds it.
  */
 const FINISHED = 'local:welcome-finished';
@@ -86,7 +86,7 @@ function FirstTime({ onFinish }: { onFinish: () => void }) {
       <section class="wel-section">
         <h2>Where it works</h2>
         <p>
-          Anywhere you read, once you allow the site — an article, a
+          Anywhere you read, once you allow the site: an article, a
           documentation page, a paper. <strong>Including AI chats.</strong> A
           conversation with ChatGPT, Claude or Gemini is reading, the good part
           is worth keeping, and nothing else treats it as a page.
@@ -101,7 +101,7 @@ function FirstTime({ onFinish }: { onFinish: () => void }) {
       <section class="wel-section">
         <h2>The ladder</h2>
         {/* 11 in one sentence: one device, every device, other people. No buy
-            button — these are here to be seen, not sold. */}
+            button: these are here to be seen, not sold. */}
         <dl class="wel-ladder">
           <dt>Free</dt>
           <dd>Alone, on one device.</dd>
@@ -118,7 +118,7 @@ function FirstTime({ onFinish }: { onFinish: () => void }) {
 
       <div class="wel-finish">
         <button type="button" class="wel-button" onClick={onFinish}>
-          That’s it — take me to Kona
+          That’s it, take me to Kona
         </button>
         <p class="wel-quiet">
           This page becomes <strong>About</strong> once you have been through
@@ -137,8 +137,8 @@ function FirstTime({ onFinish }: { onFinish: () => void }) {
  * that stops at *you highlighted something* has demonstrated a yellow
  * background.
  *
- * This runs the real `HighlightPainter` — the same code that paints every
- * highlight on every page — so what is being shown is the thing itself. It
+ * This runs the real `HighlightPainter`, the same code that paints every
+ * highlight on every page, so what is being shown is the thing itself. It
  * needs nothing granted: a page served by the extension is the extension's own
  * page (3e), so the whole loop is teachable before a single permission is
  * asked for.
@@ -181,8 +181,9 @@ function RoundTrip() {
         <h2>One thing first</h2>
         <p>
           This browser cannot draw highlights the way Kona does. Kona needs the
-          CSS Custom Highlight API — Chrome and Edge 105, Firefox 140, Safari
-          17.2 — and below that it would install and then quietly draw nothing.
+          CSS Custom Highlight API, which arrived in Chrome and Edge 105, Firefox
+          140 and Safari 17.2. Below that it would install and then quietly draw
+          nothing.
         </p>
       </section>
     );
@@ -247,7 +248,7 @@ function RoundTrip() {
       {step === 'found' && (
         <p class="wel-landed">
           That is the whole of Kona. It does the same thing on a page that has
-          been rewritten since you marked it — and says so plainly when the
+          been rewritten since you marked it, and says so plainly when the
           passage is truly gone, because your copy of it is kept either way.
         </p>
       )}
@@ -294,9 +295,8 @@ function Questions() {
 
       <h3>Where do my highlights live?</h3>
       <p>
-        On this device. Without an account nothing leaves it at all — no
-        server, no sync, nothing fetched because of a page you kept something
-        from.{' '}
+        On this device. Without an account nothing leaves it at all: no server, no
+        sync, nothing fetched because of a page you kept something from.{' '}
         <button type="button" class="wel-link" onClick={openLibrary}>
           Open your library
         </button>
@@ -313,15 +313,15 @@ function Questions() {
 
       <h3>Can I highlight a PDF?</h3>
       <p>
-        Not in the browser’s own viewer — both engines treat it as privileged,
+        Not in the browser’s own viewer, because both engines treat it as privileged and
         so nothing of Kona runs inside it. You can still capture a passage from
         one by right-clicking.
       </p>
 
       <h3>Teams</h3>
       <p class="wel-quiet">
-        Shared spaces — discussion, who gathered what, deciding together — are
-        not built yet. When they are, they will be described here.
+        Shared spaces, meaning discussion, who gathered what and deciding together,
+        are not built yet. When they are, they will be described here.
       </p>
     </section>
   );

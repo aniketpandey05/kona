@@ -52,7 +52,7 @@ const MAX_CANDIDATES = 500;
  *
  * Nine, because the budget is `floor(length * 0.12)` and that first reaches 1
  * at nine. The comment said seventeen for a long time, which would have been
- * right at a rate of 0.06 -- the rate was presumably raised and the sentence
+ * right at a rate of 0.06, the rate was presumably raised and the sentence
  * left behind. Harmless, and exactly the kind of thing that misleads whoever
  * reads it next.
  */

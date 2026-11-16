@@ -50,8 +50,8 @@ const SHOTS = [
 ];
 
 /**
- * Nothing needs padding any more. The two that used to be captured by hand —
- * a page being marked up, and the panel open — are seeded and driven by
+ * Nothing needs padding any more. The two that used to be captured by hand,
+ * a page being marked up, and the panel open, are seeded and driven by
  * `shot-page.html`, which makes the marks the way a person does: select, then
  * pick a pen.
  */

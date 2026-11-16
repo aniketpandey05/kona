@@ -11,8 +11,8 @@
  *
  * `SHIPPED_AHEAD` used to live here: a promise that sync and shared spaces
  * would not be switched off later, shown on the extension's Plans page and the
- * landing page. The tier decision (11) contradicts it -- limits exist on Free
- * so that rung is felt -- and 3c took the Plans page out of the extension
+ * landing page. The tier decision (11) contradicts it, limits exist on Free
+ * so that rung is felt, and 3c took the Plans page out of the extension
  * entirely, which left the sentence with nowhere to be said and nobody relying
  * on it. Removed rather than left as a promise the product no longer makes.
  */
@@ -107,6 +107,15 @@ export const PLANS: readonly Plan[] = [
     built: false,
   },
 ];
+
+/**
+ * Where Kona is published, once it is.
+ *
+ * Empty until the listing is live. The landing page shows "Add to Chrome" when
+ * this is set and the build-it-yourself route when it is not, so publishing is
+ * one edit here rather than a hunt through the HTML.
+ */
+export const CHROME_STORE_URL = '';
 
 export const TEAM_DEMO_URL = 'https://aniketpandey05.github.io/kona/team/#/tour';
 export const PRICING_URL = 'https://aniketpandey05.github.io/kona/#pricing';

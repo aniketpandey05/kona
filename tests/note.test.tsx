@@ -80,7 +80,7 @@ describe('the note editor', () => {
     const controller = stub();
     const el = draw(<Note card={card} mark={mark} controller={controller} />);
     // preact schedules effects on an animation frame, which happy-dom backs
-    // with a timer -- so the click-away listener is not attached on the tick
+    // with a timer, so the click-away listener is not attached on the tick
     // the component renders, nor on the next one. Measured: it needs a frame.
     await settled();
     el.querySelector<HTMLTextAreaElement>('.kona-note-text')!.value = 'half a thought';

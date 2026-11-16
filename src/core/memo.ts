@@ -115,7 +115,7 @@ export function memoMarkdown(memo: Memo): string {
 
   if (memo.decision) {
     out.push(`## What ${us} decided`, '', memo.decision, '');
-    if (memo.decidedBy) out.push(`— ${memo.decidedBy}`, '');
+    if (memo.decidedBy) out.push(`${memo.decidedBy}`, '');
   }
 
   if (memo.lines.length > 0) {
@@ -139,7 +139,7 @@ export function memoMarkdown(memo: Memo): string {
     for (const { n, mark, by } of memo.highlights) {
       out.push(`> ${mark.snapshot}`);
       if (mark.note) out.push('>', `> ${mark.note}`);
-      out.push('', `— ${siteLabel(mark)}[^${n}]${by ? `, found by ${by}` : ''}`, '');
+      out.push('', `${siteLabel(mark)}[^${n}]${by ? `, found by ${by}` : ''}`, '');
     }
   }
 

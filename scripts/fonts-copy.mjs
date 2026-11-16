@@ -10,7 +10,7 @@
  * copies are replaced.
  *
  * Only the latin, upright, weight-axis files. The optical-size and italic cuts
- * are two to three times the size and nothing in Kona asks for them yet -- no
+ * are two to three times the size and nothing in Kona asks for them yet, no
  * screen sets italic, and the optical-size axis only pays for itself at display
  * sizes, which the boards do not use. Non-latin text falls back to the system
  * font, which is the right outcome: shipping every subset to everybody to cover

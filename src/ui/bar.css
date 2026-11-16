@@ -31,7 +31,7 @@
 /**
  * The pens, at full strength. The bar is one of Kona's own rooms, so the dot
  * is the pen rather than the transparent value it gets painted onto the page
- * with -- that one washes out to almost nothing on a dark slab.
+ * with, that one washes out to almost nothing on a dark slab.
  */
 .kona-bar-pen {
   width: 23px;

@@ -13,7 +13,7 @@ import type { Mark } from '../core/types';
  *
  * What it is for, in one line from DEFINITIONS: a note is what *you* thought
  * and the highlight is what the *page* said, and the two are never mixed
- * together. So the editor says so — the passage above, your words below, and
+ * together. So the editor says so: the passage above, your words below, and
  * the accent edge between them, exactly as the passage core draws it.
  */
 const MAX_NOTE = 1000;
@@ -91,7 +91,7 @@ export function Note({
       />
 
       {/* A tag is a property of a highlight, the way a colour is, and does not
-          compete with spaces -- neither implies the other (DEFINITIONS, Tag). */}
+          compete with spaces: neither implies the other (DEFINITIONS, Tag). */}
       <div class="kona-note-tags">
         {tags.map((tag) => (
           <button

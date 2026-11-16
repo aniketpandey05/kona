@@ -16,8 +16,8 @@ import type { Mark } from '../../src/core/types';
  * On Free there is no sync, so the highlights are on the device the extension
  * is installed on and nowhere else. When the extension is here, the bridge is
  * the library's source and the app's own storage is left alone; when it is
- * not -- a phone, a machine Kona was never installed on, the library opened
- * signed out -- the app reads what it has itself.
+ * not: a phone, a machine Kona was never installed on, the library opened
+ * signed out, the app reads what it has itself.
  *
  * It is deliberately one or the other and never both at once. Merging two
  * stores on every read is how the same highlight comes to exist twice with

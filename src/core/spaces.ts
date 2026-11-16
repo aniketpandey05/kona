@@ -96,7 +96,7 @@ export interface Space {
    * Anything else worth saying about the space that is not the topic (1e).
    *
    * This is where a conclusion goes. 20 took the write-up out of the
-   * definitions entirely — a space produces no document, because 3d already
+   * definitions entirely: a space produces no document, because 3d already
    * puts the shared space on the web with every highlight linking to the exact
    * words, and that *is* the document.
    */

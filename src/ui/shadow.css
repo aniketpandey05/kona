@@ -2,12 +2,12 @@
  * Everything the panel's shadow root needs, in one file.
  *
  * The content script inlines this as text (mount.tsx) because the styles have
- * to travel with the script -- a stylesheet fetched by URL would need the file
+ * to travel with the script, a stylesheet fetched by URL would need the file
  * declared web-accessible, and 3g turned that down.
  *
  * tokens.css comes first: it declares on :root, :host and .kona-tokens, and
  * inside a shadow root it is the :host selector that lands (see the note in
- * tokens.json). The fonts are deliberately absent -- 3g, the panel falls back
+ * tokens.json). The fonts are deliberately absent: 3g, the panel falls back
  * to the system stack.
  */
 @import '../design/tokens.css';

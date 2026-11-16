@@ -1,8 +1,8 @@
 /**
  * A passage, drawn the one way it is drawn.
  *
- * Decision 3b. A passage is drawn in five places -- the panel on this page,
- * the panel showing a space, the library, the spaces screen, the phone -- and
+ * Decision 3b. A passage is drawn in five places: the panel on this page,
+ * the panel showing a space, the library, the spaces screen, the phone, and
  * it was five copies. The part that must never differ is the passage itself,
  * because that is what a person recognises from one screen to the next. The
  * frame around it genuinely is different work in each place: a card in the
@@ -17,13 +17,13 @@
  * props, which is harder to follow than the five copies it replaced.
  *
  * There are no props for which room it is in. There are two rooms by decision
- * 17 -- the panel is a dark slab because it floats over somebody else's
- * article, the library is paper because it is your own -- and a room is set
+ * 17, the panel is a dark slab because it floats over somebody else's
+ * article, the library is paper because it is your own, and a room is set
  * once on an ancestor, not passed down every call. Paper is the default,
  * because the library is the place (3f).
  *
- * Sizes that belong to this drawing and nowhere else -- how big the pen dot
- * is, how far down it sits to meet the first line -- are written here rather
+ * Sizes that belong to this drawing and nowhere else, how big the pen dot
+ * is, how far down it sits to meet the first line, are written here rather
  * than in tokens.json. A token is a primitive the whole product shares; the
  * diameter of this dot is this component's business, and putting it in the
  * token file would mean every component's measurements ended up there.
@@ -87,7 +87,7 @@
  *
  * It carries no accessible name. The colour is worth saying to a screen reader
  * (DEFINITIONS, Palette), but a row announcing "yellow" before every passage
- * is noise, and the row is what gets the name -- the frame knows it is a link
+ * is noise, and the row is what gets the name, the frame knows it is a link
  * to a page and can say the colour as part of that. Kept here as a loose end
  * for whoever builds the first frame.
  */
