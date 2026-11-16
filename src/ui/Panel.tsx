@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
+import { ago } from '../core/ago';
 import type { ActiveSpaceState, KonaController, ViewState } from '../content/controller';
 import type { Space } from '../core/spaces';
 import { loadSpaces, watchSpaces } from '../core/store';
@@ -28,6 +29,11 @@ export function Panel({ state, controller }: Props) {
   const [tab, setTab] = useState<'page' | 'space'>('page');
   const count = state.items.length;
   const space = state.activeSpace;
+  // What the matcher could not find on this page, kept apart from what it
+  // could (13). Live rather than stored: a page that was rewritten can be
+  // rewritten back, and a highlight found again is not rotted.
+  const lost = state.items.filter((each) => !each.found);
+  const here = state.items.filter((each) => each.found);
 
   // The space tab does not exist at all unless a space is active (2f), so if
   // the space is cleared while it is showing, fall back rather than show an
@@ -102,18 +108,59 @@ export function Panel({ state, controller }: Props) {
         count === 0 ? (
           <p class="kona-panel-none">Nothing kept on this page yet.</p>
         ) : (
-          <ul class="kona-panel-list">
-            {state.items.map(({ mark, found }) => (
-              <li key={mark.id}>
-                <Card
-                  mark={mark}
-                  lost={!found}
-                  onClick={() => controller.jump(mark.id)}
-                  onPreview={(on) => controller.preview(on ? mark.id : null)}
-                />
-              </li>
-            ))}
-          </ul>
+          <>
+            {/* 13: the failure of the one thing Kona promises, said in place.
+                It goes first and it is not a footnote on a row, because what
+                was lost is the *landing, not the quote*: the passage is still
+                yours, still searchable, still in its space. Kona copied it
+                when you kept it. */}
+            {lost.length > 0 && (
+              <section class="kona-lost" aria-label="This page has changed">
+                <p class="kona-lost-head">This page has changed</p>
+                <p class="kona-lost-says">
+                  {lost.length === 1
+                    ? 'The passage you kept is not in it any more. You still have the passage.'
+                    : 'The passages you kept are not in it any more. You still have them.'}
+                </p>
+                <ul class="kona-panel-list">
+                  {lost.map(({ mark }) => (
+                    <li key={mark.id}>
+                      {/* Not a button: there is nothing on this page to land
+                          on, and a row that looks clickable and does nothing
+                          is worse than one that does not. */}
+                      <div class="kona-panel-card kona-panel-card--lost">
+                        <Passage
+                          color={mark.color}
+                          text={mark.label || mark.snapshot}
+                          note={mark.note}
+                        />
+                        <p class="kona-lost-kept">
+                          kept {ago(mark.createdAt)} · still searchable
+                          {space?.items.some((each) => each.id === mark.id)
+                            ? ` · still in ${space.name}`
+                            : ''}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+            {lost.length > 0 && here.length > 0 && (
+              <p class="kona-lost-after">Still here on this page</p>
+            )}
+            <ul class="kona-panel-list">
+              {here.map(({ mark }) => (
+                <li key={mark.id}>
+                  <Card
+                    mark={mark}
+                    onClick={() => controller.jump(mark.id)}
+                    onPreview={(on) => controller.preview(on ? mark.id : null)}
+                  />
+                </li>
+              ))}
+            </ul>
+          </>
         )
       ) : space && space.items.length === 0 ? (
         <p class="kona-panel-none">Nothing in {space.name} yet.</p>
@@ -133,12 +180,10 @@ export function Panel({ state, controller }: Props) {
 /** This screen's surroundings for the shared passage (3b). */
 function Card({
   mark,
-  lost,
   onClick,
   onPreview,
 }: {
   mark: Mark;
-  lost?: boolean;
   onClick: () => void;
   onPreview?: (on: boolean) => void;
 }) {
@@ -153,7 +198,6 @@ function Card({
       onMouseLeave={() => onPreview?.(false)}
     >
       <Passage color={mark.color} text={mark.label || mark.snapshot} note={mark.note} />
-      {lost && <span class="kona-panel-lost">This page has changed</span>}
     </button>
   );
 }

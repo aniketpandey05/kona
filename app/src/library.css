@@ -111,16 +111,25 @@
   border-right: 1px solid var(--kona-paper-line-strong);
 }
 
+/* A link where it goes somewhere and a button where it filters this list, so
+   the two are the same row either way. */
 .lib-nav-item {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: var(--kona-space-10);
+  width: 100%;
   min-height: 38px;
   padding: 0 var(--kona-space-12);
+  font: inherit;
   font-size: var(--kona-text-base);
+  text-align: left;
   color: var(--kona-paper-ink-note);
   text-decoration: none;
+  background: transparent;
+  border: 0;
   border-radius: var(--kona-radius-md);
+  cursor: pointer;
 }
 
 .lib-nav-item:hover {

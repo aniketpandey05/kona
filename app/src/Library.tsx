@@ -12,8 +12,10 @@ import {
   roomToArchive,
   unarchive,
 } from '../../src/core/archive';
+import { ago } from '../../src/core/ago';
 import { linkToMark } from '../../src/core/link';
 import { searchLibrary } from '../../src/core/search';
+import { sameTag } from '../../src/core/tags';
 import { siteLabel } from '../../src/core/sites';
 import type { Space } from '../../src/core/spaces';
 import type { Mark, PenId } from '../../src/core/types';
@@ -108,6 +110,7 @@ export function Library({
   const [colours, setColours] = useState<PenId[]>([]);
   const [pens, setPens] = useState<PenId[]>([...DEFAULT_PENS]);
   const [me, setMe] = useState('');
+  const [tag, setTag] = useState<string | null>(null);
   const [site, setSite] = useState<string | null>(null);
   const [when, setWhen] = useState<When>('any');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -175,6 +178,26 @@ export function Library({
     return found.length > 0 ? found : DEFAULT_PENS.map((id) => ({ pen: penOf(id), count: 0 }));
   }, [marks]);
 
+  /**
+   * The tags in your library, commonest first.
+   *
+   * Built from what the highlights carry rather than from a list of tags you
+   * keep, for the same reason the colour chips are (12, rule 4): the only tags
+   * that exist are the ones on something. A tag could be added from the note
+   * card and then never found again, because nothing in the library offered it
+   * back. Search already reads them; this is the other half.
+   */
+  const tags = useMemo(() => {
+    const seen = new Map<string, number>();
+    for (const mark of notArchived(marks ?? [])) {
+      for (const each of mark.tags ?? []) {
+        const known = [...seen.keys()].find((kept) => sameTag(kept, each)) ?? each;
+        seen.set(known, (seen.get(known) ?? 0) + 1);
+      }
+    }
+    return [...seen.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12);
+  }, [marks]);
+
   const sites = useMemo(() => {
     const seen = new Map<string, number>();
     for (const mark of marks ?? []) {
@@ -200,6 +223,7 @@ export function Library({
       found = view === 'archived' ? archivedOnly(found) : notArchived(found);
     }
     if (colours.length) found = found.filter((mark) => colours.includes(mark.color));
+    if (tag) found = found.filter((mark) => (mark.tags ?? []).some((each) => sameTag(each, tag)));
     if (site) found = found.filter((mark) => siteLabel(mark) === site);
     if (when !== 'any') {
       const cutoff = Date.now() - SINCE[when];
@@ -210,14 +234,15 @@ export function Library({
       shown: [...found].sort((a, b) => b.createdAt - a.createdAt),
       alsoMatched: also,
     };
-  }, [marks, query, colours, site, when, view]);
+  }, [marks, query, colours, tag, site, when, view]);
 
   const toggleColour = (pen: PenId) =>
     setColours((current) =>
       current.includes(pen) ? current.filter((each) => each !== pen) : [...current, pen],
     );
 
-  const filtered = query.trim() !== '' || colours.length > 0 || site !== null || when !== 'any';
+  const filtered =
+    query.trim() !== '' || colours.length > 0 || tag !== null || site !== null || when !== 'any';
   const archivedCount = countArchived(marks ?? []);
   const room = roomToArchive(marks ?? [], pro);
 
@@ -334,6 +359,28 @@ export function Library({
               <span class="lib-nav-dot" aria-hidden="true" />
               {space.name} <span class="lib-nav-count">{space.markIds.length}</span>
             </a>
+          ))}
+
+          {/* The Main board's third nav section. A tag you added in the note
+              card had nowhere to be read back until now. */}
+          {tags.length > 0 && <p class="lib-nav-head">Tags</p>}
+          {tags.map(([each, count]) => (
+            <button
+              type="button"
+              class={
+                tag !== null && sameTag(tag, each)
+                  ? 'lib-nav-item lib-nav-item--on'
+                  : 'lib-nav-item'
+              }
+              key={each}
+              aria-pressed={tag !== null && sameTag(tag, each)}
+              onClick={() => {
+                setTag((current) => (current !== null && sameTag(current, each) ? null : each));
+                if (!inList) location.hash = '#/';
+              }}
+            >
+              {each} <span class="lib-nav-count">{count}</span>
+            </button>
           ))}
 
           <div class="lib-nav-foot">
@@ -561,18 +608,6 @@ export function Library({
       </div>
     </div>
   );
-}
-
-function ago(at: number): string {
-  const minutes = Math.round((Date.now() - at) / 60_000);
-  if (minutes < 2) return 'just now';
-  if (minutes < 60) return `${minutes} minutes ago`;
-  const hours = Math.round(minutes / 60);
-  if (hours < 24) return hours === 1 ? 'an hour ago' : `${hours} hours ago`;
-  const days = Math.round(hours / 24);
-  if (days === 1) return 'yesterday';
-  if (days < 30) return `${days} days ago`;
-  return new Date(at).toLocaleDateString();
 }
 
 function SearchIcon() {

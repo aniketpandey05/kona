@@ -219,14 +219,57 @@
 }
 
 /**
- * Decision 13. The passage is still yours, it was copied when you kept it --
- * so this says the landing is gone and nothing more alarming than that.
+ * Decision 13, in place.
+ *
+ * It is a block at the top of the list rather than a line on a row, because
+ * this is the failure of the one thing Kona promises and nothing about it
+ * should be a footnote. What it says is the decision itself: the landing is
+ * gone, the passage is not. Kona copied the passage when you kept it, so it
+ * is still yours, still searchable, still in its space.
+ *
+ * Amber, like the going-to strip, and for the same reason: it is the panel
+ * speaking rather than the page.
  */
-.kona-panel-lost {
-  display: block;
-  margin-top: var(--kona-space-6);
-  font-size: var(--kona-text-xs);
+.kona-lost {
+  margin: 0 0 var(--kona-space-8);
+  padding: var(--kona-space-10) 0 var(--kona-space-4);
+  background: var(--kona-slab-going-bg);
+  border-top: 1px solid var(--kona-slab-going-line);
+  border-bottom: 1px solid var(--kona-slab-going-line);
+}
+
+.kona-lost-head {
+  margin: 0 14px var(--kona-space-4);
+  font-size: var(--kona-text-base);
+  font-weight: var(--kona-weight-semibold);
+  color: var(--kona-slab-going-name);
+}
+
+.kona-lost-says {
+  margin: 0 14px var(--kona-space-8);
+  font-size: var(--kona-text-sm);
+  line-height: var(--kona-leading-snug);
   color: var(--kona-slab-going-label);
+}
+
+/* What is still true about the passage, which is most of it. */
+.kona-lost-kept {
+  margin: var(--kona-space-6) 0 0;
+  font-size: var(--kona-text-xs);
+  color: var(--kona-slab-ink-note);
+}
+
+.kona-panel-card--lost {
+  cursor: default;
+}
+
+.kona-lost-after {
+  margin: 0;
+  padding: var(--kona-space-4) 14px var(--kona-space-6);
+  font-size: var(--kona-text-xs);
+  letter-spacing: var(--kona-tracking-caps);
+  text-transform: uppercase;
+  color: var(--kona-slab-ink-muted);
 }
 
 .kona-panel-none {
