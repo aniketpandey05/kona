@@ -1,9 +1,9 @@
 import type { JSX } from 'preact';
 import type { KonaController, NoteCardState, ViewState } from '../content/controller';
-import { PEN_COLORS } from '../design/tokens';
-import type { HighlightColor, Mark } from '../core/types';
+import { penOf } from '../core/pens';
+import type { Mark, PenId } from '../core/types';
 
-const PENS = Object.keys(PEN_COLORS) as HighlightColor[];
+
 
 /** Enough to decide whether the bar fits under the selection or has to go above it. */
 const BAR_HEIGHT = 37;
@@ -13,20 +13,22 @@ interface BarProps {
   top: number;
   left: number;
   /** The pen it is already marked in, ringed. Absent before anything is marked. */
-  inUse?: HighlightColor;
-  onPick: (color: HighlightColor) => void;
+  inUse?: PenId;
+  onPick: (color: PenId) => void;
   onNote: () => void;
   /** Only an existing highlight can be deleted, so only then is this given (10c). */
   onDelete?: () => void;
   /** The active space this one went into, when it did. 2g's escape hatch. */
   inSpace?: { name: string; onKeepOut: () => void };
+  /** The palette, which is a set of pens you add to (12). */
+  pens: PenId[];
 }
 
 /**
  * The bar itself. Six inputs, each doing one thing, because the five copies
  * 3b replaced became five copies by growing a prop at a time.
  */
-function Bar({ top, left, inUse, onPick, onNote, onDelete, inSpace }: BarProps): JSX.Element {
+function Bar({ top, left, inUse, onPick, onNote, onDelete, inSpace, pens }: BarProps): JSX.Element {
   return (
     <div
       class="kona-bar"
@@ -35,16 +37,19 @@ function Bar({ top, left, inUse, onPick, onNote, onDelete, inSpace }: BarProps):
       // would throw away the thing being marked.
       onMouseDown={(event) => event.preventDefault()}
     >
-      {PENS.map((pen) => (
-        <button
-          key={pen}
-          type="button"
-          class={pen === inUse ? 'kona-bar-pen kona-bar-pen--in-use' : 'kona-bar-pen'}
-          style={{ background: PEN_COLORS[pen] }}
-          aria-label={pen === inUse ? `${pen}, in use` : pen}
-          onClick={() => onPick(pen)}
-        />
-      ))}
+      {pens.map((id) => {
+        const pen = penOf(id);
+        return (
+          <button
+            key={id}
+            type="button"
+            class={id === inUse ? 'kona-bar-pen kona-bar-pen--in-use' : 'kona-bar-pen'}
+            style={{ background: pen.ink }}
+            aria-label={id === inUse ? `${pen.name}, in use` : pen.name}
+            onClick={() => onPick(id)}
+          />
+        );
+      })}
       <span class="kona-bar-divider" aria-hidden="true" />
       <button type="button" class="kona-bar-action" onClick={onNote}>
         Note
@@ -88,9 +93,11 @@ function Bar({ top, left, inUse, onPick, onNote, onDelete, inSpace }: BarProps):
 export function SelectionBar({
   selection,
   controller,
+  pens,
 }: {
   selection: NonNullable<ViewState['selection']>;
   controller: KonaController;
+  pens: PenId[];
 }): JSX.Element {
   const fitsBelow = innerHeight - selection.bottom > BAR_HEIGHT + BAR_GAP * 2;
   const top = fitsBelow
@@ -109,8 +116,9 @@ export function SelectionBar({
     <Bar
       top={top}
       left={selection.left}
+      pens={pens}
       onPick={(color) => void controller.highlight(color)}
-      onNote={() => void controller.highlight('yellow', { withNote: true })}
+      onNote={() => void controller.highlight(pens[0] ?? 'yellow', { withNote: true })}
     />
   );
 }
@@ -126,10 +134,12 @@ export function MarkBar({
   mark,
   controller,
   inSpace,
+  pens,
 }: {
   card: NoteCardState;
   mark: Mark;
   controller: KonaController;
+  pens: PenId[];
   /** Named only when this highlight is actually in the active space. */
   inSpace?: string;
 }): JSX.Element | null {
@@ -138,6 +148,7 @@ export function MarkBar({
     <Bar
       top={card.position.top}
       left={card.position.left}
+      pens={pens}
       inUse={mark.color}
       inSpace={
         inSpace ? { name: inSpace, onKeepOut: () => void controller.keepOutOfSpace(mark.id) } : undefined

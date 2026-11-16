@@ -527,25 +527,11 @@ button.chip:hover {
   line-height: 1.62;
 }
 
-/* The same four colours the extension paints with. */
-.mark-quote.mark-yellow {
-  background: linear-gradient(var(--mark-yellow), var(--mark-yellow));
-  box-shadow: 4px 0 0 var(--mark-yellow), -4px 0 0 var(--mark-yellow);
-}
-
-.mark-quote.mark-green {
-  background: linear-gradient(var(--mark-green), var(--mark-green));
-  box-shadow: 4px 0 0 var(--mark-green), -4px 0 0 var(--mark-green);
-}
-
-.mark-quote.mark-blue {
-  background: linear-gradient(var(--mark-blue), var(--mark-blue));
-  box-shadow: 4px 0 0 var(--mark-blue), -4px 0 0 var(--mark-blue);
-}
-
-.mark-quote.mark-pink {
-  background: linear-gradient(var(--mark-pink), var(--mark-pink));
-  box-shadow: 4px 0 0 var(--mark-pink), -4px 0 0 var(--mark-pink);
+/* One rule, whatever the pen: the card hands in the mark colour itself, so a
+   colour somebody mixed themselves paints the same as the four built in (12). */
+.mark-quote[style*='--mark'] {
+  background: linear-gradient(var(--mark), var(--mark));
+  box-shadow: 4px 0 0 var(--mark), -4px 0 0 var(--mark);
 }
 
 .mark-note {

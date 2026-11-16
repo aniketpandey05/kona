@@ -624,3 +624,361 @@
   border-left: 2px solid var(--kona-accent);
   border-radius: 0 var(--kona-radius-sm) var(--kona-radius-sm) 0;
 }
+
+/* ── Pens (12) ──────────────────────────────────────────────────────────────
+   The case on the left, the colour you are mixing on the right. Two columns
+   where there is room and one where there is not, because the card is the
+   thing being read while the list is the thing being changed. */
+.pen-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kona-space-24);
+  align-items: flex-start;
+}
+
+.pen-case {
+  flex: 1 1 340px;
+  min-width: 0;
+}
+
+.pen-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kona-space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pen-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-12);
+  padding: var(--kona-space-12);
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-line);
+  border-radius: var(--kona-radius-lg);
+}
+
+/* The pen being added is in the list before it is saved, so you can see where
+   it will sit, and ringed so it reads as not yet real. */
+.pen-row--adding {
+  border-color: var(--kona-accent);
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+}
+
+/* The dot shows the mark, not the pen at full strength: this screen is about
+   what the pen paints over text Kona does not own. */
+.pen-dot {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: 50%;
+}
+
+.pen-dot--small {
+  width: 13px;
+  height: 13px;
+}
+
+.pen-who {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.pen-who strong {
+  display: block;
+  font-size: var(--kona-text-md);
+  font-weight: var(--kona-weight-medium);
+  color: var(--kona-paper-ink-heading);
+}
+
+.pen-count {
+  display: block;
+  margin-top: var(--kona-space-2);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+}
+
+.pen-tiny {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kona-space-8);
+  min-height: 32px;
+  padding: var(--kona-space-6) var(--kona-space-10);
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-note);
+  text-decoration: none;
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-sm);
+  cursor: pointer;
+}
+
+.pen-add {
+  margin-top: var(--kona-space-12);
+}
+
+.pen-h2 {
+  margin: var(--kona-space-24) 0 var(--kona-space-4);
+  font-size: var(--kona-text-md);
+  font-weight: var(--kona-weight-semibold);
+  color: var(--kona-paper-ink-heading);
+}
+
+.pen-quiet {
+  margin: 0 0 var(--kona-space-10);
+  font-size: var(--kona-text-base);
+  line-height: var(--kona-leading-normal);
+  color: var(--kona-paper-ink-muted);
+}
+
+.pen-quiet strong {
+  font-weight: var(--kona-weight-semibold);
+  color: var(--kona-paper-ink-heading);
+}
+
+.pen-retired {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kona-space-8);
+}
+
+.pen-where {
+  margin-top: var(--kona-space-24);
+  padding-top: var(--kona-space-12);
+  border-top: 1px solid var(--kona-paper-line);
+  font-size: var(--kona-text-sm);
+}
+
+/* The card, which floats, because it is the one thing here that is a draft. */
+.pen-card {
+  box-sizing: border-box;
+  flex: 1 1 330px;
+  min-width: 0;
+  max-width: 380px;
+  padding: var(--kona-space-16);
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-xl);
+  box-shadow: var(--kona-shadow-pill);
+}
+
+.pen-card-h {
+  margin: 0 0 var(--kona-space-12);
+  font-size: var(--kona-text-md);
+  font-weight: var(--kona-weight-semibold);
+  color: var(--kona-paper-ink-heading);
+}
+
+.pen-square {
+  position: relative;
+  height: 150px;
+  margin: 0 0 var(--kona-space-10);
+  border-radius: var(--kona-radius-md);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.pen-square:focus-visible {
+  outline: 2px solid var(--kona-accent);
+  outline-offset: 2px;
+}
+
+.pen-marker {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.pen-label {
+  display: block;
+  margin: 0 0 var(--kona-space-12);
+}
+
+.pen-label > span:first-child {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 var(--kona-space-4);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-note);
+}
+
+.pen-label strong {
+  font-weight: var(--kona-weight-medium);
+  color: var(--kona-paper-ink-heading);
+}
+
+.pen-range {
+  box-sizing: border-box;
+  width: 100%;
+  height: 14px;
+  margin: 0;
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: 7px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.pen-range--hue {
+  background: linear-gradient(
+    to right,
+    #f00 0%,
+    #ff0 17%,
+    #0f0 33%,
+    #0ff 50%,
+    #00f 67%,
+    #f0f 83%,
+    #f00 100%
+  );
+}
+
+.pen-range::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-ink-faint);
+  border-radius: 50%;
+  appearance: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.pen-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-ink-faint);
+  border-radius: 50%;
+}
+
+.pen-note {
+  display: block;
+  margin: var(--kona-space-6) 0 0;
+  font-size: var(--kona-text-xs);
+  line-height: var(--kona-leading-snug);
+  color: var(--kona-paper-ink-muted);
+}
+
+.pen-hex {
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-8);
+  margin: 0 0 var(--kona-space-12);
+}
+
+.pen-hex-field {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-8);
+  padding: var(--kona-space-8) var(--kona-space-10);
+  background: var(--kona-paper);
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-md);
+  color: var(--kona-paper-ink-faint);
+  font-size: var(--kona-text-sm);
+}
+
+.pen-hex-field input {
+  flex-grow: 1;
+  min-width: 0;
+  padding: 0;
+  font: inherit;
+  font-size: var(--kona-text-base);
+  letter-spacing: 0.04em;
+  color: var(--kona-paper-ink-heading);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+/* The derived name, which is not a field: rule 3, a pen has a colour and not
+   a label you write. */
+.pen-name {
+  padding: var(--kona-space-8) var(--kona-space-12);
+  font-size: var(--kona-text-base);
+  font-weight: var(--kona-weight-medium);
+  color: var(--kona-paper-ink-heading);
+  background: var(--kona-paper-sunken);
+  border-radius: var(--kona-radius-md);
+}
+
+.pen-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.pen-caps {
+  margin: 0 0 var(--kona-space-8);
+  font-size: var(--kona-text-xs);
+  letter-spacing: var(--kona-tracking-caps);
+  text-transform: uppercase;
+  color: var(--kona-paper-ink-faint);
+}
+
+/* Two previews, light and dark, because a mark is painted over a page whose
+   background Kona does not control. Flat rather than the board's gradient:
+   ::highlight() can only paint flat, and a preview that is prettier than the
+   paint is a preview of something else. */
+.pen-preview {
+  margin: 0 0 var(--kona-space-8);
+  padding: var(--kona-space-10) var(--kona-space-12);
+  font-family: var(--kona-font-prose);
+  font-size: var(--kona-text-md);
+  line-height: var(--kona-leading-prose);
+  color: var(--kona-paper-ink-soft);
+  background: #fff;
+  border: 1px solid var(--kona-paper-line);
+  border-radius: var(--kona-radius-md);
+}
+
+.pen-preview--dark {
+  margin-bottom: var(--kona-space-12);
+  color: var(--kona-slab-ink-passage);
+  background: var(--kona-slab-top);
+  border-color: var(--kona-slab-line);
+}
+
+.pen-preview mark {
+  padding: 1px;
+  border-radius: var(--kona-radius-xs);
+}
+
+.pen-card-do {
+  display: flex;
+  gap: var(--kona-space-8);
+}
+
+.pen-card-do .sp-do {
+  flex-grow: 1;
+  min-height: 40px;
+}
+
+.pen-out {
+  width: 100%;
+  margin: var(--kona-space-8) 0 0;
+  padding: var(--kona-space-8);
+  font: inherit;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.pen-out:hover {
+  color: var(--kona-paper-ink-note);
+  text-decoration: underline;
+}

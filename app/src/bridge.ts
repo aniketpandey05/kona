@@ -7,7 +7,7 @@ import {
   type BridgeRequest,
 } from '../../src/core/bridge';
 import type { Space } from '../../src/core/spaces';
-import type { Mark, SiteId } from '../../src/core/types';
+import type { Mark, PenId, SiteId } from '../../src/core/types';
 
 /**
  * The page's half of the bridge (3c, 3i).
@@ -114,6 +114,20 @@ export async function saveExtensionSpace(space: Space): Promise<void> {
 
 export async function removeExtensionSpace(id: string): Promise<void> {
   await expect({ kind: 'removeSpace', id }, 'ok');
+}
+
+/**
+ * The pens in the case on this machine.
+ *
+ * The extension's palette, because the bar in the page reads that one: a Pens
+ * screen editing a second list would show you pens you could not mark with.
+ */
+export async function loadExtensionPens(): Promise<PenId[]> {
+  return (await expect({ kind: 'pens' }, 'pens')).pens;
+}
+
+export async function saveExtensionPens(pens: readonly PenId[]): Promise<void> {
+  await expect({ kind: 'savePens', pens: [...pens] }, 'ok');
 }
 
 /**

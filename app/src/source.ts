@@ -1,14 +1,16 @@
 import {
   extensionPresent,
   loadExtensionMarks,
+  loadExtensionPens,
   loadExtensionSpaces,
   removeExtensionMark,
   saveExtensionMark,
+  saveExtensionPens,
   watchExtension,
 } from './bridge';
 import * as local from './storage';
 import type { Space } from '../../src/core/spaces';
-import type { Mark } from '../../src/core/types';
+import type { Mark, PenId } from '../../src/core/types';
 
 /**
  * Where the library reads from.
@@ -29,6 +31,16 @@ export interface LibrarySource {
   readonly kind: 'extension' | 'device';
   marks(): Promise<Mark[]>;
   spaces(): Promise<Space[]>;
+  /**
+   * The pens in the case on this device (12, rule 7).
+   *
+   * It follows the same one-or-the-other rule as the highlights, for a sharper
+   * reason: where the extension is installed, the bar in the page marks with
+   * *its* palette, so a library editing its own list would offer pens you
+   * could not then mark with.
+   */
+  pens(): Promise<PenId[]>;
+  savePens(pens: readonly PenId[]): Promise<void>;
   save(mark: Mark): Promise<void>;
   remove(mark: Mark): Promise<void>;
   watch(onChange: () => void): () => void;
@@ -39,6 +51,8 @@ const fromExtension: LibrarySource = {
   marks: loadExtensionMarks,
   spaces: loadExtensionSpaces,
   save: saveExtensionMark,
+  pens: loadExtensionPens,
+  savePens: saveExtensionPens,
   // The extension keys highlights by the page they are on, so removing one
   // needs the page as well as the id.
   remove: (mark) => removeExtensionMark(mark.site, mark.conversationId, mark.id),
@@ -50,6 +64,8 @@ const fromDevice: LibrarySource = {
   marks: local.loadAll,
   spaces: local.loadSpaces,
   save: local.save,
+  pens: async () => local.loadPens(),
+  savePens: async (pens) => local.savePens(pens),
   remove: (mark) => local.remove(mark.id),
   watch: local.watch,
 };

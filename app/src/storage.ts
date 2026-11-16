@@ -3,7 +3,8 @@ import { makeKeypair } from '../../src/core/identity';
 import { makePerson, type Person } from '../../src/core/people';
 import type { Space } from '../../src/core/spaces';
 import { EVERYTHING, type Scope, type SyncStore } from '../../src/core/sync';
-import type { Mark } from '../../src/core/types';
+import { DEFAULT_PENS } from '../../src/core/pens';
+import type { Mark, PenId } from '../../src/core/types';
 
 /**
  * The app has no chrome.storage, so highlights live in IndexedDB. One object
@@ -155,6 +156,26 @@ function write(key: string, value: unknown): void {
   } catch {
     // A phone with no room left still works; it just will not remember you.
   }
+}
+
+/**
+ * The pens, on a device with no extension on it.
+ *
+ * Per device, like the extension's own palette, because Free does not sync
+ * (12, rule 7). A phone that has never had the extension gets its own four to
+ * begin with and its own additions, and that is the honest answer rather than
+ * a palette that pretends to follow you.
+ */
+const PENS = 'kona:pens';
+
+export function loadPens(): PenId[] {
+  const kept = read<PenId[]>(PENS);
+  return Array.isArray(kept) && kept.length > 0 ? kept : [...DEFAULT_PENS];
+}
+
+export function savePens(pens: readonly PenId[]): void {
+  write(PENS, [...pens]);
+  notify();
 }
 
 export function loadMe(): Person | null {

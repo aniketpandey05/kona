@@ -1,3 +1,4 @@
+import { penOf, type PenId } from './pens';
 import { MARK_FLASH, MARK_NOTED, PEN_COLORS, PEN_MARKS, markInk } from '../design/tokens';
 import type { HighlightColor } from './types';
 
@@ -14,10 +15,14 @@ export const UI_COLORS = PEN_COLORS;
 
 const FLASH = 'kona-flash';
 const NOTED = 'kona-noted';
-const layerName = (color: HighlightColor) => `kona-${color}`;
+/**
+ * `::highlight()` takes a custom ident, and a colour id is `#14b8a6@45`, so
+ * everything that is not a letter or a digit becomes a hyphen.
+ */
+const layerName = (color: PenId) => `kona-${color.replace(/[^a-z0-9]/gi, '-')}`;
 
 export interface PaintEntry {
-  color: HighlightColor;
+  color: PenId;
   range: Range;
   /** Highlights with a note get a dotted underline so they stand out. */
   noted: boolean;
@@ -28,7 +33,14 @@ export interface PaintEntry {
  * the chat's DOM, so the site's re-renders can't break or duplicate highlights.
  */
 export class HighlightPainter {
-  private readonly layers = new Map<HighlightColor, Highlight>();
+  /**
+   * One layer per colour actually on the page, made as they appear.
+   *
+   * Not one per default pen: a palette is a set of pens you add to (12), so
+   * the colours a page carries are whatever its highlights were made with,
+   * including ones that are no longer in the case.
+   */
+  private readonly layers = new Map<PenId, Highlight>();
   private readonly noted = new Highlight();
   private readonly flash = new Highlight();
   private readonly style: HTMLStyleElement;
@@ -41,17 +53,11 @@ export class HighlightPainter {
   }
 
   constructor(doc: Document = document) {
-    const colors = Object.keys(PEN_MARKS) as HighlightColor[];
     this.style = doc.createElement('style');
     this.style.setAttribute('data-kona-ui', '');
     this.writeRules();
     doc.head.append(this.style);
 
-    for (const color of colors) {
-      const layer = new Highlight();
-      this.layers.set(color, layer);
-      CSS.highlights.set(layerName(color), layer);
-    }
     this.noted.priority = 1;
     CSS.highlights.set(NOTED, this.noted);
     this.flash.priority = 2;
@@ -74,11 +80,11 @@ export class HighlightPainter {
   }
 
   private writeRules(): void {
-    const colors = Object.keys(PEN_MARKS) as HighlightColor[];
+    const colors = [...this.layers.keys()];
     const ink = markInk(this.pageIsDark);
     this.style.textContent = [
       ...colors.map(
-        (c) => `::highlight(${layerName(c)}) { background-color: ${PEN_MARKS[c]}; color: ${ink}; }`,
+        (c) => `::highlight(${layerName(c)}) { background-color: ${penOf(c).mark}; color: ${ink}; }`,
       ),
       // Firefox does not apply text-decoration inside ::highlight(), so a noted
       // highlight simply looks unmarked there. The panel still shows the note.
@@ -88,6 +94,29 @@ export class HighlightPainter {
   }
 
   paint(entries: PaintEntry[]): void {
+    const wanted = new Set(entries.map((each) => each.color));
+    let changed = false;
+
+    // A colour nobody on this page is using any more loses its layer, so the
+    // registry does not grow for every pen ever seen in a long session.
+    for (const id of [...this.layers.keys()]) {
+      if (wanted.has(id)) continue;
+      CSS.highlights.delete(layerName(id));
+      this.layers.delete(id);
+      changed = true;
+    }
+    for (const id of wanted) {
+      if (this.layers.has(id)) continue;
+      const layer = new Highlight();
+      this.layers.set(id, layer);
+      CSS.highlights.set(layerName(id), layer);
+      changed = true;
+    }
+    // Painting happens on every scroll and every mutation the page makes, and
+    // the rules only depend on which colours are present, so the stylesheet is
+    // rewritten when that set moves and not otherwise.
+    if (changed) this.writeRules();
+
     for (const layer of this.layers.values()) layer.clear();
     this.noted.clear();
     for (const { color, range, noted } of entries) {

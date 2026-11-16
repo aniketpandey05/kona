@@ -74,12 +74,28 @@ describe('painting a highlight', () => {
     expect(HighlightPainter.isSupported()).toBe(true);
   });
 
-  it('writes a rule for every pen, in the pen it was made with', () => {
-    new HighlightPainter(document);
+  it('writes a rule for the pen a highlight was made with', () => {
+    // A layer per colour *on the page*, made as the colours appear, rather
+    // than a fixed four: a palette is a set of pens you add to (12), so the
+    // painter cannot know the list up front.
+    const painter = new HighlightPainter(document);
+    painter.paint(PENS.map((color) => ({ color, range: aRange(), noted: false })));
     for (const pen of PENS) {
       expect(rules()).toContain(`::highlight(kona-${pen})`);
       expect(rules()).toContain(PEN_MARKS[pen]);
     }
+  });
+
+  it('paints a colour you mixed yourself, not only the four built in', () => {
+    // The id is a value, `#14b8a6@45`, and `::highlight()` takes a custom
+    // ident, so the name is sanitised. If this ever stops matching the rule
+    // the painter writes, a highlight in your own colour paints nothing.
+    const painter = new HighlightPainter(document);
+    const range = aRange();
+    painter.paint([{ color: '#14b8a6@45', range, noted: false }]);
+    expect(rules()).toContain('::highlight(kona--14b8a6-45)');
+    expect(rules()).toContain('rgba(20, 184, 166, 0.45)');
+    expect([...registry.get('kona--14b8a6-45')!.ranges]).toEqual([range]);
   });
 
   it('takes its colours from the token file and holds none of its own', () => {
@@ -100,11 +116,11 @@ describe('painting a highlight', () => {
     expect(rules()).toContain(MARK_FLASH);
   });
 
-  it('registers one layer per pen, plus the note and the flash', () => {
-    new HighlightPainter(document);
-    expect([...registry.keys()].sort()).toEqual(
-      ['kona-blue', 'kona-flash', 'kona-green', 'kona-noted', 'kona-pink', 'kona-yellow'].sort(),
-    );
+  it('registers the note and the flash up front, and a pen when one is used', () => {
+    const painter = new HighlightPainter(document);
+    expect([...registry.keys()].sort()).toEqual(['kona-flash', 'kona-noted']);
+    painter.paint([{ color: 'blue', range: aRange(), noted: false }]);
+    expect([...registry.keys()].sort()).toEqual(['kona-blue', 'kona-flash', 'kona-noted']);
   });
 
   it('puts a range in its pen layer, and in the note layer when it has one', () => {
@@ -113,15 +129,21 @@ describe('painting a highlight', () => {
     painter.paint([{ color: 'blue', range, noted: true }]);
     expect([...registry.get('kona-blue')!.ranges]).toEqual([range]);
     expect([...registry.get('kona-noted')!.ranges]).toEqual([range]);
-    expect([...registry.get('kona-yellow')!.ranges]).toEqual([]);
+    // Nothing on this page is yellow, so there is no yellow layer to hold a
+    // range: the registry carries the colours in use, not the palette.
+    expect(registry.get('kona-yellow')).toBeUndefined();
   });
 
   it('repaints from scratch, so a deleted highlight stops being drawn', () => {
     const painter = new HighlightPainter(document);
     const range = aRange();
     painter.paint([{ color: 'blue', range, noted: false }]);
+    expect([...registry.get('kona-blue')!.ranges]).toEqual([range]);
     painter.paint([]);
-    expect([...registry.get('kona-blue')!.ranges]).toEqual([]);
+    // The layer goes with the last highlight that used it, so a long session
+    // does not leave a registry entry behind for every colour ever seen.
+    expect(registry.get('kona-blue')).toBeUndefined();
+    expect(rules()).not.toContain('::highlight(kona-blue)');
   });
 
   it('flashes one passage at a time when Kona lands you on it', () => {

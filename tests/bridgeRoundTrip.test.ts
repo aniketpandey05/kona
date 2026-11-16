@@ -2,12 +2,14 @@ import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
   extensionPresent,
   loadExtensionMarks,
+  loadExtensionPens,
   removeExtensionMark,
   saveExtensionMark,
+  saveExtensionPens,
   watchExtension,
 } from '../app/src/bridge';
 import { BRIDGE, fromThisPage, isEnvelope, type BridgeReply } from '../src/core/bridge';
-import type { Mark } from '../src/core/types';
+import type { Mark, PenId } from '../src/core/types';
 
 /**
  * happy-dom delivers a `message` event whose `source` is an EventTarget rather
@@ -42,7 +44,7 @@ beforeAll(() => {
  * reply, that a page with no extension behind it finds out rather than hanging,
  * and that a message from somewhere else is never answered.
  */
-function fakeExtension(marks: Mark[] = []) {
+function fakeExtension(marks: Mark[] = [], pens: PenId[] = ['yellow', 'green', 'blue', 'pink']) {
   const listener = (event: MessageEvent) => {
     if (!fromThisPage(event)) return;
     if (!isEnvelope(event.data)) return;
@@ -65,13 +67,20 @@ function fakeExtension(marks: Mark[] = []) {
         reply = { kind: 'ok' };
         break;
       }
+      case 'pens':
+        reply = { kind: 'pens', pens };
+        break;
+      case 'savePens':
+        pens.splice(0, pens.length, ...request.pens);
+        reply = { kind: 'ok' };
+        break;
       default:
         reply = { kind: 'error', message: 'no' };
     }
     window.postMessage({ source: BRIDGE, id, reply }, location.origin);
   };
   window.addEventListener('message', listener);
-  return { marks, stop: () => window.removeEventListener('message', listener) };
+  return { marks, pens, stop: () => window.removeEventListener('message', listener) };
 }
 
 const mark = (id: string): Mark =>
@@ -118,6 +127,18 @@ describe('the bridge, end to end', () => {
     expect(fake.marks.map((each) => each.id)).toEqual(['m1']);
     await removeExtensionMark('web', 'p1', 'm1');
     expect(fake.marks).toEqual([]);
+  });
+
+  it('reads and writes the pens, because the palette belongs to the extension', async () => {
+    // Where the extension is installed, the bar in the page marks with *its*
+    // palette (12, rule 7). A library editing a second list would offer pens
+    // you could not then mark with, which is worse than not offering them.
+    const fake = fakeExtension([]);
+    stop = fake.stop;
+    expect(await loadExtensionPens()).toEqual(['yellow', 'green', 'blue', 'pink']);
+    await saveExtensionPens(['yellow', '#14b8a6@45']);
+    expect(fake.pens).toEqual(['yellow', '#14b8a6@45']);
+    expect(await loadExtensionPens()).toEqual(['yellow', '#14b8a6@45']);
   });
 
   it('answers each question with its own answer', async () => {

@@ -25,13 +25,16 @@ export function App({ controller }: Props) {
   const state = useViewState(controller);
   if (!state.enabled || !state.conversationId) return null;
 
-  const marked = state.card && state.items.find((item) => item.mark.id === state.card?.markId)?.mark;
+  const marked =
+    state.card && state.items.find((item) => item.mark.id === state.card?.markId)?.mark;
 
   return (
     // kona-tokens so every custom property lands, whether this ends up inside a
     // shadow root (where :host matches) or not.
     <div class="kona-tokens">
-      {state.selection && <SelectionBar selection={state.selection} controller={controller} />}
+      {state.selection && (
+        <SelectionBar selection={state.selection} controller={controller} pens={state.pens} />
+      )}
 
       <Panel state={state} controller={controller} />
 
@@ -46,6 +49,7 @@ export function App({ controller }: Props) {
             card={state.card}
             mark={marked}
             controller={controller}
+            pens={state.pens}
             inSpace={
               state.activeSpace?.items.some((each) => each.id === marked.id)
                 ? state.activeSpace.name

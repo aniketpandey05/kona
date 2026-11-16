@@ -3,7 +3,19 @@ import type { TextQuote } from './quote';
 /** 'web' is any ordinary page the user switched on from the toolbar. */
 export type SiteId = 'chatgpt' | 'claude' | 'gemini' | 'web';
 export type Role = 'user' | 'assistant';
+/** The four Kona starts with. A highlight may carry one of your own instead. */
 export type HighlightColor = 'yellow' | 'green' | 'blue' | 'pink';
+
+/**
+ * The colour a highlight was made with (12).
+ *
+ * One of the four names, or a colour of your own as `#rrggbb@NN`. A value
+ * rather than a reference to a palette slot, because a highlight keeps the
+ * colour it was made with: swapping a pen in the case does not change the
+ * marks already on the paper, so the mark has to carry the colour itself.
+ * `src/core/pens.ts` reads it.
+ */
+export type PenId = string;
 
 /** Several independent clues for finding a message again; any one of them may break. */
 export interface MessageAnchor {
@@ -28,7 +40,7 @@ export interface Mark {
   /** The highlighted passage; absent when the whole message is marked. */
   quote?: TextQuote;
   label: string;
-  color: HighlightColor;
+  color: PenId;
   /** Optional note the user wrote about the highlight. */
   note?: string;
   /** Position in the user's list for this chat. New highlights go last; the user can reorder. */

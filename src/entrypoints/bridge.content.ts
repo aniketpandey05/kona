@@ -6,6 +6,7 @@ import {
   type BridgeReply,
   type BridgeRequest,
 } from '../core/bridge';
+import { loadPalette, savePalette } from '../core/palette';
 import {
   loadAllMarks,
   loadSpaces,
@@ -80,6 +81,11 @@ async function handle(request: BridgeRequest): Promise<BridgeReply> {
       return { kind: 'ok' };
     case 'removeSpace':
       await removeSpace(request.id);
+      return { kind: 'ok' };
+    case 'pens':
+      return { kind: 'pens', pens: await loadPalette() };
+    case 'savePens':
+      await savePalette(request.pens);
       return { kind: 'ok' };
     default:
       // A newer page talking to an older extension. Saying so is better than

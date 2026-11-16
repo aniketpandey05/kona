@@ -1,4 +1,4 @@
-import type { Mark, SiteId } from './types';
+import type { Mark, PenId, SiteId } from './types';
 import type { Space } from './spaces';
 
 /**
@@ -71,12 +71,18 @@ export type BridgeRequest =
   | { kind: 'removeMark'; site: SiteId; page: string; id: string }
   | { kind: 'spaces' }
   | { kind: 'saveSpace'; space: Space }
-  | { kind: 'removeSpace'; id: string };
+  | { kind: 'removeSpace'; id: string }
+  // The pens are per device (12, rule 7), and on a machine where the extension
+  // is installed the extension's palette *is* the device's: the bar in the page
+  // and the Pens screen in the library have to be editing one list.
+  | { kind: 'pens' }
+  | { kind: 'savePens'; pens: PenId[] };
 
 export type BridgeReply =
   | { kind: 'hello'; version: string }
   | { kind: 'marks'; marks: Mark[] }
   | { kind: 'spaces'; spaces: Space[] }
+  | { kind: 'pens'; pens: PenId[] }
   | { kind: 'ok' }
   | { kind: 'error'; message: string };
 

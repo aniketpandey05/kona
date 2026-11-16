@@ -1,5 +1,5 @@
-import type { HighlightColor } from '../core/types';
-import { PEN_COLORS } from './tokens';
+import { penOf } from '../core/pens';
+import type { PenId } from '../core/types';
 
 /**
  * The three things a passage always is: the pen it was marked with, the words,
@@ -10,7 +10,7 @@ import { PEN_COLORS } from './tokens';
  */
 export interface PassageProps {
   /** The pen it was marked with. The dot, not the mark painted on the page. */
-  color: HighlightColor;
+  color: PenId;
   /** What the page said. */
   text: string;
   /** What you thought. One per highlight, and usually absent. */
@@ -20,7 +20,7 @@ export interface PassageProps {
 export function Passage({ color, text, note }: PassageProps) {
   return (
     <div class="kona-passage">
-      <span class="kona-passage-pen" aria-hidden="true" style={{ background: PEN_COLORS[color] }} />
+      <span class="kona-passage-pen" aria-hidden="true" style={{ background: penOf(color).ink }} />
       <div class="kona-passage-body">
         <p class="kona-passage-text">{text}</p>
         {/* An empty note is no note. A highlight saved with the note field

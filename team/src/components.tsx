@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks';
 import { linkToMark } from '../../src/core/link';
+import { penOf } from '../../src/core/pens';
 import { siteLabel } from '../../src/core/sites';
 import { YOU, memberById } from './demo';
 import {
@@ -14,7 +15,6 @@ import {
   spaceOf,
   unshareMark,
 } from './store';
-import type { HighlightColor } from '../../src/core/types';
 import type { Member, Space, TeamMark } from './types';
 
 export function timeAgo(at: number): string {
@@ -77,13 +77,6 @@ export function Locked({
     </div>
   );
 }
-
-const COLOR_LABELS: Record<HighlightColor, string> = {
-  yellow: 'Yellow',
-  green: 'Green',
-  blue: 'Blue',
-  pink: 'Pink',
-};
 
 export function MarkCard({
   mark,
@@ -152,7 +145,13 @@ export function MarkCard({
         )}
       </header>
 
-      <blockquote class={`mark-quote mark-${mark.color}`} title={COLOR_LABELS[mark.color]}>
+      {/* The colour comes from the pen the mark was made with, not from a
+          class per colour: a pen of your own has no class to write (12). */}
+      <blockquote
+        class="mark-quote"
+        style={{ '--mark': penOf(mark.color).mark } as never}
+        title={penOf(mark.color).name}
+      >
         {mark.snapshot}
       </blockquote>
 

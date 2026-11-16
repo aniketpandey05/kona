@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { KonaMark } from '../../src/ui/KonaMark';
 import { Passage } from '../../src/design/Passage';
-import { PEN_COLORS } from '../../src/design/tokens';
+import { DEFAULT_PENS, penOf, pensInUse } from '../../src/core/pens';
 import {
   archive,
   archivedOnly,
@@ -16,9 +16,10 @@ import { linkToMark } from '../../src/core/link';
 import { searchLibrary } from '../../src/core/search';
 import { siteLabel } from '../../src/core/sites';
 import type { Space } from '../../src/core/spaces';
-import type { HighlightColor, Mark } from '../../src/core/types';
+import type { Mark, PenId } from '../../src/core/types';
 import { openLibrary, type LibrarySource } from './source';
 import type { FolderSource } from '../../src/core/folder';
+import { Pens } from './Pens';
 import { Settings } from './Settings';
 import { SpacesView } from './SpacesView';
 
@@ -41,7 +42,6 @@ import { SpacesView } from './SpacesView';
  * the passage reads back as prose in Source Serif at 18px, which is the
  * whole reason for reading it here rather than in the panel's strip.
  */
-const PENS = Object.keys(PEN_COLORS) as HighlightColor[];
 
 type When = 'any' | 'today' | 'week' | 'month';
 
@@ -80,6 +80,9 @@ export function Library({
   // 3f: the library is the place, and Highlights and Spaces are two ways in.
   const inSpaces = route.startsWith('#/spaces');
   const inSettings = route.startsWith('#/settings');
+  const inPens = route.startsWith('#/pens');
+  /** Whether one of the library's own lists is showing, rather than a screen. */
+  const inList = !inSpaces && !inSettings && !inPens;
   // Every view is a route, so the nav and the pane cannot disagree about which
   // one is showing. Holding a view in state beside the route meant clearing
   // one without the other, and the nav said Highlights while Settings showed.
@@ -87,11 +90,20 @@ export function Library({
     ? 'archived'
     : 'highlights';
   const openSpaceId = route.startsWith('#/spaces/') ? route.slice('#/spaces/'.length) : null;
+  /**
+   * A colour named in the route, which is how a colour that is no longer a pen
+   * stays reachable: the Pens screen links to it, rather than leaving somebody
+   * to recognise a retired colour among the chips (12, rule 4).
+   */
+  const askedColour = route.includes('?')
+    ? new URLSearchParams(route.slice(route.indexOf('?') + 1)).get('colour')
+    : null;
   const [source, setSource] = useState<LibrarySource | null>(null);
   const [marks, setMarks] = useState<Mark[] | null>(null);
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [query, setQuery] = useState('');
-  const [colours, setColours] = useState<HighlightColor[]>([]);
+  const [colours, setColours] = useState<PenId[]>([]);
+  const [pens, setPens] = useState<PenId[]>([...DEFAULT_PENS]);
   const [site, setSite] = useState<string | null>(null);
   const [when, setWhen] = useState<When>('any');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -118,18 +130,25 @@ export function Library({
     void (async () => {
       const opened = given ?? (await openLibrary());
       setSource(opened);
-      const read = async () => {
-        const mine = ++reading.current;
-        const [found, spacesFound] = await Promise.all([opened.marks(), opened.spaces()]);
-        if (mine !== reading.current) return;
-        setMarks(found);
-        setSpaces(spacesFound);
-      };
-      await read();
-      stop = opened.watch(() => void read());
+      await readAll(opened);
+      stop = opened.watch(() => void readAll(opened));
     })();
     return () => stop?.();
   }, [given]);
+
+  // A colour arriving in the route becomes the filter. Written through to the
+  // chips rather than held beside them, so the chip row and the list cannot
+  // disagree about what is being filtered. It clears when the route stops
+  // carrying one, or following the link and coming back leaves the library
+  // filtered to a colour nothing on screen mentions any more.
+  useEffect(() => {
+    setColours(askedColour ? [askedColour] : []);
+  }, [askedColour]);
+
+  const inUse = useMemo(() => {
+    const found = pensInUse((marks ?? []).map((mark) => mark.color));
+    return found.length > 0 ? found : DEFAULT_PENS.map((id) => ({ pen: penOf(id), count: 0 }));
+  }, [marks]);
 
   const sites = useMemo(() => {
     const seen = new Map<string, number>();
@@ -162,10 +181,13 @@ export function Library({
       found = found.filter((mark) => mark.createdAt >= cutoff);
     }
     // Newest first, as the board says under the heading.
-    return { shown: [...found].sort((a, b) => b.createdAt - a.createdAt), alsoMatched: also };
+    return {
+      shown: [...found].sort((a, b) => b.createdAt - a.createdAt),
+      alsoMatched: also,
+    };
   }, [marks, query, colours, site, when, view]);
 
-  const toggleColour = (pen: HighlightColor) =>
+  const toggleColour = (pen: PenId) =>
     setColours((current) =>
       current.includes(pen) ? current.filter((each) => each !== pen) : [...current, pen],
     );
@@ -174,13 +196,28 @@ export function Library({
   const archivedCount = countArchived(marks ?? []);
   const room = roomToArchive(marks ?? [], pro);
 
-  const reread = async () => {
-    if (!source) return;
+  /**
+   * Everything the library holds, in one read.
+   *
+   * One function rather than two, which is not tidiness: the effect and the
+   * re-read were two copies, and adding the palette to one of them left the
+   * nav counting five pens beside a list of six.
+   */
+  const readAll = async (from: LibrarySource) => {
     const mine = ++reading.current;
-    const [found, spacesFound] = await Promise.all([source.marks(), source.spaces()]);
+    const [found, spacesFound, pensFound] = await Promise.all([
+      from.marks(),
+      from.spaces(),
+      from.pens(),
+    ]);
     if (mine !== reading.current) return;
     setMarks(found);
     setSpaces(spacesFound);
+    setPens(pensFound);
+  };
+
+  const reread = async () => {
+    if (source) await readAll(source);
   };
 
   const apply = async (ids: string[], put: boolean) => {
@@ -241,22 +278,16 @@ export function Library({
         <nav class={menuOpen ? 'lib-nav lib-nav--open' : 'lib-nav'} aria-label="Library">
           <a
             class={
-              !inSpaces && !inSettings && view === 'highlights'
-                ? 'lib-nav-item lib-nav-item--on'
-                : 'lib-nav-item'
+              inList && view === 'highlights' ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'
             }
-            aria-current={!inSpaces && !inSettings && view === 'highlights' ? 'page' : undefined}
+            aria-current={inList && view === 'highlights' ? 'page' : undefined}
             href="#/"
           >
             Highlights <span class="lib-nav-count">{notArchived(marks ?? []).length}</span>
           </a>
           <a
-            class={
-              !inSpaces && !inSettings && view === 'archived'
-                ? 'lib-nav-item lib-nav-item--on'
-                : 'lib-nav-item'
-            }
-            aria-current={!inSpaces && !inSettings && view === 'archived' ? 'page' : undefined}
+            class={inList && view === 'archived' ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
+            aria-current={inList && view === 'archived' ? 'page' : undefined}
             href="#/archived"
           >
             Archived <span class="lib-nav-count">{archivedCount}</span>
@@ -289,6 +320,12 @@ export function Library({
           </a>
 
           <div class="lib-nav-foot">
+            {/* Pens sits at the foot, where the boards put it: it is a thing
+                you set up once and then hardly open again (12). */}
+            <a class={inPens ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'} href="#/pens">
+              <PensIcon />
+              Pens <span class="lib-nav-count">{pens.length}</span>
+            </a>
             {/* 17a: the account row sits at the foot, quiet. It says where this
                 library is reading from, because on Free that is the one thing
                 that explains why a highlight is or is not here. */}
@@ -301,7 +338,9 @@ export function Library({
         </nav>
 
         <main class="lib-main">
-          {inSettings ? (
+          {inPens && source ? (
+            <Pens source={source} marks={marks ?? []} onChanged={() => void reread()} />
+          ) : inSettings ? (
             <Settings
               marks={marks ?? []}
               spaces={spaces}
@@ -321,158 +360,166 @@ export function Library({
               onChanged={() => void reread()}
             />
           ) : (
-          <>
-          <div class="lib-head">
-            <h1>{view === 'archived' ? 'Archived' : 'Highlights'}</h1>
-            <p>
-              {view === 'archived'
-                ? `Out of the way, still searchable. ${archivedCount} of ${FREE_ARCHIVE_LIMIT} put away.`
-                : 'Newest first. Archived left out.'}
-            </p>
-          </div>
+            <>
+              <div class="lib-head">
+                <h1>{view === 'archived' ? 'Archived' : 'Highlights'}</h1>
+                <p>
+                  {view === 'archived'
+                    ? `Out of the way, still searchable. ${archivedCount} of ${FREE_ARCHIVE_LIMIT} put away.`
+                    : 'Newest first. Archived left out.'}
+                </p>
+              </div>
 
-          <div class="lib-chips">
-            <span class="lib-chip lib-chip--pens">
-              <span class="lib-chip-label">Colour</span>
-              {PENS.map((pen) => (
+              <div class="lib-chips">
+                <span class="lib-chip lib-chip--pens">
+                  <span class="lib-chip-label">Colour</span>
+                  {/* Built from the colours your library actually contains, not
+                  from the palette: a pen you took out of the case is still in
+                  everything you marked with it, and still filterable (12). */}
+                  {inUse.map(({ pen }) => (
+                    <button
+                      key={pen.id}
+                      type="button"
+                      class={colours.includes(pen.id) ? 'lib-pen lib-pen--on' : 'lib-pen'}
+                      style={{ background: pen.ink }}
+                      aria-label={pen.name}
+                      aria-pressed={colours.includes(pen.id)}
+                      onClick={() => toggleColour(pen.id)}
+                    />
+                  ))}
+                </span>
+
+                <select
+                  class="lib-chip"
+                  aria-label="Site"
+                  value={site ?? ''}
+                  onChange={(event) => setSite(event.currentTarget.value || null)}
+                >
+                  <option value="">Site</option>
+                  {sites.map(([label, count]) => (
+                    <option key={label} value={label}>
+                      {label} ({count})
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  class="lib-chip"
+                  aria-label="When"
+                  value={when}
+                  onChange={(event) => setWhen(event.currentTarget.value as When)}
+                >
+                  {(Object.keys(WHEN_LABEL) as When[]).map((each) => (
+                    <option key={each} value={each}>
+                      {WHEN_LABEL[each]}
+                    </option>
+                  ))}
+                </select>
+                <span class="lib-chips-gap" />
                 <button
-                  key={pen}
                   type="button"
-                  class={colours.includes(pen) ? 'lib-pen lib-pen--on' : 'lib-pen'}
-                  style={{ background: PEN_COLORS[pen] }}
-                  aria-label={pen}
-                  aria-pressed={colours.includes(pen)}
-                  onClick={() => toggleColour(pen)}
-                />
-              ))}
-            </span>
+                  class={picking ? 'lib-chip lib-chip--on' : 'lib-chip'}
+                  aria-pressed={picking}
+                  onClick={() => {
+                    setPicking((on) => !on);
+                    setChosen(new Set());
+                  }}
+                >
+                  Select
+                </button>
+              </div>
 
-            <select
-              class="lib-chip"
-              aria-label="Site"
-              value={site ?? ''}
-              onChange={(event) => setSite(event.currentTarget.value || null)}
-            >
-              <option value="">Site</option>
-              {sites.map(([label, count]) => (
-                <option key={label} value={label}>
-                  {label} ({count})
-                </option>
-              ))}
-            </select>
-
-            <select
-              class="lib-chip"
-              aria-label="When"
-              value={when}
-              onChange={(event) => setWhen(event.currentTarget.value as When)}
-            >
-              {(Object.keys(WHEN_LABEL) as When[]).map((each) => (
-                <option key={each} value={each}>
-                  {WHEN_LABEL[each]}
-                </option>
-              ))}
-            </select>
-            <span class="lib-chips-gap" />
-            <button
-              type="button"
-              class={picking ? 'lib-chip lib-chip--on' : 'lib-chip'}
-              aria-pressed={picking}
-              onClick={() => {
-                setPicking((on) => !on);
-                setChosen(new Set());
-              }}
-            >
-              Select
-            </button>
-          </div>
-
-          {/* 10a: the wall at fifteen. Bring one back, or Pro, and no delete
+              {/* 10a: the wall at fifteen. Bring one back, or Pro, and no delete
               in this notice, because offering it here would teach people to
               delete when they meant to tidy. */}
-          {wall && (
-            <p class="lib-wall" role="status">
-              Fifteen is as many as Free puts away at once. Bring one back and
-              the slot returns, or Pro archives without limit.{' '}
-              <button type="button" class="lib-wall-close" onClick={() => setWall(false)}>
-                Close
-              </button>
-            </p>
-          )}
+              {wall && (
+                <p class="lib-wall" role="status">
+                  Fifteen is as many as Free puts away at once. Bring one back and the slot returns,
+                  or Pro archives without limit.{' '}
+                  <button type="button" class="lib-wall-close" onClick={() => setWall(false)}>
+                    Close
+                  </button>
+                </p>
+              )}
 
-          {/* Bulk, or it is not a feature: archiving two hundred one at a time
+              {/* Bulk, or it is not a feature: archiving two hundred one at a time
               is a punishment. */}
-          {picking && chosen.size > 0 && (
-            <p class="lib-chosen" role="status">
-              {chosen.size} chosen
-              <button
-                type="button"
-                class="lib-chosen-do"
-                onClick={() => void apply([...chosen], view !== 'archived')}
-              >
-                {view === 'archived' ? 'Bring back' : 'Archive'}
-              </button>
-            </p>
-          )}
+              {picking && chosen.size > 0 && (
+                <p class="lib-chosen" role="status">
+                  {chosen.size} chosen
+                  <button
+                    type="button"
+                    class="lib-chosen-do"
+                    onClick={() => void apply([...chosen], view !== 'archived')}
+                  >
+                    {view === 'archived' ? 'Bring back' : 'Archive'}
+                  </button>
+                </p>
+              )}
 
-          {/* Words nobody typed that earned a result its place, so a hit using
+              {/* Words nobody typed that earned a result its place, so a hit using
               none of your words does not read as a bug (15). */}
-          {alsoMatched.length > 0 && (
-            <p class="lib-also">Also matched {alsoMatched.join(', ')}</p>
-          )}
+              {alsoMatched.length > 0 && (
+                <p class="lib-also">Also matched {alsoMatched.join(', ')}</p>
+              )}
 
-          {marks === null ? (
-            <p class="lib-none">Reading your library…</p>
-          ) : shown.length === 0 ? (
-            <p class="lib-none">
-              {filtered
-                ? 'Nothing matches that.'
-                : view === 'archived'
-                  ? 'Nothing put away. Archiving takes a highlight out of this list and leaves it everywhere else.'
-                  : 'Nothing kept yet. Highlight something and it lands here.'}
-            </p>
-          ) : (
-            <ul class="lib-list">
-              {shown.map((mark) => (
-                <li key={mark.id} class="lib-row">
-                  {picking && (
-                    <label class="lib-pick">
-                      <input
-                        type="checkbox"
-                        checked={chosen.has(mark.id)}
-                        aria-label={`Choose ${mark.label || mark.snapshot}`}
-                        onChange={() => choose(mark.id)}
-                      />
-                    </label>
-                  )}
-                  <a class="lib-row-link" href={linkToMark(mark)} target="_blank" rel="noopener">
-                    <Passage
-                      color={mark.color}
-                      text={mark.label || mark.snapshot}
-                      note={mark.note}
-                    />
-                  </a>
-                  {/* The frame's own extras (3b): where it came from, and when.
+              {marks === null ? (
+                <p class="lib-none">Reading your library…</p>
+              ) : shown.length === 0 ? (
+                <p class="lib-none">
+                  {filtered
+                    ? 'Nothing matches that.'
+                    : view === 'archived'
+                      ? 'Nothing put away. Archiving takes a highlight out of this list and leaves it everywhere else.'
+                      : 'Nothing kept yet. Highlight something and it lands here.'}
+                </p>
+              ) : (
+                <ul class="lib-list">
+                  {shown.map((mark) => (
+                    <li key={mark.id} class="lib-row">
+                      {picking && (
+                        <label class="lib-pick">
+                          <input
+                            type="checkbox"
+                            checked={chosen.has(mark.id)}
+                            aria-label={`Choose ${mark.label || mark.snapshot}`}
+                            onChange={() => choose(mark.id)}
+                          />
+                        </label>
+                      )}
+                      <a
+                        class="lib-row-link"
+                        href={linkToMark(mark)}
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <Passage
+                          color={mark.color}
+                          text={mark.label || mark.snapshot}
+                          note={mark.note}
+                        />
+                      </a>
+                      {/* The frame's own extras (3b): where it came from, and when.
                       The domain is text and nothing is fetched for it, a
                       favicon would tell that site you kept something. */}
-                  <p class="lib-row-where">
-                    {siteLabel(mark)} · {ago(mark.createdAt)}
-                    {/* Search spans everything, so a hit that is put away says
+                      <p class="lib-row-where">
+                        {siteLabel(mark)} · {ago(mark.createdAt)}
+                        {/* Search spans everything, so a hit that is put away says
                         so rather than being left out (10). */}
-                    {isArchived(mark) && <span class="lib-archived"> · archived</span>}
-                    <button
-                      type="button"
-                      class="lib-row-do"
-                      onClick={() => void apply([mark.id], !isArchived(mark))}
-                    >
-                      {isArchived(mark) ? 'Bring back' : 'Archive'}
-                    </button>
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
-          </>
+                        {isArchived(mark) && <span class="lib-archived"> · archived</span>}
+                        <button
+                          type="button"
+                          class="lib-row-do"
+                          onClick={() => void apply([mark.id], !isArchived(mark))}
+                        >
+                          {isArchived(mark) ? 'Bring back' : 'Archive'}
+                        </button>
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           )}
         </main>
       </div>
@@ -494,9 +541,37 @@ function ago(at: number): string {
 
 function SearchIcon() {
   return (
-    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+    <svg
+      aria-hidden="true"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+    >
       <circle cx="6.8" cy="6.8" r="4.6" />
       <path d="M10.4 10.4 L14 14" />
+    </svg>
+  );
+}
+
+/** The two nibs from the board's sidebar, at the size the nav draws icons. */
+function PensIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="16"
+      height="16"
+      viewBox="0 0 18 18"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+    >
+      <circle cx="6.2" cy="6.4" r="2.6" />
+      <circle cx="12" cy="11.4" r="2.6" />
+      <path d="M2.2 14.8h4" />
+      <path d="M13 3.6h2.8" />
     </svg>
   );
 }

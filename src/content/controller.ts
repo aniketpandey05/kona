@@ -28,7 +28,9 @@ import {
 } from '../core/store';
 import { loadTheme, watchTheme, type Theme } from '../core/theme';
 import { buildTextIndex, spanFromRange, type TextIndex, type TextSpan } from '../core/textIndex';
-import type { HighlightColor, Mark } from '../core/types';
+import { DEFAULT_PENS, type PenId } from '../core/pens';
+import { loadPalette, watchPalette } from '../core/palette';
+import type { Mark } from '../core/types';
 
 /** Tag name of the shadow-root host that holds all of our UI. */
 export const UI_TAG = 'kona-ui';
@@ -110,6 +112,8 @@ export interface ViewState {
   selection: { top: number; bottom: number; left: number; streaming: boolean } | null;
   card: NoteCardState | null;
   health: 'ok' | 'no-messages';
+  /** The pens in the case, which you can add to (12). */
+  pens: PenId[];
   /** Where highlights are going, and what is already there. Null when none is set. */
   activeSpace: ActiveSpaceState | null;
   /**
@@ -144,6 +148,7 @@ export class KonaController {
     selection: null,
     card: null,
     health: 'ok',
+    pens: [...DEFAULT_PENS],
     activeSpace: null,
     dark: false,
     notice: null,
@@ -155,6 +160,7 @@ export class KonaController {
   private activeSpace: Space | null = null;
   private unwatchActive: (() => void) | undefined;
   private unwatchSpaces: (() => void) | undefined;
+  private unwatchPens: (() => void) | undefined;
   /** Kept for a few seconds after a delete, so it can be undone. */
   private deleted: Mark | null = null;
   /** The element the page scrolls in, found again on every refresh. */
@@ -199,12 +205,16 @@ export class KonaController {
       this.unwatch?.();
       this.unwatchActive?.();
       this.unwatchSpaces?.();
+      this.unwatchPens?.();
       this.painter.dispose();
     });
 
     // Where highlights are going. Watched on both sides: the id changes when a
     // space is picked here or in another tab, and the space's own contents
     // change whenever anything is filed into it anywhere.
+    void loadPalette().then((pens) => this.setState({ pens }));
+    this.unwatchPens = watchPalette((pens) => this.setState({ pens }));
+
     void this.syncActiveSpace();
     this.unwatchActive = watchActiveSpaceId(() => void this.syncActiveSpace());
     this.unwatchSpaces = watchSpaces(() => void this.syncActiveSpace());
@@ -256,7 +266,7 @@ export class KonaController {
     await this.highlight('yellow');
   }
 
-  async highlight(color: HighlightColor, { withNote = false } = {}): Promise<void> {
+  async highlight(color: PenId, { withNote = false } = {}): Promise<void> {
     const pending = this.pending;
     const conversationId = this.state.conversationId;
     if (!pending || !conversationId || this.adapter.isStreaming(pending.message)) return;
