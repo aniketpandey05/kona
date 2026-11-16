@@ -276,10 +276,11 @@
   border-bottom: 0;
 }
 
-.lib-row-link {
-  display: block;
-  color: inherit;
-  text-decoration: none;
+/* The words are the link now (19), and they are still words: the row reads as
+   a passage rather than as a web link. */
+.lib-list .kona-passage-text,
+.sp-list .kona-passage-text {
+  color: var(--kona-paper-ink);
 }
 
 .lib-row-where {
@@ -1055,4 +1056,185 @@
   font-size: var(--kona-text-sm);
   font-weight: var(--kona-weight-normal);
   color: var(--kona-paper-ink-muted);
+}
+
+/**
+ * A highlight that has lost its landing (13), said in the library.
+ *
+ * Amber and quiet, in the same voice as the panel's notice: what is gone is
+ * the trip back to the words, and the passage itself is untouched. A red
+ * would say something false about a row whose text is still right there.
+ */
+.lib-lost {
+  color: var(--kona-accent-link);
+}
+
+/* Spaces: the hand order, the delete, and the pages waiting to be read. */
+.sp-card-do {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--kona-space-6);
+  margin-top: var(--kona-space-6);
+  padding: 0 var(--kona-space-4);
+}
+
+.sp-move {
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0;
+  font: inherit;
+  color: var(--kona-paper-ink-muted);
+  background: transparent;
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-sm);
+  cursor: pointer;
+}
+
+.sp-move[disabled] {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.sp-sure {
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-note);
+}
+
+/* 20: pages put here to read, which are not passages and never reach the
+   library. An invitation, drawn as one: lighter than a highlight, and struck
+   through once something on that page has been marked. */
+.sp-reading {
+  margin-top: var(--kona-space-32);
+  padding-top: var(--kona-space-16);
+  border-top: 1px solid var(--kona-paper-line);
+}
+
+.sp-reading h2 {
+  margin: 0 0 var(--kona-space-8);
+  font-size: var(--kona-text-md);
+  font-weight: var(--kona-weight-semibold);
+  color: var(--kona-paper-ink-heading);
+}
+
+.sp-reading-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kona-space-8);
+  margin-bottom: var(--kona-space-12);
+}
+
+.sp-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kona-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sp-link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--kona-space-8);
+  padding: var(--kona-space-8) var(--kona-space-10);
+  background: var(--kona-paper-raised);
+  border: 1px dashed var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-md);
+  font-size: var(--kona-text-base);
+}
+
+.sp-link a {
+  color: var(--kona-accent-link);
+}
+
+.sp-link-where {
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+}
+
+.sp-link-read {
+  font-size: var(--kona-text-xs);
+  letter-spacing: var(--kona-tracking-caps);
+  text-transform: uppercase;
+  color: var(--kona-paper-ink-faint);
+}
+
+.sp-link--read {
+  border-style: solid;
+  opacity: 0.72;
+}
+
+/* The account row opened (17a): what is about you, rather than about what you
+   kept. It sits above the row, because the row is at the foot of the nav. */
+.lib-menu {
+  position: absolute;
+  right: var(--kona-space-8);
+  bottom: 58px;
+  left: var(--kona-space-8);
+  z-index: 3;
+  padding: var(--kona-space-6);
+  background: var(--kona-paper-raised);
+  border: 1px solid var(--kona-paper-line-strong);
+  border-radius: var(--kona-radius-lg);
+  box-shadow: var(--kona-shadow-pill);
+}
+
+.lib-menu-who {
+  margin: 0;
+  padding: var(--kona-space-8) var(--kona-space-10) var(--kona-space-4);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+}
+
+.lib-menu-trouble {
+  margin: 0 0 var(--kona-space-4);
+  padding: 0 var(--kona-space-10);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-accent-link-hover);
+}
+
+.lib-menu-item {
+  display: block;
+  width: 100%;
+  padding: var(--kona-space-8) var(--kona-space-10);
+  font: inherit;
+  font-size: var(--kona-text-base);
+  text-align: left;
+  color: var(--kona-paper-ink-heading);
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  border-radius: var(--kona-radius-sm);
+  cursor: pointer;
+}
+
+.lib-menu-item:hover {
+  background: var(--kona-paper-sunken);
+}
+
+/* One line, never a feature list: selling a window harder than this would be
+   overselling it. */
+.lib-menu-why {
+  display: block;
+  margin-top: 1px;
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+}
+
+.lib-nav-foot {
+  position: relative;
+}
+
+.ab-list {
+  margin: 0;
+  padding-left: var(--kona-space-20);
+  font-size: var(--kona-text-md);
+  line-height: var(--kona-leading-normal);
+  color: var(--kona-paper-ink-note);
+}
+
+.ab-list li {
+  margin-bottom: var(--kona-space-6);
 }

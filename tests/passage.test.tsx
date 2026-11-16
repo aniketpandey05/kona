@@ -103,4 +103,44 @@ describe('the passage stylesheet', () => {
 
     expect([...new Set(missing)]).toEqual([]);
   });
+
+  it('keeps a long passage whole, and shows its opening first (19)', () => {
+    // No limit on what can be kept and no invented number for it: what the
+    // interface does about length is truncate, never refuse.
+    const long = 'An amoeba moves by extending a pseudopod. '.repeat(30);
+    const el = draw(<Passage color="yellow" text={long} href="https://example.org/a" />);
+    const shown = el.querySelector('.kona-passage-text')?.textContent ?? '';
+    expect(shown.length).toBeLessThan(long.length);
+    expect(shown.endsWith('…')).toBe(true);
+    // Cut at a word, never through one.
+    expect(shown.slice(0, -1).trimEnd()).toBe(shown.slice(0, -1));
+  });
+
+  it('opens the whole of it out, in place', async () => {
+    const long = 'An amoeba moves by extending a pseudopod. '.repeat(30);
+    const el = draw(<Passage color="yellow" text={long} href="https://example.org/a" />);
+    el.querySelector<HTMLElement>('.kona-passage-more')?.click();
+    // Preact schedules its re-render; happy-dom needs a real tick for it.
+    await new Promise((done) => setTimeout(done, 50));
+    expect(el.querySelector('.kona-passage-text')?.textContent).toBe(long);
+    expect(el.querySelector('.kona-passage-more')?.textContent).toBe('Show less');
+  });
+
+  it('puts the control outside the link, not inside it', () => {
+    // A button nested in a link is both invalid and a way to open the page by
+    // accident when you meant to read the rest of the passage.
+    const long = 'An amoeba moves by extending a pseudopod. '.repeat(30);
+    const el = draw(<Passage color="yellow" text={long} href="https://example.org/a" />);
+    expect(el.querySelector('a .kona-passage-more')).toBeNull();
+    expect(el.querySelector('.kona-passage-more')).not.toBeNull();
+  });
+
+  it('offers nothing to open where the passage is not a link', () => {
+    // The panel's card is already the way to the whole of it: the page it is
+    // on is behind you.
+    const long = 'An amoeba moves by extending a pseudopod. '.repeat(30);
+    const el = draw(<Passage color="yellow" text={long} />);
+    expect(el.querySelector('.kona-passage-more')).toBeNull();
+    expect(el.querySelector('.kona-passage-text')?.textContent).toBe(long);
+  });
 });

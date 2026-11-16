@@ -116,6 +116,19 @@
     border-width: 1px 0 0;
     border-radius: var(--kona-radius-xl) var(--kona-radius-xl) 0 0;
   }
+
+  /**
+   * The bar owns the foot of a phone screen (22), and the resting mark lives
+   * there too. So while a bar is up, the mark steps above it rather than
+   * sitting on the one control somebody is reaching for.
+   *
+   * `:has()` rather than a sibling combinator because the two bars are drawn
+   * on either side of the panel: the selection bar before it, the bar for a
+   * highlight you tapped after it.
+   */
+  .kona-tokens:has(.kona-bar) .kona-rest {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 72px);
+  }
 }
 
 .kona-panel-head {
@@ -403,4 +416,26 @@
   font-size: var(--kona-text-sm);
   line-height: var(--kona-leading-snug);
   color: var(--kona-slab-ink-note);
+}
+
+/**
+ * A kept picture, outlined (18).
+ *
+ * The CSS Custom Highlight API takes text ranges, and a picture is not text,
+ * so this is the one thing Kona draws at a position of its own. It is still
+ * not in the page's DOM: it is a box in Kona's own layer, placed from a
+ * rectangle the controller recomputes as the page scrolls.
+ *
+ * It does not take clicks. A link under a picture has to keep working, which
+ * is the same rule a highlight over a link follows, and a tap on a picture is
+ * hit-tested against these rectangles rather than caught by them.
+ */
+.kona-outline {
+  position: fixed;
+  z-index: 2147483646;
+  box-sizing: border-box;
+  border: 3px solid var(--kona-outline-ink);
+  border-radius: var(--kona-radius-sm);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
 }

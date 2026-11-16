@@ -1,3 +1,4 @@
+import type { ImageAnchor } from './image';
 import type { TextQuote } from './quote';
 
 /** 'web' is any ordinary page the user switched on from the toolbar. */
@@ -41,6 +42,34 @@ export interface Mark {
   quote?: TextQuote;
   label: string;
   color: PenId;
+  /**
+   * Set when Kona knows this highlight cannot be landed on (13).
+   *
+   * *Lost its landing, not its quote.* The passage is still here, still
+   * searchable, still in its spaces, because it was copied when it was kept,
+   * and only the trip back to the words on the page has gone.
+   *
+   * Written in two cases, and deliberately not in a third. A highlight kept
+   * from a PDF is in this state from the first second, because nothing of Kona
+   * can run in the browser's own viewer (16). An ordinary web page that no
+   * longer holds the passage earns it when the page has been opened and
+   * settled and the matcher still could not find it, and loses it again the
+   * moment it can. The chat sites never set it from the page: they render
+   * their older messages only when you scroll to them, so a passage that is
+   * merely further up looks exactly like one that is gone.
+   */
+  landing?: 'lost';
+  /**
+   * Set when what was marked is a picture rather than a passage (18).
+   *
+   * Still a highlight and not a new noun: it is in the library, it is in
+   * spaces, it is searchable, it has a colour and a note like any other. What
+   * differs is underneath, which is why this is an anchor of its own: a
+   * picture cannot be painted by the CSS Custom Highlight API, its way back to
+   * the page is weaker than a quote selector, and the words that make it
+   * findable are the ones that happened to be near it.
+   */
+  image?: ImageAnchor;
   /** Optional note the user wrote about the highlight. */
   note?: string;
   /** Position in the user's list for this chat. New highlights go last; the user can reorder. */

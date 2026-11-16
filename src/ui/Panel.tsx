@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
+import { storage } from '#imports';
 import { ago } from '../core/ago';
+import { imageKey } from '../core/image';
 import type { ActiveSpaceState, KonaController, ViewState } from '../content/controller';
 import type { Space } from '../core/spaces';
 import { loadSpaces, watchSpaces } from '../core/store';
@@ -187,6 +189,7 @@ function Card({
   onClick: () => void;
   onPreview?: (on: boolean) => void;
 }) {
+  const picture = useKeptPicture(mark);
   return (
     <button
       type="button"
@@ -197,9 +200,40 @@ function Card({
       onMouseEnter={() => onPreview?.(true)}
       onMouseLeave={() => onPreview?.(false)}
     >
-      <Passage color={mark.color} text={mark.label || mark.snapshot} note={mark.note} />
+      <Passage
+        color={mark.color}
+        text={mark.label || mark.snapshot}
+        note={mark.note}
+        isPicture={!!mark.image}
+        picture={picture}
+      />
     </button>
   );
+}
+
+/**
+ * A kept picture's bytes, read straight from storage.
+ *
+ * The panel is the extension, so there is no bridge in the way here: it is
+ * the library on a web page that has to ask for them. Still never the address
+ * the picture came from, for the same reason as everywhere else (6, 18).
+ */
+function useKeptPicture(mark: Mark): string | null {
+  const [data, setData] = useState<string | null>(null);
+  useEffect(() => {
+    if (!mark.image?.kept) {
+      setData(null);
+      return;
+    }
+    let stopped = false;
+    void storage.getItem<string>(imageKey(mark.id)).then((kept) => {
+      if (!stopped) setData(kept ?? null);
+    });
+    return () => {
+      stopped = true;
+    };
+  }, [mark.id, mark.image?.kept]);
+  return data;
 }
 
 /** The space's name at rest, small, so the resting mark can carry 2e too. */

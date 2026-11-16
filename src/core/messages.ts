@@ -19,6 +19,8 @@ export type RuntimeMessage =
   | { type: 'list-sites' }
   /** Sent when the right-click menu item is used, so the selection becomes a highlight. */
   | { type: 'highlight-selection' }
+  /** Right-click on a picture: keep it, with the bytes copied from the page (18). */
+  | { type: 'highlight-image'; src: string }
   /** Opens the library, optionally narrowed to one site's label. */
   | { type: 'open-library'; site?: string }
   /** Opens one space, straight from the panel that just filed something into it. */

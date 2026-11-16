@@ -76,13 +76,22 @@ export type BridgeRequest =
   // is installed the extension's palette *is* the device's: the bar in the page
   // and the Pens screen in the library have to be editing one list.
   | { kind: 'pens' }
-  | { kind: 'savePens'; pens: PenId[] };
+  | { kind: 'savePens'; pens: PenId[] }
+  /**
+   * The bytes of a kept picture (18), one highlight at a time.
+   *
+   * One at a time because a library of two hundred highlights holding a
+   * hundred pictures would be megabytes crossing the bridge on every read,
+   * for rows nobody has scrolled to.
+   */
+  | { kind: 'image'; markId: string };
 
 export type BridgeReply =
   | { kind: 'hello'; version: string }
   | { kind: 'marks'; marks: Mark[] }
   | { kind: 'spaces'; spaces: Space[] }
   | { kind: 'pens'; pens: PenId[] }
+  | { kind: 'image'; data: string | null }
   | { kind: 'ok' }
   | { kind: 'error'; message: string };
 

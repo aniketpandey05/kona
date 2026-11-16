@@ -63,7 +63,16 @@ export function Note({
     <div
       ref={box}
       class={card.position ? 'kona-note' : 'kona-note kona-note--docked'}
-      style={card.position ? { top: `${card.position.top}px`, left: `${card.position.left}px` } : undefined}
+      // Custom properties, not top and left, so the phone rule can move the
+      // card to the foot of the screen without an inline style outranking it.
+      style={
+        card.position
+          ? ({
+              '--kona-note-top': `${card.position.top}px`,
+              '--kona-note-left': `${card.position.left}px`,
+            } as never)
+          : undefined
+      }
       role="dialog"
       aria-label="Your note"
       onKeyDown={(event) => {

@@ -1,8 +1,19 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { FREE_SPACE_LIMIT, roomForSpace } from '../../src/core/archive';
+import { titleFor } from '../../src/core/capture';
 import { linkToMark } from '../../src/core/link';
 import { siteLabel } from '../../src/core/sites';
-import { createSpace, removeMark as takeOutOfSpace, rename, type Space } from '../../src/core/spaces';
+import {
+  addLink,
+  createSpace,
+  inOrder,
+  moveSpace,
+  removeLink,
+  removeMark as takeOutOfSpace,
+  rename,
+  samePage,
+  type Space,
+} from '../../src/core/spaces';
 import type { Mark } from '../../src/core/types';
 import { Passage } from '../../src/design/Passage';
 import type { LibrarySource } from './source';
@@ -36,9 +47,21 @@ interface Props {
 export function SpacesView({ source, spaces, marks, onChanged, openId, onOpen }: Props) {
   const open = spaces.find((each) => each.id === openId) ?? null;
   return open ? (
-    <OneSpace space={open} marks={marks} onBack={() => onOpen(null)} onChanged={onChanged} />
+    <OneSpace
+      space={open}
+      marks={marks}
+      onBack={() => onOpen(null)}
+      onChanged={onChanged}
+      save={source.saveSpace}
+    />
   ) : (
-    <AllSpaces spaces={spaces} marks={marks} onOpen={onOpen} onChanged={onChanged} />
+    <AllSpaces
+      spaces={spaces}
+      marks={marks}
+      onOpen={onOpen}
+      onChanged={onChanged}
+      source={source}
+    />
   );
 }
 
@@ -47,12 +70,30 @@ function AllSpaces({
   marks,
   onOpen,
   onChanged,
+  source,
 }: {
   spaces: Space[];
   marks: Mark[];
   onOpen: (id: string) => void;
   onChanged: () => void;
+  source: LibrarySource;
 }) {
+  // 1e: the order of your spaces is yours, the way the order of highlights
+  // already is. Spaces made before there was a position sort after the ones
+  // that have one, newest first, which is where they were.
+  const ordered = useMemo(() => inOrder(spaces), [spaces]);
+  const [goingToDelete, setGoingToDelete] = useState<string | null>(null);
+
+  const move = async (id: string, by: -1 | 1) => {
+    for (const space of moveSpace(spaces, id, by)) await source.saveSpace(space);
+    onChanged();
+  };
+
+  const remove = async (id: string) => {
+    await source.removeSpace(id);
+    setGoingToDelete(null);
+    onChanged();
+  };
   const [naming, setNaming] = useState(false);
   const [name, setName] = useState('');
   const [question, setQuestion] = useState('');
@@ -63,7 +104,7 @@ function AllSpaces({
   const make = async () => {
     if (!name.trim() || !room) return;
     const space = createSpace(name.trim(), question.trim() || undefined);
-    await saveSpaceVia(space);
+    await source.saveSpace(space);
     setNaming(false);
     setName('');
     setQuestion('');
@@ -137,15 +178,60 @@ function AllSpaces({
         </p>
       ) : (
         <ul class="sp-list">
-          {spaces.map((space) => (
+          {ordered.map((space, at) => (
             <li key={space.id}>
               <button type="button" class="sp-card" onClick={() => onOpen(space.id)}>
                 <span class="sp-card-name">{space.name}</span>
                 {space.question && <span class="sp-card-question">{space.question}</span>}
                 <span class="sp-card-count">
                   {space.markIds.length === 1 ? '1 highlight' : `${space.markIds.length} highlights`}
+                  {space.links?.length ? ` · ${space.links.length} to read` : ''}
                 </span>
               </button>
+              <div class="sp-card-do">
+                {/* By hand (1e). Two buttons rather than a drag, because a drag
+                    needs a pointer and 2g already settled that nothing here may. */}
+                <button
+                  type="button"
+                  class="sp-move"
+                  aria-label={`Move ${space.name} up`}
+                  disabled={at === 0}
+                  onClick={() => void move(space.id, -1)}
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  class="sp-move"
+                  aria-label={`Move ${space.name} down`}
+                  disabled={at === ordered.length - 1}
+                  onClick={() => void move(space.id, 1)}
+                >
+                  ↓
+                </button>
+                {goingToDelete === space.id ? (
+                  <>
+                    {/* The only verb here that takes anything away, so it asks
+                        once and says exactly what it costs: the highlights are
+                        pointed at, not held, and they stay (20). */}
+                    <span class="sp-sure">Delete it? The highlights stay in your library.</span>
+                    <button type="button" class="sp-undo" onClick={() => void remove(space.id)}>
+                      Delete the space
+                    </button>
+                    <button type="button" class="sp-undo" onClick={() => setGoingToDelete(null)}>
+                      Keep it
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    class="lib-row-do"
+                    onClick={() => setGoingToDelete(space.id)}
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
             </li>
           ))}
         </ul>
@@ -159,13 +245,16 @@ function OneSpace({
   marks,
   onBack,
   onChanged,
+  save,
 }: {
   space: Space;
   marks: Mark[];
   onBack: () => void;
   onChanged: () => void;
+  save: (space: Space) => Promise<void>;
 }) {
   const [note, setNote] = useState(space.note ?? '');
+  const [link, setLink] = useState('');
 
   // A space points at highlights; the highlight stays in the library and stays
   // one highlight. Nothing is copied and nothing is moved.
@@ -174,14 +263,37 @@ function OneSpace({
     return space.markIds.map((id) => byId.get(id)).filter((mark): mark is Mark => !!mark);
   }, [space, marks]);
 
+  /**
+   * A link whose page already has a highlight in this space has been read, and
+   * says so rather than sitting in the list looking like work still to do.
+   */
+  const links = useMemo(
+    () =>
+      (space.links ?? []).map((each) => ({
+        ...each,
+        read: held.some((mark) => samePage(mark.url, each.url)),
+      })),
+    [space.links, held],
+  );
+
   const takeOut = async (id: string) => {
-    await saveSpaceVia(takeOutOfSpace(space, id));
+    await save(takeOutOfSpace(space, id));
     onChanged();
   };
 
   const saveNote = async () => {
     if ((space.note ?? '') === note) return;
-    await saveSpaceVia({ ...space, note: note || undefined, updatedAt: Date.now() });
+    await save({ ...space, note: note || undefined, updatedAt: Date.now() });
+    onChanged();
+  };
+
+  const keepLink = async () => {
+    const url = link.trim();
+    if (!url) return;
+    // A bare host typed without a scheme is still a page somebody meant.
+    const full = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+    await save(addLink(space, full));
+    setLink('');
     onChanged();
   };
 
@@ -220,11 +332,15 @@ function OneSpace({
           {held.map((mark) => (
             <li key={mark.id} class="lib-row">
               <div>
-                <a class="lib-row-link" href={linkToMark(mark)} target="_blank" rel="noopener">
-                  <Passage color={mark.color} text={mark.label || mark.snapshot} note={mark.note} />
-                </a>
+                <Passage
+                  color={mark.color}
+                  text={mark.label || mark.snapshot}
+                  note={mark.note}
+                  href={linkToMark(mark)}
+                />
                 <p class="lib-row-where">
                   {siteLabel(mark)}
+                  {mark.landing === 'lost' && <span class="lib-lost"> · page has changed</span>}
                   {/* The gentlest of the three verbs, and so the easiest to
                       reach: out of this space, still in the library, still in
                       every other space (20). */}
@@ -237,20 +353,67 @@ function OneSpace({
           ))}
         </ul>
       )}
+
+      {/* 20: a workspace may hold a page you have not read yet. Bare links live
+          in spaces and never in the library, because the library is passages
+          and a bookmark put there is clutter nobody chose. This shows as what
+          it is, an invitation to read, not a passage you kept. */}
+      <section class="sp-reading">
+        <h2>To read</h2>
+        <div class="sp-reading-add">
+          <input
+            class="set-input"
+            type="url"
+            value={link}
+            placeholder="Paste a page you want to read for this"
+            aria-label="A page to read"
+            onInput={(event) => setLink(event.currentTarget.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') void keepLink();
+            }}
+          />
+          <button type="button" class="sp-undo" disabled={!link.trim()} onClick={() => void keepLink()}>
+            Keep it to read
+          </button>
+        </div>
+        {links.length === 0 ? (
+          <p class="set-quiet">
+            Nothing waiting. A page kept here is one you have found and not read
+            yet; once you highlight something on it, it is a passage like any
+            other and this list says so.
+          </p>
+        ) : (
+          <ul class="sp-links">
+            {links.map((each) => (
+              <li key={each.url} class={each.read ? 'sp-link sp-link--read' : 'sp-link'}>
+                <a href={each.url} target="_blank" rel="noopener">
+                  {titleFor(each.url, each.title)}
+                </a>
+                <span class="sp-link-where">{hostOf(each.url)}</span>
+                {each.read && <span class="sp-link-read">read</span>}
+                <button
+                  type="button"
+                  class="lib-row-do"
+                  onClick={() => void save(removeLink(space, each.url)).then(onChanged)}
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </>
   );
 }
 
-/**
- * Spaces are written straight to the device.
- *
- * The bridge carries them for reading, but a space edited here is edited on
- * the machine you are on, the extension and the web app share one store on
- * that machine, so there is nothing to reconcile.
- */
-async function saveSpaceVia(space: Space): Promise<void> {
-  const { saveSpace } = await import('./storage');
-  await saveSpace(space);
+/** Where a page lives, said once beside what it is called. */
+function hostOf(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return url;
+  }
 }
 
 export { rename };

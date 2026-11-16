@@ -130,6 +130,11 @@ export async function saveExtensionPens(pens: readonly PenId[]): Promise<void> {
   await expect({ kind: 'savePens', pens: [...pens] }, 'ok');
 }
 
+/** The bytes of one kept picture, or null where the site would not let Kona copy it (18). */
+export async function loadExtensionImage(markId: string): Promise<string | null> {
+  return (await expect({ kind: 'image', markId }, 'image')).data;
+}
+
 /**
  * Something changed in the extension's storage: another tab, or the panel on
  * an article being read in the next window. What changed is not sent, only

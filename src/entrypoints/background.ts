@@ -2,12 +2,16 @@ import { konaAppUrl } from '../core/bridge';
 import { browser, defineBackground, storage } from '#imports';
 import type { PendingJump, RuntimeMessage } from '../core/messages';
 import { SITE_SCRIPTS, WEB_SCRIPT, scriptsForOrigins } from '../core/sites';
-import { mergeDuplicatePages } from '../core/store';
+import { captureSelection } from '../core/capture';
+import { fileIntoActiveSpace } from '../core/activeSpace';
+import { loadPalette } from '../core/palette';
+import { loadMe, mergeDuplicatePages, upsertMark } from '../core/store';
 import type { Mark } from '../core/types';
 
 
 const WELCOME_PAGE = '/welcome.html';
 const MENU_ID = 'highlight-selection';
+const IMAGE_MENU_ID = 'highlight-image';
 const pendingKey = (tabId: number) => `pending-jump:${tabId}`;
 
 /**
@@ -43,10 +47,15 @@ export default defineBackground(() => {
   browser.permissions.onRemoved.addListener(() => void syncWebSites());
 
   menus?.onClicked.addListener((info, tab) => {
-    if (info.menuItemId !== MENU_ID || tab?.id === undefined) return;
-    void browser.tabs
-      .sendMessage(tab.id, { type: 'highlight-selection' } satisfies RuntimeMessage)
-      .catch(() => undefined);
+    if (info.menuItemId === MENU_ID) void keepSelection(info, tab?.id);
+    if (info.menuItemId === IMAGE_MENU_ID && tab?.id !== undefined && info.srcUrl) {
+      // Only the page can do this one: the bytes have to be copied out of the
+      // picture that is already decoded there (18), so unlike a selection
+      // there is no fallback for a page Kona cannot run in.
+      void browser.tabs
+        .sendMessage(tab.id, { type: 'highlight-image', src: info.srcUrl } satisfies RuntimeMessage)
+        .catch(() => undefined);
+    }
   });
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -140,10 +149,21 @@ async function syncWebSites(startOnActiveTab = false): Promise<null> {
 }
 
 /**
- * The right-click item only appears where highlighting actually works, so it is
- * rebuilt whenever the allowed sites change rather than offered everywhere.
- * Where there is no such menu at all, switching a site on carries on without
- * one: losing the menu must not cost you the highlighting.
+ * Where PDFs are read. Both engines treat their viewer as privileged, so no
+ * content script runs there and the menu is the only way in (16).
+ *
+ * It needs no host permission: the selection arrives with the menu click
+ * rather than being read out of the page, which is the documented exception
+ * the whole PDF route rests on.
+ */
+const PDF_PATTERNS = ['*://*/*.pdf', 'file:///*.pdf'];
+
+/**
+ * The right-click item appears where highlighting works, and on PDFs, where it
+ * is the only thing that does. It is rebuilt whenever the allowed sites change
+ * rather than offered everywhere. Where there is no such menu at all, switching
+ * a site on carries on without one: losing the menu must not cost you the
+ * highlighting.
  */
 async function buildMenu(userSites: string[]): Promise<void> {
   if (!menus) return;
@@ -152,10 +172,56 @@ async function buildMenu(userSites: string[]): Promise<void> {
     id: MENU_ID,
     title: 'Highlight with Kona',
     contexts: ['selection'],
-    // Only where Kona is actually allowed (3e). A right-click menu offered on
-    // a site it cannot read would do nothing when clicked.
+    // Only where Kona is actually allowed (3e), plus the PDF viewer, which no
+    // permission can reach and which a right-click can (16).
+    documentUrlPatterns: [...userSites, ...PDF_PATTERNS],
+  });
+  // A picture is a highlight too (18), and only where Kona runs: the copy is
+  // made from the page, so there is nothing a privileged page could offer.
+  menus.create({
+    id: IMAGE_MENU_ID,
+    title: 'Keep this picture with Kona',
+    contexts: ['image'],
     documentUrlPatterns: userSites,
   });
+}
+
+/**
+ * Keeping what was selected when the menu fired.
+ *
+ * The page's own content script is asked first, because where there is one it
+ * can do the whole job: find the passage in the document, paint it, and store
+ * where it sits so it can be found again. Only when nothing answers, which is
+ * what a privileged page sounds like from here, does the background keep the
+ * selection itself.
+ *
+ * Asking first rather than deciding by URL is deliberate. A PDF is not the
+ * only page Kona cannot run in, and a page that looks like a PDF from its
+ * address is not always one.
+ */
+async function keepSelection(
+  info: { selectionText?: string; pageUrl?: string },
+  tabId: number | undefined,
+): Promise<void> {
+  if (tabId !== undefined) {
+    const answered = await browser.tabs
+      .sendMessage(tabId, { type: 'highlight-selection' } satisfies RuntimeMessage)
+      .then(() => true)
+      .catch(() => false);
+    if (answered) return;
+  }
+
+  const text = info.selectionText?.trim();
+  const url = info.pageUrl;
+  if (!text || !url) return;
+
+  const tab = tabId === undefined ? undefined : await browser.tabs.get(tabId).catch(() => undefined);
+  const [pen] = await loadPalette();
+  const mark = captureSelection({ text, url, title: tab?.title, color: pen ?? 'yellow' });
+  await upsertMark(mark);
+  // A space that is active takes what you keep while it is (1a), wherever it
+  // was kept from. A PDF is not an exception to that.
+  await fileIntoActiveSpace(mark.id, await loadMe());
 }
 
 function matchesAny(url: string, patterns: string[]): boolean {

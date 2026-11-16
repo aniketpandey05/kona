@@ -3,6 +3,12 @@ type Listener = (value: unknown) => void;
 type ChangeListener = (changes: Record<string, unknown>, area: string) => void;
 
 const watchers = new Map<string, Set<Listener>>();
+const messageListeners = new Set<(message: unknown) => unknown>();
+
+/** Delivers a runtime message to whatever is listening, for the harness. */
+export function deliverMessage(message: unknown): void {
+  for (const listener of messageListeners) listener(message);
+}
 const changeListeners = new Set<ChangeListener>();
 // Extension storage keys have no area prefix, so drop it the way WXT does.
 const plainKey = (key: string) => key.replace(/^(local|session|sync|managed):/, '');
@@ -38,7 +44,20 @@ export const browser = {
       console.info('[harness] runtime.sendMessage', message);
       return null;
     },
-    onMessage: { addListener(_listener: unknown) {}, removeListener(_listener: unknown) {} },
+    /**
+     * Real listeners, because two things the extension does arrive only as a
+     * runtime message: the right-click menu's "highlight this selection" and
+     * "keep this picture" (16, 18). A no-op here meant neither could be tried
+     * anywhere but in a packed extension.
+     */
+    onMessage: {
+      addListener(listener: (message: unknown) => unknown) {
+        messageListeners.add(listener);
+      },
+      removeListener(listener: (message: unknown) => unknown) {
+        messageListeners.delete(listener);
+      },
+    },
     // Extension pages link to each other by extension URL; in the harness they
     // are plain pages sitting next to one another.
     getURL(path: string) {

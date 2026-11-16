@@ -1,11 +1,14 @@
 import {
   extensionPresent,
   loadExtensionMarks,
+  loadExtensionImage,
   loadExtensionPens,
   loadExtensionSpaces,
   removeExtensionMark,
+  removeExtensionSpace,
   saveExtensionMark,
   saveExtensionPens,
+  saveExtensionSpace,
   watchExtension,
 } from './bridge';
 import * as local from './storage';
@@ -41,6 +44,24 @@ export interface LibrarySource {
    */
   pens(): Promise<PenId[]>;
   savePens(pens: readonly PenId[]): Promise<void>;
+  /**
+   * Writing a space back where it was read from.
+   *
+   * This used to go straight to the device on the grounds that the extension
+   * and the web app share one store, which is not true: they are two origins
+   * with two stores and the bridge is the only thing between them. A space
+   * made in the library while the extension was installed was written where
+   * the panel could never see it, so setting it active while you read, which
+   * is the whole of 1a, could not work.
+   */
+  saveSpace(space: Space): Promise<void>;
+  removeSpace(id: string): Promise<void>;
+  /**
+   * A kept picture's bytes (18). Null where there are none: a picture a site
+   * would not let Kona copy, or a device that has never had the extension and
+   * so has never captured one.
+   */
+  image(markId: string): Promise<string | null>;
   save(mark: Mark): Promise<void>;
   remove(mark: Mark): Promise<void>;
   watch(onChange: () => void): () => void;
@@ -53,6 +74,9 @@ const fromExtension: LibrarySource = {
   save: saveExtensionMark,
   pens: loadExtensionPens,
   savePens: saveExtensionPens,
+  saveSpace: saveExtensionSpace,
+  image: loadExtensionImage,
+  removeSpace: removeExtensionSpace,
   // The extension keys highlights by the page they are on, so removing one
   // needs the page as well as the id.
   remove: (mark) => removeExtensionMark(mark.site, mark.conversationId, mark.id),
@@ -66,6 +90,9 @@ const fromDevice: LibrarySource = {
   save: local.save,
   pens: async () => local.loadPens(),
   savePens: async (pens) => local.savePens(pens),
+  saveSpace: local.saveSpace,
+  image: async () => null,
+  removeSpace: local.removeSpace,
   remove: (mark) => local.remove(mark.id),
   watch: local.watch,
 };

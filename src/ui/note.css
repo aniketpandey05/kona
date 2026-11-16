@@ -9,6 +9,8 @@
 
 .kona-note {
   position: fixed;
+  top: var(--kona-note-top);
+  left: var(--kona-note-left);
   z-index: 2147483647;
   box-sizing: border-box;
   width: 324px;
@@ -27,6 +29,23 @@
 .kona-note--docked {
   right: var(--kona-space-24);
   bottom: var(--kona-space-24);
+}
+
+/**
+ * On a phone the note card docks too, for 22's reason rather than for room:
+ * the controls go where the thumb is, in the same place every time, and a
+ * card floating beside a line of someone else's text on a 375px screen is
+ * both cramped and somewhere different each time.
+ */
+@media (max-width: 839px) {
+  .kona-note {
+    top: auto;
+    right: var(--kona-space-8);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 58px);
+    left: var(--kona-space-8);
+    width: auto;
+    max-width: none;
+  }
 }
 
 .kona-note-quote {

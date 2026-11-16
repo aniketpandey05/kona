@@ -107,12 +107,52 @@
 }
 
 .kona-passage-text {
+  display: block;
   margin: 0;
   font-family: var(--kona-passage-font);
   font-size: var(--kona-passage-size);
   line-height: var(--kona-passage-leading);
   color: var(--kona-passage-ink);
+  text-decoration: none;
   overflow-wrap: break-word;
+}
+
+/**
+ * Opening out a long passage (19).
+ *
+ * A highlight can be a word or an entire page, and nothing refuses the second
+ * one. In a list the opening is enough to know which passage this is, and
+ * this is the rest of it. It reads as a control rather than as more of the
+ * passage: the interface font, small, in the muted ink, so the serif column
+ * above it stays one unbroken thing.
+ */
+.kona-passage-more {
+  margin: var(--kona-space-4) 0 0;
+  padding: 0;
+  font-family: var(--kona-font-ui);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+  text-decoration: underline;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.kona-slab .kona-passage-more {
+  color: var(--kona-slab-ink-muted);
+}
+
+/**
+ * In the panel the passage is not a link and so is never opened out: the card
+ * around it is already the way to the whole of it, which is the page behind
+ * you. Three lines is enough to recognise one.
+ */
+.kona-slab .kona-passage-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 /**
@@ -132,4 +172,40 @@
   border-left: 2px solid var(--kona-passage-note-edge);
   border-radius: var(--kona-passage-note-radius);
   overflow-wrap: break-word;
+}
+
+/**
+ * A kept picture (18).
+ *
+ * Its own bytes, never the address it came from, so opening your library
+ * fetches nothing from anybody. Capped in height because a row in a list is
+ * still a row: the whole of it is one click away on the page it came from,
+ * and the point here is recognising which highlight this is.
+ */
+.kona-passage-picture {
+  display: block;
+  max-width: 100%;
+  max-height: 260px;
+  margin: 0 0 var(--kona-space-8);
+  border: 1px solid var(--kona-paper-line);
+  border-radius: var(--kona-radius-sm);
+  object-fit: contain;
+}
+
+.kona-slab .kona-passage-picture {
+  max-height: 140px;
+  border-color: var(--kona-slab-card-line);
+}
+
+/* Said once, rather than a broken frame: the highlight is real, the picture
+   is the part that could not be had. */
+.kona-passage-nopicture {
+  margin: 0 0 var(--kona-space-6);
+  font-family: var(--kona-font-ui);
+  font-size: var(--kona-text-sm);
+  color: var(--kona-paper-ink-muted);
+}
+
+.kona-slab .kona-passage-nopicture {
+  color: var(--kona-slab-ink-note);
 }

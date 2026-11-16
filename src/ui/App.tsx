@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { KonaController, ViewState } from '../content/controller';
+import { penOf } from '../core/pens';
 import { MarkBar, SelectionBar } from './Bar';
 import { Note } from './Note';
 import { Panel } from './Panel';
@@ -35,6 +36,27 @@ export function App({ controller }: Props) {
       {state.selection && (
         <SelectionBar selection={state.selection} controller={controller} pens={state.pens} />
       )}
+
+      {/* 18: a picture cannot be painted by the Custom Highlight API, which
+          takes text ranges. So it is outlined in Kona's own layer, over the
+          image, never in the page's DOM, which is the same discipline
+          everything else here keeps. */}
+      {state.outlines.map((outline) => (
+        <span
+          key={outline.markId}
+          class="kona-outline"
+          aria-hidden="true"
+          style={
+            {
+              '--kona-outline-ink': penOf(outline.color).ink,
+              top: `${outline.top}px`,
+              left: `${outline.left}px`,
+              width: `${outline.width}px`,
+              height: `${outline.height}px`,
+            } as never
+          }
+        />
+      ))}
 
       <Panel state={state} controller={controller} />
 

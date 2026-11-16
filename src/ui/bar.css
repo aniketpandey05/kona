@@ -15,6 +15,10 @@
 
 .kona-bar {
   position: fixed;
+  /* Where the bar goes on a desktop, handed in by the component. On a phone
+     the rule at the foot of this file overrides both (22). */
+  top: var(--kona-bar-top);
+  left: var(--kona-bar-left);
   z-index: 2147483647;
   display: flex;
   align-items: center;
@@ -122,4 +126,67 @@
   border: 0;
   border-radius: var(--kona-radius-pill);
   cursor: pointer;
+}
+
+/**
+ * The bar on a phone (22): fixed to the foot of the screen, full width.
+ *
+ * The phone puts its own menu over selected text and Kona cannot replace it,
+ * move it, or know where it will be. That menu appears *beside the text*, so
+ * the way out is to stop placing Kona relative to the selection at all: a bar
+ * in the same place every time never meets it, and it is where the thumb
+ * already is. Reach beats proximity on a phone.
+ *
+ * The same breakpoint the panel uses (2h), because it is the same question:
+ * is there room for this and a readable column of somebody else's text.
+ *
+ * iOS Safari keeps its own URL bar at the bottom, so Kona sits above it:
+ * `safe-area-inset-bottom` is what that measures, and on anything that has no
+ * such bar it is zero and the gap is the gap.
+ */
+@media (max-width: 839px) {
+  .kona-bar {
+    top: auto;
+    right: var(--kona-space-8);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + var(--kona-space-8));
+    left: var(--kona-space-8);
+    justify-content: center;
+    padding: var(--kona-space-8);
+    border-radius: var(--kona-radius-xl);
+  }
+
+  /* Nothing under 38px, which is what a finger needs and what the board
+     draws. The pens grow with everything else rather than staying a dot in a
+     row of buttons. */
+  .kona-bar-pen {
+    width: 32px;
+    height: 32px;
+  }
+
+  .kona-bar-action {
+    min-height: 38px;
+    padding: var(--kona-space-8) var(--kona-space-12);
+    font-size: var(--kona-text-base);
+  }
+
+  .kona-bar-space-out {
+    width: 26px;
+    height: 26px;
+  }
+
+  .kona-bar-divider {
+    margin: 0 var(--kona-space-2);
+  }
+}
+
+/* Narrower than a phone in portrait: the escape hatch keeps its control and
+   loses the space's name before anything else wraps, since the × is the part
+   you act on and the name is the part you can also read in the panel. */
+@media (max-width: 400px) {
+  .kona-bar-space-name {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

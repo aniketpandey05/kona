@@ -1,4 +1,5 @@
 import { joinPeople, personIn, type Person } from './people';
+import { pageId } from './pageUrl';
 import type { Mark } from './types';
 
 /**
@@ -119,6 +120,10 @@ export interface Space {
   comments?: Comment[];
   /** Highlights whose thread somebody has called finished. */
   settled?: string[];
+  /** Pages put here to read, which are not highlights and never reach the library (20). */
+  links?: SpaceLink[];
+  /** Where you put this space in your own list (1e). Absent on spaces made before. */
+  position?: number;
   createdAt: number;
   updatedAt: number;
 }
@@ -468,4 +473,93 @@ export function unusedIn(space: Space, marks: readonly Mark[]): Mark[] {
 export function statusOf(space: Space): 'settled' | 'open' | 'shelf' {
   if (!space.question) return 'shelf';
   return space.decision ? 'settled' : 'open';
+}
+
+/**
+ * A page somebody put in a space without having read it yet (20).
+ *
+ * **Bare links live in spaces, never in the library.** The library is
+ * passages: a bookmark put there is clutter nobody chose, which is why 14a
+ * refuses to import bookmarks at all. A workspace is the other thing, and a
+ * workspace may hold *I found this, I will read it*, which is a deliberate
+ * act rather than a pile.
+ *
+ * It shows as what it is, an invitation to read, and it has nothing in common
+ * with a highlight except that it names a page.
+ */
+export interface SpaceLink {
+  /** The page, exactly as it was given. */
+  url: string;
+  /** What to call it. The page's own title where one was known, else the host. */
+  title?: string;
+  addedAt: number;
+}
+
+/** Putting a page in a space to read later. Adding the same one twice is not an error. */
+export function addLink(space: Space, url: string, title?: string, now = Date.now()): Space {
+  const clean = url.trim();
+  if (!clean) return space;
+  const links = space.links ?? [];
+  if (links.some((link) => samePage(link.url, clean))) return space;
+  return touched(space, { links: [...links, { url: clean, title: title?.trim() || undefined, addedAt: now }] }, now);
+}
+
+export function removeLink(space: Space, url: string, now = Date.now()): Space {
+  const links = space.links ?? [];
+  if (!links.some((link) => samePage(link.url, url))) return space;
+  return touched(space, { links: links.filter((link) => !samePage(link.url, url)) }, now);
+}
+
+/**
+ * Whether two addresses are the same page, by the same rule the library files
+ * highlights under, so a link added from a tweet and a highlight made from a
+ * search result are not two different pages.
+ */
+export function samePage(a: string, b: string): boolean {
+  try {
+    return pageId(new URL(a)) === pageId(new URL(b));
+  } catch {
+    return a.trim() === b.trim();
+  }
+}
+
+/**
+ * The order you put your spaces in (1e).
+ *
+ * By hand, the way highlights already are in `order.ts`, because a list of
+ * spaces is a list of what you are working on and the order of that is yours
+ * rather than a date's. Spaces made before this have no position, and sort
+ * after the ones that do, newest first, which is where they already were.
+ */
+export function inOrder(spaces: readonly Space[]): Space[] {
+  return [...spaces].sort((a, b) => {
+    if (a.position !== undefined && b.position !== undefined) return a.position - b.position;
+    if (a.position !== undefined) return -1;
+    if (b.position !== undefined) return 1;
+    return b.updatedAt - a.updatedAt;
+  });
+}
+
+/**
+ * Moving one space up or down the list.
+ *
+ * Returns every space that has to be written, not just the one that moved:
+ * ordering a list by hand means giving the whole list its positions, and
+ * writing one of them would leave the rest disagreeing about where they are.
+ */
+export function moveSpace(spaces: readonly Space[], id: string, by: -1 | 1, now = Date.now()): Space[] {
+  const ordered = inOrder(spaces);
+  const at = ordered.findIndex((space) => space.id === id);
+  const to = at + by;
+  if (at < 0 || to < 0 || to >= ordered.length) return [];
+  const moved = [...ordered];
+  const [taken] = moved.splice(at, 1);
+  moved.splice(to, 0, taken!);
+  // Only the ones whose stored position differs from where they now are: a
+  // space that has not moved does not need writing, and one that never had a
+  // position does.
+  return moved
+    .map((space, position) => ({ space, position }))
+    .filter(({ space, position }) => space.position !== position)
+    .map(({ space, position }) => touched(space, { position }, now));
 }

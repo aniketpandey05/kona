@@ -6,6 +6,8 @@ import {
   type BridgeReply,
   type BridgeRequest,
 } from '../core/bridge';
+import { storage } from '#imports';
+import { imageKey } from '../core/image';
 import { loadPalette, savePalette } from '../core/palette';
 import {
   loadAllMarks,
@@ -87,6 +89,8 @@ async function handle(request: BridgeRequest): Promise<BridgeReply> {
     case 'savePens':
       await savePalette(request.pens);
       return { kind: 'ok' };
+    case 'image':
+      return { kind: 'image', data: (await storage.getItem<string>(imageKey(request.markId))) ?? null };
     default:
       // A newer page talking to an older extension. Saying so is better than
       // silence, which is indistinguishable from the extension not being here.

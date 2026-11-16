@@ -32,7 +32,10 @@ function Bar({ top, left, inUse, onPick, onNote, onDelete, inSpace, pens }: BarP
   return (
     <div
       class="kona-bar"
-      style={{ top: `${top}px`, left: `${left}px` }}
+      // Handed over as custom properties rather than as top and left, because
+      // on a phone the bar is fixed to the foot of the screen (22) and an
+      // inline `top` would beat the rule that puts it there.
+      style={{ '--kona-bar-top': `${top}px`, '--kona-bar-left': `${left}px` } as never}
       // Keep the page's selection alive while the bar is clicked: losing it
       // would throw away the thing being marked.
       onMouseDown={(event) => event.preventDefault()}
@@ -87,8 +90,25 @@ function Bar({ top, left, inUse, onPick, onNote, onDelete, inSpace, pens }: BarP
 
 /**
  * Marking something: the bar sits by the selection, and a pen makes the
- * highlight. On a phone this goes to the foot of the screen instead (22),
- * which needs an iPhone to try and is not built here.
+ * highlight.
+ *
+ * **On a phone it is fixed to the foot of the screen instead (22)**, which is
+ * a stylesheet rule rather than a second component: the contents are the same
+ * contents, and two bars would be two things to keep in step.
+ *
+ * The reasoning is worth keeping next to the code, because the shape looks
+ * arbitrary until you have it. The phone's own menu over selected text, Copy,
+ * Look Up, Share, is not ours to replace or move, and it appears *beside the
+ * text*. So anything Kona places relative to the selection is placed relative
+ * to a thing it does not control. Dropping the assumption that Kona has to be
+ * near the selection dissolves the collision: a bar in the same place every
+ * time never meets that menu, and it is where the thumb already is. On a
+ * phone, reach beats proximity.
+ *
+ * Still to be tried on a real iPhone, and one answer could overturn it: if
+ * tapping Kona's bar clears the selection, every in-page option dies and
+ * capture becomes the share route (1h) on both platforms. A bottom bar is no
+ * more exposed to that than the dot it replaced.
  */
 export function SelectionBar({
   selection,
@@ -106,7 +126,12 @@ export function SelectionBar({
 
   if (selection.streaming) {
     return (
-      <div class="kona-bar" style={{ top: `${top}px`, left: `${selection.left}px` }}>
+      <div
+        class="kona-bar"
+        style={
+          { '--kona-bar-top': `${top}px`, '--kona-bar-left': `${selection.left}px` } as never
+        }
+      >
         <span class="kona-bar-wait">Wait for the reply to finish</span>
       </div>
     );

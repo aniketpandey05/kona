@@ -31,6 +31,7 @@ interface Script {
 interface MenuItem {
   id: string;
   documentUrlPatterns: string[];
+  contexts?: string[];
 }
 
 interface FakeSafari {
@@ -156,8 +157,28 @@ it('rebuilds the menu where Safari has one', async () => {
 
   safari.allowSite();
 
-  await vi.waitFor(() => expect(safari.menuItems).toHaveLength(1));
-  expect(safari.menuItems[0]!.documentUrlPatterns).toContain('https://example.com/*');
+  // Two items: a passage anywhere Kona is allowed, and a picture, which only
+  // the page can copy (16, 18).
+  await vi.waitFor(() => expect(safari.menuItems).toHaveLength(2));
+  const [passage, picture] = safari.menuItems;
+  expect(passage!.documentUrlPatterns).toContain('https://example.com/*');
+  expect(picture!.contexts).toEqual(['image']);
+  expect(picture!.documentUrlPatterns).toContain('https://example.com/*');
+});
+
+it('offers a passage on a PDF, where nothing of Kona can run (16)', async () => {
+  // The browser's own viewer is privileged in both engines, so the menu is
+  // the only way in: a right-click hands over the selection without any host
+  // permission, which is the documented exception the whole route rests on.
+  const safari = fakeSafari({ menus: true, windows: true });
+  await start(safari);
+
+  safari.allowSite();
+
+  await vi.waitFor(() => expect(safari.menuItems).toHaveLength(2));
+  expect(safari.menuItems[0]!.documentUrlPatterns).toContain('*://*/*.pdf');
+  // And never for a picture, because copying one needs the page.
+  expect(safari.menuItems[1]!.documentUrlPatterns).not.toContain('*://*/*.pdf');
 });
 
 it('opens a highlight with no window to focus', async () => {

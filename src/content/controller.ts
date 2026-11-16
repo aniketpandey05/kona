@@ -1,4 +1,4 @@
-import { browser, type ContentScriptContext } from '#imports';
+import { browser, storage, type ContentScriptContext } from '#imports';
 import type { MessageRef, SiteAdapter } from '../adapters/types';
 import {
   fileIntoActiveSpace,
@@ -29,6 +29,7 @@ import {
 import { loadTheme, watchTheme, type Theme } from '../core/theme';
 import { buildTextIndex, spanFromRange, type TextIndex, type TextSpan } from '../core/textIndex';
 import { DEFAULT_PENS, type PenId } from '../core/pens';
+import { KEPT_AS, KEPT_QUALITY, imageKey, scaleTo, UNDESCRIBED, wordsFor } from '../core/image';
 import { loadPalette, watchPalette } from '../core/palette';
 import type { Mark } from '../core/types';
 
@@ -129,6 +130,24 @@ export interface ViewState {
   noun: 'chat' | 'page';
   dark: boolean;
   notice: string | null;
+  /**
+   * Where to draw an outline, for every kept picture on this page (18).
+   *
+   * An image is not text, so the CSS Custom Highlight API cannot paint it.
+   * These are viewport rectangles recomputed on every refresh, and the outline
+   * is drawn in Kona's own layer from them, never in the page's DOM, which is
+   * the same discipline everything else here keeps.
+   */
+  outlines: Outline[];
+}
+
+export interface Outline {
+  markId: string;
+  color: PenId;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
 }
 
 interface PendingSelection {
@@ -152,6 +171,7 @@ export class KonaController {
     activeSpace: null,
     dark: false,
     notice: null,
+    outlines: [],
   };
   /** Every highlight from every site, loaded when the search box opens. */
   private allMarks: Mark[] = [];
@@ -163,12 +183,23 @@ export class KonaController {
   private unwatchPens: (() => void) | undefined;
   /** Kept for a few seconds after a delete, so it can be undone. */
   private deleted: Mark | null = null;
+  /**
+   * A deleted picture's bytes, held for as long as the undo is offered.
+   *
+   * Taken out of storage with the highlight so a deleted picture stops taking
+   * room immediately, and kept here rather than thrown away, because bringing
+   * a highlight back and finding the picture gone would be a worse kind of
+   * undo than none at all.
+   */
+  private deletedImage: string | null = null;
   /** The element the page scrolls in, found again on every refresh. */
   private scroller: HTMLElement | null = null;
   private readonly listeners = new Set<() => void>();
   private readonly painter = new HighlightPainter();
   private marks: Mark[] = [];
   private resolved = new Map<string, ResolvedMark>();
+  /** The picture each image highlight is currently sitting on (18). */
+  private readonly images = new Map<string, HTMLImageElement>();
   private pending: PendingSelection | null = null;
   private unwatch: (() => void) | undefined;
   private openedAt = 0;
@@ -242,7 +273,16 @@ export class KonaController {
     browser.runtime.onMessage.addListener((message) => {
       const request = message as RuntimeMessage;
       if (request.type === 'jump-to-mark') void this.jumpWhenReady(request.markId, request.conversationId);
-      if (request.type === 'highlight-selection') void this.highlightSelection();
+      if (request.type === 'highlight-image') void this.highlightImage(request.src);
+      if (request.type === 'highlight-selection') {
+        void this.highlightSelection();
+        // Answered, not merely received. The right-click menu also fires on
+        // pages Kona cannot run in, and there the background keeps the
+        // selection itself (16): silence is how it tells the two apart, so a
+        // page that *is* handling it has to say so or be captured twice.
+        return Promise.resolve({ handled: true });
+      }
+      return undefined;
     });
 
     this.theme = await loadTheme();
@@ -263,7 +303,9 @@ export class KonaController {
   async highlightSelection(): Promise<void> {
     this.captureSelection();
     if (!this.pending) return;
-    await this.highlight('yellow');
+    // The first pen in the case, not a hardcoded yellow: somebody whose first
+    // pen is teal has said which pen they reach for (12).
+    await this.highlight(this.state.pens[0] ?? 'yellow');
   }
 
   async highlight(color: PenId, { withNote = false } = {}): Promise<void> {
@@ -408,12 +450,17 @@ export class KonaController {
     this.painter.clearFlash();
 
     this.deleted = mark;
+    if (mark.image?.kept) {
+      this.deletedImage = await storage.getItem<string>(imageKey(id));
+      await storage.removeItem(imageKey(id));
+    }
     this.marks = this.marks.filter((m) => m.id !== id);
     this.refresh();
     this.setState({ undo: { label: mark.label || mark.snapshot } });
     this.ctx.setTimeout(() => {
       if (this.deleted?.id === id) {
         this.deleted = null;
+        this.deletedImage = null;
         this.setState({ undo: null });
       }
     }, UNDO_MS);
@@ -425,11 +472,14 @@ export class KonaController {
   undoDelete(): void {
     const mark = this.deleted;
     if (!mark) return;
+    const picture = this.deletedImage;
     this.deleted = null;
+    this.deletedImage = null;
     this.marks = [...this.marks, mark];
     this.setState({ undo: null });
     this.refresh();
     void upsertMark(mark);
+    if (picture) void storage.setItem(imageKey(mark.id), picture);
   }
 
   jump(id: string): void {
@@ -625,6 +675,151 @@ export class KonaController {
    * Only worth knowing when there is nothing here, so it is not counted
    * otherwise; it reads every highlight there is.
    */
+  /**
+   * Writing down which highlights this page can no longer land on (13).
+   *
+   * The in-page notice is live and needs nothing stored. The library's half
+   * does: *marks it in the library, so you can see what has rotted rather
+   * than meeting it one at a time*, and the library never visits the page.
+   *
+   * Everything here is about not being wrong. A highlight goes unresolved for
+   * plenty of innocent reasons, and writing "this is gone" on one of those is
+   * the main ability degrading quietly, which is worse than not saying it at
+   * all. So this is deliberately narrow:
+   *
+   * - **Ordinary web pages only.** The chat sites render their older messages
+   *   when you scroll to them, so a passage merely further up the thread looks
+   *   exactly like one that has been edited away.
+   * - **Only once the page has settled**, which is the same five seconds the
+   *   broken-layout notice waits, and only when the adapter found content at
+   *   all. A page still loading has not failed to hold anything.
+   * - **It clears itself.** A page that was rewritten can be rewritten back,
+   *   and a highlight found again is not rotted. So every pass that finds one
+   *   takes the mark off.
+   */
+  private async recordLandings(messageCount: number): Promise<void> {
+    if (this.adapter.site !== 'web') return;
+    if (messageCount === 0) return;
+    if (Date.now() - this.openedAt <= BROKEN_AFTER_MS) return;
+
+    const changed: Mark[] = [];
+    for (const mark of this.marks) {
+      const found = this.resolved.has(mark.id) || this.images.has(mark.id);
+      if (!found && mark.landing !== 'lost') changed.push({ ...mark, landing: 'lost' });
+      if (found && mark.landing === 'lost') {
+        const { landing: _gone, ...rest } = mark;
+        changed.push(rest as Mark);
+      }
+    }
+    if (changed.length === 0) return;
+
+    // `updatedAt` is left alone on purpose. Nobody edited anything, and a
+    // library sorted by when you last touched something should not reshuffle
+    // because a page you were reading had been rewritten.
+    const byId = new Map(changed.map((mark) => [mark.id, mark]));
+    this.marks = this.marks.map((mark) => byId.get(mark.id) ?? mark);
+    for (const mark of changed) await upsertMark(mark);
+  }
+
+  /**
+   * Keeping a picture (18).
+   *
+   * Right-click, keep. The menu hands over the picture's address and this
+   * finds the element it belongs to, which is what makes the rest possible:
+   * the bytes are already decoded in the page, the words near it are readable,
+   * and where it sits is known.
+   *
+   * Everything about it is a highlight. It goes in the library, it takes a
+   * pen, it can carry a note, it files into the active space. What differs is
+   * underneath: no quote selector, an outline instead of paint, and a weaker
+   * way back.
+   */
+  async highlightImage(src: string): Promise<void> {
+    const conversationId = this.state.conversationId;
+    if (!conversationId) return;
+    const pictures = [...document.images];
+    const found =
+      pictures.find((img) => img.currentSrc === src || img.src === src) ??
+      pictures.find((img) => img.currentSrc.startsWith(src) || src.startsWith(img.currentSrc));
+    if (!found) return;
+
+    const now = Date.now();
+    const id = crypto.randomUUID();
+    const kept = await keepACopy(found, id);
+    const words = wordsFor({
+      alt: found.alt,
+      caption: found.closest('figure')?.querySelector('figcaption')?.textContent,
+      title: found.title,
+      nearby: nearestWords(found),
+    });
+
+    const mark: Mark = {
+      id,
+      site: this.adapter.site,
+      conversationId,
+      conversationTitle: this.adapter.getConversationTitle(),
+      url: location.href,
+      label: '',
+      color: this.state.pens[0] ?? 'yellow',
+      order: nextOrder(this.marks),
+      snapshot: words || UNDESCRIBED,
+      image: {
+        src: found.currentSrc || found.src,
+        index: pictures.indexOf(found),
+        width: found.naturalWidth || found.width,
+        height: found.naturalHeight || found.height,
+        kept,
+      },
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    this.marks = [...this.marks, mark];
+    this.refresh();
+    await upsertMark(mark);
+    const space = await fileIntoActiveSpace(mark.id, await loadMe());
+    if (space) this.notify(`Kept in ${space.name}`);
+    else if (!kept) {
+      // Said once, where it happened. The highlight is real either way, and
+      // somebody who keeps a chart expects the chart (18).
+      this.notify('Kept. That site would not let Kona copy the picture itself.');
+    }
+  }
+
+  /**
+   * Where each kept picture is on the page right now.
+   *
+   * By source first and by its place among the page's pictures second, which
+   * is the weaker half of the anchor and the reason a picture is likelier than
+   * a passage to end up in 13's state. Nothing is written into the page: the
+   * outline is drawn in Kona's own layer, from these rectangles.
+   */
+  private resolveImages(): Outline[] {
+    this.images.clear();
+    const pictures = [...document.images];
+    const outlines: Outline[] = [];
+    for (const mark of this.marks) {
+      const anchor = mark.image;
+      if (!anchor) continue;
+      const found =
+        pictures.find((img) => img.currentSrc === anchor.src || img.src === anchor.src) ??
+        pictures[anchor.index];
+      if (!found || !found.isConnected) continue;
+      this.images.set(mark.id, found);
+      const box = found.getBoundingClientRect();
+      if (box.width === 0 || box.height === 0) continue;
+      outlines.push({
+        markId: mark.id,
+        color: mark.color,
+        top: box.top,
+        left: box.left,
+        width: box.width,
+        height: box.height,
+      });
+    }
+    return outlines;
+  }
+
   private async countElsewhere(conversationId: string): Promise<void> {
     if (this.marks.length > 0) {
       if (this.state.elsewhere !== 0) this.setState({ elsewhere: 0 });
@@ -669,10 +864,16 @@ export class KonaController {
 
     const brokenLayout =
       !!conversationId && messages.length === 0 && Date.now() - this.openedAt > BROKEN_AFTER_MS;
+    void this.recordLandings(messages.length);
     const cardStillValid = card && this.marks.some((m) => m.id === card.markId);
     this.scroller = this.findScroller();
+    const outlines = this.resolveImages();
     this.setState({
-      items: sortByOrder(this.marks).map((mark) => ({ mark, found: this.resolved.has(mark.id) })),
+      outlines,
+      items: sortByOrder(this.marks).map((mark) => ({
+        mark,
+        found: this.resolved.has(mark.id) || this.images.has(mark.id),
+      })),
       card: cardStillValid ? { ...card, position: this.cardPosition(card.markId) } : null,
       health: brokenLayout ? 'no-messages' : 'ok',
       // "System" means matching the page we're sitting on, which is what looks right in context.
@@ -681,6 +882,13 @@ export class KonaController {
   }
 
   private cardPosition(markId: string): NoteCardState['position'] {
+    const outline = this.state.outlines.find((each) => each.markId === markId);
+    if (outline) {
+      const below = outline.top + outline.height + CARD_GAP;
+      return below + CARD_HEIGHT <= innerHeight
+        ? { top: below, left: outline.left }
+        : { top: Math.max(CARD_GAP, outline.top - CARD_GAP - CARD_HEIGHT), left: outline.left };
+    }
     const range = this.resolved.get(markId)?.range;
     if (!range) return null;
     const rects = range.getClientRects();
@@ -757,6 +965,18 @@ export class KonaController {
   };
 
   private markAt(x: number, y: number): string | undefined {
+    // Pictures first: an outline sits over an image, and an image is usually
+    // inside something that also holds text.
+    for (const outline of this.state.outlines) {
+      if (
+        x >= outline.left &&
+        x <= outline.left + outline.width &&
+        y >= outline.top &&
+        y <= outline.top + outline.height
+      ) {
+        return outline.markId;
+      }
+    }
     for (const { mark, range } of this.resolved.values()) {
       if (!mark.quote) continue;
       for (const rect of range.getClientRects()) {
@@ -819,4 +1039,93 @@ function isDarkPage(): boolean {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b < 128;
   }
   return matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+/**
+ * Keeping the picture itself, not a link to it (18).
+ *
+ * Showing it later by its original address would fetch it from the site it
+ * came from every time the library was opened, which tells that host what you
+ * kept, and decision 6 forbids a request made on account of a page you read.
+ * So the bytes are copied here, scaled down, and stored on the device.
+ *
+ * Two routes, and the order matters. The picture is already decoded in the
+ * page, so drawing it to a canvas costs nothing and asks nobody. That fails
+ * for a picture served from another host without CORS headers, because the
+ * canvas is then tainted and refuses to give its bytes up: a browser rule, not
+ * a Kona one. The second try is an ordinary fetch, which many image hosts do
+ * allow.
+ *
+ * **And where both fail, the highlight is kept anyway, without the picture.**
+ * That is the honest answer rather than a broken image or a link that phones
+ * home: what Kona has then is the words near it, which is what makes it
+ * findable, and it says so once rather than pretending.
+ */
+async function keepACopy(img: HTMLImageElement, markId: string): Promise<boolean> {
+  const bytes = (await fromCanvas(img)) ?? (await fromFetch(img.currentSrc || img.src));
+  if (!bytes) return false;
+  try {
+    await storage.setItem(imageKey(markId), bytes);
+    return true;
+  } catch {
+    // Out of room on the device. The highlight still exists; the picture does
+    // not, and it says so like any other picture it could not keep.
+    return false;
+  }
+}
+
+/** The quick way: it is already decoded on the page, so nothing is requested. */
+async function fromCanvas(img: HTMLImageElement): Promise<string | null> {
+  try {
+    const natural = { width: img.naturalWidth, height: img.naturalHeight };
+    if (!natural.width || !natural.height) return null;
+    const size = scaleTo(natural.width, natural.height);
+    const canvas = document.createElement('canvas');
+    canvas.width = size.width;
+    canvas.height = size.height;
+    const context = canvas.getContext('2d');
+    if (!context) return null;
+    context.drawImage(img, 0, 0, size.width, size.height);
+    // Throws on a tainted canvas, which is the cross-origin case.
+    return canvas.toDataURL(KEPT_AS, KEPT_QUALITY);
+  } catch {
+    return null;
+  }
+}
+
+/** The second try, for a picture the canvas would not give up. */
+async function fromFetch(src: string): Promise<string | null> {
+  try {
+    const response = await fetch(src, { credentials: 'omit' });
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    const bitmap = await createImageBitmap(blob);
+    const size = scaleTo(bitmap.width, bitmap.height);
+    const canvas = document.createElement('canvas');
+    canvas.width = size.width;
+    canvas.height = size.height;
+    canvas.getContext('2d')?.drawImage(bitmap, 0, 0, size.width, size.height);
+    bitmap.close();
+    return canvas.toDataURL(KEPT_AS, KEPT_QUALITY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The words nearest a picture, when it has no caption and no alt text.
+ *
+ * Walks out from the picture rather than taking the whole page: the paragraph
+ * it sits in, or its figure, or the block above it. A page's worth of text
+ * attached to one chart would make that chart match everything.
+ */
+function nearestWords(img: HTMLImageElement): string {
+  let at: Element | null = img.parentElement;
+  for (let up = 0; up < 4 && at; up += 1) {
+    const text = at.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+    if (text.length > 2) return text.slice(0, 300);
+    at = at.parentElement;
+  }
+  const before = img.previousElementSibling ?? img.parentElement?.previousElementSibling;
+  return (before?.textContent ?? '').replace(/\s+/g, ' ').trim().slice(0, 300);
 }

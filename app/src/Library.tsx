@@ -21,10 +21,14 @@ import type { Space } from '../../src/core/spaces';
 import type { Mark, PenId } from '../../src/core/types';
 import { browserFolders } from '../../src/core/folder';
 import { useFolderSync } from '../../src/ui/useFolderSync';
-import { loadMe, syncStore } from './storage';
+import { createBackup } from '../../src/core/backup';
+import { identityForBackup, loadMe, syncStore } from './storage';
 import { openLibrary, type LibrarySource } from './source';
 import type { FolderSource } from '../../src/core/folder';
+import { About } from './About';
+import { bridgeVersion } from './bridge';
 import { Pens } from './Pens';
+import { usePictures } from './usePictures';
 import { Settings } from './Settings';
 import { SpacesView } from './SpacesView';
 
@@ -86,8 +90,9 @@ export function Library({
   const inSpaces = route.startsWith('#/spaces');
   const inSettings = route.startsWith('#/settings');
   const inPens = route.startsWith('#/pens');
+  const inAbout = route.startsWith('#/about');
   /** Whether one of the library's own lists is showing, rather than a screen. */
-  const inList = !inSpaces && !inSettings && !inPens;
+  const inList = !inSpaces && !inSettings && !inPens && !inAbout;
   // Every view is a route, so the nav and the pane cannot disagree about which
   // one is showing. Holding a view in state beside the route meant clearing
   // one without the other, and the nav said Highlights while Settings showed.
@@ -111,6 +116,7 @@ export function Library({
   const [pens, setPens] = useState<PenId[]>([...DEFAULT_PENS]);
   const [me, setMe] = useState('');
   const [tag, setTag] = useState<string | null>(null);
+  const [menuAt, setMenuAt] = useState(false);
   const [site, setSite] = useState<string | null>(null);
   const [when, setWhen] = useState<When>('any');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -162,7 +168,15 @@ export function Library({
 
   useEffect(() => {
     setMe(loadMe()?.name ?? '');
+    setMenuAt(false);
   }, [route]);
+
+  // Which extension is on this machine, for About. Null where there is none,
+  // which is the ordinary case for anybody who has only opened the library.
+  const [version, setVersion] = useState<string | null>(null);
+  useEffect(() => {
+    void bridgeVersion().then(setVersion);
+  }, []);
 
   // A colour arriving in the route becomes the filter. Written through to the
   // chips rather than held beside them, so the chip row and the list cannot
@@ -235,6 +249,10 @@ export function Library({
       alsoMatched: also,
     };
   }, [marks, query, colours, tag, site, when, view]);
+
+  // The pictures for the rows actually on screen (18), asked for one at a
+  // time and then held.
+  const pictures = usePictures(shown, source);
 
   const toggleColour = (pen: PenId) =>
     setColours((current) =>
@@ -400,10 +418,12 @@ export function Library({
                 board rejected by name: a state you cannot act on, that never
                 changes, sitting where the one message that matters has to be
                 believed. */}
-            <a
+            <button
+              type="button"
               class={trouble ? 'lib-acct lib-acct--trouble' : 'lib-acct'}
-              href="#/settings"
-              aria-current={inSettings ? 'page' : undefined}
+              aria-expanded={menuAt}
+              aria-haspopup="menu"
+              onClick={() => setMenuAt((open) => !open)}
             >
               <span class="lib-acct-face" aria-hidden="true" data-empty={me ? undefined : 'yes'}>
                 {initials(me)}
@@ -416,12 +436,26 @@ export function Library({
               ) : (
                 <span class="lib-acct-who">{me || 'Your name and your backups'}</span>
               )}
-            </a>
+            </button>
+            {menuAt && (
+              <AccountMenu
+                me={me}
+                trouble={trouble}
+                extension={source?.kind === 'extension'}
+                onClose={() => setMenuAt(false)}
+                onBackup={() => {
+                  setMenuAt(false);
+                  downloadBackup(marks ?? [], spaces);
+                }}
+              />
+            )}
           </div>
         </nav>
 
         <main class="lib-main">
-          {inPens && source ? (
+          {inAbout ? (
+            <About version={version} />
+          ) : inPens && source ? (
             <Pens source={source} marks={marks ?? []} onChanged={() => void reread()} />
           ) : inSettings ? (
             <Settings
@@ -570,18 +604,18 @@ export function Library({
                           />
                         </label>
                       )}
-                      <a
-                        class="lib-row-link"
+                      {/* The words are the link, rather than a link wrapped
+                          around the whole passage: a passage long enough to be
+                          folded needs a control of its own to open it out, and
+                          that control cannot live inside a link (19). */}
+                      <Passage
+                        color={mark.color}
+                        text={mark.label || mark.snapshot}
+                        note={mark.note}
                         href={linkToMark(mark)}
-                        target="_blank"
-                        rel="noopener"
-                      >
-                        <Passage
-                          color={mark.color}
-                          text={mark.label || mark.snapshot}
-                          note={mark.note}
-                        />
-                      </a>
+                        isPicture={!!mark.image}
+                        picture={pictures.get(mark.id)}
+                      />
                       {/* The frame's own extras (3b): where it came from, and when.
                       The domain is text and nothing is fetched for it, a
                       favicon would tell that site you kept something. */}
@@ -590,6 +624,17 @@ export function Library({
                         {/* Search spans everything, so a hit that is put away says
                         so rather than being left out (10). */}
                         {isArchived(mark) && <span class="lib-archived"> · archived</span>}
+                        {/* 13's other half. The library never visits the page,
+                        so this is what the page wrote down last time it was
+                        open, or what was true from the start for a passage
+                        kept out of a PDF (16). The link stays: an edited page
+                        is usually still the page you wanted. */}
+                        {mark.landing === 'lost' && (
+                          <span class="lib-lost" title="The passage is still yours: searchable, and in its spaces.">
+                            {' '}
+                            · page has changed
+                          </span>
+                        )}
                         <button
                           type="button"
                           class="lib-row-do"
@@ -659,4 +704,112 @@ function initials(name: string): string {
   const first = parts[0]![0] ?? '';
   const last = parts.length > 1 ? (parts[parts.length - 1]![0] ?? '') : '';
   return `${first}${last}`.toUpperCase();
+}
+
+/**
+ * The account row, opened (17a, 24).
+ *
+ * It holds what is about *you* rather than about what you kept: saving a copy
+ * of everything first, because 14 makes it the only backup that exists;
+ * settings; what's new; and the two offers that are only worth making when
+ * they are not already true, which is how neither of them nags.
+ *
+ * There is no signing in yet and nothing to sign out of, so neither is here.
+ * The board's signed-out menu is settings and saving a copy, which is what
+ * this is.
+ */
+function AccountMenu({
+  me,
+  trouble,
+  onClose,
+  onBackup,
+  extension,
+}: {
+  me: string;
+  trouble: string | null;
+  onClose: () => void;
+  onBackup: () => void;
+  /** Whether the bridge found an extension on this machine (3c). */
+  extension: boolean;
+}) {
+  const [installable, setInstallable] = useState<(() => void) | null>(null);
+
+  useEffect(() => {
+    // Chrome hands over the install prompt and lets it be fired later from a
+    // control of your own; left alone it shows up whenever it feels like it,
+    // which is usually not now (24).
+    const offer = (event: Event) => {
+      event.preventDefault();
+      const held = event as Event & { prompt(): Promise<void> };
+      setInstallable(() => () => void held.prompt());
+    };
+    window.addEventListener('beforeinstallprompt', offer);
+    return () => window.removeEventListener('beforeinstallprompt', offer);
+  }, []);
+
+  // Running in its own window already: there is nothing to offer.
+  const inApp =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (navigator as { standalone?: boolean }).standalone === true;
+
+  return (
+    <div class="lib-menu" role="menu">
+      <p class="lib-menu-who">{me || 'Nobody signed in'}</p>
+      {trouble && <p class="lib-menu-trouble">{trouble}</p>}
+
+      <button type="button" class="lib-menu-item" role="menuitem" onClick={onBackup}>
+        Save a copy of everything
+        {/* Said here rather than only in settings, because somebody reaching
+            for it has to know what it is for the first time they see it. */}
+        <span class="lib-menu-why">Kona cannot read your library, so this file is the backup.</span>
+      </button>
+
+      <a class="lib-menu-item" role="menuitem" href="#/settings" onClick={onClose}>
+        Settings
+      </a>
+      <a class="lib-menu-item" role="menuitem" href="#/about" onClick={onClose}>
+        What&rsquo;s new
+      </a>
+
+      {/* The menu shows what you have not got. Both disappear once taken. */}
+      {!inApp && installable && (
+        <button
+          type="button"
+          class="lib-menu-item"
+          role="menuitem"
+          onClick={() => {
+            installable();
+            onClose();
+          }}
+        >
+          Install Kona
+          <span class="lib-menu-why">Its own window and a dock icon, instead of a tab to find.</span>
+        </button>
+      )}
+      {!extension && (
+        <a
+          class="lib-menu-item"
+          role="menuitem"
+          href="https://aniketpandey05.github.io/kona/"
+          target="_blank"
+          rel="noopener"
+          onClick={onClose}
+        >
+          Get the extension
+          <span class="lib-menu-why">Only the extension can highlight. This library reads it.</span>
+        </a>
+      )}
+    </div>
+  );
+}
+
+/** Saving a copy of everything, from the one row that is about you (14). */
+function downloadBackup(marks: Mark[], spaces: Space[]): void {
+  const text = createBackup(marks, spaces, identityForBackup() ?? undefined);
+  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `kona-${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
