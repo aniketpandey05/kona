@@ -224,7 +224,7 @@ is that the extension does not work.
 - [ ] A real domain, replacing `kona.example` in `src/design/tokens.json`
 - [ ] Privacy policy URL confirmed live
 - [ ] $5 one-off developer registration paid
-- [ ] ZIP uploaded from `.output/kona-1.2.0-chrome.zip` (`npm run zip`)
+- [ ] ZIP uploaded from `.output/kona-1.3.0-chrome.zip` (`npm run zip`)
 
 The ZIP produced by `npm run zip` contains only the built extension, no `.git`, no
 `node_modules`, no source, and not this file.
@@ -233,6 +233,6 @@ The ZIP produced by `npm run zip` contains only the built extension, no `.git`, 
 
 | Version | Date | Summary |
 |---|---|---|
-| 1.2.0 | unreleased | Rebuilt from the design documents. Kona installs asking for nothing: no site is read until it is allowed, the AI chats included. One set of colours and type across the whole product. Spaces can be set from the panel, and while one is active the panel says in words where highlights are going; a highlight that does not belong comes back out in one tap. A space is the highlights gathered in it, the write-up and findings are gone. Archiving puts a highlight out of the way of the list without losing it. The library moved to the web, so there is one library rather than two. Highlights stay readable on dark pages, which they were not. |
+| 1.3.0 | 2026-11-16 | Rebuilt from the design documents. Kona installs asking for nothing: no site is read until it is allowed, the AI chats included. One set of colours and type across the whole product. Spaces can be set from the panel, and while one is active the panel says in words where highlights are going; a highlight that does not belong comes back out in one tap. A space is the highlights gathered in it, the write-up and findings are gone. Archiving puts a highlight out of the way of the list without losing it. The library moved to the web, so there is one library rather than two. Highlights stay readable on dark pages, which they were not. |
 | 1.1.0 | 2026-10-23 | Colour on phone captures, with filtering to match. Backups and appearance reachable from the header rather than the foot of the list. Shared text is tidied as it is stored. A conversation link shared to the app attaches itself to everything kept from that conversation. |
 | 1.0.0 | 2026-10-21 | First public release. Highlighting with notes and tags on ChatGPT, Claude, Gemini and any site the user switches on; side panel; cross-chat search; one library with Markdown and backup export; light and dark themes. |

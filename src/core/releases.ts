@@ -20,13 +20,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
-    version: '1.2.0',
+    version: '1.3.0',
     notes: [
       'The panel, the bar and your notes are rebuilt: one set of colours and type across the whole of Kona, instead of each screen deciding its own.',
       'Spaces can be set from the panel. While a space is active the panel says so, in words, and a highlight that does not belong there comes back out in one tap.',
       'Kona now installs asking for nothing at all. No site is read until you allow it, including the AI chats.',
       'The library moved to the web, so there is one library rather than two that could disagree.',
       'Search moved there with it. A page’s highlights are already in front of you; everything else belongs where you can see all of it.',
+      'Archiving: a highlight put out of the way of the list, still searchable, still painted on its page.',
+      'Highlights stay readable on a dark page, which they did not before.',
     ],
   },
   {
