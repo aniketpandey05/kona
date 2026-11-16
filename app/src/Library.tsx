@@ -17,6 +17,9 @@ import { searchLibrary } from '../../src/core/search';
 import { siteLabel } from '../../src/core/sites';
 import type { Space } from '../../src/core/spaces';
 import type { Mark, PenId } from '../../src/core/types';
+import { browserFolders } from '../../src/core/folder';
+import { useFolderSync } from '../../src/ui/useFolderSync';
+import { loadMe, syncStore } from './storage';
 import { openLibrary, type LibrarySource } from './source';
 import type { FolderSource } from '../../src/core/folder';
 import { Pens } from './Pens';
@@ -104,6 +107,7 @@ export function Library({
   const [query, setQuery] = useState('');
   const [colours, setColours] = useState<PenId[]>([]);
   const [pens, setPens] = useState<PenId[]>([...DEFAULT_PENS]);
+  const [me, setMe] = useState('');
   const [site, setSite] = useState<string | null>(null);
   const [when, setWhen] = useState<When>('any');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -135,6 +139,27 @@ export function Library({
     })();
     return () => stop?.();
   }, [given]);
+
+  /**
+   * The folder sync, run from here rather than from Settings.
+   *
+   * One pass at a time is the whole point of the hook, so there can only be
+   * one of it: two would each write what the other had not read yet. It lives
+   * here because the account row has to be able to say that a sync stopped
+   * (23) whichever screen you are on, and Settings is handed the same controls
+   * rather than making a second set.
+   */
+  const sync = useFolderSync(folders ?? browserFolders, syncStore);
+  const trouble =
+    sync.state.kind === 'on' && sync.state.trouble
+      ? sync.state.trouble
+      : sync.state.kind === 'needs-permission'
+        ? `${sync.state.name} needs permission again`
+        : null;
+
+  useEffect(() => {
+    setMe(loadMe()?.name ?? '');
+  }, [route]);
 
   // A colour arriving in the route becomes the filter. Written through to the
   // chips rather than held beside them, so the chip row and the list cannot
@@ -214,6 +239,9 @@ export function Library({
     setMarks(found);
     setSpaces(spacesFound);
     setPens(pensFound);
+    // Cheap, and it keeps the account row in step when the name is saved on
+    // the settings screen without leaving it.
+    setMe(loadMe()?.name ?? '');
   };
 
   const reread = async () => {
@@ -308,17 +336,6 @@ export function Library({
             </a>
           ))}
 
-          {/* Sync, backups and installing are still the old screen. Linked
-              rather than left stranded, which is what happened when Highlights
-              took the default route. */}
-          <p class="lib-nav-head">More</p>
-          <a
-            class={inSettings ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
-            href="#/settings"
-          >
-            Settings &amp; backups
-          </a>
-
           <div class="lib-nav-foot">
             {/* Pens sits at the foot, where the boards put it: it is a thing
                 you set up once and then hardly open again (12). */}
@@ -326,14 +343,33 @@ export function Library({
               <PensIcon />
               Pens <span class="lib-nav-count">{pens.length}</span>
             </a>
-            {/* 17a: the account row sits at the foot, quiet. It says where this
-                library is reading from, because on Free that is the one thing
-                that explains why a highlight is or is not here. */}
-            <p class="lib-account">
-              {source?.kind === 'extension'
-                ? 'Reading the extension on this device'
-                : 'Reading this device'}
-            </p>
+            {/* 17a: the account row, where signing in, your account, settings
+                and saving a copy all live. Quiet almost always, and the one
+                thing in Kona allowed to speak up, because 23 allows no
+                notifications and a sync that stopped has no other route to
+                you.
+
+                It said "Reading this device" before, which is the version the
+                board rejected by name: a state you cannot act on, that never
+                changes, sitting where the one message that matters has to be
+                believed. */}
+            <a
+              class={trouble ? 'lib-acct lib-acct--trouble' : 'lib-acct'}
+              href="#/settings"
+              aria-current={inSettings ? 'page' : undefined}
+            >
+              <span class="lib-acct-face" aria-hidden="true" data-empty={me ? undefined : 'yes'}>
+                {initials(me)}
+              </span>
+              {trouble ? (
+                <span class="lib-acct-who">
+                  <span class="lib-acct-trouble">{trouble}</span>
+                  <span class="lib-acct-quiet">This machine only, for now</span>
+                </span>
+              ) : (
+                <span class="lib-acct-who">{me || 'Your name and your backups'}</span>
+              )}
+            </a>
           </div>
         </nav>
 
@@ -345,7 +381,7 @@ export function Library({
               marks={marks ?? []}
               spaces={spaces}
               onChanged={() => void reread()}
-              folders={folders}
+              sync={sync}
               syncOnDemand={syncOnDemand}
             />
           ) : inSpaces && source ? (
@@ -574,4 +610,18 @@ function PensIcon() {
       <path d="M13 3.6h2.8" />
     </svg>
   );
+}
+
+/**
+ * Two letters for the face in the account row.
+ *
+ * A dashed empty circle when there is no name, which is the board's signed-out
+ * state: something to act on rather than a state you cannot change.
+ */
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '';
+  const first = parts[0]![0] ?? '';
+  const last = parts.length > 1 ? (parts[parts.length - 1]![0] ?? '') : '';
+  return `${first}${last}`.toUpperCase();
 }

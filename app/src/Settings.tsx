@@ -4,8 +4,7 @@ import { toMarkdown } from '../../src/core/markdown';
 import type { Space } from '../../src/core/spaces';
 import type { Theme } from '../../src/core/theme';
 import type { Mark } from '../../src/core/types';
-import { browserFolders, type FolderSource } from '../../src/core/folder';
-import { useFolderSync } from '../../src/ui/useFolderSync';
+import type { FolderSyncControls } from '../../src/ui/useFolderSync';
 import { Install } from './Install';
 import {
   identityForBackup,
@@ -15,7 +14,7 @@ import {
   restoreIdentity,
   saveMe,
 } from './storage';
-import { loadScope, syncStore } from './storage';
+import { loadScope } from './storage';
 import { applyTheme, loadTheme, saveTheme } from './theme';
 
 /**
@@ -43,16 +42,18 @@ interface Props {
   spaces: Space[];
   onChanged: () => void;
   /**
-   * Where a sync folder comes from. In a browser that is a handle the user
-   * picks and the browser may forget; on the desktop it is a real path that
-   * does not expire, which is the Electron app's entire reason to exist.
+   * The one folder sync, made by the library and handed down.
+   *
+   * Not made here: the hook runs a pass on a timer and allows one at a time,
+   * so a second copy would mean two passes writing what the other had not
+   * read. The account row needs the same state to say that a sync stopped.
    */
-  folders?: FolderSource;
+  sync: FolderSyncControls;
   /** The desktop tray's "sync now", handed a function to call. */
   syncOnDemand?: (run: () => void) => void;
 }
 
-export function Settings({ marks, spaces, onChanged, folders, syncOnDemand }: Props) {
+export function Settings({ marks, spaces, onChanged, sync, syncOnDemand }: Props) {
   const [theme, setTheme] = useState<Theme>('system');
   const [name, setName] = useState('');
   const [said, setSaid] = useState<string | null>(null);
@@ -197,7 +198,11 @@ export function Settings({ marks, spaces, onChanged, folders, syncOnDemand }: Pr
             type="button"
             class="sp-undo"
             onClick={() => {
-              void saveMe(name).then(() => say('Saved.'));
+              void saveMe(name).then(() => {
+                say('Saved.');
+                // The account row at the foot of the nav shows this name.
+                onChanged();
+              });
             }}
           >
             Save
@@ -205,7 +210,7 @@ export function Settings({ marks, spaces, onChanged, folders, syncOnDemand }: Pr
         </div>
       </section>
 
-      <FolderSync onChanged={onChanged} say={say} folders={folders} syncOnDemand={syncOnDemand} />
+      <FolderSync onChanged={onChanged} say={say} sync={sync} syncOnDemand={syncOnDemand} />
     </>
   );
 }
@@ -224,15 +229,14 @@ export function Settings({ marks, spaces, onChanged, folders, syncOnDemand }: Pr
 function FolderSync({
   onChanged,
   say,
-  folders = browserFolders,
+  sync,
   syncOnDemand,
 }: {
   onChanged: () => void;
   say: (m: string) => void;
-  folders?: FolderSource;
+  sync: FolderSyncControls;
   syncOnDemand?: (run: () => void) => void;
 }) {
-  const sync = useFolderSync(folders, syncStore);
   const state = sync.state;
 
   // The tray asks for a pass; the screen is what knows how to do one.
