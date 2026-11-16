@@ -299,24 +299,76 @@ section is in.
 
 ## Still not built, named plainly
 
-**The library half of decision 13.** 13 asks for the unfindable state in two
-places: in place when you open the page, which is now built, and *in the
-library, as a state on the highlight, so you can see which of your highlights
-have rotted instead of discovering it one at a time*. The second is not built,
-and it is not a small one: it means storing that a passage could not be found,
-and the risk is false positives. A mark goes unresolved while the page is
-still loading, while a long chat has not rendered the older messages, and
-whenever a layout changes under the adapter. Writing "rotted" on a highlight
-in any of those cases would be the main ability degrading quietly, which is
-the one thing you said must not happen. It needs its own pass, with the
-settling rules worked out and tested, rather than being bolted onto the end of
-this one.
+**Everything that needs a server**, which is an account (5), sync and what
+privacy means once there is one (6), two devices disagreeing (21), and the
+half of 11 above Free. All designed, none buildable here.
+
+**The iOS container** (9, 9a). `apple/package.sh` needs a Mac and Xcode.
+
+**Team** (1f, 1g, and the thread states), frozen by decision rather than
+missing.
 
 **The phone boards** (`PhoneLibrary`, `PhonePanel`, `PhoneBar`, `PhoneSelect`)
 are met by a breakpoint and a folding nav, not by a layout drawn against each
-board. Nobody has opened the rebuilt library on a real phone.
+board. The bar at the foot is built and measured at 375px; nobody has opened
+the rebuilt library on a real phone.
 
 ---
+
+## The pass that closed the decisions, and what I decided inside it
+
+Going through both documents end to end turned up seven settled decisions with
+nothing built, and building them meant deciding a few things they did not
+cover. These are those.
+
+**Where a site will not let Kona copy a picture (18).** 18 says Kona keeps a
+copy rather than a link, and assumes the copy can always be had. It cannot: a
+picture served from another host without CORS headers taints a canvas, and the
+browser then refuses to hand over the pixels. There are two tries, the canvas
+and then an ordinary fetch, and where both fail **the highlight is kept
+without the picture and says so once**. The alternative would have been to
+refuse to keep it, or to fall back to the original address, which is the one
+thing 6 forbids. If you would rather it refused, that is one line.
+
+**When a lost landing is written down (13).** The risk in 13's library half is
+false positives: a mark goes unresolved while a page is loading, while a chat
+has not rendered its older messages, whenever a layout changes under the
+adapter. So it is written only where Kona knows. PDFs from the first second.
+Ordinary web pages once the page has settled, by the same five seconds the
+broken-layout notice waits, and cleared the moment the passage is found again.
+**Never from a chat site**, where a passage further up the thread is
+indistinguishable from one that was edited away. The cost of that caution is
+that a rotted ChatGPT highlight is only reported in the panel, where you can
+see it, and never in the library.
+
+**The context menu asks the page before capturing (16).** It would have been
+simpler to decide by URL, which is what "on a PDF" sounds like. Asking first
+covers every page Kona cannot run in rather than only the ones whose address
+ends in `.pdf`, and it means the content script, where there is one, keeps
+doing the whole job: finding the passage, painting it, storing where it sits.
+
+**A single delete waits rather than undoes.** DEFINITIONS says a single delete
+can be undone immediately afterwards. The row goes at once and the delete is
+written only when the offer expires, rather than writing it and restoring on
+undo. It means closing the tab mid-window leaves the highlight standing, which
+is the safe direction, and it means the kept picture never has to be put back.
+
+**Spaces write through the source.** Not a judgement call so much as a defect:
+the spaces screen wrote straight to the device on the grounds that the
+extension and the web app share one store. They do not. A space made in the
+library while the extension was installed went where the panel could never see
+it, so 1a could not work.
+
+**Two things I left alone, on purpose.**
+
+*The extension's Library button opening the installed app (24).* 24 says the
+button should open the installed app when there is one, and that the behaviour
+is worth confirming before it is relied on. I cannot confirm it from here, and
+the fallback is what already happens, so it stays a tab.
+
+*Renaming `conversationId`.* Still the middle of every storage key, still a
+migration rather than a rename, and still wanting its own session with the
+migration tested against a library made before it.
 
 ## What I would look at first, if I were you
 

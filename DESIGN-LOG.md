@@ -60,6 +60,14 @@ carries it.** Sync is weeks of work, and you cannot sensibly build the thing
 that syncs spaces until you have decided what a space is. The first four are
 cheap, need no server, and make what already exists better.
 
+**Every one of them is now settled, and every one that needs no server is
+built.** What is left open is named rather than implied, and it is three
+things: Team's price, which waits for what the setup costs to run; the phone
+bar in practice, which is drawn, built and still wants a real iPhone; and
+everything that depends on a server existing, which is 5, 6, 21 and the half
+of 11 above Free. `BUILD-LOG.md` is what was built and in what order,
+`REVIEW.md` is what was decided along the way without asking.
+
 ---
 
 ### 1. What a space is — settled
@@ -2622,7 +2630,18 @@ Worth saying plainly, because it is easy to miss: **this is the core gesture on
 the surface iOS was chosen for.** If it is awkward, 9 is worth less than it
 looks.
 
-**Decided:** _______
+**Decided: the bottom bar, and it is built.** A stylesheet rule rather than a
+second component, at the same 839px breakpoint the panel uses, because it is
+the same question: whether there is room for this and a readable column of
+somebody else's text. The contents are the desktop bar's contents, nothing
+under 38px, sitting above the safe area so iOS Safari's own URL bar does not
+land on it. The note card docks there too, and the resting mark steps above
+the bar while one is up rather than sitting on the control being reached for.
+
+The five questions below still want a real phone, and question 3 still decides
+everything. Nothing about building it first was wasted if the answer goes the
+other way: the share route (1h) exists either way, and what would change is
+which gesture is offered, not what a highlight is.
 
 ---
 
@@ -2781,14 +2800,21 @@ what is written, kept here so the definitions do not have to carry it.
 | Defined | What exists |
 | --- | --- |
 | **Active space** | Built. A device-local id, a picker in the panel, a hook in the save path, and 2g's way back out. Per device and never on the space itself, for the reason now in `DEFINITIONS.md`. |
-| **Thread states** | Settled and not-settled. *Asking* does not exist, and it is the one that does the work. |
-| **Raising a question (ping)** | Nothing. Comments exist, but none can be marked a question. |
-| **Poll** | Nothing. |
+| **Palette** | Built, all seven of 12. A highlight stores a value rather than a palette slot, so editing the case repaints nothing; the colours in use can outnumber the pens and the filter is built from the library. |
+| **Archived highlight** | Built. The state, both views, the bulk gesture, and Free's fifteen, which hands the slot back when one is brought out. |
+| **A highlight that cannot be found** | Built in both places 13 asks for. In the page, as a block saying the landing is gone and the passage is not. In the library, from what the page wrote down last time, and from the first second for a passage kept out of a PDF. Never guessed on a chat site, which renders older messages only when you scroll to them. |
+| **A picture** | Built. Kept by right-click, copied rather than linked, outlined in Kona's own layer, with the words nearest it as its searchable content. Where a site refuses the copy the highlight is kept without it and says so, which 18 did not foresee. |
+| **A PDF** | Capture built, by right-click, which is the one route a privileged page leaves open. No mark drawn and no landing, as 16 says. |
+| **A link with nothing marked on it** | Built. Held by the space, never reaching the library, and marked read once something on that page has been highlighted. |
+| **Space has a note, labels, a position** | All built. Reordering by hand is two controls rather than a drag, because 2g settled that nothing here may need a pointer. |
+| **Delete** | Built in both places. One at a time is undoable while the offer stands and is only written when it expires; several at once asks first. |
+| **Thread states** | Settled and not-settled. *Asking* does not exist, and it is the one that does the work. Team, and frozen. |
+| **Raising a question (ping)** | Nothing. Comments exist, but none can be marked a question. Team, and frozen. |
+| **Poll** | Nothing. Team, and frozen. |
 | **Seen / unseen** | Nothing, and when it is built it must stay off the shared space. |
 | **Telling everyone** | A space travels by shared folder or handed-over file, so a ping lands when the other copy next syncs. Real push needs the server. |
-| **Space has a note, labels, a position** | Only `createdAt`. Reordering by hand exists for highlights (`order.ts`) and not for spaces. |
 | **Attention list** | Nothing. `openQuestions` exists as a plain list and is not joined to anything. |
-| **Archived highlight** | Nothing. Neither the state nor the filter exists. The rebuilt Highlights view says *Archived left out* and has nothing to leave out yet. |
+| **Sync, account, Pro** | Nothing, and nothing can be: there is no server. Everything that depends on one, 5, 6, 21 and half of 11, is designed and unbuilt. |
 | **Page** | Correct as of today: tracking parameters are stripped and old highlights migrate. |
 | **Highlight survives an edited page** | Correct as of today. |
 

@@ -716,3 +716,111 @@ highlights carry.
 | Verified in a browser | a mixed pen painting on a real page, the Pens screen adding and retiring, the retired-colour link into the library, the tag filter, the account row in all three states |
 | Boards with nothing built | none in `library/` or `panel/`; the four phone boards are met by a breakpoint rather than a layout |
 | Still not built | the library half of 13, `team/` folded in (3d), the paid half |
+
+---
+
+## The pass that closed the decisions
+
+Read `DIRECTION.md` and `DESIGN-LOG.md` end to end against what existed, made
+a list of what was decided and not built, and built it. What follows is that
+list, and then what is left.
+
+### The phone (22)
+
+The bar is fixed to the foot of the screen. It was a comment in `Bar.tsx`
+saying this needs an iPhone, which was true of *testing* it and not of
+building it: the decision is settled and it is settled as something a desk can
+draw.
+
+One stylesheet rule at the panel's own breakpoint, not a second component. The
+note card docks the same way, and the resting mark steps above the bar while
+one is up, which a screenshot caught: the mark was sitting exactly on the Note
+button.
+
+Measured in the harness at 375×812: the bar spans 359 of 375 and sits 8px off
+the bottom, the resting mark moves from 748 to 700.
+
+### PDFs (16)
+
+The menu was relaying to the content script, which cannot exist in a PDF
+viewer, so the item did nothing on the one page it was most needed. It now
+asks the page first and keeps the passage itself when nothing answers, which
+covers every page Kona cannot run in rather than only the ones whose address
+ends in `.pdf`.
+
+### A highlight that cannot be found, in the library (13)
+
+`landing: 'lost'` on the mark, written only where Kona knows. From the first
+second for a PDF capture. From the page for an ordinary web page that has
+settled and still does not hold the passage, and cleared the moment it does.
+Never on a chat site: they render older messages only when you scroll to them,
+so a passage further up the thread looks exactly like one that was edited
+away, and writing *rotted* on that would be the main ability degrading
+quietly.
+
+### A picture is a highlight (18)
+
+The largest of them. Right-click a picture and it is kept, with the bytes
+copied rather than linked, because showing it later by its original address
+would tell that host what you kept, every time the library was opened, for
+Free users too.
+
+- Scaled to 1400px on the long edge, written as WebP, under its own storage
+  key so that reading a list of highlights does not drag megabytes with it.
+- The caption, else the alt text, else the words nearest it become its
+  searchable content. A picture with nothing written near it says so.
+- Outlined in Kona's own layer from a rectangle recomputed as the page
+  scrolls, because `::highlight()` takes text ranges and a picture is not
+  text. Nothing enters the page's DOM, and the outline takes no clicks: a tap
+  is hit-tested against the rectangle, so a link under a picture still works.
+- Deleting the highlight deletes the bytes, and the undo window holds them.
+
+Checked end to end in a browser rather than only in tests: kept from the
+harness page, stored as WebP, outlined exactly over the image, shown in the
+panel and in the library.
+
+**One thing 18 did not foresee.** It assumed the bytes could always be had.
+A cross-origin picture taints a canvas, and the browser then refuses to hand
+the pixels over; a fetch can be refused as well. So there are two tries and
+then an honest failure: the highlight is kept without the picture and says so
+once, keeping the words that make it findable.
+
+### Spaces (20, 1e, 1b)
+
+- **A page you have not read yet.** Bare links live in spaces and never in the
+  library. One says *read* once something on that page has been highlighted.
+- **Order, delete, labels.** The order is two controls rather than a drag,
+  since 2g settled that nothing here may need a pointer. Deleting says what it
+  costs: the highlights are pointed at, not held, and they stay.
+- **A defect found on the way.** The spaces screen wrote straight to the
+  device on the grounds that the extension and the web app share one store.
+  They do not: two origins, two stores, and the bridge between. A space made
+  in the library while the extension was installed went where the panel could
+  never see it, so setting it active while you read could not work. Spaces now
+  go back through the source they were read from.
+
+### The rest
+
+- **Long passages (19).** The opening, with a way to open the whole out, in
+  the rooms where the page may be gone. The panel clamps instead: the card is
+  already the way to the whole of it.
+- **The account menu (17a).** Saving a copy first and saying what it is for,
+  settings, what's new, and the two offers that are only made when they are
+  not already true.
+- **What's new in the library (4, 24).** The same notes that ship with the
+  extension, from the same file, so nothing is fetched to show them.
+- **Delete in the library.** It was missing entirely: a highlight whose page
+  was gone could be archived and never removed.
+
+---
+
+## Where it stands, at the end of the decisions
+
+| | |
+| --- | --- |
+| Tests | 541 |
+| Settled decisions with nothing built | none that a server is not needed for |
+| Verified in a browser this pass | the phone bar at 375px, a picture kept and outlined and shown in both rooms, a page kept to read in a space, the space order, delete and undo, the account menu, What's new |
+| Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
+| Needs hardware | the phone bar in practice (22), and the iOS container (9, 9a), which needs a Mac and Xcode |
+| Frozen by decision | Team (1f, 1g), and the Electron app |
