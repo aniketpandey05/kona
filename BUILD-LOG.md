@@ -633,3 +633,86 @@ rebuilt.
 been publishing to on every push the whole time, the placeholder was the only
 thing missing. The bridge's content script, the Library button and the page
 client all read `KONA_ORIGINS`, so a custom domain later is one line.
+
+---
+
+## Going back over the boards
+
+Prompted by one question, *what about allowing the colour to create new
+tints?*, which was fair: the rebuild shipped four fixed pens and called
+decision 12 done. So this was a pass over every board in `design/mockups`
+against what exists, and then building what was missing.
+
+### The palette (12)
+
+`src/core/pens.ts` is what a pen is; `src/core/palette.ts` is which pens you
+have. The split matters: the first is about a colour on a highlight that was
+made months ago, the second about the case you are marking from today.
+
+A highlight's colour is a value now, `yellow` or `#14b8a6@45`. `Mark.color`
+widened from four names to `PenId`, which is what let rule 4 be structural
+instead of promised. The painter builds a layer per colour *on the page* as
+the colours appear, since it can no longer know the list in advance.
+
+Checked in a real browser and not only in tests, because this is the main
+ability: on the harness chat page, marking with a mixed pen registers
+`::highlight(kona--14b8a6-45)`, writes the matching rule, and paints.
+
+Two bugs the work turned up.
+
+The default pens were being derived from the dot value rather than read from
+the token file. The boards draw the dot and the mark as two different values
+(yellow's dot is `#eab308`, its mark `rgba(250, 204, 21, 0.45)`, a lighter
+yellow), so deriving one from the other repainted every yellow highlight ever
+made a slightly different yellow. `tests/painter.test.ts` caught it, because
+it compares against the tokens rather than against the pens module. A test
+that asserts a thing equals itself would have passed.
+
+The library was reading its storage in two near-identical places, one in the
+load effect and one for re-reads. Adding the palette to one left the nav
+counting five pens beside a list of six. One function now.
+
+### The Pens screen
+
+Built from `library/Pens.dc.html`: the case with counts, *Also in your
+library* for colours that outlived it, and the card you mix in. Two departures
+from the board, both recorded in `REVIEW.md` with the reasoning, the opacity
+ceiling and the flat previews.
+
+The palette crosses the bridge (`pens` and `savePens`), so where the extension
+is installed the Pens screen edits the list the bar in the page marks with. A
+device with no extension keeps its own. Per device either way, because Free
+does not sync.
+
+### The account row (17a)
+
+It said "Reading this device", which is the state the board rejects by name.
+Rebuilt to the three the board draws. The folder sync hook moved up to the
+library for it, since it allows one pass at a time and both the row and the
+settings screen need its state.
+
+### Decision 13, in place
+
+One line on a row became the block the board draws, with the sentence that is
+the decision itself. The library half of 13 is still not built, and `REVIEW.md`
+says why: it needs stored state, and the risk is writing "rotted" on a
+highlight that was only slow to load.
+
+### Tags
+
+Capturable since the note editor, readable nowhere. Search had been indexing
+them the whole time, which made it worse: the only way to use a tag was to
+remember it. The Main board's nav section is in, built from the tags the
+highlights carry.
+
+---
+
+## Where it stands, after this pass
+
+| | |
+| --- | --- |
+| Tests | 512 |
+| Built this pass | the palette and the Pens screen (12), the account row (17a), decision 13 in place, tags in the nav |
+| Verified in a browser | a mixed pen painting on a real page, the Pens screen adding and retiring, the retired-colour link into the library, the tag filter, the account row in all three states |
+| Boards with nothing built | none in `library/` or `panel/`; the four phone boards are met by a breakpoint rather than a layout |
+| Still not built | the library half of 13, `team/` folded in (3d), the paid half |

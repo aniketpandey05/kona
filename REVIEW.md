@@ -222,14 +222,6 @@ rename. It wants its own session, with the migration tested against a library
 made before it. Doing it blind at the end of a long run of other work is how a
 library gets lost.
 
-**The dead library branch in `app/src/App.tsx`.** Unreachable since the
-Highlights view took its route. It comes out when Spaces is rebuilt, which is
-the same file.
-
-**Archiving.** The Highlights view says *Archived left out* and has nothing to
-leave out: neither the state nor the filter exists. Decision 10 settles what it
-means; nothing is built.
-
 **`app/` and `team/` still carry their own `--accent`.** They adopt the tokens
 as each screen is rebuilt, which is the rule set in *3a and 3b, as built*.
 `team/` has not been touched at all, so 3d: one web app, not two, is still
@@ -242,11 +234,97 @@ one. Until then the Library button opens a page that does not exist.
 
 ---
 
+---
+
+## The boards I had skipped, and what I did about them
+
+You were right, and the hit landed. I built four fixed colours and called
+decision 12 done, when 12 settles seven things and there is a whole board for
+the screen. So I went back through every board in `design/mockups` against
+what is built. Four gaps, three now closed, one named below and not.
+
+**The palette (12, all seven).** Built, and the shape of it is the part worth
+reading: a highlight now stores a *value*, `#14b8a6@45`, not one of four
+names. That is rule 4 made structural rather than promised. A reference to a
+palette slot would have repainted your library the day you edited a pen, which
+is the thing you overruled me on and were right about.
+
+Two consequences follow and both are built: the colours in use can outnumber
+the pens, and filtering by colour therefore reads your library rather than
+your palette. *Also in your library* on the Pens screen is where a retired
+colour goes, and it links through to those highlights.
+
+**I overrode the board on the opacity ceiling.** The board stops the slider at
+60% and labels that ceiling "the one piece of 12 still open". The design log
+settles it the other way, no ceiling and settled in those words, with your
+reasoning: it
+is your pen, nothing already marked changes, and the preview shows it before
+it is made. I followed the log, because it is the later document and it
+records the decision rather than a drawing of it. **If the board was the
+later word, say so and the ceiling goes back in, it is one line.**
+
+**I also departed from the board on the two previews**, which it draws as a
+vertical gradient with dark ink on both the light and the dark page. The CSS
+Custom Highlight API cannot paint a gradient, and the measured contrast of
+dark ink over a mark over a dark page is 1.5:1. So the previews are flat and
+the dark one writes light ink: a preview that is prettier than the paint is a
+preview of something else. This one I would not change back.
+
+**The account row (17a) was the version your board rejects by name.** It said
+"Reading this device". The board's own note says the earlier row had four
+states and three were furniture, *on this device never changes, in step never
+changes, mid-sync is a flicker nobody watches*, and that only the fourth
+earned its place. It is now quiet, and speaks once: a folder sync that has
+stopped, in amber, because 23 allows no notifications and that message has
+exactly one route to you.
+
+That moved the sync hook up to the library, since it allows one pass at a time
+and the row needs the same state the settings screen does. The nav lost its
+"More" section, because settings are what the row opens, which is what the
+board shows.
+
+**Decision 13 in place was one line on a row.** The board gives it a block,
+and the sentence under the warning *is* the decision: the passage you kept is
+not in it any more, you still have the passage. It now says when each was
+kept, that it is still searchable, and which space it is still in, with the
+ones that did resolve under "Still here on this page".
+
+**Tags were write-only.** You could add one from the note card and never read
+it back: nothing in the library listed or filtered by them. Search has been
+indexing them the whole time, which made it worse rather than better, since
+the only way to use a tag was to remember it. The Main board's third nav
+section is in.
+
+---
+
+## Still not built, named plainly
+
+**The library half of decision 13.** 13 asks for the unfindable state in two
+places: in place when you open the page, which is now built, and *in the
+library, as a state on the highlight, so you can see which of your highlights
+have rotted instead of discovering it one at a time*. The second is not built,
+and it is not a small one: it means storing that a passage could not be found,
+and the risk is false positives. A mark goes unresolved while the page is
+still loading, while a long chat has not rendered the older messages, and
+whenever a layout changes under the adapter. Writing "rotted" on a highlight
+in any of those cases would be the main ability degrading quietly, which is
+the one thing you said must not happen. It needs its own pass, with the
+settling rules worked out and tested, rather than being bolted onto the end of
+this one.
+
+**The phone boards** (`PhoneLibrary`, `PhonePanel`, `PhoneBar`, `PhoneSelect`)
+are met by a breakpoint and a folding nav, not by a layout drawn against each
+board. Nobody has opened the rebuilt library on a real phone.
+
+---
+
 ## What I would look at first, if I were you
 
 1. The manifest change, because it ships and is awkward to take back.
-2. The minimap deletion, because it removed something that worked.
-3. The 840px breakpoint, because I derived the number rather than found it.
-4. The pen colours, because I overrode a board on the evidence of another one.
-5. Whether the library reading from the bridge *or* the device, never both,
-   is the behaviour you want on Free.
+2. The opacity ceiling, because the board and the log disagree and I picked
+   the log. One line either way.
+3. The minimap deletion, because it removed something that worked.
+4. The 840px breakpoint, because I derived the number rather than found it.
+5. The pen colours, because I overrode a board on the evidence of another one.
+6. Whether the library reading from the bridge *or* the device, never both,
+   is the behaviour you want on Free, which the palette now follows too.
