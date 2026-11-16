@@ -366,13 +366,26 @@
   cursor: pointer;
 }
 
+/**
+ * Always visible, never hover-only.
+ *
+ * 10 calls archiving an ordinary gesture, used often, and says that wherever
+ * both are offered archive is at least as easy to reach as delete. A control
+ * revealed on hover is neither: it is invisible at a glance on a desktop and
+ * it does not exist at all on a touch screen, where there is no hover to give.
+ *
+ * So it is quiet rather than hidden, and louder when you reach for it.
+ */
 .lib-row-do {
-  opacity: 0;
+  color: var(--kona-paper-ink-muted);
+  border-color: transparent;
 }
 
 .lib-row:hover .lib-row-do,
+.lib-row-do:hover,
 .lib-row-do:focus-visible {
-  opacity: 1;
+  color: var(--kona-accent-link);
+  border-color: var(--kona-paper-line-strong);
 }
 
 .lib-chosen {
