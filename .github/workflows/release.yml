@@ -1,0 +1,62 @@
+name: Release
+
+# Cuts a release from a version tag, with the three packaged extensions
+# attached. The packages are built here rather than uploaded from somebody's
+# laptop, so what people download is what the tagged commit produces and
+# nothing else: the same checks run first, and a red one stops the release.
+#
+#   git tag v1.2.0
+#   git push origin v1.2.0
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release, for example v1.2.0'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      # The same gate the branch has. A release that skipped it would be the
+      # one build nobody checked.
+      - run: npm run compile
+      - run: npm test
+
+      - run: npm run zip
+      - run: npm run zip:firefox
+      - run: npm run zip:safari
+
+      - name: Check the version matches the tag
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          packaged="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$packaged" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package.json $packaged" >&2
+            exit 1
+          fi
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "Kona $GITHUB_REF_NAME" \
+            --notes-file .github/RELEASE_NOTES.md \
+            .output/*.zip
