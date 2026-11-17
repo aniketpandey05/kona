@@ -1,6 +1,7 @@
 import { browser } from '#imports';
 import { useEffect, useState } from 'preact/hooks';
 import type { RuntimeMessage } from '../../core/messages';
+import { loadPaused, savePaused } from '../../core/pause';
 import { KonaMark } from '../../ui/KonaMark';
 
 /**
@@ -21,11 +22,19 @@ import { KonaMark } from '../../ui/KonaMark';
  *   twenty, and twenty is the success case. A list that gets worse the more
  *   you use the product is the wrong list: and the browser already draws it,
  *   authoritatively, on its own extensions screen.
- * - **The soft switch.** `local:disabled-sites` was a second list that could
- *   disagree with the browser's: revoke a site from the browser's screen and
- *   Kona's copy never heard, so the popup went on offering a switch for a site
- *   it could no longer touch. With nothing built in, *allowed* and *on*
- *   collapse into one fact and the second list has no reason to exist.
+ * - **The soft switch, per site.** `local:disabled-sites` was a second list
+ *   that could disagree with the browser's: revoke a site from the browser's
+ *   screen and Kona's copy never heard, so the popup went on offering a switch
+ *   for a site it could no longer touch. With nothing built in, *allowed* and
+ *   *on* collapse into one fact and the second list has no reason to exist.
+ *
+ * What came back, and why it is not that switch: **off, everywhere.** One
+ * boolean has no list to disagree with, so 3e's objection does not reach it.
+ * Which sites Kona may read is still the browser's word alone; this says only
+ * whether Kona is listening on them. It is here because selecting text is not
+ * a request to highlight it, and somebody who is copying, searching or keeping
+ * their place should be able to stop the bar without handing a permission
+ * back and being asked for it again afterwards.
  */
 const send = (message: RuntimeMessage) => browser.runtime.sendMessage(message);
 const patternFor = (url: URL) => `${url.protocol}//${url.hostname}/*`;
@@ -34,6 +43,7 @@ export function Popup() {
   const [url, setUrl] = useState<URL | null>(null);
   const [ready, setReady] = useState(false);
   const [allowed, setAllowed] = useState<string[]>([]);
+  const [paused, setPaused] = useState(false);
 
   const refresh = async () => {
     setAllowed(((await send({ type: 'list-sites' })) as string[]) ?? []);
@@ -47,10 +57,22 @@ export function Popup() {
       } catch {
         setUrl(null);
       }
+      setPaused(await loadPaused());
       await refresh();
       setReady(true);
     })();
   }, []);
+
+  /**
+   * Written, then shown. Every open tab is watching this key, so the pages
+   * behind the popup go quiet together rather than one at a time as you
+   * happen to visit them.
+   */
+  const togglePause = async () => {
+    const next = !paused;
+    await savePaused(next);
+    setPaused(next);
+  };
 
   const hostname = url?.hostname ?? '';
   const supported = url?.protocol === 'https:' || url?.protocol === 'http:';
@@ -96,8 +118,28 @@ export function Popup() {
         </label>
       )}
 
-      {ready && pattern && !on && (
+      {ready && pattern && !on && !paused && (
         <p class="pop-hint">Your browser will ask you to allow this site. Nothing happens until you do.</p>
+      )}
+
+      {/*
+        Off, everywhere. Separate from the switch above because it answers a
+        different question: that one is which sites Kona may read, this one is
+        whether it is listening at all.
+      */}
+      {ready && (
+        <section class="pop-pause">
+          <label class="pop-toggle">
+            <input type="checkbox" checked={!paused} onChange={() => void togglePause()} />
+            <span class="pop-switch" aria-hidden="true" />
+            <span>Kona is {paused ? 'off' : 'on'}</span>
+          </label>
+          <p class="pop-hint">
+            {paused
+              ? 'No bar when you select, and nothing painted, on every site. Your highlights are all still here and come back when you turn it on.'
+              : 'Turn it off and Kona stops offering: no bar when you select anything. Nothing is deleted, on any site.'}
+          </p>
+        </section>
       )}
 
       {/*

@@ -899,11 +899,86 @@ opened on all three lines.
 
 ---
 
+## A way to shut Kona up
+
+> sometimes i select thing and i dont wanna highlight
+
+Which is most of the time. People select text to read with, to copy, to
+search, to keep their place on a long page, and Kona put a toolbar up for
+every one of them. 2b already settled the same point about the panel, that one
+which is always open is one that gets turned off for good, and a bar that
+cannot be made to stop is the same mistake with a smaller surface.
+
+Two answers, because there are two different wants underneath it.
+
+### Escape, for the moment
+
+The common case is not *turn this product off*, it is *not this time*. Escape
+dismisses the bar and leaves the selection exactly where it was: Kona's offer
+goes away, the words you were holding do not. Nothing brings it back until you
+select something else, because the selection has not changed, so there is no
+`selectionchange` to hear.
+
+One branch in the key handler that was already listening.
+
+### Off, for the afternoon
+
+A real switch, in the popup, where the user asked for it.
+
+**It is one boolean and not a list of sites, and that is the whole of why it
+does not reopen 3e.** That decision gave up the per-site soft switch, and the
+reason was specific rather than general: `local:disabled-sites` was a *second
+list* of sites beside the browser's own, and the two could drift. Revoke a
+site on the browser's extensions screen and Kona's copy never heard, so the
+popup went on offering a switch for a site it could no longer touch. A single
+`local:paused` has no list to disagree with. Which sites Kona may read is
+still the browser's word alone, exactly as 3e left it; this says only whether
+Kona is listening on the sites it is already allowed on.
+
+**Off means off, and it costs nothing.** No bar on a selection, no resting
+mark, nothing painted. It sets `enabled: false` on the controller, which was
+already written and already correct, and had never been reachable: the flag
+existed because taking a permission back tears the content script down, so
+nothing had ever set it. Its own comment says *stop painting and show nothing,
+but keep everything saved*, which is the right meaning of off for a product
+whose job is keeping things.
+
+Turning it back on resolves the marks against the page again, so the page
+comes back as it was rather than needing a reload. The difference between a
+pause and a reinstall.
+
+**Watched, not read once.** The switch is in the popup, which is a different
+page from the tab you are reading. Every open tab watches the key, so they go
+quiet together rather than one at a time as you happen to visit them.
+
+### A harness that was lying
+
+`harness/popup.html` loaded `popup.css` and neither `tokens.css` nor
+`fonts.css`: every rule, and none of the values they are written in. So
+`--kona-space-10` resolved to nothing, the switches rendered as unstyled text,
+and the one page with no other way to look at it showed a popup nobody would
+ship. Same imports as `main.tsx` now, theme included.
+
+### Checked
+
+Six tests: the default is on, it round-trips, the watcher tells every page,
+and the popup draws the right words both ways round, including the sentence
+that answers the question somebody turning a thing off is actually asking,
+which is whether their highlights are still there.
+
+In a browser, on the harness blog page: the bar appears on a selection and
+Escape takes it away while the selection stays; with Kona off, selecting
+raises no bar, no resting mark is drawn, `CSS.highlights` holds nothing, and
+the highlight is still in storage; turning it back on paints it again and the
+resting mark returns.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 547 |
+| Tests | 553 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |

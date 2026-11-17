@@ -12,6 +12,7 @@ import { describeMessage, resolveMarks, type ResolvedMark } from '../core/locate
 import type { PendingJump, RuntimeMessage } from '../core/messages';
 import { moveItem, nextOrder, sortByOrder } from '../core/order';
 import { HighlightPainter } from '../core/painter';
+import { loadPaused, watchPaused } from '../core/pause';
 import { describeQuote } from '../core/quote';
 import { linkToMark } from '../core/link';
 import { sameSite, siteLabel } from '../core/sites';
@@ -180,6 +181,7 @@ export class KonaController {
   private unwatchActive: (() => void) | undefined;
   private unwatchSpaces: (() => void) | undefined;
   private unwatchPens: (() => void) | undefined;
+  private unwatchPaused: (() => void) | undefined;
   /** Kept for a few seconds after a delete, so it can be undone. */
   private deleted: Mark | null = null;
   /**
@@ -235,6 +237,7 @@ export class KonaController {
       this.unwatchActive?.();
       this.unwatchSpaces?.();
       this.unwatchPens?.();
+      this.unwatchPaused?.();
       this.painter.dispose();
     });
 
@@ -243,6 +246,13 @@ export class KonaController {
     // change whenever anything is filed into it anywhere.
     void loadPalette().then((pens) => this.setState({ pens }));
     this.unwatchPens = watchPalette((pens) => this.setState({ pens }));
+
+    // Off, if it was left off. Read once at start and then watched, because
+    // the switch is in the popup, which is a different page: the tab you are
+    // reading has to hear about it without being reloaded, and every open tab
+    // has to go quiet at once rather than one at a time as you visit them.
+    void loadPaused().then((paused) => this.setEnabled(!paused));
+    this.unwatchPaused = watchPaused((paused) => this.setEnabled(!paused));
 
     void this.syncActiveSpace();
     this.unwatchActive = watchActiveSpaceId(() => void this.syncActiveSpace());
@@ -985,7 +995,14 @@ export class KonaController {
 
   private onKeyUp = (event: KeyboardEvent): void => {
     if (!this.state.enabled) return;
-    if (event.altKey && event.shiftKey && (event.code === 'KeyH' || event.code === 'KeyN')) {
+    if (event.key === 'Escape') {
+      // Selecting text is not a request to highlight it, and most of the time
+      // the answer to an unwanted bar is this rather than switching Kona off.
+      // The selection itself is left alone: Escape dismisses Kona's offer, not
+      // the words you were holding, and nothing brings the bar back until you
+      // select something else.
+      this.clearSelectionDraft();
+    } else if (event.altKey && event.shiftKey && (event.code === 'KeyH' || event.code === 'KeyN')) {
       void this.highlight('yellow', { withNote: event.code === 'KeyN' });
     } else if (event.altKey && event.shiftKey && (event.code === 'ArrowDown' || event.code === 'ArrowUp')) {
       this.step(event.code === 'ArrowDown' ? 1 : -1);
@@ -1008,6 +1025,20 @@ export class KonaController {
     this.ctx.setTimeout(() => {
       if (this.state.notice === notice) this.setState({ notice: null });
     }, NOTICE_MS);
+  }
+
+  /**
+   * On or off, from the switch in the popup.
+   *
+   * `refresh` already knows both halves: off clears the paint and the view and
+   * keeps every highlight saved, on resolves them against the page again. So
+   * turning Kona back on puts the page back as it was rather than needing a
+   * reload, which is the difference between a pause and a reinstall.
+   */
+  private setEnabled(on: boolean): void {
+    if (this.state.enabled === on) return;
+    this.setState({ enabled: on });
+    this.refresh();
   }
 
   private setState(patch: Partial<ViewState>): void {

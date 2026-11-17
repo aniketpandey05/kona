@@ -45,5 +45,11 @@ their own labels, and be deleted. **Delete** is in the library now: one can be
 undone, several at once ask first. **Tags** you add are listed and filter the
 library.
 
+**Turning Kona off.** Selecting text is not a request to highlight it, so
+`Esc` takes the bar away and leaves your selection where it was. For longer
+than a moment there is a switch in the popup: off means no bar and nothing
+painted, on every site. Nothing is deleted, and your highlights come back the
+moment you turn it on.
+
 Still not here, and needing a server rather than more work: an account, sync
 between devices, and shared spaces.

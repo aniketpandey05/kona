@@ -98,6 +98,17 @@ body {
   color: var(--kona-paper-ink-muted);
 }
 
+/*
+ * Off, everywhere. Ruled off from the site switch above it because the two
+ * answer different questions, and reading them as one list invites the idea
+ * that this one is also about this site.
+ */
+.pop-pause {
+  margin-top: var(--kona-space-12);
+  padding-top: var(--kona-space-12);
+  border-top: 1px solid var(--kona-paper-line);
+}
+
 .pop-open {
   margin-top: var(--kona-space-16);
   padding-top: var(--kona-space-16);

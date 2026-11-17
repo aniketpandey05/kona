@@ -344,7 +344,12 @@ in `DESIGN-LOG.md` and built nowhere.
 | `Alt+Shift+N` | Highlight it and open a note |
 | `Alt+Shift+↓` / `↑` | Go to the next or previous highlight, with a "3 of 7" marker |
 | `Ctrl+Enter` | Save the note you're writing |
-| `Esc` | Close the note without saving |
+| `Esc` | Dismiss the bar over a selection, or close the note without saving |
+
+Selecting text is not a request to highlight it, so `Esc` takes the bar away
+and leaves the selection alone. To stop Kona offering at all, there is a
+switch in the popup: off means no bar and nothing painted, on every site, and
+nothing is deleted, so your highlights come back the moment you turn it on.
 
 The first two are also listed along the bottom of the panel, and a welcome page walks through all of it the first time you install.
 

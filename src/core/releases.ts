@@ -30,6 +30,7 @@ export const RELEASES: readonly Release[] = [
       'Spaces can hold a page you have not read yet, be put in the order you want, carry their own labels, and be deleted.',
       'Delete, in the library. A single one can be undone; several at once asks first.',
       'Tags you add are listed in the library and filter it.',
+      'Turn Kona off. Press Escape and the bar goes away for that selection, or switch Kona off in the popup and it stops offering on every site at once. Nothing is deleted either way, and your highlights come straight back.',
     ],
   },
   {
