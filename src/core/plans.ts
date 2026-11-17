@@ -63,7 +63,6 @@ export const PLANS: readonly Plan[] = [
       'Everything in Free',
       'Sync across your own devices, through a folder you already keep in step',
       'Every surface on one library, the extension, the phone app and the desktop app',
-      'The desktop app, which keeps that folder in step with its window shut',
       'Or nothing to arrange at all: no folder to pick, no sync client of your own to run',
       'On a phone, and inside Safari and Firefox, where neither a folder nor an app reaches',
       'Meaning from a model too, so it knows words you have never kept together',
@@ -107,6 +106,32 @@ export const PLANS: readonly Plan[] = [
     built: false,
   },
 ];
+
+/**
+ * Whether anything above Free can actually be bought.
+ *
+ * **False, and it is the server that makes it false.** 5's account and 6's
+ * sync both need one, 8 cannot price Team until the running cost is known,
+ * and nothing in here takes a card. Everywhere a cap is felt (25) reads this
+ * rather than asserting that Pro is there to be had, so the day a tier ships
+ * one flag changes every sentence that offers it, and none of them is left
+ * pointing at a checkout that does not exist.
+ *
+ * The same defect, twice removed from this product already: a README that
+ * promised what was not built, and release notes still promising archiving a
+ * version after it shipped. A wall saying *or Pro* is the third form of it,
+ * and the worst placed, because it is read by somebody who has just been
+ * stopped and is looking for the way out.
+ */
+export const CAN_BUY: boolean = PLANS.some((plan) => plan.id !== 'free' && plan.built);
+
+/**
+ * The clause to say instead, where a paid tier would have been offered.
+ *
+ * One wording, in one place, so the two walls cannot drift apart or each
+ * invent their own apology.
+ */
+export const NOT_YET = 'which is not ready to buy yet';
 
 /**
  * Where Kona is published, once it is.

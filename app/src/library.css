@@ -1195,6 +1195,21 @@
   color: var(--kona-accent-link-hover);
 }
 
+/*
+ * Under the name in the account menu: that there is no account, and why.
+ *
+ * A name in this row, and the words "signed in" under it, both imply an
+ * account standing behind them. There is none, so it says so here rather
+ * than letting the row imply otherwise (5, 17a).
+ */
+.lib-menu-none {
+  margin: 0 0 var(--kona-space-6);
+  padding: 0 var(--kona-space-10);
+  font-size: var(--kona-text-xs);
+  line-height: 1.45;
+  color: var(--kona-paper-ink-muted);
+}
+
 .lib-menu-item {
   display: block;
   width: 100%;

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { PLANS } from '../src/core/plans';
+import { CAN_BUY, PLANS } from '../src/core/plans';
 import { TIERS } from '../team/src/billing';
 
 /**
@@ -64,6 +64,20 @@ describe('the price of the product, in both places it is written down', () => {
     expect(headings).toEqual(PLANS.map((plan) => plan.name));
   });
 
+  it('nothing above Free can be bought, and the walls read that rather than assert it', () => {
+    // 25 allows an upgrade to be mentioned where a limit is felt and nowhere
+    // else, which makes the two caps the only places Pro is named in the
+    // product, and the worst two places to promise it: somebody has just
+    // been stopped and is looking for the way out. Both branch on CAN_BUY so
+    // that shipping a tier changes the sentences with it.
+    expect(CAN_BUY).toBe(false);
+    for (const path of ['app/src/SpacesView.tsx', 'app/src/Library.tsx']) {
+      const wall = /class="lib-wall"[\s\S]*?<\/p>/.exec(readFileSync(resolve(path), 'utf8'));
+      expect(wall?.[0], `${path} has no wall`).toBeDefined();
+      expect(wall?.[0], path).toContain('CAN_BUY');
+    }
+  });
+
   it('the Team demo sells the same tiers as everywhere else', () => {
     // It held a fourth hand-written copy and drifted: still selling Slack and
     // Notion sync long after that stopped being what Team was. It derives from
@@ -74,6 +88,22 @@ describe('the price of the product, in both places it is written down', () => {
       expect(tier.price).toBe(PLANS[index]?.price);
       expect(tier.pitch).toBe(PLANS[index]?.pitch);
     }
+  });
+
+  it('every tier that is not built carries the badge, and the built one does not', () => {
+    for (const plan of PLANS) {
+      const block = new RegExp(`<h3>${plan.name}</h3>([\\s\\S]*?)</article>`).exec(site);
+      expect(/class="soon"/.test(block?.[1] ?? ''), plan.name).toBe(!plan.built);
+    }
+  });
+
+  it('the page no longer says the paid tiers are running today', () => {
+    // It said "built and running today" of Pro and Team while the server half
+    // of both was missing: a frozen desktop app listed as a Pro feature, a
+    // phone that needs a Mac, and shared spaces that update as people type.
+    // The same stale promise already removed twice, from the README and from
+    // the release notes.
+    expect(site).not.toMatch(/built and running/i);
   });
 
   it('nothing anywhere still sells Kona as being for one person only', () => {

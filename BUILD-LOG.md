@@ -824,3 +824,88 @@ once, keeping the words that make it findable.
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Needs hardware | the phone bar in practice (22), and the iOS container (9, 9a), which needs a Mac and Xcode |
 | Frozen by decision | Team (1f, 1g), and the Electron app |
+
+---
+
+## Saying coming soon where a server is what is missing
+
+A server costs money and there is not one, so nothing above Free can be
+bought. That was already true; what was not true was what the product said
+about it.
+
+### Three places offered a thing that cannot be had
+
+The walls were the worst of them, because of where they are read. Somebody
+who has just hit five spaces, or fifteen archived, is stopped and looking for
+the way out, and both notices pointed at Pro as though it were there to be
+bought:
+
+> Five is as many spaces as Free keeps. Delete one you have finished with, **or
+> Pro keeps as many as you like**.
+
+25 is right that an upgrade belongs where the limit is felt and nowhere else,
+which makes these the only two places in the product that name a paid tier,
+and therefore the only two that can make this mistake. They now say what is
+true: *keeping more is Pro, which is not ready to buy yet.*
+
+Neither wall asserts it. Both read `CAN_BUY` in `plans.ts`, derived from the
+`built` flags that were already there, so the day a tier ships, one line
+changes both sentences rather than somebody remembering to.
+
+**The account row said `Nobody signed in`**, which implies there is somewhere
+to sign in. There is not: 5's account needs 6's server. It says *No account
+yet*, and underneath, once, why.
+
+### And the landing page claimed the paid tiers were running
+
+> Both are built and running today, ahead of any way to pay for them.
+
+Of Pro and Team, and it was reading off the half of each that is real. A
+folder you already keep in step does carry your library between desktops, and
+a space can be handed over as a file and come back with somebody's work in
+it. But Pro also promised the phone, Safari, Firefox, sync with no folder to
+arrange, and meaning from a model; Team promised a space that updates as
+people type, permissions, vouched names and an admin console. None of that
+exists, and *built and running today* covered all of it.
+
+This is the same defect twice removed from this product already: a README
+promising what was not built, and release notes still promising archiving a
+version after it shipped. It is the third form of it and the most public.
+
+Pro, Team and Enterprise all carry *Coming soon* now, and the fine print says
+which half is built and that a server is what the other half is waiting on.
+
+**One promise withdrawn rather than relabelled.** Pro listed *the desktop app,
+which keeps that folder in step with its window shut*. The Electron app is
+frozen by decision, and the reason given is that hosted sync closes the gap it
+was filling, so that bullet was selling a thing nobody intends to finish. It is
+gone from `plans.ts` and from the site, which `pricing.test.ts` checks are
+identical line for line.
+
+### What stops it happening again
+
+Three tests, in the file that already guards the price against drifting
+between the two places it is written:
+
+- Every tier that is not built carries the badge on the site, and the built
+  one does not. Flipping `built` now fails until the page is brought with it.
+- The page does not say *built and running*.
+- Nothing above Free can be bought, and both walls branch on `CAN_BUY`
+  rather than writing their own sentence.
+
+Checked in a browser, not only in tests: five spaces made and the wall read,
+a sixteenth highlight archived and that wall read, and the account menu
+opened on all three lines.
+
+---
+
+## Where it stands
+
+| | |
+| --- | --- |
+| Tests | 547 |
+| What the product claims it can do | only what it does |
+| Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
+| Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |
+| Needs hardware | the phone bar in practice (22), and the iOS container (9, 9a), which needs a Mac and Xcode |
+| Frozen by decision | Team (1f, 1g), and the Electron app |

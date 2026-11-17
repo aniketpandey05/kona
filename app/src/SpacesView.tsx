@@ -2,6 +2,7 @@ import { useMemo, useState } from 'preact/hooks';
 import { FREE_SPACE_LIMIT, roomForSpace } from '../../src/core/archive';
 import { titleFor } from '../../src/core/capture';
 import { linkToMark } from '../../src/core/link';
+import { CAN_BUY, NOT_YET } from '../../src/core/plans';
 import { siteLabel } from '../../src/core/sites';
 import {
   addLink,
@@ -118,12 +119,17 @@ function AllSpaces({
       </div>
 
       {/* 7: at the cap you delete a space or you pay. Kona itself never removes
-          or hides anything, and the cap limits making rather than keeping. */}
+          or hides anything, and the cap limits making rather than keeping.
+
+          The paying half has nowhere to go yet, so Pro is named as what it is
+          rather than offered. Somebody who has just been stopped is looking
+          for the way out, and sending them to a checkout that does not exist
+          is the worst place in the product to be caught promising. */}
       {!room && (
         <p class="lib-wall" role="status">
-          Five is as many spaces as Free keeps. Delete one you have finished
-          with, or Pro keeps as many as you like. Nothing you have made goes
-          away either way.
+          Five is as many spaces as Free keeps. Delete one you have finished with, and nothing
+          you have made goes away.{' '}
+          {CAN_BUY ? 'Pro keeps as many as you like.' : `Keeping more is Pro, ${NOT_YET}.`}
         </p>
       )}
 

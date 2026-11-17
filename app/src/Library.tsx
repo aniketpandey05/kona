@@ -13,6 +13,7 @@ import {
 } from '../../src/core/archive';
 import { ago } from '../../src/core/ago';
 import { linkToMark } from '../../src/core/link';
+import { CAN_BUY, NOT_YET } from '../../src/core/plans';
 import { searchLibrary } from '../../src/core/search';
 import { countTags, sameTag } from '../../src/core/tags';
 import { siteLabel } from '../../src/core/sites';
@@ -587,11 +588,16 @@ export function Library({
 
               {/* 10a: the wall at fifteen. Bring one back, or Pro, and no delete
               in this notice, because offering it here would teach people to
-              delete when they meant to tidy. */}
+              delete when they meant to tidy.
+
+              Pro is named rather than offered while CAN_BUY is false: there is
+              no server, so there is no checkout to send anybody to. */}
               {wall && (
                 <p class="lib-wall" role="status">
-                  Fifteen is as many as Free puts away at once. Bring one back and the slot returns,
-                  or Pro archives without limit.{' '}
+                  Fifteen is as many as Free puts away at once. Bring one back and the slot returns.{' '}
+                  {CAN_BUY
+                    ? 'Pro archives without limit.'
+                    : `Archiving without limit is Pro, ${NOT_YET}.`}{' '}
                   <button type="button" class="lib-wall-close" onClick={() => setWall(false)}>
                     Close
                   </button>
@@ -852,7 +858,16 @@ function AccountMenu({
 
   return (
     <div class="lib-menu" role="menu" ref={box}>
-      <p class="lib-menu-who">{me || 'Nobody signed in'}</p>
+      <p class="lib-menu-who">{me || 'No account yet'}</p>
+      {/* 5: an account is only ever for keeping devices in step, and 6's sync
+          needs a server that does not exist. Said plainly, because the row
+          above looks exactly like every other account row on the web, and
+          those all have somewhere to sign in. */}
+      <p class="lib-menu-none">
+        {me ? 'A name kept on this machine, not an account. ' : 'Nothing to sign in to. '}
+        An account would only be for keeping your devices in step, and that sync is not built
+        yet.
+      </p>
       {trouble && <p class="lib-menu-trouble">{trouble}</p>}
 
       <button type="button" class="lib-menu-item" role="menuitem" onClick={onBackup}>
