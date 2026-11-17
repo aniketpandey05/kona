@@ -1,9 +1,40 @@
 # Chrome Web Store listing for Kona
 
-> Last Updated: 2026-10-23 · Version 1.1.0
+> Last updated: 2026-11-17 · Version 1.4.0
 
 Everything needed to fill in the Developer Dashboard, so nothing has to be invented at
 submission time. Exclude this file from the uploaded ZIP.
+
+**Read this before copying anything out of it.** Everything below has been checked
+against the 1.4.0 build rather than against the last version of this file. What was
+wrong, and is worth knowing about because it is the shape of mistake that gets a
+listing pulled rather than rejected: the description told the reviewer to press a
+shortcut that does not exist, said a space writes up a document for you when 20 took
+the write-up out of the product, and said Kona can see the three AI chats, which is the
+opposite of what the manifest does and would have been a false statement about
+permissions. The data-use section held two tables that answered the same questions the
+other way round. All four are fixed here.
+
+## What to send, and what it is for
+
+| Send | Where it is | What it is for |
+| --- | --- | --- |
+| `kona-1.4.0-chrome.zip` | the [v1.4.0 release](https://github.com/aniketpandey05/kona/releases/tag/v1.4.0), or `.output/` after `npm run zip` | The package itself. Prefer the release copy: CI built it from the tagged commit, so it is the one the source can be checked against |
+| This file | `CHROMEWEBSTORE.md` | Every box on the submission form, already written |
+| Five screenshots | `docs/screenshots/*.png` | `web-page`, `chat-panel`, `library`, `spaces`, `space`. All 1280×800, which is one of the two sizes the store takes |
+| The icon | `src/public/icon/128.png` | 128×128, and already inside the ZIP as well |
+
+**Three things they will need from you rather than from a file.** A Google
+account with the $5 one-off developer registration paid; the privacy policy
+live at `https://aniketpandey05.github.io/kona/privacy.html`, which is served
+by GitHub Pages from this repository; and a decision about whose account the
+listing lives on, because the account that publishes it owns it and moving a
+published extension between accounts is not a thing the store does readily.
+
+**The one step that is easy to skip.** The reviewer instructions below are not
+optional for this extension. Kona arrives allowed on no site at all, so a
+reviewer who installs it and opens a page sees nothing happen, and the honest
+conclusion from that is that it does not work. Paste them into the box.
 
 ## Store Listing
 
@@ -35,10 +66,21 @@ widens a search along those pairs, so looking for "downtime" can turn up the pas
 only ever says "cutover". It tells you which word did that. Nothing is sent anywhere to
 work it out, and a library too small to have taught it anything claims nothing.
 
+Colour is yours. Four pens to start with, and you can mix your own at any hue and any
+strength. Retiring a colour never repaints what you already marked with it, and that
+colour stays something you can filter your library by.
+
+A picture can be a highlight too. Right-click a chart or a diagram and Kona keeps its
+own copy, so opening your library later never fetches anything from the site it came
+from. The caption or the words nearest it are what you find it by.
+
+A passage in a PDF can be kept as well, by right-clicking it. Nothing of Kona can run
+inside the browser's own PDF viewer, so there is no mark drawn on the page and no way
+back to the exact words, and Kona says so rather than pretending.
+
 When a handful of highlights turn out to be about one question, put them in a space. A
 space holds the question, the passages that bear on it, what you concluded from them and
-what you still do not know, and writes it up for you, with every claim citing the exact
-sentence it rests on.
+what is still open, with every conclusion citing the exact sentence it rests on.
 
 A space is also a file. Send it to somebody and they get your question, your evidence and
 your conclusions, with a link under each that lands on the exact sentence even without
@@ -49,16 +91,25 @@ computer, so a space coming back is provably from the same person, and anything 
 words moved after it was signed is flagged rather than hidden.
 
 How to use it:
-1. Select some text on a supported page.
-2. Pick a colour from the small bar that appears, or right-click and choose "Highlight with
-Kona".
+1. Click the Kona icon and switch it on for the site you are reading. Nothing happens
+before this: Kona arrives allowed on nothing at all.
+2. Select some text. Pick a colour from the small bar that appears, or right-click and
+choose "Highlight with Kona".
 3. Add a note with the pencil button if you want one.
-4. Open the panel on the right to see everything on this page, reorder it, or jump to it.
-5. Press Alt+Shift+F to search every highlight you have, without leaving the page.
+4. Open the panel from the mark at the bottom right to see everything on this page,
+reorder it, or jump back to any of it.
+5. Open the library from the panel for everything you have ever kept, across every site.
+
+Selecting text is not a request to highlight it, so press Escape and the bar goes away
+and leaves your selection alone. If you want Kona quiet for longer, there is a switch in
+the popup: off means no bar and nothing painted, on every site at once. Nothing is
+deleted either way, and your highlights come back the moment you turn it back on.
 
 Everything is stored on your own computer. Kona makes no network requests of any kind:
-there is no account, no server, and no analytics. It can only see the three chat sites plus
-whichever sites you switch on yourself, and you can switch any of them off again.
+there is no account, no server, and no analytics. It arrives able to read no site
+whatsoever, the AI chats included, and reads only the sites you switch on one at a time.
+Your browser's own extensions page lists every site you have allowed and takes any of
+them back.
 
 Export your highlights as Markdown for Obsidian or Notion, or as a backup file, highlights,
 spaces and all; that you can move to another computer. Or point Kona at a folder your
@@ -137,7 +188,7 @@ demand.
 
 | Content script | Why it is needed |
 |---|---|
-| `https://kona.example/*` | Kona's own web app, and the only match in the manifest. On a free account there is no sync, so the library on the web has to read what the extension saved on the same machine; this script is the bridge between the two. It runs on no other origin, only at the top level, and answers nothing that did not come from the page itself. |
+| `https://aniketpandey05.github.io/kona/*` | Kona's own web app, and the only match in the manifest. On a free account there is no sync, so the library on the web has to read what the extension saved on the same machine; this script is the bridge between the two. It runs on no other origin, only at the top level, and answers nothing that did not come from the page itself. |
 
 **Remote code:** none. All code is bundled in the package; nothing is fetched or evaluated
 at runtime.
@@ -162,23 +213,25 @@ own storage on the device; there is no server to send it to.
 
 **Privacy policy URL:** https://aniketpandey05.github.io/kona/privacy.html
 
-Data-use disclosures to tick in the dashboard:
+**Declare it, even though nothing leaves the device.** This file used to carry a second
+table saying *No* to website content and personal communications, directly under the
+one above saying *Yes*, which left whoever submitted it to guess. The guess that gets an
+extension pulled is the one that under-declares, and Google's own user-data FAQ settles
+it: extensions must disclose how they handle user data *even when that data is processed
+or stored locally on the user's device*. Handling means collecting, using or sharing it,
+not only sending it somewhere.
 
-| Question | Answer |
-|---|---|
-| Collects personally identifiable information | No |
-| Collects health information | No |
-| Collects financial information | No |
-| Collects authentication information | No |
-| Collects personal communications | No |
-| Collects location | No |
-| Collects web history | No |
-| Collects user activity | No |
-| Collects website content | **No**, page text is read in the page and saved only on the user's own device. Nothing is transmitted. |
+So the single table above is the answer. Saying *Yes* to website content and personal
+communications costs nothing here, because the privacy policy and the listing both say
+the same true thing about where it goes, which is nowhere.
 
-Three certifications to accept: data is not sold to third parties; data is not used for any
-purpose unrelated to the single purpose above; data is not used to determine
-creditworthiness or for lending.
+Everything else on the form is *No*: personally identifiable information, health,
+financial, authentication, location, web history and user activity are not read or
+stored.
+
+Three certifications to accept, all true: the data is not sold to third parties; it is
+not used for any purpose unrelated to the single purpose above; and it is not used to
+determine creditworthiness or for lending.
 
 ## Test instructions for the reviewer
 
@@ -206,6 +259,12 @@ is that the extension does not work.
 > 8. Click **Library** in the panel to open the web library at
 >    `https://aniketpandey05.github.io/kona/app/`.
 >
+> Two more, if you want to see the rest: right-click a picture and choose
+> **Keep this picture with Kona**, which stores a copy of it rather than a
+> link to it. And in the popup, switch **Kona is on** off: the bar stops
+> appearing on every site and nothing is drawn, while every highlight stays
+> saved and comes back when you switch it on again.
+>
 > To test a chat site, do the same on chatgpt.com, claude.ai or
 > gemini.google.com. They are not special and are not granted at install.
 
@@ -218,13 +277,21 @@ is that the extension does not work.
 - [x] Every permission has a specific justification above
 - [x] Privacy policy written and served over HTTPS
 - [x] No remote code, no analytics, no network requests
-- [x] Builds clean, 484 tests pass
-- [ ] Screenshots **re-captured**, every one of them shows the old interface
-- [ ] Listing copy re-read against the rebuilt product
-- [ ] A real domain, replacing `kona.example` in `src/design/tokens.json`
-- [ ] Privacy policy URL confirmed live
+- [x] Builds clean, 553 tests pass
+- [x] Screenshots re-captured against the rebuilt interface, all five 1280×800
+- [x] Listing copy re-read against the build, line by line, at 1.4.0
+- [x] The manifest carries the real web-app origin, not a placeholder
+- [x] ZIP built by CI from the tagged commit, `.output/kona-1.4.0-chrome.zip`
+- [ ] Privacy policy URL confirmed live, which needs the Pages deploy to have run
 - [ ] $5 one-off developer registration paid
-- [ ] ZIP uploaded from `.output/kona-1.3.0-chrome.zip` (`npm run zip`)
+
+Two things that are nobody's blocker but will be noticed:
+
+- [ ] **Small promo tile**, 440×280. Optional, and a listing without one is not
+      featured anywhere.
+- [ ] The landing page's Enterprise button still mails `sales@kona.example`,
+      which is nobody. It is the website rather than the extension, so it does
+      not affect review.
 
 The ZIP produced by `npm run zip` contains only the built extension, no `.git`, no
 `node_modules`, no source, and not this file.
@@ -233,6 +300,7 @@ The ZIP produced by `npm run zip` contains only the built extension, no `.git`, 
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.4.0 | 2026-11-17 | Pens you mix yourself, at any hue and strength; retiring one never repaints what it marked. A picture can be a highlight, kept as Kona's own copy so the library never fetches from the site it came from. A passage can be kept out of the browser's PDF viewer, where no extension can run, and Kona says what that costs. A page that changed under a highlight says so in the library as well as on the page. On a phone the bar sits at the foot of the screen. Spaces hold pages you have not read yet, and can be ordered, labelled and deleted. Delete and tags in the library. And Kona can be turned off: Escape for one selection, a switch in the popup for every site at once, with nothing deleted either way. |
 | 1.3.0 | 2026-11-16 | Rebuilt from the design documents. Kona installs asking for nothing: no site is read until it is allowed, the AI chats included. One set of colours and type across the whole product. Spaces can be set from the panel, and while one is active the panel says in words where highlights are going; a highlight that does not belong comes back out in one tap. A space is the highlights gathered in it, the write-up and findings are gone. Archiving puts a highlight out of the way of the list without losing it. The library moved to the web, so there is one library rather than two. Highlights stay readable on dark pages, which they were not. |
 | 1.1.0 | 2026-10-23 | Colour on phone captures, with filtering to match. Backups and appearance reachable from the header rather than the foot of the list. Shared text is tidied as it is stored. A conversation link shared to the app attaches itself to everything kept from that conversation. |
 | 1.0.0 | 2026-10-21 | First public release. Highlighting with notes and tags on ChatGPT, Claude, Gemini and any site the user switches on; side panel; cross-chat search; one library with Markdown and backup export; light and dark themes. |
