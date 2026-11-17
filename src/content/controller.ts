@@ -47,7 +47,6 @@ const JUMP_POLL_MS = 300;
 // Scrolling up to let a site load older messages: how many screens to try, and how long to wait each time.
 const LOAD_OLDER_STEPS = 12;
 const LOAD_OLDER_WAIT_MS = 400;
-const SEARCH_RESULTS = 8;
 // How long a selection has to stop changing before a finger is taken to have
 // finished dragging it about.
 const SELECTION_SETTLE_MS = 250;
@@ -193,7 +192,6 @@ export class KonaController {
    */
   private deletedImage: string | null = null;
   /** The element the page scrolls in, found again on every refresh. */
-  private scroller: HTMLElement | null = null;
   private readonly listeners = new Set<() => void>();
   private readonly painter = new HighlightPainter();
   private marks: Mark[] = [];
@@ -866,7 +864,6 @@ export class KonaController {
       !!conversationId && messages.length === 0 && Date.now() - this.openedAt > BROKEN_AFTER_MS;
     void this.recordLandings(messages.length);
     const cardStillValid = card && this.marks.some((m) => m.id === card.markId);
-    this.scroller = this.findScroller();
     const outlines = this.resolveImages();
     this.setState({
       outlines,

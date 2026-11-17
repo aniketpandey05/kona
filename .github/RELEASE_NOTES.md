@@ -20,7 +20,30 @@ leaves the device it was marked on.
 
 ### In this release
 
-The whole product rebuilt from its design documents: one set of colours and
-type everywhere, a panel that says in words which space highlights are going
-into, archiving, and highlights that stay readable on dark pages, which they
-were not before.
+Every decision in the design documents that does not need a server is now
+built.
+
+**Pens.** Mix your own colour, with a hue and an opacity you pick. Changing
+the case never repaints what you already marked, so a colour you retire is
+still in your library and still something you can filter by.
+
+**Pictures.** Right-click a chart and keep it. Kona stores its own copy, so
+opening your library never fetches anything from the site it came from.
+
+**PDFs.** Right-click a passage in the browser's own viewer and keep it.
+Nothing of Kona can run in there, so there is no mark drawn and no way back
+to the exact words, and Kona says so rather than pretending.
+
+**A page that changed under a highlight** says so in the library as well as
+on the page, so you can see what has gone without visiting each one.
+
+**On a phone** the bar sits at the foot of the screen, where your thumb is
+and where the phone's own menu over selected text can never reach it.
+
+**Spaces** can hold a page you have not read yet, be ordered by hand, carry
+their own labels, and be deleted. **Delete** is in the library now: one can be
+undone, several at once ask first. **Tags** you add are listed and filter the
+library.
+
+Still not here, and needing a server rather than more work: an account, sync
+between devices, and shared spaces.

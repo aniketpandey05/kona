@@ -5,7 +5,6 @@ import type { Space } from '../../src/core/spaces';
 import type { Theme } from '../../src/core/theme';
 import type { Mark } from '../../src/core/types';
 import type { FolderSyncControls } from '../../src/ui/useFolderSync';
-import { Install } from './Install';
 import {
   identityForBackup,
   importMarks,
@@ -125,8 +124,6 @@ export function Settings({ marks, spaces, onChanged, sync, syncOnDemand }: Props
           {said}
         </p>
       )}
-
-      <Install />
 
       <section class="set-section">
         <h2>Your copy of everything</h2>

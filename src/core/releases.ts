@@ -20,6 +20,19 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.4.0',
+    notes: [
+      'Pens: mix your own colour, with a hue and an opacity you choose. Changing the case never repaints what you already marked, and a colour you retire stays in your library and stays something you can filter by.',
+      'Keep a picture, not just a passage. Kona stores its own copy, so opening your library never fetches anything from the site it came from.',
+      'Keep a passage out of a PDF, by right-clicking it. Nothing of Kona can run in the browser’s PDF viewer, so there is no mark drawn and no landing, and it says so.',
+      'A highlight whose page has changed says so in the library as well as on the page, so you can see what has gone without visiting each one.',
+      'On a phone the bar sits at the foot of the screen, where your thumb is and where the phone’s own menu over selected text can never reach it.',
+      'Spaces can hold a page you have not read yet, be put in the order you want, carry their own labels, and be deleted.',
+      'Delete, in the library. A single one can be undone; several at once asks first.',
+      'Tags you add are listed in the library and filter it.',
+    ],
+  },
+  {
     version: '1.3.0',
     notes: [
       'The panel, the bar and your notes are rebuilt: one set of colours and type across the whole of Kona, instead of each screen deciding its own.',
@@ -52,8 +65,8 @@ export const RELEASES: readonly Release[] = [
  * commitment they carry.
  */
 export const COMING: readonly string[] = [
-  'Archiving: putting a highlight out of the way of the list without losing it.',
   'Your library on every device, kept in step, with the server unable to read a word of it.',
-  'Search by meaning as well as by word.',
+  'An account, which is what that sync attaches to and is needed for nothing else.',
   'Shared spaces, for deciding something with other people.',
+  'Kona on iPhone and iPad, as one install that gives both the extension and the library.',
 ];

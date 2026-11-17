@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useMemo, useState } from 'preact/hooks';
 import { FREE_SPACE_LIMIT, roomForSpace } from '../../src/core/archive';
 import { titleFor } from '../../src/core/capture';
 import { linkToMark } from '../../src/core/link';
@@ -57,25 +57,17 @@ export function SpacesView({ source, spaces, marks, onChanged, openId, onOpen }:
       save={source.saveSpace}
     />
   ) : (
-    <AllSpaces
-      spaces={spaces}
-      marks={marks}
-      onOpen={onOpen}
-      onChanged={onChanged}
-      source={source}
-    />
+    <AllSpaces spaces={spaces} onOpen={onOpen} onChanged={onChanged} source={source} />
   );
 }
 
 function AllSpaces({
   spaces,
-  marks,
   onOpen,
   onChanged,
   source,
 }: {
   spaces: Space[];
-  marks: Mark[];
   onOpen: (id: string) => void;
   onChanged: () => void;
   source: LibrarySource;

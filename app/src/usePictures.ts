@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Mark } from '../../src/core/types';
 import type { LibrarySource } from './source';
 
@@ -17,6 +17,12 @@ import type { LibrarySource } from './source';
  */
 export function usePictures(marks: Mark[], source: LibrarySource | null): Map<string, string> {
   const [kept, setKept] = useState<Map<string, string>>(new Map());
+  /**
+   * What has already been asked for, kept in a ref rather than read off the
+   * state the effect closed over. The state is what the rows render from; this
+   * is what stops a second ask, and the two want different lifetimes.
+   */
+  const asked = useRef(new Set<string>());
 
   const wanted = marks
     .filter((mark) => mark.image?.kept)
@@ -30,9 +36,10 @@ export function usePictures(marks: Mark[], source: LibrarySource | null): Map<st
     void (async () => {
       for (const id of ids) {
         if (stopped) return;
-        // Already held: a re-read of the library must not ask again for a
+        // Asked for once. A re-read of the library must not fetch again for a
         // picture that has not changed.
-        if (kept.has(id)) continue;
+        if (asked.current.has(id)) continue;
+        asked.current.add(id);
         const data = await source.image(id).catch(() => null);
         if (stopped || !data) continue;
         setKept((current) => new Map(current).set(id, data));

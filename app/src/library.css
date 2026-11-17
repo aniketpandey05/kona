@@ -1317,3 +1317,16 @@
   color: var(--kona-accent-fill-ink);
   background: var(--kona-accent-fill);
 }
+
+/* The one line Safari gets instead of a button, since it fires no install
+   event and has no API for one (24). It is not a control and does not
+   pretend to be. */
+.lib-menu-item--said {
+  margin: 0;
+  cursor: default;
+  color: var(--kona-paper-ink-note);
+}
+
+.lib-menu-item--said:hover {
+  background: transparent;
+}

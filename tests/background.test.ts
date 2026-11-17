@@ -46,6 +46,13 @@ interface FakeSafari {
   notes: Record<string, unknown>;
   allowSite: () => void;
   send: (message: unknown, tabId: number) => void;
+  /** Uses the right-click item, the way the browser would. */
+  rightClick: (info: {
+    menuItemId: string;
+    selectionText?: string;
+    srcUrl?: string;
+    pageUrl?: string;
+  }) => void;
 }
 
 function fakeSafari(has: { menus: boolean; windows: boolean }): FakeSafari {
@@ -108,10 +115,14 @@ function fakeSafari(has: { menus: boolean; windows: boolean }): FakeSafari {
     notes,
     allowSite: () => permissionAdded.emit(),
     send: (message, tabId) => messages.emit(message, { tab: { id: tabId } }, () => {}),
+    rightClick: (info) =>
+      (api.contextMenus as { onClicked: Hook }).onClicked.emit(info, { id: TAB_ID }),
   };
 }
 
 let browserApi: Record<string, unknown>;
+/** Extension storage, which the capture path writes a highlight into (16). */
+const kept = new Map<string, unknown>();
 
 vi.mock('#imports', () => ({
   // Read through on every access: the background script reads some of these
@@ -120,6 +131,12 @@ vi.mock('#imports', () => ({
     get: (_target, key) => browserApi[key as string],
   }),
   defineBackground: (main: () => void) => main,
+  storage: {
+    getItem: async (key: string) => kept.get(key) ?? null,
+    setItem: async (key: string, value: unknown) => void kept.set(key, value),
+    removeItem: async (key: string) => void kept.delete(key),
+    watch: () => () => {},
+  },
 }));
 
 async function start(safari: FakeSafari): Promise<void> {
@@ -128,6 +145,93 @@ async function start(safari: FakeSafari): Promise<void> {
   const loaded = await import('../src/entrypoints/background');
   (loaded.default as unknown as () => void)();
 }
+
+/**
+ * 16. The browser's own PDF viewer is privileged in both engines, so no
+ * content script runs there and nothing answers. That is what the background
+ * listens for: not a URL ending in `.pdf`, but silence.
+ */
+it('keeps the passage itself when nothing in the page answers', async () => {
+  kept.clear();
+  const safari = fakeSafari({ menus: true, windows: true });
+  // Nobody home, which is what a privileged page sounds like from here.
+  (safari.api.tabs as Record<string, unknown>).sendMessage = async () => {
+    throw new Error('Could not establish connection');
+  };
+  await start(safari);
+  safari.allowSite();
+  await vi.waitFor(() => expect(safari.menuItems).toHaveLength(2));
+
+  safari.rightClick({
+    menuItemId: 'highlight-selection',
+    selectionText: '  An amoeba moves by extending   a pseudopod ',
+    pageUrl: 'https://example.org/papers/motility.pdf?utm_source=twitter',
+  });
+
+  await vi.waitFor(() => expect(kept.size).toBeGreaterThan(0));
+  type Kept = { snapshot: string; landing?: string };
+  const entries = [...kept.entries()] as Array<[string, Kept[]]>;
+  const [key, marks] = entries[0]!;
+  // Filed under the page, with the tracking parameters off, like any other.
+  expect(key).toBe('local:marks:web:https://example.org/papers/motility.pdf');
+  expect(marks[0]!.snapshot).toBe('An amoeba moves by extending a pseudopod');
+  // Lost its landing from the first second: there was never a chance to find
+  // the passage again, and saying so now is 13 rather than a guess later.
+  expect(marks[0]!.landing).toBe('lost');
+});
+
+it('leaves it to the page where the page is listening', async () => {
+  kept.clear();
+  const safari = fakeSafari({ menus: true, windows: true });
+  const asked: unknown[] = [];
+  (safari.api.tabs as Record<string, unknown>).sendMessage = async (_id: number, message: unknown) => {
+    asked.push(message);
+    return { handled: true };
+  };
+  await start(safari);
+  safari.allowSite();
+  await vi.waitFor(() => expect(safari.menuItems).toHaveLength(2));
+
+  safari.rightClick({
+    menuItemId: 'highlight-selection',
+    selectionText: 'An amoeba moves',
+    pageUrl: 'https://example.com/post',
+  });
+
+  // The content script can do the whole job: find the passage in the
+  // document, paint it, and store where it sits. The background must not
+  // write a second, landing-less copy beside it.
+  await vi.waitFor(() => expect(asked).toHaveLength(1));
+  expect(asked[0]).toEqual({ type: 'highlight-selection' });
+  await new Promise((done) => setTimeout(done, 20));
+  expect(kept.size).toBe(0);
+});
+
+it('hands a picture to the page, which is the only thing that can copy it (18)', async () => {
+  kept.clear();
+  const safari = fakeSafari({ menus: true, windows: true });
+  const asked: unknown[] = [];
+  (safari.api.tabs as Record<string, unknown>).sendMessage = async (_id: number, message: unknown) => {
+    asked.push(message);
+    return { handled: true };
+  };
+  await start(safari);
+  safari.allowSite();
+  await vi.waitFor(() => expect(safari.menuItems).toHaveLength(2));
+
+  safari.rightClick({
+    menuItemId: 'highlight-image',
+    srcUrl: 'https://example.com/chart.png',
+    pageUrl: 'https://example.com/post',
+  });
+
+  // The bytes are already decoded in the page, so there is no fallback here
+  // the way there is for a selection: a page Kona cannot run in is a picture
+  // it cannot keep.
+  await vi.waitFor(() => expect(asked).toHaveLength(1));
+  expect(asked[0]).toEqual({ type: 'highlight-image', src: 'https://example.com/chart.png' });
+  expect(kept.size).toBe(0);
+});
 
 it('switches a site on where there is no menu to rebuild', async () => {
   const safari = fakeSafari({ menus: false, windows: false });

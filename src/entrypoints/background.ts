@@ -215,7 +215,13 @@ async function keepSelection(
   const url = info.pageUrl;
   if (!text || !url) return;
 
-  const tab = tabId === undefined ? undefined : await browser.tabs.get(tabId).catch(() => undefined);
+  // Reached for the same way the menus and the windows are: this file's whole
+  // discipline is that an API missing on one platform must not take the
+  // extension down, and a title is the most optional thing here.
+  const tab =
+    tabId === undefined || typeof browser.tabs.get !== 'function'
+      ? undefined
+      : await browser.tabs.get(tabId).catch(() => undefined);
   const [pen] = await loadPalette();
   const mark = captureSelection({ text, url, title: tab?.title, color: pen ?? 'yellow' });
   await upsertMark(mark);

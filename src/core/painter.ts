@@ -1,6 +1,5 @@
 import { penOf, type PenId } from './pens';
 import { MARK_FLASH, MARK_NOTED, PEN_COLORS, PEN_MARKS, markInk } from '../design/tokens';
-import type { HighlightColor } from './types';
 
 /**
  * The pens, from the one place they are decided (`src/design/tokens.json`).

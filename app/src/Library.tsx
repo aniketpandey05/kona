@@ -9,13 +9,12 @@ import {
   FREE_ARCHIVE_LIMIT,
   isArchived,
   notArchived,
-  roomToArchive,
   unarchive,
 } from '../../src/core/archive';
 import { ago } from '../../src/core/ago';
 import { linkToMark } from '../../src/core/link';
 import { searchLibrary } from '../../src/core/search';
-import { sameTag } from '../../src/core/tags';
+import { countTags, sameTag } from '../../src/core/tags';
 import { siteLabel } from '../../src/core/sites';
 import type { Space } from '../../src/core/spaces';
 import type { Mark, PenId } from '../../src/core/types';
@@ -27,6 +26,7 @@ import { openLibrary, type LibrarySource } from './source';
 import type { FolderSource } from '../../src/core/folder';
 import { About } from './About';
 import { bridgeVersion } from './bridge';
+import { canInstall, inOwnWindow, install, isApple, watchInstall } from './install';
 import { Pens } from './Pens';
 import { usePictures } from './usePictures';
 import { Settings } from './Settings';
@@ -205,16 +205,7 @@ export function Library({
    * card and then never found again, because nothing in the library offered it
    * back. Search already reads them; this is the other half.
    */
-  const tags = useMemo(() => {
-    const seen = new Map<string, number>();
-    for (const mark of notArchived(marks ?? [])) {
-      for (const each of mark.tags ?? []) {
-        const known = [...seen.keys()].find((kept) => sameTag(kept, each)) ?? each;
-        seen.set(known, (seen.get(known) ?? 0) + 1);
-      }
-    }
-    return [...seen.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12);
-  }, [marks]);
+  const tags = useMemo(() => countTags(notArchived(marks ?? [])).slice(0, 12), [marks]);
 
   const sites = useMemo(() => {
     const seen = new Map<string, number>();
@@ -267,7 +258,6 @@ export function Library({
   const filtered =
     query.trim() !== '' || colours.length > 0 || tag !== null || site !== null || when !== 'any';
   const archivedCount = countArchived(marks ?? []);
-  const room = roomToArchive(marks ?? [], pro);
 
   /**
    * Everything the library holds, in one read.
@@ -586,6 +576,9 @@ export function Library({
                   onClick={() => {
                     setPicking((on) => !on);
                     setChosen(new Set());
+                    // A question asked about a selection that no longer
+                    // exists would come back the next time one did.
+                    setAsking(false);
                   }}
                 >
                   Select
@@ -822,28 +815,43 @@ function AccountMenu({
   /** Whether the bridge found an extension on this machine (3c). */
   extension: boolean;
 }) {
-  const [installable, setInstallable] = useState<(() => void) | null>(null);
+  const box = useRef<HTMLDivElement>(null);
+  // Asked rather than listened for: the browser fires its offer once, early,
+  // and this menu mounts when somebody opens it, which is long afterwards.
+  const [offered, setOffered] = useState(canInstall());
+  useEffect(() => watchInstall(() => setOffered(canInstall())), []);
 
+  /**
+   * Escape, or a click anywhere else, closes it.
+   *
+   * A menu that only closes by clicking the thing that opened it is a menu
+   * that sits over the library until somebody works that out.
+   */
   useEffect(() => {
-    // Chrome hands over the install prompt and lets it be fired later from a
-    // control of your own; left alone it shows up whenever it feels like it,
-    // which is usually not now (24).
-    const offer = (event: Event) => {
-      event.preventDefault();
-      const held = event as Event & { prompt(): Promise<void> };
-      setInstallable(() => () => void held.prompt());
+    const away = (event: MouseEvent) => {
+      const at = event.target;
+      if (at instanceof Node && !box.current?.contains(at)) onClose();
     };
-    window.addEventListener('beforeinstallprompt', offer);
-    return () => window.removeEventListener('beforeinstallprompt', offer);
-  }, []);
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    // Next tick, or the click that opened it closes it again.
+    const started = setTimeout(() => {
+      document.addEventListener('mousedown', away);
+      document.addEventListener('keydown', escape);
+    }, 0);
+    return () => {
+      clearTimeout(started);
+      document.removeEventListener('mousedown', away);
+      document.removeEventListener('keydown', escape);
+    };
+  }, [onClose]);
 
   // Running in its own window already: there is nothing to offer.
-  const inApp =
-    window.matchMedia('(display-mode: standalone)').matches ||
-    (navigator as { standalone?: boolean }).standalone === true;
+  const inApp = inOwnWindow();
 
   return (
-    <div class="lib-menu" role="menu">
+    <div class="lib-menu" role="menu" ref={box}>
       <p class="lib-menu-who">{me || 'Nobody signed in'}</p>
       {trouble && <p class="lib-menu-trouble">{trouble}</p>}
 
@@ -861,20 +869,31 @@ function AccountMenu({
         What&rsquo;s new
       </a>
 
-      {/* The menu shows what you have not got. Both disappear once taken. */}
-      {!inApp && installable && (
+      {/* The menu shows what you have not got, and 24 puts the offer here
+          rather than in a banner: one place, beside the other thing about you,
+          and it disappears once taken. */}
+      {!inApp && offered && (
         <button
           type="button"
           class="lib-menu-item"
           role="menuitem"
           onClick={() => {
-            installable();
+            void install();
             onClose();
           }}
         >
           Install Kona
           <span class="lib-menu-why">Its own window and a dock icon, instead of a tab to find.</span>
         </button>
+      )}
+      {!inApp && !offered && isApple() && (
+        <p class="lib-menu-item lib-menu-item--said">
+          Put Kona on your home screen
+          <span class="lib-menu-why">
+            Tap Share, then Add to Home Screen. It opens like an app, works
+            offline, and text can be shared straight into it.
+          </span>
+        </p>
       )}
       {!extension && (
         <a
