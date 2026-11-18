@@ -437,6 +437,25 @@ npm run zip:safari   # the extension resources, for the App Store Connect upload
 answers, so the submission form can be filled in from one place. The privacy policy is
 served at <https://aniketpandey05.github.io/kona/privacy.html>.
 
+### If your job is to submit it rather than to build it
+
+**Do not run the zip commands above.** The release workflow already built the
+package on CI from the tagged commit, which is the copy the source can be checked
+against, and a zip built on somebody's laptop is not. Three steps:
+
+1. Take `kona-<version>-chrome.zip` from
+   [the latest release](https://github.com/aniketpandey05/kona/releases/latest).
+   Only the `-chrome` one; the firefox, safari and sources zips go elsewhere.
+2. Open `CHROMEWEBSTORE.md` and fill the form from it, top to bottom. The
+   **Instructions for reviewers** are not optional: Kona installs allowed on no site
+   at all, so a reviewer who skips them sees nothing happen and concludes it is broken.
+3. Screenshots are in `docs/screenshots/`, five at 1280×800 plus the 440×280
+   promotional tile. The 128×128 icon is `src/public/icon/128.png` and is in the zip
+   as well.
+
+What that doc cannot give you: the $5 one-off developer registration, and a decision
+about which account the listing lives on, since the account that publishes it owns it.
+
 ---
 
 © 2026 Aniket Pandey. All rights reserved.
