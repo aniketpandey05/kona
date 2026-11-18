@@ -20,6 +20,14 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.4.1',
+    notes: [
+      'Dark actually works. Choosing Dark, or leaving Kona to match your system, now changes the library, the popup and the welcome page. Before this the choice was saved and nothing read it. The panel you open in a page stays dark over any article, as it always has.',
+      'Two tabs of your library agree with each other. A name, a new space or a deletion in one shows up in the other without reloading it.',
+      'Spaces is a row in the sidebar rather than a heading above one, so there is an obvious way back to all of them, which is also where a new one is made.',
+    ],
+  },
+  {
     version: '1.4.0',
     notes: [
       'Pens: mix your own colour, with a hue and an opacity you choose. Changing the case never repaints what you already marked, and a colour you retire stays in your library and stays something you can filter by.',

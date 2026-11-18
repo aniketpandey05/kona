@@ -1,12 +1,12 @@
 # Chrome Web Store listing for Kona
 
-> Last updated: 2026-11-17 · Version 1.4.0
+> Last updated: 2026-11-18 · Version 1.4.1
 
 Everything needed to fill in the Developer Dashboard, so nothing has to be invented at
 submission time. Exclude this file from the uploaded ZIP.
 
 **Read this before copying anything out of it.** Everything below has been checked
-against the 1.4.0 build rather than against the last version of this file. What was
+against the build rather than against the last version of this file. What was
 wrong, and is worth knowing about because it is the shape of mistake that gets a
 listing pulled rather than rejected: the description told the reviewer to press a
 shortcut that does not exist, said a space writes up a document for you when 20 took
@@ -19,7 +19,7 @@ other way round. All four are fixed here.
 
 | Send | Where it is | What it is for |
 | --- | --- | --- |
-| `kona-1.4.0-chrome.zip` | the [v1.4.0 release](https://github.com/aniketpandey05/kona/releases/tag/v1.4.0), or `.output/` after `npm run zip` | The package itself. Prefer the release copy: CI built it from the tagged commit, so it is the one the source can be checked against |
+| `kona-1.4.1-chrome.zip` | the [v1.4.1 release](https://github.com/aniketpandey05/kona/releases/tag/v1.4.1), or `.output/` after `npm run zip` | The package itself. Prefer the release copy: CI built it from the tagged commit, so it is the one the source can be checked against |
 | This file | `CHROMEWEBSTORE.md` | Every box on the submission form, already written |
 | Five screenshots | `docs/screenshots/*.png` | `web-page`, `chat-panel`, `library`, `spaces`, `space`. All 1280×800, which is one of the two sizes the store takes |
 | The icon | `src/public/icon/128.png` | 128×128, and already inside the ZIP as well |
@@ -284,9 +284,9 @@ is that the extension does not work.
 - [x] No remote code, no analytics, no network requests
 - [x] Builds clean, 553 tests pass
 - [x] Screenshots re-captured against the rebuilt interface, all five 1280×800
-- [x] Listing copy re-read against the build, line by line, at 1.4.0
+- [x] Listing copy re-read against the build, line by line, at 1.4.1
 - [x] The manifest carries the real web-app origin, not a placeholder
-- [x] ZIP built by CI from the tagged commit, `.output/kona-1.4.0-chrome.zip`
+- [x] ZIP built by CI from the tagged commit, `kona-1.4.1-chrome.zip`
 - [ ] Privacy policy URL confirmed live, which needs the Pages deploy to have run
 - [ ] $5 one-off developer registration paid
 
@@ -306,6 +306,7 @@ The ZIP produced by `npm run zip` contains only the built extension, no `.git`, 
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.4.1 | 2026-11-18 | Dark works. Choosing Dark, or leaving Kona to match the system, now changes the library, the popup and the welcome page; before this the choice was saved and nothing read it. The panel inside a page stays dark over any article, as it always has. Two tabs of the library agree with each other: a name, a new space or a deletion in one shows up in the other without a reload. Spaces is a row in the sidebar rather than a heading above one, so there is an obvious way back to all of them. |
 | 1.4.0 | 2026-11-17 | Pens you mix yourself, at any hue and strength; retiring one never repaints what it marked. A picture can be a highlight, kept as Kona's own copy so the library never fetches from the site it came from. A passage can be kept out of the browser's PDF viewer, where no extension can run, and Kona says what that costs. A page that changed under a highlight says so in the library as well as on the page. On a phone the bar sits at the foot of the screen. Spaces hold pages you have not read yet, and can be ordered, labelled and deleted. Delete and tags in the library. And Kona can be turned off: Escape for one selection, a switch in the popup for every site at once, with nothing deleted either way. |
 | 1.3.0 | 2026-11-16 | Rebuilt from the design documents. Kona installs asking for nothing: no site is read until it is allowed, the AI chats included. One set of colours and type across the whole product. Spaces can be set from the panel, and while one is active the panel says in words where highlights are going; a highlight that does not belong comes back out in one tap. A space is the highlights gathered in it, the write-up and findings are gone. Archiving puts a highlight out of the way of the list without losing it. The library moved to the web, so there is one library rather than two. Highlights stay readable on dark pages, which they were not. |
 | 1.1.0 | 2026-10-23 | Colour on phone captures, with filtering to match. Backups and appearance reachable from the header rather than the foot of the list. Shared text is tidied as it is stored. A conversation link shared to the app attaches itself to everything kept from that conversation. |

@@ -8,8 +8,8 @@ not special.
 
 ### Installing
 
-The attached files carry the version in their names, so the ones below are
-`kona-1.4.0-chrome.zip` and so on; a later release attaches its own.
+The attached files carry the version in their names, so this release's are
+`kona-1.4.1-chrome.zip` and so on; a later release attaches its own.
 
 Chrome, Edge and Brave: download the `-chrome` zip, unzip it, then
 `chrome://extensions`, turn on developer mode, and **Load unpacked** on the
@@ -23,7 +23,21 @@ Your library lives on the web at
 <https://aniketpandey05.github.io/kona/app/>, and on a free account nothing
 leaves the device it was marked on.
 
-### In this release
+### Fixed in 1.4.1
+
+**Dark actually works.** Choosing Dark, or leaving Kona to match your system,
+now changes the library, the popup and the welcome page. Before this the
+choice was saved and nothing read it, so the chip lit and the paper stayed
+cream. The panel you open inside a page stays dark over any article, as it
+always has.
+
+**Two tabs of your library agree with each other.** A name, a new space or a
+deletion in one shows up in the other without reloading it.
+
+**Spaces is a row in the sidebar** rather than a heading above one, so there
+is an obvious way back to all of them, which is also where a new one is made.
+
+### In 1.4.0
 
 Every decision in the design documents that does not need a server is now
 built.
