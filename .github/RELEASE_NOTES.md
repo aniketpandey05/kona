@@ -8,11 +8,16 @@ not special.
 
 ### Installing
 
-Chrome, Edge and Brave: download `kona-chrome.zip`, unzip it, then
+The attached files carry the version in their names, so the ones below are
+`kona-1.4.0-chrome.zip` and so on; a later release attaches its own.
+
+Chrome, Edge and Brave: download the `-chrome` zip, unzip it, then
 `chrome://extensions`, turn on developer mode, and **Load unpacked** on the
-unzipped folder. Firefox: `kona-firefox.zip`, loaded as a temporary add-on from
-`about:debugging`. Safari: `kona-safari.zip` holds the extension's resources
-and still needs the Xcode wrap, which is described in `apple/README.md`.
+unzipped folder. Firefox: the `-firefox` zip, loaded as a temporary add-on
+from `about:debugging`; the `-sources` zip beside it is what add-on review
+asks for and nobody installing needs. Safari: the `-safari` zip holds the
+extension's resources and still needs the Xcode wrap, which is described in
+`apple/README.md`.
 
 Your library lives on the web at
 <https://aniketpandey05.github.io/kona/app/>, and on a free account nothing
