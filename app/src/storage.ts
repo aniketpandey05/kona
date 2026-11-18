@@ -244,7 +244,43 @@ export function restoreIdentity(identity: Identity): Person | null {
 // The share route saves and then hands over to the library, which is a separate
 // render; let anything listening know the store moved underneath it.
 const listeners = new Set<() => void>();
-const notify = () => listeners.forEach((listener) => listener());
+const tell = () => listeners.forEach((listener) => listener());
+
+/**
+ * The same library, open in another tab.
+ *
+ * This set only ever reached the page it was declared on, so a second tab of
+ * the library held a copy of the store from whenever it was opened and never
+ * heard about anything after that: a name set in one tab still read *Your name
+ * and your backups* in the other, and a space made in one never appeared in
+ * the other. The same store, two tabs, two answers.
+ *
+ * Nothing the browser gives you covers both halves on its own. Highlights and
+ * spaces are in IndexedDB, which fires no cross-tab event at all, so the
+ * channel is what carries those. Identity is in localStorage, which fires
+ * `storage` in the *other* tabs natively, and that is the half that still
+ * works where a channel cannot be made. Neither fires in the tab that did the
+ * writing, so this cannot loop.
+ */
+const channel = typeof BroadcastChannel === 'function' ? new BroadcastChannel('kona-store') : null;
+if (channel) channel.onmessage = tell;
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (event) => {
+    // A key of null is the whole store being cleared, which is also news.
+    if (event.key === null || event.key.startsWith('kona')) tell();
+  });
+}
+
+const notify = () => {
+  tell();
+  // Posting can throw where the channel has been closed by the page going
+  // away. Telling this tab is the part that must not be lost.
+  try {
+    channel?.postMessage('changed');
+  } catch {
+    // Another tab will catch up on its next read.
+  }
+};
 
 export function watch(onChange: () => void): () => void {
   listeners.add(onChange);

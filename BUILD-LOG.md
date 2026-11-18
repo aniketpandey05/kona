@@ -1051,11 +1051,66 @@ marked, and landing back on the exact words.
 
 ---
 
+## Two tabs of the same library, and the row at the foot of the nav
+
+> the your name and you rbacup doesnt persist across different tabs an
+> currently looks bad
+
+Two things, and the first is bigger than the row it was noticed on.
+
+### The store told one page and no others
+
+`watch` in the app's storage was a set of callbacks at module scope, which is
+one page. Every write called it, and every write reached only the tab that did
+the writing. So a second tab of the library held whatever the store said when
+it was opened and never heard about anything after that: a name set in one
+tab still read *Your name and backups* in the other, a space made in one never
+appeared beside the others, a highlight deleted in one stayed in the list.
+The same store, two tabs, two answers, and no way to tell which was right
+except by reloading.
+
+**Nothing the browser gives you covers both halves.** Highlights and spaces
+are in IndexedDB, which fires no cross-tab event at all; identity is in
+localStorage, which fires `storage` in the *other* tabs by itself. So both are
+wired:
+
+- A `BroadcastChannel` carries every write, which is what reaches the
+  IndexedDB half.
+- The `storage` event is listened for as well, filtered to Kona's own keys,
+  because an unrelated key moving on the same origin is not a reason to
+  re-read a library. A null key is, because that is the whole store being
+  cleared.
+
+Neither fires in the tab that did the writing, so there is no loop, and
+posting is wrapped because a channel on a page that is going away can throw,
+while telling *this* tab must not be lost.
+
+Checked with two real tabs open on the same library: a name saved in one
+appeared in the other without a reload, and a space made in one took the
+other's list from three to four.
+
+### And the row itself
+
+Two things, both visible in the screenshot that came with the report.
+
+**It wrapped.** `Your name and your backups` is the right description and one
+word too long for the width the nav gives it, so it broke onto a second line,
+pushed the row past its 48px and left the disc floating against the first
+line of two. It is `Your name and backups` now, with one line enforced rather
+than hoped for.
+
+**The empty avatar was a dashed ring.** The reasoning behind it still holds,
+an empty outline is better than the initials of nobody, but at 28px a dashed
+ring reads as something still loading, and on dark paper it reads as a spinner
+that never finishes. A quiet filled disc says the same thing calmly.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 558 |
+| Tests | 562 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |

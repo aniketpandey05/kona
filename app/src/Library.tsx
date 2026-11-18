@@ -486,7 +486,10 @@ export function Library({
                   <span class="lib-acct-quiet">This machine only, for now</span>
                 </span>
               ) : (
-                <span class="lib-acct-who">{me || 'Your name and your backups'}</span>
+                // Shorter than it was. "Your name and your backups" is the
+                // right description and one word too long for the width it
+                // has, so it wrapped and took the row's height with it.
+                <span class="lib-acct-who">{me || 'Your name and backups'}</span>
               )}
             </button>
             {menuAt && (

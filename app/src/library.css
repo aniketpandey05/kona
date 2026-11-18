@@ -1049,16 +1049,41 @@
   border-radius: 50%;
 }
 
-/* No name yet: an empty outline rather than initials of nobody. */
+/*
+ * No name yet.
+ *
+ * It was a dashed outline, on the reasoning that an empty ring is better than
+ * the initials of nobody. The reasoning holds and the dashes did not: at 28px
+ * a dashed ring reads as something still loading, and on dark paper it reads
+ * as a spinner that never finishes. A quiet filled disc says the same thing
+ * and says it calmly.
+ */
 .lib-acct-face[data-empty] {
-  background: transparent;
-  border: 1px dashed var(--kona-paper-line-strong);
+  background: var(--kona-paper-sunken);
+  box-shadow: inset 0 0 0 1px var(--kona-paper-line-strong);
 }
 
+/*
+ * One line, always.
+ *
+ * The label wrapped onto a second line in a nav narrow enough to need it,
+ * which pushed the row past its 48px and left the disc floating against the
+ * first line of two. A row this quiet should not be the tallest thing in the
+ * nav.
+ */
 .lib-acct-who {
   flex-grow: 1;
   min-width: 0;
+  overflow: hidden;
   color: var(--kona-paper-ink-heading);
+}
+
+.lib-acct-who,
+.lib-acct-trouble,
+.lib-acct-quiet {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* The one time it speaks. Amber, and it says what to expect rather than what
