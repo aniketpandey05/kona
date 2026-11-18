@@ -974,11 +974,88 @@ resting mark returns.
 
 ---
 
+## Dark, the way back to the spaces, and a tile
+
+Three things reported from using it, and one found underneath the first.
+
+### Dark mode was a control that did nothing
+
+Settings had offered **Match the system**, **Light** and **Dark** since it was
+written. Choosing one saved it and stamped `data-theme` on `<html>`, exactly
+as intended.
+
+Nothing read it. `tokens.css` had a single block, `:root, :host, .kona-tokens`,
+with light values and no second set anywhere; the only `[data-theme]` rule in
+the repository was in the landing page's own stylesheet. So the chips lit, the
+attribute changed, and the library stayed cream. The same was true of the popup
+and the welcome page.
+
+That is worse than not offering it. A choice that visibly does nothing tells
+somebody their eyes are wrong rather than the product.
+
+**Sixteen tokens, at the document and nowhere else.** The paper surfaces, the
+inks, the two lines, the dot, and the link, which in light is a dark orange
+that disappears on dark paper. Written in `tokens.json` beside everything else
+and generated into two blocks: `[data-theme='dark']` for a choice, and
+`@media (prefers-color-scheme: dark)` scoped to `:root:not([data-theme='light'])`
+for Match the system. The `:not()` is the half that is easy to leave out and
+impossible to notice on a light laptop: without it, somebody who chose Light
+is overruled by their machine every evening. There is a test for that case
+specifically.
+
+**The panel does not move, and that is the point of the selector.** 17 settled
+that the panel is a dark slab over a white article and over a black one, so it
+is the one surface in Kona that must not follow a preference. The dark blocks
+are written against `:root` alone, never `:host` or `.kona-tokens`, which is
+what the panel's shadow root wears. Checked rather than reasoned about: with
+the operating system dark, the panel in the page still reports
+`--kona-paper: #f8f5ee` and its slab unchanged.
+
+`color-scheme: dark` goes in the same blocks, for the half we do not paint:
+the scrollbar, the caret, and anything native a form draws.
+
+**And a defect it uncovered.** The account row never declared a background, a
+border or a font, so it had been wearing the browser's own button all along:
+default grey, default border, default font, in the row meant to be the
+quietest thing in the nav. Light paper hid most of it. Dark did not.
+
+### The way back to all the spaces was a caption
+
+> i have to click the space rather than spaces to make a new i have to go back
+> to the all spaces
+
+The nav listed **Highlights** and **Archived** as rows, then `SPACES · 3` as a
+faint, tiny, capitalised heading, then the spaces. The heading was a link to
+the all-spaces view the whole time, and it looked exactly like every dead
+section label on the web: eleven pixels, uppercase, the faintest ink in the
+palette, no underline.
+
+So the only route to the view that holds **New space** read as decoration.
+There was a `← All spaces` button inside an open space, which is a second way
+to find something that should not have needed finding.
+
+It is a row now, like the two above it, with the count beside it and the
+current state when it is open. The spaces themselves are indented under it in
+the quieter ink, which is what they are: a list inside that view rather than
+more destinations beside it.
+
+### The promotional tile
+
+440×280, the one size the store shows beside a listing. Drawn in
+`harness/tile.html` from the real mark and the real tokens and photographed by
+the same script as the screenshots, so it cannot drift away from the product
+the way an image exported once from a design tool does.
+
+It carries one idea, which is all a tile seen at a glance can: a passage
+marked, and landing back on the exact words.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 553 |
+| Tests | 558 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |

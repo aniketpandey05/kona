@@ -210,3 +210,70 @@
   --kona-shadow-slab: 0 1px 2px rgba(0, 0, 0, 0.2), 0 22px 50px -12px rgba(0, 0, 0, 0.46);
   --kona-shadow-pill: 0 1px 2px rgba(0, 0, 0, 0.22), 0 14px 32px -8px rgba(0, 0, 0, 0.4);
 }
+
+/* Dark, for the rooms that are made of paper.
+
+   Settings offered Match the system, Light and Dark from the day it was
+   written, and stamped the answer on <html> as data-theme. Nothing read
+   it. There was no dark anywhere in this file, so the choice moved a
+   value nothing was looking at and the library stayed cream whichever
+   chip was lit. A control that does nothing is worse than no control: it
+   tells somebody their eyes are wrong rather than the product.
+
+   **Only paper goes dark, and only at the document.** The slab tokens
+   below are the panel in the page, which 17 settled as dark over a white
+   article and dark over a black one, so it is the one surface that must
+   not follow anybody's preference. That is why these are emitted against
+   :root alone and never against :host or .kona-tokens: the panel is
+   drawn inside a shadow root wearing that class, and a rule that reached
+   it would undo the decision by accident.
+
+   The pens are not here either. A mark is a transparent wash over
+   somebody else's words, and the painter already picks its ink by how
+   dark the page is rather than by what the reader prefers.
+
+   Contrast measured against the dark paper: ink 16.0, headings 17.2,
+   muted 6.7, the link 10.9. The faint tone lands at 4.2, which is above
+   where the light theme puts the same token, at 3.4.
+*/
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --kona-paper: #17140f;
+    --kona-paper-raised: #201c16;
+    --kona-paper-sunken: #110f0b;
+    --kona-paper-note: #221d15;
+    --kona-paper-note-edge: #8a6a3f;
+    --kona-paper-ink: #f4efe6;
+    --kona-paper-ink-heading: #fbf7f0;
+    --kona-paper-ink-soft: #e4ded3;
+    --kona-paper-ink-note: #cdc5b8;
+    --kona-paper-ink-muted: #a39b8d;
+    --kona-paper-ink-faint: #7f776b;
+    --kona-paper-line: #2e2921;
+    --kona-paper-line-strong: #403931;
+    --kona-paper-dot-empty: #4a4238;
+    --kona-accent-link: #fdba74;
+    --kona-accent-link-hover: #fed7aa;
+  }
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --kona-paper: #17140f;
+  --kona-paper-raised: #201c16;
+  --kona-paper-sunken: #110f0b;
+  --kona-paper-note: #221d15;
+  --kona-paper-note-edge: #8a6a3f;
+  --kona-paper-ink: #f4efe6;
+  --kona-paper-ink-heading: #fbf7f0;
+  --kona-paper-ink-soft: #e4ded3;
+  --kona-paper-ink-note: #cdc5b8;
+  --kona-paper-ink-muted: #a39b8d;
+  --kona-paper-ink-faint: #7f776b;
+  --kona-paper-line: #2e2921;
+  --kona-paper-line-strong: #403931;
+  --kona-paper-dot-empty: #4a4238;
+  --kona-accent-link: #fdba74;
+  --kona-accent-link-hover: #fed7aa;
+}

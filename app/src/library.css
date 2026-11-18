@@ -562,9 +562,20 @@
   color: var(--kona-paper-ink-faint);
 }
 
-.lib-nav-head a {
-  color: inherit;
-  text-decoration: none;
+/*
+ * A space, under the Spaces row that holds them.
+ *
+ * Indented so the list reads as what is inside that view rather than as more
+ * destinations beside it, and in the quieter ink, since the row above is the
+ * one that is always there and these come and go.
+ */
+.lib-nav-item--sub {
+  padding-left: var(--kona-space-24);
+  color: var(--kona-paper-ink-muted);
+}
+
+.lib-nav-item--sub.lib-nav-item--on {
+  color: var(--kona-paper-ink);
 }
 
 /* Settings: export first, because 6 makes a file you keep the only backup
@@ -1001,10 +1012,23 @@
   min-height: 48px;
   margin-top: var(--kona-space-2);
   padding: var(--kona-space-8) var(--kona-space-10);
+  /* It never said any of these, so it wore the browser's own button: the
+     default grey, the default border and the default font, in the one row
+     that is supposed to be the quietest thing in the nav. Light paper hid
+     most of it. Dark did not, which is how it was found. */
+  font: inherit;
   font-size: var(--kona-text-base);
   color: var(--kona-paper-ink-note);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
   text-decoration: none;
   border-radius: var(--kona-radius-md);
+}
+
+.lib-acct:hover {
+  background: var(--kona-paper-sunken);
 }
 
 .lib-acct:hover {

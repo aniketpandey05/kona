@@ -122,3 +122,62 @@ describe('text you have to be able to read', () => {
   // not the pen at full strength, measuring the wrong pair is what hid the
   // dark-page defect. It is measured properly in tests/painter.test.ts.
 });
+
+/**
+ * Dark, for the rooms made of paper.
+ *
+ * Settings offered Match the system, Light and Dark, stamped the answer on
+ * `<html>`, and nothing read it: there was no dark in the token file at all,
+ * so the library stayed cream whichever chip was lit. These are the
+ * conditions that make the choice mean something, and the one that keeps it
+ * away from the panel.
+ */
+describe('dark', () => {
+  const dark = (name: string): string => {
+    const value = (read().dark as Record<string, string>)[name];
+    if (!value) throw new Error(`No such dark token: ${name}`);
+    return value;
+  };
+
+  it('reads a passage comfortably, the same bar the light room has to clear', () => {
+    expect(contrast(dark('paper-ink'), dark('paper'))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(dark('paper-ink-heading'), dark('paper'))).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('keeps the quiet text and the links legible too', () => {
+    expect(contrast(dark('paper-ink-muted'), dark('paper'))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(dark('paper-ink-note'), dark('paper-raised'))).toBeGreaterThanOrEqual(4.5);
+    // The light theme's link is a dark orange, which disappears on dark paper.
+    expect(contrast(dark('accent-link'), dark('paper'))).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('overrides only tokens that already exist, rather than inventing any', () => {
+    const light = new Set<string>();
+    for (const group of read().groups) for (const name of Object.keys(group.vars)) light.add(name);
+    const orphans = Object.keys(read().dark as object).filter((name) => !light.has(name));
+    expect(orphans).toEqual([]);
+  });
+
+  it('never reaches the panel, which 17 settled as dark over any page', () => {
+    // The panel is drawn in a shadow root wearing `.kona-tokens`, and the main
+    // block hands it the light paper values on purpose. A dark rule written
+    // against that class, or against `:host`, would make the one surface that
+    // must not follow a preference follow one.
+    const css = readFileSync(CSS, 'utf8');
+    const blocks = css.slice(css.indexOf('@media (prefers-color-scheme: dark)'));
+    expect(blocks).not.toContain('.kona-tokens');
+    expect(blocks).not.toContain(':host');
+    expect(blocks).toContain(":root:not([data-theme='light'])");
+    expect(blocks).toContain("[data-theme='dark']");
+  });
+
+  it('lets a light choice survive a dark operating system', () => {
+    // Without the :not(), somebody who picked Light would be overruled by
+    // their machine every evening, which is the half of this that is easy to
+    // leave out and impossible to notice on a light laptop.
+    const css = readFileSync(CSS, 'utf8');
+    expect(css).toMatch(
+      /@media \(prefers-color-scheme: dark\) \{\s*:root:not\(\[data-theme='light'\]\)/,
+    );
+  });
+});

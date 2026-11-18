@@ -401,13 +401,28 @@ export function Library({
             Archived <span class="lib-nav-count">{archivedCount}</span>
           </a>
 
-          {/* Spaces are the library's other view (3f), still the old screen. */}
-          <p class="lib-nav-head">
-            <a href="#/spaces">Spaces · {spaces.length}</a>
-          </p>
+          {/* Spaces are the library's other view (3f).
+
+              A row like the two above it rather than the caption it used to
+              be. As a caption it was faint, small and capitalised, which is
+              what every dead section label on the web looks like, so the one
+              way to all of them, and therefore the only way to make a new
+              one, read as decoration. The spaces themselves sit under it as
+              what they are, which is a list inside this view. */}
+          <a
+            class={inSpaces && !openSpaceId ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
+            aria-current={inSpaces && !openSpaceId ? 'page' : undefined}
+            href="#/spaces"
+          >
+            Spaces <span class="lib-nav-count">{spaces.length}</span>
+          </a>
           {spaces.map((space) => (
             <a
-              class={openSpaceId === space.id ? 'lib-nav-item lib-nav-item--on' : 'lib-nav-item'}
+              class={
+                openSpaceId === space.id
+                  ? 'lib-nav-item lib-nav-item--sub lib-nav-item--on'
+                  : 'lib-nav-item lib-nav-item--sub'
+              }
               key={space.id}
               href={`#/spaces/${space.id}`}
             >

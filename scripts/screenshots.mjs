@@ -106,6 +106,34 @@ for (const [name, from] of PAD) {
   report(name, out);
 }
 
+/**
+ * The small promotional tile, which is 440x280 and nothing else.
+ *
+ * Captured the same way and for the same reason as the screenshots: it is
+ * drawn from the real mark and the real tokens in `harness/tile.html`, so it
+ * cannot drift away from the product the way an image exported once from a
+ * design tool does.
+ */
+for (const [name, path] of [['promo-tile.png', '/tile.html']]) {
+  const out = resolve('docs', 'screenshots', name);
+  execFileSync(
+    CHROME,
+    [
+      '--headless=new',
+      '--disable-gpu',
+      '--hide-scrollbars',
+      '--force-device-scale-factor=1',
+      '--window-size=440,280',
+      '--virtual-time-budget=5000',
+      `--user-data-dir=${profile}`,
+      `--screenshot=${out}`,
+      `${HARNESS}${path}`,
+    ],
+    { stdio: ['ignore', 'ignore', 'pipe'] },
+  );
+  report(name, out);
+}
+
 function report(name, out) {
   const size = existsSync(out) ? statSync(out).size : 0;
   console.log(size ? `${name}, ${(size / 1024).toFixed(0)} kB` : `${name}, FAILED`);

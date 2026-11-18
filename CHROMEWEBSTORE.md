@@ -144,7 +144,7 @@ English
 | Screenshot 3 | 1280×800 | ✅ Ready | `docs/screenshots/library.png` |
 | Screenshot 4 | 1280×800 | ✅ Ready | `docs/screenshots/spaces.png` |
 | Screenshot 5 | 1280×800 | ✅ Ready | `docs/screenshots/space.png` |
-| Small Promo Tile | 440×280 | ⬜ Not created | |
+| Small Promo Tile | 440×280 | ✅ Ready | `docs/screenshots/promo-tile.png` |
 
 ### Screenshot notes
 All five are exactly 1280×800, which is one of the two sizes the store accepts; anything
@@ -152,6 +152,11 @@ else is rejected. They show the product in use rather than the popup, which is w
 review team wants to see, and between them they cover a highlight on an ordinary page,
 the panel inside a chat, the library, the spaces list, and a space two people have worked
 in, with the decision signed and checked.
+
+The promotional tile is drawn the same way, in `harness/tile.html`, from the
+real mark and the real tokens, so it cannot drift away from the product the
+way an image exported once from a design tool does. It is captured at exactly
+440×280 by the same script.
 
 `node scripts/screenshots.mjs` regenerates them against a running harness
 (`npm run dev:harness`). Three are captured straight from the page. The other two show
@@ -285,10 +290,11 @@ is that the extension does not work.
 - [ ] Privacy policy URL confirmed live, which needs the Pages deploy to have run
 - [ ] $5 one-off developer registration paid
 
-Two things that are nobody's blocker but will be noticed:
+- [x] Small promotional tile, 440×280, drawn from the real mark and the real
+      tokens rather than exported once from a design tool
 
-- [ ] **Small promo tile**, 440×280. Optional, and a listing without one is not
-      featured anywhere.
+One thing that is nobody's blocker but will be noticed:
+
 - [ ] The landing page's Enterprise button still mails `sales@kona.example`,
       which is nobody. It is the website rather than the extension, so it does
       not affect review.
