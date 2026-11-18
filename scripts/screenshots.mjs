@@ -114,7 +114,12 @@ for (const [name, from] of PAD) {
  * cannot drift away from the product the way an image exported once from a
  * design tool does.
  */
-for (const [name, path] of [['promo-tile.png', '/tile.html']]) {
+for (const [name, path, size] of [
+  ['promo-tile.png', '/tile.html', '440,280'],
+  // Optional, and only shown if the store features Kona in the carousel on its
+  // home page. A listing without one cannot be picked for it.
+  ['marquee.png', '/marquee.html', '1400,560'],
+]) {
   const out = resolve('docs', 'screenshots', name);
   execFileSync(
     CHROME,
@@ -123,7 +128,7 @@ for (const [name, path] of [['promo-tile.png', '/tile.html']]) {
       '--disable-gpu',
       '--hide-scrollbars',
       '--force-device-scale-factor=1',
-      '--window-size=440,280',
+      `--window-size=${size}`,
       '--virtual-time-budget=5000',
       `--user-data-dir=${profile}`,
       `--screenshot=${out}`,

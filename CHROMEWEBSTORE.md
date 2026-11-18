@@ -22,6 +22,7 @@ other way round. All four are fixed here.
 | `kona-1.4.1-chrome.zip` | the [v1.4.1 release](https://github.com/aniketpandey05/kona/releases/tag/v1.4.1), or `.output/` after `npm run zip` | The package itself. Prefer the release copy: CI built it from the tagged commit, so it is the one the source can be checked against |
 | This file | `CHROMEWEBSTORE.md` | Every box on the submission form, already written |
 | Five screenshots | `docs/screenshots/*.png` | `web-page`, `chat-panel`, `library`, `spaces`, `space`. All 1280×800, which is one of the two sizes the store takes |
+| Two tiles | `docs/screenshots/` | `promo-tile.png` at 440×280, and `marquee.png` at 1400×560 for the carousel |
 | The icon | `src/public/icon/128.png` | 128×128, and already inside the ZIP as well |
 
 **Three things they will need from you rather than from a file.** A Google
@@ -145,6 +146,8 @@ English
 | Screenshot 4 | 1280×800 | ✅ Ready | `docs/screenshots/spaces.png` |
 | Screenshot 5 | 1280×800 | ✅ Ready | `docs/screenshots/space.png` |
 | Small Promo Tile | 440×280 | ✅ Ready | `docs/screenshots/promo-tile.png` |
+| Marquee | 1400×560 | ✅ Ready | `docs/screenshots/marquee.png` |
+| Promo video | a YouTube link | ⬜ Needs recording | see below |
 
 ### Screenshot notes
 All five are exactly 1280×800, which is one of the two sizes the store accepts; anything
@@ -153,10 +156,43 @@ review team wants to see, and between them they cover a highlight on an ordinary
 the panel inside a chat, the library, the spaces list, and a space two people have worked
 in, with the decision signed and checked.
 
-The promotional tile is drawn the same way, in `harness/tile.html`, from the
-real mark and the real tokens, so it cannot drift away from the product the
-way an image exported once from a design tool does. It is captured at exactly
-440×280 by the same script.
+Both tiles are drawn the same way, in `harness/tile.html` and
+`harness/marquee.html`, from the real mark and the real tokens, so they cannot
+drift away from the product the way an image exported once from a design tool
+does. Both are captured at exactly their size by the same script. The marquee
+is optional and is only used if the store features Kona in the carousel on its
+home page, which is a thing a listing without one cannot be picked for.
+
+### The video
+
+**The store takes a YouTube link, not a file.** So the recording and the
+upload are a person's job, and the account the video lives on is a decision
+worth making on purpose, because it is on the listing for as long as the
+listing is.
+
+What is here is the part that can be made repeatable: `harness/shot-page.html?demo`
+runs the whole story on its own, at a pace somebody can watch, using the real
+extension against a real page. Open it, hit record, and it does the same take
+every time without depending on anybody's mouse hand. Record at 1280×800 and
+you have the store's own screenshot size.
+
+The beats, in order, about twenty seconds end to end:
+
+| | |
+| --- | --- |
+| 0:00 | An ordinary article. Nothing of Kona on screen except the resting mark |
+| 0:02 | A sentence is selected. The bar appears beside it |
+| 0:04 | A colour is picked. The sentence is marked, and the resting mark counts up |
+| 0:06 | Twice more, in two more colours, because the palette is the thing people ask about first |
+| 0:13 | The panel opens. It lists what was kept on this page |
+| 0:15 | The page is scrolled away to the end of the article |
+| 0:18 | A row in the panel is clicked, and the page goes back to the exact words and flashes them |
+
+That last beat is the product and is the only one worth protecting if the
+video has to be cut shorter. Everything before it is setup.
+
+If you narrate it, the one line that matters is the one the listing opens
+with: *highlight anything you read, and land back on the exact words.*
 
 `node scripts/screenshots.mjs` regenerates them against a running harness
 (`npm run dev:harness`). Three are captured straight from the page. The other two show
@@ -290,8 +326,13 @@ is that the extension does not work.
 - [ ] Privacy policy URL confirmed live, which needs the Pages deploy to have run
 - [ ] $5 one-off developer registration paid
 
-- [x] Small promotional tile, 440×280, drawn from the real mark and the real
-      tokens rather than exported once from a design tool
+- [x] Small promotional tile, 440×280, and the marquee at 1400×560, both drawn
+      from the real mark and the real tokens rather than exported once from a
+      design tool
+
+- [ ] The promo video recorded and uploaded, and its YouTube link pasted into
+      the listing. Optional, and the one asset nobody else can make for you,
+      because the store wants a link rather than a file
 
 One thing that is nobody's blocker but will be noticed:
 
