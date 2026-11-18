@@ -1106,6 +1106,29 @@ that never finishes. A quiet filled disc says the same thing calmly.
 
 ---
 
+## 1.4.1, and the order a release goes in
+
+`v1.4.0` was tagged on the off-switch commit, and the dark palette landed four
+commits later. The web library was fine, because Pages deploys from `main`;
+the zip attached to the release was not, and the thing it was missing was
+precisely the one somebody would notice first, an appearance setting that does
+nothing.
+
+Nobody would have found that by reading the diff. It took asking what the
+*released artefact* contained rather than what the branch did, which is a
+different question and the one that matters once something is tagged. A tag is
+a photograph, and the thing being photographed kept moving.
+
+So: 1.4.1, the same code with the palette in it, notes in both the file that
+ships with the build and the one the release body is written from, and the
+store listing pointed at the new zip.
+
+While bumping it: `package-lock.json` still said `1.2.0`, two releases behind.
+`npm ci` does not complain about the root version, so nothing had ever failed
+over it and nobody had looked.
+
+---
+
 ## Where it stands
 
 | | |
