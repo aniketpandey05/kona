@@ -247,27 +247,22 @@ export function addFinding(
   );
 }
 
-export function editFinding(space: Space, findingId: string, claim: string, now = Date.now()): Space {
-  const body = claim.trim();
-  if (!body) return space;
-  return touched(
-    space,
-    {
-      findings: space.findings.map((finding) =>
-        finding.id === findingId ? { ...finding, claim: body } : finding,
-      ),
-    },
-    now,
-  );
-}
-
-export function removeFinding(space: Space, findingId: string, now = Date.now()): Space {
-  return touched(
-    space,
-    { findings: space.findings.filter((finding) => finding.id !== findingId) },
-    now,
-  );
-}
+/*
+ * `editFinding` and `removeFinding` were here, and went when the last thing
+ * that called them did.
+ *
+ * Decision 20 cut findings and the write-up out of the product: a finding was
+ * only ever a highlight with a note on it, and the write-up was a second way
+ * to make the page 3d already provides. `addFinding` survives because the
+ * frozen Team demo still calls it, and `addQuestion` and `closeQuestion`
+ * because the shared-space merge still carries what they wrote; these two had
+ * no caller anywhere, in any folder, including the tests.
+ *
+ * Kept as a note rather than deleted silently, because the next person to
+ * read this file will wonder why a space has `findings` on it at all. It has
+ * them because a space that was made before 20 still does, and the merge has
+ * to be able to read one.
+ */
 
 export function addQuestion(space: Space, text: string, now = Date.now()): Space {
   const body = text.trim();

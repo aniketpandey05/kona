@@ -10,6 +10,7 @@ import {
   type Scope,
   type SyncStore,
 } from '../src/core/sync';
+import { mergeGone, type Gone } from '../src/core/gone';
 import type { Mark } from '../src/core/types';
 
 const mark = (id: string, snapshot: string, updatedAt = 100): Mark =>
@@ -48,10 +49,15 @@ function folder(contents: string | null = null) {
 
 /** One side's library, in memory. */
 function side(marks: Mark[] = [], spaces: Space[] = []) {
-  const held = { marks: [...marks], spaces: [...spaces] };
+  const held = { marks: [...marks], spaces: [...spaces], gone: [] as Gone[] };
   const store: SyncStore = {
     marks: async () => [...held.marks],
     spaces: async () => [...held.spaces],
+    deleted: async () => [...held.gone],
+    removeMark: async (id, at) => {
+      held.marks = held.marks.filter((entry) => entry.id !== id);
+      held.gone = mergeGone(held.gone, [{ id, at }], at);
+    },
     saveMark: async (next) => {
       const at = held.marks.findIndex((entry) => entry.id === next.id);
       if (at === -1) held.marks.push(next);
@@ -63,7 +69,9 @@ function side(marks: Mark[] = [], spaces: Space[] = []) {
       else held.spaces[at] = next;
     },
   };
-  return { store, held };
+  /** Delete a highlight the way the product does: gone, and written down. */
+  const forget = (id: string, at: number) => void store.removeMark(id, at);
+  return { store, held, forget };
 }
 
 describe('a folder two libraries share', () => {
@@ -448,5 +456,110 @@ describe('an empty shared folder', () => {
   it('is still an error when it is meant to be a backup', async () => {
     // Restoring from an empty file is somebody having picked the wrong one.
     expect(() => readBackup(empty)).toThrow(/No highlights/);
+  });
+});
+
+/**
+ * Times at the scale a clock actually produces. `prune` measures a tombstone
+ * against the present, so 100 and 500 describe something deleted in 1970 and
+ * forgotten long before any of this runs.
+ */
+const WHILE_AGO = Date.now() - 60_000;
+const EARLIER = Date.now() - 30_000;
+const JUST_NOW = Date.now() - 1_000;
+
+/**
+ * Deleting something, and having it stay deleted.
+ *
+ * The merge takes the union of both sides and the newer copy of anything they
+ * both hold, which is 21's *latest change wins* and is right for an edit. A
+ * deletion is not an edit: it is an absence, and an absence is indistinguish-
+ * able from a record the other side has not been handed yet. So the merge did
+ * the only thing it could and gave the highlight back. Delete on the laptop,
+ * sync, and the desktop returned it.
+ */
+describe('a highlight that was deleted', () => {
+  it('does not come back from the folder it was synced into', async () => {
+    const disk = folder();
+    const one = side([mark('a', 'Named volumes are kept', WHILE_AGO)]);
+    const two = side([mark('a', 'Named volumes are kept', WHILE_AGO)]);
+
+    // Both sides know about it, and then one side deletes it.
+    await syncOnce(disk.folder, one.store);
+    await syncOnce(disk.folder, two.store);
+    one.forget('a', EARLIER);
+
+    const back = await syncOnce(disk.folder, one.store);
+
+    expect(back.added).toBe(0);
+    expect(one.held.marks).toEqual([]);
+  });
+
+  it('is deleted on the other side too, next time it looks', async () => {
+    const disk = folder();
+    const one = side([mark('a', 'Named volumes are kept', WHILE_AGO)]);
+    const two = side([mark('a', 'Named volumes are kept', WHILE_AGO)]);
+
+    await syncOnce(disk.folder, one.store);
+    await syncOnce(disk.folder, two.store);
+    one.forget('a', EARLIER);
+    await syncOnce(disk.folder, one.store);
+
+    const heard = await syncOnce(disk.folder, two.store);
+
+    expect(heard.removed).toBe(1);
+    expect(two.held.marks).toEqual([]);
+  });
+
+  it('stays deleted when a third machine that still has it joins in', async () => {
+    // The case a tombstone that stopped at the second machine would get
+    // wrong: the third hands it back to both of them.
+    const disk = folder();
+    const one = side([mark('a', 'Named volumes are kept', WHILE_AGO)]);
+    const two = side([mark('a', 'Named volumes are kept', WHILE_AGO)]);
+    const three = side([mark('a', 'Named volumes are kept', WHILE_AGO)]);
+
+    one.forget('a', EARLIER);
+    await syncOnce(disk.folder, one.store);
+    await syncOnce(disk.folder, two.store);
+    await syncOnce(disk.folder, three.store);
+    await syncOnce(disk.folder, one.store);
+
+    expect(one.held.marks).toEqual([]);
+    expect(two.held.marks).toEqual([]);
+    expect(three.held.marks).toEqual([]);
+  });
+
+  it('comes back if the other side edited it after the deletion', async () => {
+    // 21 settled on the latest change winning rather than on deletion
+    // winning, and this is the case where the two differ. My recommendation
+    // was that a deletion never beats an edit; the author's rule is simpler
+    // and this is it, written down so nobody has to guess which was built.
+    const disk = folder();
+    const one = side([mark('a', 'The old wording', WHILE_AGO)]);
+    const two = side([mark('a', 'The newer wording', JUST_NOW)]);
+
+    one.forget('a', EARLIER);
+    await syncOnce(disk.folder, one.store);
+    const back = await syncOnce(disk.folder, two.store);
+
+    expect(back.removed).toBe(0);
+    expect(two.held.marks[0]?.snapshot).toBe('The newer wording');
+  });
+
+  it('settles rather than deleting and re-adding forever', async () => {
+    const disk = folder();
+    const one = side([mark('a', 'Named volumes are kept', WHILE_AGO)]);
+    const two = side([mark('a', 'Named volumes are kept', WHILE_AGO)]);
+
+    one.forget('a', EARLIER);
+    await syncOnce(disk.folder, one.store);
+    await syncOnce(disk.folder, two.store);
+    await syncOnce(disk.folder, one.store);
+    const settled = disk.writes;
+
+    await syncOnce(disk.folder, two.store);
+    await syncOnce(disk.folder, one.store);
+    expect(disk.writes).toBe(settled);
   });
 });

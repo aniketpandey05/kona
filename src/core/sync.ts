@@ -41,6 +41,7 @@
  */
 
 import { createBackup, readBackup } from './backup';
+import { deletedAt, mergeGone, outlives, type Gone } from './gone';
 import { mergeSpace } from './spaceShare';
 import { originOf, type Space } from './spaces';
 import type { Mark } from './types';
@@ -101,6 +102,14 @@ export interface SyncStore {
   spaces(): Promise<Space[]>;
   saveMark(mark: Mark): Promise<void>;
   saveSpace(space: Space): Promise<void>;
+  /** Highlights this side has deleted, and when. */
+  deleted(): Promise<Gone[]>;
+  /**
+   * Delete a highlight the other side deleted first, and remember having done
+   * it, so the deletion carries on to the next folder rather than stopping
+   * here.
+   */
+  removeMark(id: string, at: number): Promise<void>;
 }
 
 /**
@@ -119,6 +128,8 @@ export interface Synced {
   added: number;
   /** Highlights the other side had a newer copy of. */
   updated: number;
+  /** Highlights the other side had deleted since this side last saw them. */
+  removed: number;
   /** Spaces that were not here before. */
   spacesAdded: number;
   /** Spaces that were here and gained something. */
@@ -130,6 +141,7 @@ export interface Synced {
 const nothing = (): Synced => ({
   added: 0,
   updated: 0,
+  removed: 0,
   spacesAdded: 0,
   spacesMerged: 0,
   wrote: false,
@@ -144,13 +156,24 @@ const nothing = (): Synced => ({
  * written, so two sides in perfect agreement would each see a difference,
  * write, and set the other writing again, forever.
  */
-function signature(marks: readonly Mark[], spaces: readonly Space[]): string {
+function signature(
+  marks: readonly Mark[],
+  spaces: readonly Space[],
+  gone: readonly Gone[] = [],
+): string {
   const of = (entries: ReadonlyArray<{ id: string; updatedAt: number }>): string =>
     entries
       .map((entry) => `${entry.id}:${entry.updatedAt}`)
       .sort()
       .join(',');
-  return `${of(marks)}|${of(spaces)}`;
+  // Tombstones count towards it too. A pass that learned of a deletion and
+  // nothing else changes no highlight and no space, so without this the file
+  // would not be rewritten and the deletion would never reach anybody else.
+  const graves = gone
+    .map((one) => `${one.id}:${one.at}`)
+    .sort()
+    .join(',');
+  return `${of(marks)}|${of(spaces)}|${graves}`;
 }
 
 /**
@@ -176,8 +199,15 @@ export async function syncOnce(
   if (incoming) {
 
     const mine = new Map((await store.marks()).map((mark) => [mark.id, mark]));
+    const goneHere = await store.deleted();
+
     for (const mark of incoming.marks) {
       const current = mine.get(mark.id);
+      // Deleted here, after the copy in the folder was written. Without this
+      // the next two branches hand it straight back, which is the whole defect
+      // tombstones exist for: an absence is not evidence of never having had
+      // it, and the merge could not tell the two apart.
+      if (outlives(deletedAt(goneHere, mark.id), mark.updatedAt)) continue;
       if (!current) {
         await store.saveMark(mark);
         found.added += 1;
@@ -185,6 +215,17 @@ export async function syncOnce(
         await store.saveMark(mark);
         found.updated += 1;
       }
+    }
+
+    // And the other direction: deleted there, and this side still has a copy
+    // that has not been touched since. An edit made here after their deletion
+    // keeps the highlight, because 21 settled on the latest change winning
+    // rather than on deletion winning.
+    for (const one of incoming.deleted) {
+      const current = mine.get(one.id);
+      if (!current || !outlives(one.at, current.updatedAt)) continue;
+      await store.removeMark(one.id, one.at);
+      found.removed += 1;
     }
 
     const here = await store.spaces();
@@ -209,13 +250,16 @@ export async function syncOnce(
   }
 
   const publish = await toPublish(store, scope, incoming);
-  const ours = signature(publish.marks, publish.spaces);
-  const theirs = incoming ? signature(incoming.marks, incoming.spaces) : null;
+  // Both sides' tombstones go back into the file, or a deletion would reach
+  // the second machine and stop there, and a third would hand it back to both.
+  const gone = mergeGone(await store.deleted(), incoming?.deleted ?? [], now);
+  const ours = signature(publish.marks, publish.spaces, gone);
+  const theirs = incoming ? signature(incoming.marks, incoming.spaces, incoming.deleted) : null;
 
   if (ours !== theirs) {
     // Never the identity: the same folder may be one somebody shares with a
     // colleague, and a signing key is not a thing to leave lying in it.
-    await folder.write(createBackup(publish.marks, publish.spaces));
+    await folder.write(createBackup(publish.marks, publish.spaces, null, gone));
     found.wrote = true;
   }
   return found;

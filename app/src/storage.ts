@@ -1,4 +1,5 @@
 import type { Identity } from '../../src/core/backup';
+import { mergeGone, prune, type Gone } from '../../src/core/gone';
 import { makeKeypair } from '../../src/core/identity';
 import { makePerson, type Person } from '../../src/core/people';
 import type { Space } from '../../src/core/spaces';
@@ -75,7 +76,32 @@ export async function save(mark: Mark): Promise<void> {
 
 export async function remove(id: string): Promise<void> {
   await run(MARKS, 'readwrite', (store) => store.delete(id));
+  // Written down, or the next folder sync hands it straight back (gone.ts).
+  rememberGone(id);
   notify();
+}
+
+const GONE = 'kona:gone';
+
+/** What this device has deleted, forgetting what is too old to matter. */
+export function loadGone(now = Date.now()): Gone[] {
+  try {
+    const raw = localStorage.getItem(GONE);
+    return prune(raw ? (JSON.parse(raw) as Gone[]) : [], now);
+  } catch {
+    // An unreadable list is the same as none: the sync falls back to handing
+    // things back, which is where it was before any of this.
+    return [];
+  }
+}
+
+export function rememberGone(id: string, at = Date.now()): void {
+  try {
+    localStorage.setItem(GONE, JSON.stringify(mergeGone(loadGone(at), [{ id, at }], at)));
+  } catch {
+    // No room left. The highlight is still deleted here; it may come back on
+    // the next sync, which is survivable and not worth failing the delete for.
+  }
 }
 
 /** Import keeps whichever copy was edited most recently, as the extension does. */
@@ -295,6 +321,12 @@ export function watch(onChange: () => void): () => void {
 export const syncStore: SyncStore = {
   marks: () => loadAll(),
   spaces: () => loadSpaces(),
+  deleted: async () => loadGone(),
+  removeMark: async (id, at) => {
+    await run(MARKS, 'readwrite', (store) => store.delete(id));
+    rememberGone(id, at);
+    notify();
+  },
   saveMark: (mark) => save(mark),
   saveSpace: (space) => saveSpace(space),
 };

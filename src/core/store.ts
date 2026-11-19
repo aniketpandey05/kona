@@ -1,5 +1,6 @@
 import { browser, storage } from '#imports';
 import type { Identity } from './backup';
+import { mergeGone, prune, type Gone } from './gone';
 import { makeKeypair } from './identity';
 import type { SyncStore } from './sync';
 import { pageId } from './pageUrl';
@@ -103,6 +104,8 @@ export function removeMark(site: SiteId, conversationId: string, id: string): Pr
     // points at those bytes, so leaving them would be a megabyte nobody can
     // reach and nobody can clear.
     if (going?.image?.kept) await storage.removeItem(imageKey(id));
+    // Written down, or the next sync hands it back from the folder (gone.ts).
+    await rememberGone(id);
   });
 }
 
@@ -230,7 +233,33 @@ export const syncStore: SyncStore = {
   spaces: () => loadSpaces(),
   saveMark: (mark) => upsertMark(mark),
   saveSpace: (space) => saveSpace(space),
+  deleted: () => loadGone(),
+  // The engine knows an id; this store is keyed by the page a highlight is on,
+  // so the mark has to be found before it can be taken out.
+  removeMark: async (id, at) => {
+    const mark = (await loadAllMarks()).find((one) => one.id === id);
+    if (mark) await removeMark(mark.site, mark.conversationId, id);
+    await rememberGone(id, at);
+  },
 };
+
+const GONE_KEY = 'local:gone' as const;
+
+/** What this device has deleted, forgetting what is too old to matter (gone.ts). */
+export async function loadGone(now = Date.now()): Promise<Gone[]> {
+  return prune((await storage.getItem<Gone[]>(GONE_KEY)) ?? [], now);
+}
+
+/**
+ * Write down that a highlight was deleted.
+ *
+ * Every delete path goes through here, because a deletion nobody wrote down
+ * is one the next sync hands straight back.
+ */
+export async function rememberGone(id: string, at = Date.now()): Promise<void> {
+  const gone = await loadGone(at);
+  await storage.setItem(GONE_KEY, mergeGone(gone, [{ id, at }], at));
+}
 
 /** Keeps another tab's view of the spaces in step with this one. */
 export function watchSpaces(onChange: (spaces: Space[]) => void): () => void {

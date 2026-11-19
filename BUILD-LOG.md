@@ -1129,11 +1129,81 @@ over it and nobody had looked.
 
 ---
 
+## Making a deletion stick
+
+Of the things left that need no server, one was a defect and the rest were
+tidying. This is the defect.
+
+### An absence is not a fact
+
+The folder merge takes the union of both sides and the newer copy of anything
+they both hold, which is 21's *latest change wins* and is exactly right for an
+edit. A deletion is not an edit. It is an **absence**, and an absence is
+indistinguishable from a record the other side has not been handed yet, so the
+merge did the only thing it could with it and gave the highlight back. Delete
+on the laptop, sync, and the desktop returns it. Delete on both and a third
+machine returns it to both.
+
+A tombstone turns the absence into a fact with a time on it, which is the one
+shape the merge already knows how to compare: *deleted at* against *updated
+at*, newer wins. That also settles the case nobody enjoys writing down, which
+is deleted here and edited there: **the edit wins if it came later**, because
+21 chose the author's rule over my recommendation that a deletion must never
+silently beat an edit. It is written down in a test by name, so nobody has to
+guess afterwards which of the two was built.
+
+### Three things that are easy to get wrong
+
+**It stays version 2.** The tombstones are an optional field in the file, so a
+copy of Kona that has never heard of them reads it exactly as before. Bumping
+the version would make an older copy refuse a file it can in fact read, and
+the two halves of this product update at different speeds: the web app
+deploys the moment something lands, the extension waits on a store review. A
+folder they share has to stay readable by both for as long as that gap lasts.
+
+**The tombstones go back into the file.** Otherwise a deletion reaches the
+second machine and stops there, and the third hands it back to both of them.
+There is a test with three sides in it for exactly that.
+
+**They count towards the signature.** A pass that learns of a deletion and
+nothing else changes no highlight and no space, so without this the file is
+not rewritten and the deletion never travels. The same signature is what stops
+two sides writing at each other forever, and it now has to do both jobs.
+
+**And they are forgotten after six months**, because a list that only grows
+would carry every tidy-up you ever did into every sync file. The cost is
+stated rather than hidden: a folder nobody has opened in six months will hand
+back what you deleted, because by then nothing left knows you deleted it.
+
+### A test that was lying by arithmetic
+
+The first three attempts failed and the reason is worth keeping. The existing
+sync tests use `100`, `200`, `900` as timestamps, which is harmless for marks
+because nothing prunes a mark. A tombstone is pruned against the present, so a
+tombstone at `500` describes something deleted in 1970 and forgotten long
+before the test runs. The engine was right and the fixture was describing a
+different universe.
+
+### The tidying
+
+`editFinding` and `removeFinding` went: decision 20 cut findings out of the
+product and they had no caller anywhere afterwards, including in the tests. A
+note stands where they were, because the next person will wonder why a space
+still has `findings` on it at all. It has them because a space made before 20
+does, and the merge has to be able to read one.
+
+What was left alone, and why, is in the loose ends of `DESIGN-LOG.md`:
+renaming `conversationId` is a wire break between an extension and a web app
+that are expected to be different versions of each other for a week at a time,
+so it is a sequence across two releases rather than a change.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 562 |
+| Tests | 580 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |

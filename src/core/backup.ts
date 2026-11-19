@@ -19,6 +19,7 @@
  * longer check out against the name on them.
  */
 
+import { prune, type Gone } from './gone';
 import type { Person } from './people';
 import type { Space } from './spaces';
 import { cleanSpace } from './spaceShare';
@@ -37,18 +38,33 @@ export interface Backup {
   marks: Mark[];
   spaces?: Space[];
   identity?: Identity;
+  /**
+   * Highlights that were deleted, and when, so a deletion survives the merge
+   * rather than being handed back by the other side.
+   *
+   * **Still version 2, deliberately.** This is an optional field, so a copy of
+   * Kona that has never heard of it reads the file exactly as before and
+   * ignores it. Bumping the version would make the older copy refuse a file it
+   * can in fact read, and the two halves of this product update at different
+   * speeds: the web app deploys the moment something lands, the extension
+   * waits on a store review. A folder they share has to stay readable by both
+   * for as long as that gap lasts.
+   */
+  deleted?: Gone[];
 }
 
 export interface Restored {
   marks: Mark[];
   spaces: Space[];
   identity: Identity | null;
+  deleted: Gone[];
 }
 
 export function createBackup(
   marks: readonly Mark[],
   spaces: readonly Space[] = [],
   identity: Identity | null = null,
+  deleted: readonly Gone[] = [],
 ): string {
   const backup: Backup = {
     app: 'kona',
@@ -57,6 +73,7 @@ export function createBackup(
     marks: [...marks],
     ...(spaces.length > 0 ? { spaces: [...spaces] } : {}),
     ...(identity ? { identity } : {}),
+    ...(deleted.length > 0 ? { deleted: [...deleted] } : {}),
   };
   return JSON.stringify(backup, null, 2);
 }
@@ -86,9 +103,7 @@ export function readBackup(text: string, allowEmpty = false): Restored {
   const marks = rawMarks.filter(isMark);
   const held = new Set(marks.map((mark) => mark.id));
   const spaces = Array.isArray(raw?.spaces)
-    ? raw.spaces
-        .map((entry) => cleanSpace(entry, held))
-        .filter((space): space is Space => !!space)
+    ? raw.spaces.map((entry) => cleanSpace(entry, held)).filter((space): space is Space => !!space)
     : [];
 
   // A backup with nothing in it is somebody having picked the wrong file, and
@@ -98,7 +113,11 @@ export function readBackup(text: string, allowEmpty = false): Restored {
   if (!allowEmpty && marks.length === 0 && spaces.length === 0) {
     throw new Error('No highlights were found in that file.');
   }
-  return { marks, spaces, identity: cleanIdentity(raw?.identity) };
+  // Pruned on the way in as well as on the way out: a file left in a folder
+  // for a year should not be able to re-delete something on the strength of a
+  // tombstone everybody else has long since forgotten.
+  const deleted = prune(Array.isArray(raw?.deleted) ? (raw.deleted as Gone[]) : []);
+  return { marks, spaces, identity: cleanIdentity(raw?.identity), deleted };
 }
 
 function cleanIdentity(value: unknown): Identity | null {
@@ -114,7 +133,9 @@ function cleanIdentity(value: unknown): Identity | null {
   // later anyway, and refusing it here keeps the stored record clean.
   const signingKey = raw?.signingKey;
   const usable =
-    !!signingKey && typeof signingKey === 'object' && typeof (signingKey as JsonWebKey).kty === 'string';
+    !!signingKey &&
+    typeof signingKey === 'object' &&
+    typeof (signingKey as JsonWebKey).kty === 'string';
   return { me: person, ...(usable ? { signingKey: signingKey as JsonWebKey } : {}) };
 }
 

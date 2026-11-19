@@ -2833,12 +2833,29 @@ relying on it, and 11 contradicts it anyway. A promise the product no longer
 makes is worse than no promise.
 
 **`conversationId` is still what the code calls a page.** Deferred, with a
-reason rather than by omission: it is not only a type's field but the middle of
-every storage key (`marks:<site>:<conversationId>`), so renaming it is a data
-migration and not a rename. It wants doing on its own, with the migration
-tested against a library made before it — not folded into the end of a long
-session of other work. The word is wrong for most of what Kona now covers and
-every day it stays costs a little more.
+reason rather than by omission, and the reason turned out to be a different
+one from the one written here first.
+
+What was written: that the name is the middle of every storage key
+(`marks:<site>:<conversationId>`), so renaming it is a data migration. On a
+closer look that part is softer than it sounds. The key is built from the
+*value*, so a rename of the field does not touch a single key; what it touches
+is the shape of every stored record, which a read-time shim handles, and
+`store.ts` already carries one of those for the query-string migration.
+
+The harder reason is the bridge. 3c put the library on the web and the two
+halves update at different speeds: the web app deploys the moment something
+lands on `main`, and the extension waits on a store review that can take a
+week. They talk in whole `Mark` objects, so a renamed field is a wire break
+between two halves that are *expected* to be different versions of each other
+for days at a time. Doing it means accepting both names on the way in for one
+release and dropping the old one in the next, which is a sequence rather than
+a change, and a sequence is not a thing to fold into the end of a session of
+other work.
+
+Worth noting that the wire is already half-renamed: `removeMark` carries
+`page`, not `conversationId`. Whoever does this is finishing something rather
+than starting it.
 
 **The pen dot in `src/design/Passage.tsx` has no accessible name.** It is
 `aria-hidden`, as the boards draw it. DEFINITIONS says a colour is named by its

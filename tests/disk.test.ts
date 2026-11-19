@@ -7,6 +7,7 @@ import { readBackup } from '../src/core/backup';
 import { addMark, createSpace, type Space } from '../src/core/spaces';
 import { makePerson } from '../src/core/people';
 import { SYNC_FILE, syncOnce, type SyncStore } from '../src/core/sync';
+import { mergeGone, type Gone } from '../src/core/gone';
 import type { Mark } from '../src/core/types';
 
 const mark = (id: string, snapshot: string, updatedAt = 100): Mark =>
@@ -24,10 +25,15 @@ const mark = (id: string, snapshot: string, updatedAt = 100): Mark =>
 
 /** One side's library, in memory, as the engine is allowed to see it. */
 function side(marks: Mark[] = [], spaces: Space[] = []) {
-  const held = { marks: [...marks], spaces: [...spaces] };
+  const held = { marks: [...marks], spaces: [...spaces], gone: [] as Gone[] };
   const store: SyncStore = {
     marks: async () => [...held.marks],
     spaces: async () => [...held.spaces],
+    deleted: async () => [...held.gone],
+    removeMark: async (id, at) => {
+      held.marks = held.marks.filter((entry) => entry.id !== id);
+      held.gone = mergeGone(held.gone, [{ id, at }], at);
+    },
     saveMark: async (next) => {
       const at = held.marks.findIndex((entry) => entry.id === next.id);
       if (at === -1) held.marks.push(next);
