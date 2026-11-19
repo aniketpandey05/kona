@@ -28,8 +28,8 @@ function markOn(message: MessageRef, exact?: string): Mark {
   return {
     id: 'mark-1',
     site: 'chatgpt',
-    conversationId: 'conv',
-    conversationTitle: 'Test',
+    pageId: 'conv',
+    pageTitle: 'Test',
     url: 'https://chatgpt.com/c/conv',
     message: describeMessage(message, text),
     quote: exact ? describeQuote(text, { start, end: start + exact.length }) : undefined,

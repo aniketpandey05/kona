@@ -40,7 +40,7 @@ describe('a passage kept by right-click', () => {
     // The same page identity as everywhere else, or the same PDF opened from a
     // tweet and from a search would be two pages.
     const mark = captureSelection(captured);
-    expect(mark.conversationId).toBe('https://example.org/papers/motility.pdf');
+    expect(mark.pageId).toBe('https://example.org/papers/motility.pdf');
     expect(mark.url).toBe(captured.url);
     expect(mark.site).toBe('web');
   });

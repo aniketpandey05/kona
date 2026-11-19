@@ -124,7 +124,7 @@ export function memoMarkdown(memo: Memo): string {
   if (memo.citations.length > 0) {
     out.push('## Sources', '');
     for (const citation of memo.citations) {
-      const where = `${siteLabel(citation.mark)}, ${citation.mark.conversationTitle}`;
+      const where = `${siteLabel(citation.mark)}, ${citation.mark.pageTitle}`;
       out.push(`[^${citation.n}]: ${where}. <${citation.href}>`);
     }
     out.push('');

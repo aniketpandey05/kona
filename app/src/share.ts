@@ -42,8 +42,8 @@ export function markFromShare(payload: SharedPayload, now = Date.now()): Mark | 
   return {
     id: crypto.randomUUID(),
     site: 'web',
-    conversationId: url ? pageKey(url) : 'unsorted',
-    conversationTitle: (payload.title ?? '').trim() || (url ? hostOf(url) : 'Saved text'),
+    pageId: url ? pageKey(url) : 'unsorted',
+    pageTitle: (payload.title ?? '').trim() || (url ? hostOf(url) : 'Saved text'),
     url: url ?? '',
     quote: snapshot ? { exact: snapshot, prefix: '', suffix: '', start: 0 } : undefined,
     label: '',

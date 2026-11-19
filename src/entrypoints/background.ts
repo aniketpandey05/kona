@@ -242,7 +242,7 @@ function matchesAny(url: string, patterns: string[]): boolean {
 /** Opens (or re-focuses) the page a highlight belongs to and tells that tab to jump to it. */
 async function openMark(mark: Mark): Promise<null> {
   const url = new URL(mark.url);
-  const pending: PendingJump = { markId: mark.id, conversationId: mark.conversationId };
+  const pending: PendingJump = { markId: mark.id, pageId: mark.pageId };
   const existing = await findTab(`${url.origin}${url.pathname}*`);
 
   if (existing?.id === undefined) {

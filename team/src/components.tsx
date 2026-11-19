@@ -135,7 +135,7 @@ export function MarkCard({
             </strong>
           )}
           <span class="mark-meta">
-            {siteLabel(mark)} · {mark.conversationTitle} · {timeAgo(mark.createdAt)}
+            {siteLabel(mark)} · {mark.pageTitle} · {timeAgo(mark.createdAt)}
           </span>
         </div>
         {space ? (

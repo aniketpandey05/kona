@@ -5,8 +5,8 @@ import type { Mark } from '../src/core/types';
 const mark = (partial: Partial<Mark>) =>
   ({
     site: 'chatgpt',
-    conversationId: 'c1',
-    conversationTitle: 'Docker setup help',
+    pageId: 'c1',
+    pageTitle: 'Docker setup help',
     url: 'https://chatgpt.com/c/c1',
     snapshot: 'docker compose up -d',
     createdAt: 1,
@@ -32,7 +32,7 @@ describe('toMarkdown', () => {
     const file = toMarkdown([
       mark({ id: 'a', snapshot: 'second', order: 1 }),
       mark({ id: 'b', snapshot: 'first', order: 0 }),
-      mark({ id: 'c', conversationId: 'c2', conversationTitle: 'Newer chat', snapshot: 'newest', createdAt: 9 }),
+      mark({ id: 'c', pageId: 'c2', pageTitle: 'Newer chat', snapshot: 'newest', createdAt: 9 }),
     ]);
     expect(file.indexOf('## Newer chat')).toBeLessThan(file.indexOf('## Docker setup help'));
     expect(file.indexOf('> first')).toBeLessThan(file.indexOf('> second'));

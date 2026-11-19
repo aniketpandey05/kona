@@ -3,17 +3,19 @@ import type { Identity } from './backup';
 import { mergeGone, prune, type Gone } from './gone';
 import { makeKeypair } from './identity';
 import type { SyncStore } from './sync';
-import { pageId } from './pageUrl';
+// Aliased: six functions here take a `pageId` parameter, which would
+// otherwise shadow this import inside them. One of them calls it.
+import { pageId as pageIdFor } from './pageUrl';
 import { makePerson, type Person } from './people';
 import type { Space } from './spaces';
 import { imageKey } from './image';
-import type { Mark, SiteId } from './types';
+import { paged, type AsStored, type Mark, type SiteId } from './types';
 
 // Prototype storage: one array per conversation in chrome.storage.local.
 // If the library ever gets slow, this is what moves to IndexedDB.
 const MARKS_PREFIX = 'marks:';
-const marksKey = (site: SiteId, conversationId: string) =>
-  `local:${MARKS_PREFIX}${site}:${conversationId}` as const;
+const marksKey = (site: SiteId, pageId: string) =>
+  `local:${MARKS_PREFIX}${site}:${pageId}` as const;
 
 // Every write reads, changes and rewrites a whole array, so writes run one at a time;
 // otherwise a quick color change right after creating a highlight could be lost.
@@ -24,8 +26,11 @@ function serialized<T>(write: () => Promise<T>): Promise<T> {
   return result;
 }
 
-export async function loadMarks(site: SiteId, conversationId: string): Promise<Mark[]> {
-  return (await storage.getItem<Mark[]>(marksKey(site, conversationId))) ?? [];
+export async function loadMarks(site: SiteId, pageId: string): Promise<Mark[]> {
+  // One of the two doors into this device's library. A highlight written
+  // before the rename arrives wearing `conversationId`, and `paged` is where
+  // it stops being that (types.ts).
+  return ((await storage.getItem<AsStored[]>(marksKey(site, pageId))) ?? []).map(paged);
 }
 
 /** Every highlight from every chat, for the library and its search. */
@@ -33,7 +38,7 @@ export async function loadAllMarks(): Promise<Mark[]> {
   const everything = await browser.storage.local.get(null);
   return Object.entries(everything)
     .filter(([key]) => key.startsWith(MARKS_PREFIX))
-    .flatMap(([, value]) => (Array.isArray(value) ? (value as Mark[]) : []));
+    .flatMap(([, value]) => (Array.isArray(value) ? (value as AsStored[]).map(paged) : []));
 }
 
 /**
@@ -60,7 +65,7 @@ export function mergeDuplicatePages(): Promise<number> {
 
       let now: string;
       try {
-        now = pageId(new URL(was));
+        now = pageIdFor(new URL(was));
       } catch {
         // Not a URL, so nothing can be said about where it should live.
         continue;
@@ -71,7 +76,7 @@ export function mergeDuplicatePages(): Promise<number> {
       for (const mark of value as Mark[]) {
         const current = merged.get(mark.id);
         if (!current || (mark.updatedAt ?? 0) > (current.updatedAt ?? 0)) {
-          merged.set(mark.id, { ...mark, conversationId: now });
+          merged.set(mark.id, { ...mark, pageId: now });
         }
       }
       await storage.setItem(marksKey('web', now), [...merged.values()]);
@@ -82,22 +87,26 @@ export function mergeDuplicatePages(): Promise<number> {
   });
 }
 
-export function upsertMark(mark: Mark): Promise<void> {
+export function upsertMark(incoming: Mark): Promise<void> {
+  // Through `paged` on the way in as well as on the way out, so a highlight
+  // made here carries the old names too and an older Kona reading this
+  // device's storage, or being handed one over the bridge, still works.
+  const mark = paged(incoming);
   return serialized(async () => {
-    const marks = await loadMarks(mark.site, mark.conversationId);
+    const marks = await loadMarks(mark.site, mark.pageId);
     const next = marks.some((m) => m.id === mark.id)
       ? marks.map((m) => (m.id === mark.id ? mark : m))
       : [...marks, mark];
-    await storage.setItem(marksKey(mark.site, mark.conversationId), next);
+    await storage.setItem(marksKey(mark.site, mark.pageId), next);
   });
 }
 
-export function removeMark(site: SiteId, conversationId: string, id: string): Promise<void> {
+export function removeMark(site: SiteId, pageId: string, id: string): Promise<void> {
   return serialized(async () => {
-    const marks = await loadMarks(site, conversationId);
+    const marks = await loadMarks(site, pageId);
     const going = marks.find((m) => m.id === id);
     await storage.setItem(
-      marksKey(site, conversationId),
+      marksKey(site, pageId),
       marks.filter((m) => m.id !== id),
     );
     // A kept picture goes with the highlight that held it (18). Nothing else
@@ -110,12 +119,12 @@ export function removeMark(site: SiteId, conversationId: string, id: string): Pr
 }
 
 /** Saves the user's order for a chat in one write, so positions can't get out of step. */
-export function saveOrder(site: SiteId, conversationId: string, orderedIds: string[]): Promise<void> {
+export function saveOrder(site: SiteId, pageId: string, orderedIds: string[]): Promise<void> {
   return serialized(async () => {
     const position = new Map(orderedIds.map((id, index) => [id, index]));
-    const marks = await loadMarks(site, conversationId);
+    const marks = await loadMarks(site, pageId);
     await storage.setItem(
-      marksKey(site, conversationId),
+      marksKey(site, pageId),
       marks.map((m) => ({ ...m, order: position.get(m.id) ?? m.order })),
     );
   });
@@ -126,15 +135,15 @@ export function importMarks(incoming: readonly Mark[]): Promise<{ added: number;
   return serialized(async () => {
     const byChat = new Map<string, Mark[]>();
     for (const mark of incoming) {
-      const key = `${mark.site}\u0000${mark.conversationId}`;
+      const key = `${mark.site}\u0000${mark.pageId}`;
       byChat.set(key, [...(byChat.get(key) ?? []), mark]);
     }
 
     let added = 0;
     let updated = 0;
     for (const [key, marks] of byChat) {
-      const [site, conversationId] = key.split('\u0000') as [SiteId, string];
-      const merged = new Map((await loadMarks(site, conversationId)).map((m) => [m.id, m]));
+      const [site, pageId] = key.split('\u0000') as [SiteId, string];
+      const merged = new Map((await loadMarks(site, pageId)).map((m) => [m.id, m]));
       for (const mark of marks) {
         const current = merged.get(mark.id);
         if (!current) {
@@ -145,7 +154,7 @@ export function importMarks(incoming: readonly Mark[]): Promise<{ added: number;
           updated++;
         }
       }
-      await storage.setItem(marksKey(site, conversationId), [...merged.values()]);
+      await storage.setItem(marksKey(site, pageId), [...merged.values()]);
     }
     return { added, updated };
   });
@@ -154,10 +163,10 @@ export function importMarks(incoming: readonly Mark[]): Promise<{ added: number;
 /** Keeps other tabs showing the same chat in sync. */
 export function watchMarks(
   site: SiteId,
-  conversationId: string,
+  pageId: string,
   onChange: (marks: Mark[]) => void,
 ): () => void {
-  return storage.watch<Mark[]>(marksKey(site, conversationId), (marks) => onChange(marks ?? []));
+  return storage.watch<Mark[]>(marksKey(site, pageId), (marks) => onChange(marks ?? []));
 }
 
 /** Keeps the library in sync with highlights made or deleted in any chat. */
@@ -238,7 +247,7 @@ export const syncStore: SyncStore = {
   // so the mark has to be found before it can be taken out.
   removeMark: async (id, at) => {
     const mark = (await loadAllMarks()).find((one) => one.id === id);
-    if (mark) await removeMark(mark.site, mark.conversationId, id);
+    if (mark) await removeMark(mark.site, mark.pageId, id);
     await rememberGone(id, at);
   },
 };

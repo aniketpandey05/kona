@@ -6,8 +6,8 @@ function mark(over: Partial<Mark> = {}): Mark {
   return {
     id: 'a',
     site: 'web',
-    conversationId: 'c',
-    conversationTitle: 'An article',
+    pageId: 'c',
+    pageTitle: 'An article',
     url: 'https://example.com/post',
     label: '',
     color: 'yellow',

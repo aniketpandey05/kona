@@ -24,8 +24,8 @@ function mark(id: string, snapshot: string, over: Partial<Mark> = {}): Mark {
   return {
     id,
     site: 'chatgpt',
-    conversationId: 'c1',
-    conversationTitle: 'Docker setup help',
+    pageId: 'c1',
+    pageTitle: 'Docker setup help',
     url: 'https://chatgpt.com/c/c1',
     label: 'chatgpt.com',
     color: 'yellow',
@@ -53,7 +53,7 @@ function sender() {
 describe('packing a space', () => {
   it('sends only the highlights the space holds, not the library', () => {
     const { space, marks } = sender();
-    const library = [...marks, mark('a9', 'Something else entirely', { conversationId: 'c2' })];
+    const library = [...marks, mark('a9', 'Something else entirely', { pageId: 'c2' })];
 
     const file = readSharedSpace(packSpace(space, library));
     expect(file.marks.map((m) => m.id).sort()).toEqual(['a1', 'a2']);
@@ -208,7 +208,7 @@ describe('adopting a space into a library', () => {
     const { space, marks } = sender();
     const file = readSharedSpace(packSpace(space, marks));
     // Same id, entirely different passage: the reader's 'a1' must survive.
-    const mine = [mark('a1', 'Something unrelated', { conversationId: 'c9' })];
+    const mine = [mark('a1', 'Something unrelated', { pageId: 'c9' })];
 
     const taken = adoptSpace(file, mine, [], 500);
     const ids = taken.added.map((m) => m.id);

@@ -87,8 +87,8 @@ const mark = (id: string): Mark =>
   ({
     id,
     site: 'web',
-    conversationId: 'p1',
-    conversationTitle: 'How an amoeba moves',
+    pageId: 'p1',
+    pageTitle: 'How an amoeba moves',
     url: 'https://example.org/a',
     label: '',
     color: 'yellow',

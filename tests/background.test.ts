@@ -292,7 +292,7 @@ it('opens a highlight with no window to focus', async () => {
   safari.send(
     {
       type: 'open-mark',
-      mark: { id: 'm1', conversationId: 'c1', url: 'https://example.com/post' },
+      mark: { id: 'm1', pageId: 'c1', url: 'https://example.com/post' },
     },
     TAB_ID,
   );
@@ -302,7 +302,7 @@ it('opens a highlight with no window to focus', async () => {
   await vi.waitFor(() =>
     expect(safari.notes[`pending-jump:${TAB_ID}`]).toEqual({
       markId: 'm1',
-      conversationId: 'c1',
+      pageId: 'c1',
     }),
   );
 });

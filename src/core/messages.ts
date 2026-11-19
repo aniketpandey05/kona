@@ -3,7 +3,7 @@ import type { Mark } from './types';
 /** Which highlight a newly opened or re-focused tab should jump to. */
 export interface PendingJump {
   markId: string;
-  conversationId: string;
+  pageId: string;
 }
 
 export type RuntimeMessage =

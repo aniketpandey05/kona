@@ -34,8 +34,8 @@ const selection: NonNullable<ViewState['selection']> = {
 const mark = {
   id: 'm1',
   site: 'web',
-  conversationId: 'c1',
-  conversationTitle: 'How an amoeba moves',
+  pageId: 'c1',
+  pageTitle: 'How an amoeba moves',
   url: 'https://example.org/a',
   label: '',
   color: 'blue',

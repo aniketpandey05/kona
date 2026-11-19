@@ -31,7 +31,7 @@ function Evidence({ mark }: { mark: TeamMark }) {
       <Avatar member={author} small />
       <div>
         <span class="mark-meta">
-          {author.name} · {siteLabel(mark)} · {mark.conversationTitle}
+          {author.name} · {siteLabel(mark)} · {mark.pageTitle}
         </span>
         <blockquote class={`mark-quote mark-${mark.color}`}>{mark.snapshot}</blockquote>
         <a class="evidence-link" href={linkToMark(mark)} target="_blank" rel="noreferrer noopener">
@@ -248,7 +248,7 @@ export function Space({
             <ol class="memo-sources">
               {memo.citations.map((citation) => (
                 <li key={citation.n} id={`cite-${citation.n}`}>
-                  {siteLabel(citation.mark)}, {citation.mark.conversationTitle}.{' '}
+                  {siteLabel(citation.mark)}, {citation.mark.pageTitle}.{' '}
                   <a href={citation.href} target="_blank" rel="noreferrer noopener">
                     the exact sentence
                   </a>

@@ -51,7 +51,7 @@ function fieldsOf(mark: TeamMark): string[] {
     mark.snapshot,
     mark.note ?? '',
     (mark.tags ?? []).join(' '),
-    mark.conversationTitle,
+    mark.pageTitle,
     siteLabel(mark),
   ].map((field) => field.toLowerCase());
 }

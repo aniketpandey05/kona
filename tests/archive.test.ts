@@ -17,8 +17,8 @@ const mark = (id: string, archivedAt?: number): Mark =>
   ({
     id,
     site: 'web',
-    conversationId: 'p1',
-    conversationTitle: 'A page',
+    pageId: 'p1',
+    pageTitle: 'A page',
     url: 'https://example.org/a',
     label: '',
     color: 'yellow',

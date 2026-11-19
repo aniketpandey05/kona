@@ -5,7 +5,7 @@ import { makePerson, type Person } from '../../src/core/people';
 import type { Space } from '../../src/core/spaces';
 import { EVERYTHING, type Scope, type SyncStore } from '../../src/core/sync';
 import { DEFAULT_PENS } from '../../src/core/pens';
-import type { Mark, PenId } from '../../src/core/types';
+import { paged, type AsStored, type Mark, type PenId } from '../../src/core/types';
 
 /**
  * The app has no chrome.storage, so highlights live in IndexedDB. One object
@@ -65,12 +65,17 @@ function run<T>(
 }
 
 export async function loadAll(): Promise<Mark[]> {
-  const marks = await run<Mark[]>(MARKS, 'readonly', (store) => store.getAll());
-  return marks.sort((a, b) => b.createdAt - a.createdAt);
+  // The web library's door. A highlight saved here before the rename, or one
+  // handed over by an extension the store has not finished reviewing, arrives
+  // wearing `conversationId`; `paged` is where it stops being that.
+  const marks = await run<AsStored[]>(MARKS, 'readonly', (store) => store.getAll());
+  return marks.map(paged).sort((a, b) => b.createdAt - a.createdAt);
 }
 
 export async function save(mark: Mark): Promise<void> {
-  await run(MARKS, 'readwrite', (store) => store.put(mark));
+  // Both names on the way out as well, so this library and an older extension
+  // reading the same backup file still agree about what a page is.
+  await run(MARKS, 'readwrite', (store) => store.put(paged(mark)));
   notify();
 }
 

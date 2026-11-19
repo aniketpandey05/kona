@@ -404,7 +404,7 @@ function mergeInto(
 
 /** The same passage in the same conversation, however it was whitespaced. */
 function passageKey(mark: Mark): string {
-  return [mark.site, mark.conversationId, cleanPassage(mark.snapshot)].join('\u0000');
+  return [mark.site, mark.pageId, cleanPassage(mark.snapshot)].join('\u0000');
 }
 
 const SITES: readonly SiteId[] = ['chatgpt', 'claude', 'gemini', 'web'];
@@ -442,8 +442,8 @@ function cleanMark(value: unknown): Mark | null {
   return {
     id,
     site: SITES.includes(raw.site as SiteId) ? (raw.site as SiteId) : 'web',
-    conversationId: str(raw.conversationId) ?? id,
-    conversationTitle: typeof raw.conversationTitle === 'string' ? raw.conversationTitle : '',
+    pageId: str(raw.pageId) ?? id,
+    pageTitle: typeof raw.pageTitle === 'string' ? raw.pageTitle : '',
     url,
     label: typeof raw.label === 'string' ? raw.label : '',
     color: COLORS.includes(raw.color as HighlightColor) ? (raw.color as HighlightColor) : 'yellow',

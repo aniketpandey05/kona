@@ -57,8 +57,8 @@ function markAt(page: string, markId: string, updatedAt = 1): Mark {
   return {
     id: markId,
     site: 'web',
-    conversationId: page,
-    conversationTitle: 'An article',
+    pageId: page,
+    pageTitle: 'An article',
     url: page,
     label: '',
     color: 'yellow',
@@ -81,7 +81,7 @@ describe('mergeDuplicatePages', () => {
     expect(here.map((m) => m.id)).toEqual(['from-twitter']);
     // The highlight has to agree about where it lives, or the next write to it
     // would file it back under the URL it came from.
-    expect(here[0]?.conversationId).toBe('https://example.com/article');
+    expect(here[0]?.pageId).toBe('https://example.com/article');
     expect(await loadMarks('web', tracked)).toEqual([]);
   });
 

@@ -81,8 +81,8 @@ export function captureSelection({ text, url, title, color, now = Date.now() }: 
   return {
     id: crypto.randomUUID(),
     site: 'web',
-    conversationId: pageId(new URL(url)),
-    conversationTitle: titleFor(url, title),
+    pageId: pageId(new URL(url)),
+    pageTitle: titleFor(url, title),
     url,
     label: '',
     color,

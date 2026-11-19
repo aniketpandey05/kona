@@ -1199,11 +1199,74 @@ so it is a sequence across two releases rather than a change.
 
 ---
 
+## A page is called a page
+
+The last loose end that needed no server. `conversationId` and
+`conversationTitle` were what the code called a page, on an ordinary article
+as much as inside a chat, because the chat sites came first and the word
+stuck. 201 occurrences across 41 files.
+
+### The reason it had waited was the wrong reason
+
+What the loose end said: the name is the middle of every storage key, so
+renaming it is a data migration. On a closer look the key is built from the
+**value**, so the rename touches no key at all. What it touches is the shape
+of every stored record, which a read-time shim handles, and `store.ts`
+already carries one of those for the query-string migration.
+
+The real blocker is the bridge, and it is sharper than the one written down.
+3c put the library on the web, so the two halves update at different speeds:
+the web app deploys the moment something lands on `main`, the extension waits
+on a store review that can take a week. They talk in whole `Mark` objects. So
+for a week at a time a new library is handing marks to an old extension that
+will key its storage by the page each mark says it is on, and sending only
+the new name files every one of them under `undefined`.
+
+### Which makes it a sequence, and this is the first half
+
+`paged` in `types.ts` fills both names from whichever one arrived, and every
+door into the library goes through it: the two stores, the backup reader, and
+therefore the bridge and the folder sync, which only ever pass on what a store
+gave them. Inside, nothing reads the old names.
+
+It fills both rather than translating, which is the decision that makes the
+rest easy: a mark held in memory already carries what an older Kona needs, so
+every path that saves one, to storage, to a file, or down the bridge, is
+compatible without having to know it.
+
+The second half is the next release and is one commit: take the two
+deprecated fields off `Mark`, stop filling them, and go on reading them for as
+long as a backup somebody kept might still carry them.
+
+### Two things it turned up
+
+**`isMark` in the backup reader would have insisted on the new name.** That
+does not fail loudly. It drops every highlight in an older file and reports an
+empty library rather than an unreadable one, which is the worst of both: no
+error to chase and nothing left. It takes either name now, and there is a test
+that reads a file written the old way.
+
+**Six functions in `store.ts` take a `pageId` parameter**, which after the
+rename shadowed the `pageId` *function* imported at the top of the same file.
+One of them calls it, in the migration that merges duplicate pages. Nothing
+broke, because the two are in different scopes, but the trap was one edit
+away; the import is aliased.
+
+### Checked where it actually matters
+
+In a browser, not only in tests. A highlight was made the ordinary way, its
+stored record was rewritten to carry only the old names, exactly as a Kona
+from before this would have left it, and the page was reloaded: it is found,
+located and painted, and written back carrying both names. The ability that
+must never degrade does not.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 580 |
+| Tests | 588 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |

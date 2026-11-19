@@ -23,7 +23,7 @@ describe('markFromShare', () => {
     const mark = markFromShare({ text: 'the quick brown fox', url: 'https://e.com/p', title: 'A post' })!;
     expect(mark.snapshot).toBe('the quick brown fox');
     expect(mark.quote?.exact).toBe('the quick brown fox');
-    expect(mark.conversationTitle).toBe('A post');
+    expect(mark.pageTitle).toBe('A post');
   });
 
   it('has no message anchor, because there is no message', () => {
@@ -39,11 +39,11 @@ describe('markFromShare', () => {
   it('groups by page, ignoring the query string', () => {
     const a = markFromShare({ text: 'one', url: 'https://e.com/p?utm=x' })!;
     const b = markFromShare({ text: 'two', url: 'https://e.com/p?utm=y' })!;
-    expect(a.conversationId).toBe(b.conversationId);
+    expect(a.pageId).toBe(b.pageId);
   });
 
   it('falls back to the host when nothing supplied a title', () => {
-    expect(markFromShare({ text: 'hi', url: 'https://www.e.com/p' })!.conversationTitle).toBe('e.com');
+    expect(markFromShare({ text: 'hi', url: 'https://www.e.com/p' })!.pageTitle).toBe('e.com');
   });
 
   it('collapses the whitespace a selection drags along', () => {
@@ -78,8 +78,8 @@ describe('planShare', () => {
   const kept = (over: Partial<Mark> = {}): Mark => ({
     id: crypto.randomUUID(),
     site: 'web',
-    conversationId: 'unsorted',
-    conversationTitle: 'Saved text',
+    pageId: 'unsorted',
+    pageTitle: 'Saved text',
     url: '',
     label: '',
     color: 'yellow',

@@ -29,8 +29,30 @@ export interface MessageAnchor {
 export interface Mark {
   id: string;
   site: SiteId;
-  conversationId: string;
-  conversationTitle: string;
+  /**
+   * The page this was marked on.
+   *
+   * It was `conversationId`, on ordinary articles as much as on AI chats,
+   * because the chat sites came first and the word stuck. `pageTitle` below
+   * was `conversationTitle` for the same reason.
+   */
+  pageId: string;
+  pageTitle: string;
+  /**
+   * What those two were called, written alongside them for one release.
+   *
+   * Not for this copy of Kona, which never reads them: for the *other* one.
+   * The web library deploys the moment a change lands and the extension waits
+   * on a store review, so for a week at a time a new library is talking to an
+   * old extension across the bridge, handing it whole marks that the old
+   * extension will key its storage by. Sending only the new name would file
+   * every one of them under `undefined`.
+   *
+   * `paged` below is what keeps them in step, and the release after this one
+   * is where they go.
+   */
+  conversationId?: string;
+  conversationTitle?: string;
   url: string;
   /**
    * Where in a conversation this was marked. Absent for anything captured
@@ -90,4 +112,32 @@ export interface Mark {
   archivedAt?: number;
   createdAt: number;
   updatedAt: number;
+}
+
+/**
+ * A highlight as it may arrive, rather than as it is held.
+ *
+ * From this device's storage written by a Kona from before the rename, from a
+ * backup file somebody kept for a year, or across the bridge from an
+ * extension the store has not finished reviewing yet.
+ */
+export type AsStored = Omit<Mark, 'pageId' | 'pageTitle'> &
+  Partial<Pick<Mark, 'pageId' | 'pageTitle'>>;
+
+/**
+ * A highlight with both names on it, whichever one it arrived wearing.
+ *
+ * Every door into the library goes through this: the two stores, the backup
+ * reader, and therefore the bridge and the folder sync, which only ever pass
+ * on what a store already gave them. Inside, nothing reads the old names.
+ *
+ * It fills both rather than translating, so that writing is not a separate
+ * problem from reading. A mark held in memory already carries what an older
+ * Kona needs, so every path that saves one, to storage, to a file, or down
+ * the bridge, is compatible without knowing it has to be.
+ */
+export function paged(mark: AsStored): Mark {
+  const pageId = mark.pageId ?? mark.conversationId ?? '';
+  const pageTitle = mark.pageTitle ?? mark.conversationTitle ?? '';
+  return { ...mark, pageId, pageTitle, conversationId: pageId, conversationTitle: pageTitle };
 }

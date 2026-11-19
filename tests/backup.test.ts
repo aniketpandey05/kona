@@ -2,15 +2,41 @@ import { describe, expect, it } from 'vitest';
 import { createBackup, readBackup } from '../src/core/backup';
 import { makePerson } from '../src/core/people';
 import { addComment, addFinding, addMark, createSpace, recordDecision } from '../src/core/spaces';
-import type { Mark } from '../src/core/types';
+import { paged, type Mark } from '../src/core/types';
 
-const mark = (id: string) =>
-  ({ id, site: 'chatgpt', conversationId: 'c1', snapshot: 'some text' }) as Mark;
+const mark = (id: string) => ({ id, site: 'chatgpt', pageId: 'c1', snapshot: 'some text' }) as Mark;
 
 describe('backup', () => {
   it('survives a round trip', () => {
+    // Read back carrying both names for a page, which is what `paged` leaves
+    // on anything coming through a door: the new one for this copy of Kona,
+    // the old one for whatever is reading the same file on the other side of
+    // a store review.
     const marks = [mark('a'), mark('b')];
-    expect(readBackup(createBackup(marks)).marks).toEqual(marks);
+    expect(readBackup(createBackup(marks)).marks).toEqual(marks.map(paged));
+  });
+
+  it('reads a backup written before a page was called a page', () => {
+    // The case that would not have failed loudly. `isMark` insisting on the
+    // new name would drop every highlight in an old file and report an empty
+    // library rather than an unreadable one.
+    const old = JSON.stringify({
+      app: 'kona',
+      version: 2,
+      exportedAt: 1,
+      marks: [
+        {
+          id: 'a',
+          site: 'chatgpt',
+          conversationId: 'c1',
+          conversationTitle: 'Upgrading Postgres',
+          snapshot: 'some text',
+        },
+      ],
+    });
+    const [restored] = readBackup(old).marks;
+    expect(restored?.pageId).toBe('c1');
+    expect(restored?.pageTitle).toBe('Upgrading Postgres');
   });
 
   it('also accepts a plain list of highlights', () => {

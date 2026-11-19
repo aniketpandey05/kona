@@ -6,7 +6,7 @@ const mark = (id: string, snapshot: string, extra: Partial<Mark> = {}) =>
   ({
     id,
     snapshot,
-    conversationTitle: 'Some chat',
+    pageTitle: 'Some chat',
     site: 'chatgpt',
     url: 'https://chatgpt.com/c/x',
     createdAt: Number(id),
@@ -15,7 +15,7 @@ const mark = (id: string, snapshot: string, extra: Partial<Mark> = {}) =>
 
 const marks = [
   mark('1', 'docker compose up -d', { note: 'starts the stack detached' }),
-  mark('2', 'Named volumes are kept', { conversationTitle: 'Docker setup help' }),
+  mark('2', 'Named volumes are kept', { pageTitle: 'Docker setup help' }),
   mark('3', 'O(n log n) is typical for good sorting', {
     site: 'claude',
     url: 'https://claude.ai/chat/y',

@@ -79,7 +79,7 @@ const fromExtension: LibrarySource = {
   removeSpace: removeExtensionSpace,
   // The extension keys highlights by the page they are on, so removing one
   // needs the page as well as the id.
-  remove: (mark) => removeExtensionMark(mark.site, mark.conversationId, mark.id),
+  remove: (mark) => removeExtensionMark(mark.site, mark.pageId, mark.id),
   watch: watchExtension,
 };
 

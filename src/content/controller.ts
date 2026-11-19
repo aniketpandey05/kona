@@ -104,7 +104,7 @@ export interface ViewState {
    * down rather than setting this to false.
    */
   enabled: boolean;
-  conversationId: string | null;
+  pageId: string | null;
   /** Highlights in the user's order. */
   items: PanelItem[];
   /** A just-deleted highlight that can still be brought back. */
@@ -159,7 +159,7 @@ interface PendingSelection {
 export class KonaController {
   private state: ViewState = {
     enabled: true,
-    conversationId: null,
+    pageId: null,
     elsewhere: 0,
     noun: 'chat',
     items: [],
@@ -280,7 +280,7 @@ export class KonaController {
     // The library asks an already-open tab to jump to a highlight.
     browser.runtime.onMessage.addListener((message) => {
       const request = message as RuntimeMessage;
-      if (request.type === 'jump-to-mark') void this.jumpWhenReady(request.markId, request.conversationId);
+      if (request.type === 'jump-to-mark') void this.jumpWhenReady(request.markId, request.pageId);
       if (request.type === 'highlight-image') void this.highlightImage(request.src);
       if (request.type === 'highlight-selection') {
         void this.highlightSelection();
@@ -318,16 +318,16 @@ export class KonaController {
 
   async highlight(color: PenId, { withNote = false } = {}): Promise<void> {
     const pending = this.pending;
-    const conversationId = this.state.conversationId;
-    if (!pending || !conversationId || this.adapter.isStreaming(pending.message)) return;
+    const pageId = this.state.pageId;
+    if (!pending || !pageId || this.adapter.isStreaming(pending.message)) return;
 
     const quote = describeQuote(pending.index.text, pending.span);
     const now = Date.now();
     const mark: Mark = {
       id: crypto.randomUUID(),
       site: this.adapter.site,
-      conversationId,
-      conversationTitle: this.adapter.getConversationTitle(),
+      pageId,
+      pageTitle: this.adapter.getConversationTitle(),
       url: location.href,
       message: describeMessage(pending.message, pending.index.text),
       quote,
@@ -438,22 +438,22 @@ export class KonaController {
 
   /** Moves a highlight to a new position in the user's list. */
   async move(id: string, toIndex: number): Promise<void> {
-    const conversationId = this.state.conversationId;
+    const pageId = this.state.pageId;
     const ordered = sortByOrder(this.marks);
     const from = ordered.findIndex((m) => m.id === id);
-    if (!conversationId || from === -1 || from === toIndex) return;
+    if (!pageId || from === -1 || from === toIndex) return;
 
     this.marks = moveItem(ordered, from, toIndex).map((m, order) =>
       m.order === order ? m : { ...m, order },
     );
     this.refresh();
-    await saveOrder(this.adapter.site, conversationId, this.marks.map((m) => m.id));
+    await saveOrder(this.adapter.site, pageId, this.marks.map((m) => m.id));
   }
 
   async remove(id: string): Promise<void> {
-    const conversationId = this.state.conversationId;
+    const pageId = this.state.pageId;
     const mark = this.marks.find((m) => m.id === id);
-    if (!conversationId || !mark) return;
+    if (!pageId || !mark) return;
     if (this.state.card?.markId === id) this.closeCard();
     this.painter.clearFlash();
 
@@ -473,7 +473,7 @@ export class KonaController {
       }
     }, UNDO_MS);
 
-    await removeMark(this.adapter.site, conversationId, id);
+    await removeMark(this.adapter.site, pageId, id);
   }
 
   /** Brings back the highlight deleted a moment ago. */
@@ -617,23 +617,23 @@ export class KonaController {
     const fromLink = location.hash.startsWith(MARK_HASH)
       ? decodeURIComponent(location.hash.slice(MARK_HASH.length))
       : null;
-    if (fromLink && this.state.conversationId) {
+    if (fromLink && this.state.pageId) {
       history.replaceState(null, '', location.pathname + location.search);
-      await this.jumpWhenReady(fromLink, this.state.conversationId);
+      await this.jumpWhenReady(fromLink, this.state.pageId);
       return;
     }
     const pending = (await browser.runtime
       .sendMessage({ type: 'take-pending-jump' } satisfies RuntimeMessage)
       .catch(() => null)) as PendingJump | null;
-    if (pending) await this.jumpWhenReady(pending.markId, pending.conversationId);
+    if (pending) await this.jumpWhenReady(pending.markId, pending.pageId);
   }
 
   /** Waits for the chat and the highlight to load, then jumps to it. */
-  private async jumpWhenReady(markId: string, conversationId: string): Promise<void> {
+  private async jumpWhenReady(markId: string, pageId: string): Promise<void> {
     const deadline = Date.now() + JUMP_WAIT_MS;
     while (Date.now() < deadline && !this.ctx.isInvalid) {
       // Wait for the right chat and for its highlights to load, then let jumping do the rest.
-      if (this.state.conversationId === conversationId && this.marks.some((m) => m.id === markId)) {
+      if (this.state.pageId === pageId && this.marks.some((m) => m.id === markId)) {
         this.jump(markId);
         return;
       }
@@ -642,8 +642,8 @@ export class KonaController {
   }
 
   private async openConversation(url: URL): Promise<void> {
-    const conversationId = this.adapter.getConversationId(url);
-    if (conversationId === this.state.conversationId) return;
+    const pageId = this.adapter.getConversationId(url);
+    if (pageId === this.state.pageId) return;
 
     this.unwatch?.();
     this.unwatch = undefined;
@@ -653,27 +653,27 @@ export class KonaController {
     this.openedAt = Date.now();
     this.painter.clearFlash();
     this.setState({
-      conversationId,
+      pageId,
       items: [],
       selection: null,
       card: null,
         health: 'ok',
     });
-    if (!conversationId) {
+    if (!pageId) {
       this.refresh();
       return;
     }
 
-    this.unwatch = watchMarks(this.adapter.site, conversationId, (marks) => {
+    this.unwatch = watchMarks(this.adapter.site, pageId, (marks) => {
       this.marks = marks;
       this.refresh();
-      void this.countElsewhere(conversationId);
+      void this.countElsewhere(pageId);
     });
-    const marks = await loadMarks(this.adapter.site, conversationId);
-    if (this.state.conversationId !== conversationId) return;
+    const marks = await loadMarks(this.adapter.site, pageId);
+    if (this.state.pageId !== pageId) return;
     this.marks = marks;
     this.refresh();
-    void this.countElsewhere(conversationId);
+    void this.countElsewhere(pageId);
     // Re-check once the page has had time to render, so a broken layout gets reported.
     this.ctx.setTimeout(() => this.refresh(), BROKEN_AFTER_MS + 100);
   }
@@ -743,8 +743,8 @@ export class KonaController {
    * way back.
    */
   async highlightImage(src: string): Promise<void> {
-    const conversationId = this.state.conversationId;
-    if (!conversationId) return;
+    const pageId = this.state.pageId;
+    if (!pageId) return;
     const pictures = [...document.images];
     const found =
       pictures.find((img) => img.currentSrc === src || img.src === src) ??
@@ -764,8 +764,8 @@ export class KonaController {
     const mark: Mark = {
       id,
       site: this.adapter.site,
-      conversationId,
-      conversationTitle: this.adapter.getConversationTitle(),
+      pageId,
+      pageTitle: this.adapter.getConversationTitle(),
       url: location.href,
       label: '',
       color: this.state.pens[0] ?? 'yellow',
@@ -828,17 +828,17 @@ export class KonaController {
     return outlines;
   }
 
-  private async countElsewhere(conversationId: string): Promise<void> {
+  private async countElsewhere(pageId: string): Promise<void> {
     if (this.marks.length > 0) {
       if (this.state.elsewhere !== 0) this.setState({ elsewhere: 0 });
       return;
     }
     const all = await loadAllMarks();
     // The conversation may have changed while that was being read.
-    if (this.state.conversationId !== conversationId) return;
+    if (this.state.pageId !== pageId) return;
     const self = { site: this.adapter.site, url: location.href };
     const here = (mark: Mark) =>
-      sameSite(mark, self) && mark.conversationId !== conversationId;
+      sameSite(mark, self) && mark.pageId !== pageId;
     this.setState({
       elsewhere: all.filter(here).length,
       noun: this.adapter.conversationNoun ?? 'chat',
@@ -846,7 +846,7 @@ export class KonaController {
   }
 
   private refresh(): void {
-    const { conversationId, card, enabled } = this.state;
+    const { pageId, card, enabled } = this.state;
     if (!enabled) {
       // Switched off here: stop painting and show nothing, but keep everything saved.
       this.resolved.clear();
@@ -855,7 +855,7 @@ export class KonaController {
       this.setState({ items: [], card: null, selection: null });
       return;
     }
-    const messages = conversationId ? this.adapter.getMessages() : [];
+    const messages = pageId ? this.adapter.getMessages() : [];
     const { resolved } = resolveMarks(this.marks, messages, (m) => this.adapter.getContentRoot(m));
     this.resolved = new Map(resolved.map((r) => [r.mark.id, r]));
     this.painter.paint(
@@ -871,7 +871,7 @@ export class KonaController {
     this.painter.setPageDark(pageDark);
 
     const brokenLayout =
-      !!conversationId && messages.length === 0 && Date.now() - this.openedAt > BROKEN_AFTER_MS;
+      !!pageId && messages.length === 0 && Date.now() - this.openedAt > BROKEN_AFTER_MS;
     void this.recordLandings(messages.length);
     const cardStillValid = card && this.marks.some((m) => m.id === card.markId);
     const outlines = this.resolveImages();
@@ -913,7 +913,7 @@ export class KonaController {
   private captureSelection = (): void => {
     const selection = window.getSelection();
     if (!this.state.enabled) return;
-    if (!this.state.conversationId || !selection || selection.isCollapsed || !selection.rangeCount) {
+    if (!this.state.pageId || !selection || selection.isCollapsed || !selection.rangeCount) {
       this.clearSelectionDraft();
       return;
     }

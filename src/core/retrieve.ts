@@ -32,7 +32,7 @@ const FIELDS: ReadonlyArray<{ weight: number; of: (mark: Mark) => string }> = [
   { weight: 3, of: (mark) => mark.snapshot },
   { weight: 2, of: (mark) => mark.note ?? '' },
   { weight: 2, of: (mark) => (mark.tags ?? []).join(' ') },
-  { weight: 1, of: (mark) => mark.conversationTitle ?? '' },
+  { weight: 1, of: (mark) => mark.pageTitle ?? '' },
   { weight: 1, of: (mark) => siteLabel(mark) },
 ];
 

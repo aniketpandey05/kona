@@ -2832,30 +2832,42 @@ out of the extension, which left the promise with nowhere to be said and nobody
 relying on it, and 11 contradicts it anyway. A promise the product no longer
 makes is worse than no promise.
 
-**`conversationId` is still what the code calls a page.** Deferred, with a
-reason rather than by omission, and the reason turned out to be a different
-one from the one written here first.
+~~**`conversationId` is still what the code calls a page.**~~ Renamed, with
+`conversationTitle` beside it, to `pageId` and `pageTitle`. Two hundred and
+one occurrences across forty-one files.
 
-What was written: that the name is the middle of every storage key
-(`marks:<site>:<conversationId>`), so renaming it is a data migration. On a
-closer look that part is softer than it sounds. The key is built from the
-*value*, so a rename of the field does not touch a single key; what it touches
-is the shape of every stored record, which a read-time shim handles, and
-`store.ts` already carries one of those for the query-string migration.
+**The reason it waited was not the one written here first.** What was written:
+that the name is the middle of every storage key
+(`marks:<site>:<conversationId>`), so renaming it is a data migration. That
+part turned out to be softer than it sounds. The key is built from the
+*value*, so the rename touches no key at all; what it touches is the shape of
+every stored record, and a read-time shim handles that, which `store.ts`
+already does once for the query-string migration.
 
-The harder reason is the bridge. 3c put the library on the web and the two
+The harder reason is the bridge. 3c put the library on the web, and the two
 halves update at different speeds: the web app deploys the moment something
-lands on `main`, and the extension waits on a store review that can take a
-week. They talk in whole `Mark` objects, so a renamed field is a wire break
-between two halves that are *expected* to be different versions of each other
-for days at a time. Doing it means accepting both names on the way in for one
-release and dropping the old one in the next, which is a sequence rather than
-a change, and a sequence is not a thing to fold into the end of a session of
-other work.
+lands on `main`, the extension waits on a store review. They talk in whole
+`Mark` objects, so for a week at a time a new library is handing marks to an
+old extension that will key its storage by the page each one says it is on.
+Sending only the new name files every one of them under `undefined`.
 
-Worth noting that the wire is already half-renamed: `removeMark` carries
-`page`, not `conversationId`. Whoever does this is finishing something rather
-than starting it.
+**So it is a sequence, and this is its first half.** `paged` in `types.ts`
+fills both names from whichever arrived, and every door into the library goes
+through it: the two stores, the backup reader, and therefore the bridge and
+the folder sync, which only pass on what a store gave them. Inside, nothing
+reads the old names. A mark held in memory already carries what an older Kona
+needs, so writing is not a separate problem from reading.
+
+**The second half is the next release**, and it is one commit: take the two
+deprecated fields off `Mark`, stop filling them in `paged`, and keep reading
+them for as long as a backup file somebody kept might still carry them.
+
+Two things this turned up on the way. `isMark` in the backup reader would
+have insisted on the new name, which does not fail loudly: it drops every
+highlight in an older file and reports an empty library rather than an
+unreadable one. And six functions in `store.ts` take a `pageId` parameter,
+which would have shadowed the `pageId` *function* imported there, one of
+which it calls; the import is aliased now.
 
 **The pen dot in `src/design/Passage.tsx` has no accessible name.** It is
 `aria-hidden`, as the boards draw it. DEFINITIONS says a colour is named by its

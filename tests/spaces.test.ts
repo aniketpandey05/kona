@@ -30,8 +30,8 @@ function mark(id: string, snapshot: string, createdAt = 1): Mark {
   return {
     id,
     site: 'web',
-    conversationId: 'c',
-    conversationTitle: 'A page',
+    pageId: 'c',
+    pageTitle: 'A page',
     url: 'https://example.com/page',
     label: 'example.com',
     color: 'yellow',

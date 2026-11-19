@@ -6,7 +6,7 @@ import type { Mark } from './types';
 export function toMarkdown(marks: readonly Mark[], today = new Date()): string {
   const groups = new Map<string, Mark[]>();
   for (const mark of marks) {
-    const key = `${mark.site}:${mark.conversationId}`;
+    const key = `${mark.site}:${mark.pageId}`;
     groups.set(key, [...(groups.get(key) ?? []), mark]);
   }
 
@@ -15,7 +15,7 @@ export function toMarkdown(marks: readonly Mark[], today = new Date()): string {
 
   for (const group of [...groups.values()].sort((a, b) => newest(b) - newest(a))) {
     const first = group[0]!;
-    lines.push(`## ${first.conversationTitle || 'Untitled'}`, '');
+    lines.push(`## ${first.pageTitle || 'Untitled'}`, '');
     lines.push(`${siteLabel(first)}, [open](${first.url})`, '');
 
     for (const mark of sortByOrder(group)) {

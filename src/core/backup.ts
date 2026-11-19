@@ -23,7 +23,7 @@ import { prune, type Gone } from './gone';
 import type { Person } from './people';
 import type { Space } from './spaces';
 import { cleanSpace } from './spaceShare';
-import type { Mark } from './types';
+import { paged, type AsStored, type Mark } from './types';
 
 export interface Identity {
   me: Person;
@@ -100,7 +100,7 @@ export function readBackup(text: string, allowEmpty = false): Restored {
   const rawMarks = Array.isArray(data) ? data : raw?.marks;
   if (!Array.isArray(rawMarks)) throw new Error("That file doesn't look like a backup.");
 
-  const marks = rawMarks.filter(isMark);
+  const marks = rawMarks.filter(isMark).map(paged);
   const held = new Set(marks.map((mark) => mark.id));
   const spaces = Array.isArray(raw?.spaces)
     ? raw.spaces.map((entry) => cleanSpace(entry, held)).filter((space): space is Space => !!space)
@@ -139,13 +139,16 @@ function cleanIdentity(value: unknown): Identity | null {
   return { me: person, ...(usable ? { signingKey: signingKey as JsonWebKey } : {}) };
 }
 
-function isMark(value: unknown): value is Mark {
+function isMark(value: unknown): value is AsStored {
   const mark = value as Partial<Mark> | null;
   return (
     !!mark &&
     typeof mark.id === 'string' &&
     typeof mark.site === 'string' &&
-    typeof mark.conversationId === 'string' &&
+    // Either name. A backup kept from before the rename carries only the old
+    // one, and insisting on the new one here would not fail loudly: it would
+    // quietly drop every highlight in the file and call it an empty library.
+    (typeof mark.pageId === 'string' || typeof mark.conversationId === 'string') &&
     typeof mark.snapshot === 'string'
   );
 }

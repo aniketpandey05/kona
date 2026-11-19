@@ -7,7 +7,7 @@ const mark = (id: string, snapshot: string, extra: Partial<Mark> = {}) =>
   ({
     id,
     snapshot,
-    conversationTitle: 'Some chat',
+    pageTitle: 'Some chat',
     site: 'chatgpt',
     url: 'https://chatgpt.com/c/x',
     createdAt: Number(id),
@@ -34,7 +34,7 @@ const library = [
 
 describe('the index', () => {
   it('weighs a word in the passage above the same word in the title', () => {
-    const index = buildIndex([mark('1', 'volumes', { conversationTitle: 'volumes' })]);
+    const index = buildIndex([mark('1', 'volumes', { pageTitle: 'volumes' })]);
     // Three for the passage and one for the title, counted together.
     expect(index.postings.get(stem('volumes'))?.get(0)).toBe(4);
   });
