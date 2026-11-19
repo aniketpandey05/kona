@@ -15,3 +15,25 @@
 @import './panel.css';
 @import './bar.css';
 @import './note.css';
+
+/*
+ * One focus ring, for everything Kona draws in somebody else's page.
+ *
+ * The pens, the two tabs, the close button and the Library link had no focus
+ * style of their own, so a keyboard landing on them got whatever ring the
+ * browser happens to draw, which is a different ring on every platform. The
+ * rules that did exist only brightened a border, which is also what hover
+ * does, so focus and hover were the same picture and a keyboard user could
+ * not tell where they were.
+ *
+ * The pens matter most here. Marking a passage is the product, and it was the
+ * one control you could not see yourself land on.
+ *
+ * Buttons and links only. The note's field replaces its ring with an accent
+ * edge on purpose, which is the same signal in the shape a field wants.
+ */
+.kona-tokens button:focus-visible,
+.kona-tokens a:focus-visible {
+  outline: 2px solid var(--kona-accent);
+  outline-offset: 2px;
+}

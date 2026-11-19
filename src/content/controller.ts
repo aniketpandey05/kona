@@ -996,12 +996,23 @@ export class KonaController {
   private onKeyUp = (event: KeyboardEvent): void => {
     if (!this.state.enabled) return;
     if (event.key === 'Escape') {
-      // Selecting text is not a request to highlight it, and most of the time
-      // the answer to an unwanted bar is this rather than switching Kona off.
-      // The selection itself is left alone: Escape dismisses Kona's offer, not
-      // the words you were holding, and nothing brings the bar back until you
-      // select something else.
-      this.clearSelectionDraft();
+      // Innermost first, and one press per thing, so Escape always closes
+      // whatever is nearest rather than everything at once. The panel answers
+      // it last, in `Panel.tsx`, once neither of these is up.
+      if (this.state.selection) {
+        // Selecting text is not a request to highlight it, and most of the
+        // time the answer to an unwanted bar is this rather than switching
+        // Kona off. The selection itself is left alone: Escape dismisses
+        // Kona's offer, not the words you were holding, and nothing brings
+        // the bar back until you select something else.
+        this.clearSelectionDraft();
+      } else if (this.state.card) {
+        // The bar over a highlight you tapped. It had no way out but the
+        // mouse, which also meant Escape did nothing at all while it was up,
+        // and the panel behind it could not be closed from the keyboard
+        // either.
+        this.closeCard();
+      }
     } else if (event.altKey && event.shiftKey && (event.code === 'KeyH' || event.code === 'KeyN')) {
       void this.highlight('yellow', { withNote: event.code === 'KeyN' });
     } else if (event.altKey && event.shiftKey && (event.code === 'ArrowDown' || event.code === 'ArrowUp')) {

@@ -44,6 +44,25 @@ export function Panel({ state, controller }: Props) {
     if (!space && tab === 'space') setTab('page');
   }, [space, tab]);
 
+  /**
+   * Escape closes it.
+   *
+   * It is a dialog, and the × was the only way out of it without a mouse.
+   *
+   * Innermost first, which is what the guard is: a note editor and a bar over
+   * a selection both answer Escape before this does, so one press closes the
+   * thing you are actually in rather than the room around it. Press it again
+   * and the room closes.
+   */
+  useEffect(() => {
+    if (!open || state.selection || state.card) return;
+    const close = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('keydown', close);
+    return () => document.removeEventListener('keydown', close);
+  }, [open, state.selection, state.card]);
+
   if (!open) {
     return (
       <button

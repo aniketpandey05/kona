@@ -1293,11 +1293,64 @@ what a person's selection looks like and what the product claims to do.
 
 ---
 
+## The extension, gone over properly
+
+Asked for the extension to be perfect, so this is a pass over the thing
+itself rather than over a decision: every control in the page, with a
+keyboard rather than a mouse.
+
+### There were states the keyboard could not leave
+
+The panel is `role="dialog"` and the × was the only way out of it. Worse than
+that, while a bar was up Escape did nothing at all, so a highlight you had
+tapped left you with a bar you could not dismiss and a panel behind it you
+could not close.
+
+It is a cascade now, innermost first, one press per thing: the note editor
+answers Escape, then a bar over a selection or over a highlight, then the
+panel. Press it three times from the worst case and you are back to the page
+with the resting mark. The three live in three different files, which is
+exactly why the order is worth a test rather than a comment.
+
+**What it does not do is close everything at once.** One press taking away
+two things is the behaviour people learn to distrust, so the panel's handler
+simply does not run while something nearer is up.
+
+### Focus was a different ring on every platform
+
+The pens, the two tabs, the close button and the Library link had no focus
+style at all, so a keyboard landing on them got whatever the browser draws.
+The rules that did exist only brightened a border, which is also what hover
+does, so focus and hover were the same picture and there was no telling where
+you were.
+
+One rule now, in `shadow.css` where everything the page UI needs already
+lives: a two-pixel accent ring on every button and link Kona draws. The note's
+field keeps its own accent edge, which is the same signal in the shape a field
+wants.
+
+The pens are the reason this mattered. Marking a passage *is* the product, and
+it was the one control you could not see yourself land on.
+
+### What the pass did not find
+
+Checked and left alone: every control in the panel has a name a screen reader
+can read, the pens are named by their hue as `DEFINITIONS` asks, the panel's
+head is symmetric, and the welcome page's column is consistent. The slab is
+unaffected by dark mode, which 17 requires and which was already true.
+
+Not checked here, and worth a person: the packed extension in a real Chrome,
+with a real permission grant. The harness runs the same components against a
+mock of the browser, which is the right tool for everything above and the
+wrong one for the install.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 588 |
+| Tests | 592 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |
