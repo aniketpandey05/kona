@@ -104,8 +104,11 @@ body {
  * that this one is also about this site.
  */
 .pop-pause {
-  margin-top: var(--kona-space-12);
-  padding-top: var(--kona-space-12);
+  /* The same rhythm as the section below it. They are two ruled sections in a
+     320px window and they were keeping different time, 24px of air above one
+     rule and 32px above the other. */
+  margin-top: var(--kona-space-16);
+  padding-top: var(--kona-space-16);
   border-top: 1px solid var(--kona-paper-line);
 }
 

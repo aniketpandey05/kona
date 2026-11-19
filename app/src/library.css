@@ -297,6 +297,23 @@
 }
 
 /* The nav folds behind the three bars on a phone (17). */
+/*
+ * The mark heads the nav column, so it lines up with the nav's text rather
+ * than with the header's own padding: four pixels to the left of the column
+ * it is supposed to head is the kind of thing nobody can name and everybody
+ * sees.
+ *
+ * Only where there is a nav to head. Below the breakpoint the nav is behind
+ * the bars and the mark heads the content instead, which is already where the
+ * header's own padding puts it. Written as the sum it is, so moving the nav's
+ * inset moves this with it.
+ */
+@media (min-width: 840px) {
+  .lib-top {
+    padding-left: calc(var(--kona-space-16) + var(--kona-space-12));
+  }
+}
+
 @media (max-width: 839px) {
   .lib-bars {
     display: flex;
@@ -1011,7 +1028,10 @@
   width: 100%;
   min-height: 48px;
   margin-top: var(--kona-space-2);
-  padding: var(--kona-space-8) var(--kona-space-10);
+  /* The same inset as the nav items above it, which it was two pixels short
+     of, enough to stagger the left edge of a column nobody would be able to
+     say was wrong but everybody would see. */
+  padding: var(--kona-space-8) var(--kona-space-12);
   /* It never said any of these, so it wore the browser's own button: the
      default grey, the default border and the default font, in the one row
      that is supposed to be the quietest thing in the nav. Light paper hid

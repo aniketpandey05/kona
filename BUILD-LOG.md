@@ -1262,6 +1262,37 @@ must never degrade does not.
 
 ---
 
+## Three things you could see
+
+Asked to look at the interface rather than at a decision, so this is what
+measuring it turned up.
+
+**The left column had three left edges.** The mark at the top of the library
+sat at 32, the nav text under it at 36, the account row at the foot at 34.
+Nobody could have named it and everybody would have seen it: a column whose
+items do not agree about where they start reads as slightly broken without
+ever looking wrong. All three are at 36 now, written as the sum of the nav's
+own insets so that moving the nav moves the mark with it.
+
+The first attempt at that fixed the desktop and broke the phone. The mark
+heads the nav column above the breakpoint and heads the content below it,
+where there is no nav, and those are two different edges. It is in a
+`min-width` query now, which is the honest way to say *only where there is a
+nav to head*.
+
+**The popup kept two different times.** Two ruled sections in a 320px window,
+with 24px of air above one rule and 32px above the other, because the second
+was added later and guessed.
+
+**And the store screenshots showed Kona marking text badly.** The harness
+selects the opening of a paragraph to make its highlights, and it cut at 96
+characters, which landed inside `n²` and inside *splits*. So the pictures a
+reviewer sees first had highlights ending mid-word and panel cards reading
+*Sparse attention spl*. It cuts at the last whole word now, which is both
+what a person's selection looks like and what the product claims to do.
+
+---
+
 ## Where it stands
 
 | | |
