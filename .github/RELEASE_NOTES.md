@@ -9,7 +9,7 @@ not special.
 ### Installing
 
 The attached files carry the version in their names, so this release's are
-`kona-1.4.1-chrome.zip` and so on; a later release attaches its own.
+`kona-1.4.2-chrome.zip` and so on; a later release attaches its own.
 
 Chrome, Edge and Brave: download the `-chrome` zip, unzip it, then
 `chrome://extensions`, turn on developer mode, and **Load unpacked** on the
@@ -22,6 +22,15 @@ extension's resources and still needs the Xcode wrap, which is described in
 Your library lives on the web at
 <https://aniketpandey05.github.io/kona/app/>, and on a free account nothing
 leaves the device it was marked on.
+
+### Fixed in 1.4.2
+
+**A deletion stays deleted.** If your library is kept in a folder you sync,
+deleting a highlight on one machine used to leave the other machine free to
+hand it back, because an absence looks exactly like something that machine
+has not been told about yet. It is a fact with a time on it now, and the same
+rule settles the awkward case: delete on one machine and edit on another, and
+whichever happened later is what you keep.
 
 ### Fixed in 1.4.1
 

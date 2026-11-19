@@ -20,6 +20,12 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.4.2',
+    notes: [
+      'A highlight you delete stays deleted when your library is kept in a folder you sync. It used to come back from the other machine, because a deletion looked exactly like something that machine had not been told about yet.',
+    ],
+  },
+  {
     version: '1.4.1',
     notes: [
       'Dark actually works. Choosing Dark, or leaving Kona to match your system, now changes the library, the popup and the welcome page. Before this the choice was saved and nothing read it. The panel you open in a page stays dark over any article, as it always has.',
