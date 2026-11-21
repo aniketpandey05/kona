@@ -20,6 +20,13 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.4.3',
+    notes: [
+      'Escape closes whatever you are in, nearest first: the note you are writing, then the bar, then the panel. One press at a time, so it never takes away two things at once.',
+      'Every button Kona draws now shows where your keyboard is, the colours in the bar included. They were leaving that to whatever ring your browser happened to draw.',
+    ],
+  },
+  {
     version: '1.4.2',
     notes: [
       'A highlight you delete stays deleted when your library is kept in a folder you sync. It used to come back from the other machine, because a deletion looked exactly like something that machine had not been told about yet.',

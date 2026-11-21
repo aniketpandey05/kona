@@ -9,7 +9,7 @@ not special.
 ### Installing
 
 The attached files carry the version in their names, so this release's are
-`kona-1.4.2-chrome.zip` and so on; a later release attaches its own.
+`kona-1.4.3-chrome.zip` and so on; a later release attaches its own.
 
 Chrome, Edge and Brave: download the `-chrome` zip, unzip it, then
 `chrome://extensions`, turn on developer mode, and **Load unpacked** on the
@@ -22,6 +22,18 @@ extension's resources and still needs the Xcode wrap, which is described in
 Your library lives on the web at
 <https://aniketpandey05.github.io/kona/app/>, and on a free account nothing
 leaves the device it was marked on.
+
+### Fixed in 1.4.3
+
+**Escape closes what you are in.** Nearest first: the note you are writing,
+then the bar, then the panel. One press at a time, so it never takes two
+things away at once. Before this the panel could only be closed with its ×,
+and while a bar was up Escape did nothing at all, which left states a
+keyboard could not get out of.
+
+**Every button shows where your keyboard is**, the colours in the bar
+included. They had no focus style of their own and were leaving it to
+whatever ring the browser happened to draw.
 
 ### Fixed in 1.4.2
 
