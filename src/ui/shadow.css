@@ -17,6 +17,26 @@
 @import './note.css';
 
 /*
+ * Border-box, for everything Kona draws in the page.
+ *
+ * Five elements in here already said it one at a time, and the one that did
+ * not was the card a highlight sits in: `width: 100%` with twelve pixels of
+ * padding and a border on top of it, which made every card twenty-six pixels
+ * wider than the list holding it. The list scrolls on its y axis, so the
+ * browser gave it an x axis too, and the panel grew a horizontal scrollbar
+ * nobody asked for. It showed up first in the block for a highlight whose
+ * page has changed, because that block is inset and ran out of room soonest.
+ *
+ * Said once, at the top, so the next `width: 100%` is simply right.
+ */
+.kona-tokens,
+.kona-tokens *,
+.kona-tokens *::before,
+.kona-tokens *::after {
+  box-sizing: border-box;
+}
+
+/*
  * One focus ring, for everything Kona draws in somebody else's page.
  *
  * The pens, the two tabs, the close button and the Library link had no focus

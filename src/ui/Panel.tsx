@@ -104,16 +104,21 @@ export function Panel({ state, controller }: Props) {
 
       <GoingTo space={space} controller={controller} />
 
-      <div class="kona-panel-tabs">
-        <button
-          type="button"
-          class="kona-panel-tab"
-          aria-current={tab === 'page' ? 'page' : undefined}
-          onClick={() => setTab('page')}
-        >
-          This page {count}
-        </button>
-        {space && (
+      {/* 2f describes a pair, *This page* and the space, appearing only when a
+          space is active. A single tab is not a pair: it is a switch with
+          nowhere to go, drawn above a list it is already describing, and on
+          an empty page it was the second thing you saw. The count it carried
+          is on the mark this panel rests as. */}
+      {space && (
+        <div class="kona-panel-tabs">
+          <button
+            type="button"
+            class="kona-panel-tab"
+            aria-current={tab === 'page' ? 'page' : undefined}
+            onClick={() => setTab('page')}
+          >
+            This page {count}
+          </button>
           <button
             type="button"
             class="kona-panel-tab"
@@ -122,8 +127,8 @@ export function Panel({ state, controller }: Props) {
           >
             {space.name} {space.items.length}
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {tab === 'page' ? (
         count === 0 ? (

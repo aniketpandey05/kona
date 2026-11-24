@@ -1346,11 +1346,52 @@ wrong one for the install.
 
 ---
 
+## Refining it
+
+Another pass over the extension, this time through the states a panel spends
+most of its life in rather than the one it is photographed in.
+
+### A scrollbar nobody asked for
+
+`.kona-panel-card` is `width: 100%` with twelve pixels of padding and a border
+on top of it, and nothing in the shadow root had ever said `border-box`. So
+every card was twenty-six pixels wider than the list holding it. The list
+scrolls on its y axis, which means the browser gives it an x axis too, and the
+panel grew a horizontal scrollbar.
+
+It had been there the whole time and was invisible until the block for a
+highlight whose page has changed, which is inset and so ran out of room
+soonest. Five elements in that stylesheet already said `border-box` one at a
+time; it is said once at the top now, so the next `width: 100%` is simply
+right.
+
+### A tab with nowhere to go
+
+2f describes a pair, *This page* and the space, appearing together only when a
+space is active. A single tab is not a pair. It was drawn anyway, so a page
+with nothing kept on it showed a switch that did nothing, above a list it was
+already describing, as the second thing in the panel. The count it carried is
+on the mark the panel rests as.
+
+The empty panel is 133 pixels tall now rather than 174, which is most of a
+quarter of it that was saying nothing.
+
+### What the pass cleared
+
+The welcome page end to end: nothing overflows, the ladder reads, *What
+changed* is showing 1.4.3 correctly, and the Teams section says plainly that
+shared spaces are not built. The note card keeps its vertical resize, which is
+right for a note and cannot push it sideways. The bar, the pens and the note
+card are all unaffected by the border-box baseline, which was the thing worth
+checking before shipping it.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 592 |
+| Tests | 596 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |
