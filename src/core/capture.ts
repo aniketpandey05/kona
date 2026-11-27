@@ -1,4 +1,5 @@
 import { pageId } from './pageUrl';
+import { collapseSpace } from './text';
 import type { Mark, PenId } from './types';
 
 /**
@@ -77,7 +78,7 @@ export function looksLikePdf(url: string): boolean {
  * document Kona could read, and it could not read this one.
  */
 export function captureSelection({ text, url, title, color, now = Date.now() }: Captured): Mark {
-  const snapshot = text.replace(/\s+/g, ' ').trim();
+  const snapshot = collapseSpace(text);
   return {
     id: crypto.randomUUID(),
     site: 'web',

@@ -20,6 +20,14 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.4.4',
+    notes: [
+      'The panel opens upward from the mark you clicked, instead of jumping to the opposite corner of the window.',
+      'A passage that ran across a line break in the page is kept as one line. It was stored with the page’s own indentation in it, which a Markdown export turned into a code block.',
+      'On a page with no space set, the panel no longer draws a row of tabs with only one tab in it.',
+    ],
+  },
+  {
     version: '1.4.3',
     notes: [
       'Escape closes whatever you are in, nearest first: the note you are writing, then the bar, then the panel. One press at a time, so it never takes away two things at once.',

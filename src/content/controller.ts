@@ -14,6 +14,7 @@ import { moveItem, nextOrder, sortByOrder } from '../core/order';
 import { HighlightPainter } from '../core/painter';
 import { loadPaused, watchPaused } from '../core/pause';
 import { describeQuote } from '../core/quote';
+import { collapseSpace } from '../core/text';
 import { linkToMark } from '../core/link';
 import { sameSite, siteLabel } from '../core/sites';
 import type { Space } from '../core/spaces';
@@ -334,7 +335,10 @@ export class KonaController {
       label: '',
       color,
       order: nextOrder(this.marks),
-      snapshot: quote.exact.trim(),
+      // The copy kept of the passage, not the thing the matcher uses: `quote`
+      // above stays verbatim. This is what the library shows and what a
+      // Markdown export writes, so it carries no page indentation (text.ts).
+      snapshot: collapseSpace(quote.exact),
       createdAt: now,
       updatedAt: now,
     };

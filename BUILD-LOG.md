@@ -1422,11 +1422,51 @@ again.
 
 ---
 
+## The round trip, on all four surfaces
+
+Told to stop worrying about versions and go at the product, so this is the
+core promise exercised rather than reasoned about: mark a passage, leave,
+come back, land on the exact words. On an ordinary article, and on each of the
+three chat adapters.
+
+**All four work.** Each files under its own key, `marks:web:<url>`,
+`marks:claude:…`, `marks:gemini:…`, `marks:chatgpt:…`, each paints after a
+reload, and the panel row flashes the passage when clicked.
+
+### What it turned up
+
+A passage selected across a line break in the page was stored with the page's
+own indentation inside it. On screen that never shows, because HTML collapses
+whitespace. It shows where the text is treated as text, and the Markdown
+export is where it bites: the export puts `> ` in front of every line, so the
+second line kept its eight spaces, and four spaces inside a block quote is an
+indented code block. A passage came out set in a monospace box.
+
+The two capture paths disagreed, and the one that did not tidy was the
+ordinary one. `captureSelection`, the right-click path for a page Kona cannot
+run in, collapsed whitespace from the day it was written; the bar in the page
+did `quote.exact.trim()`, which tidies the ends and nothing in the middle.
+`wordsFor` in `image.ts` had a third copy of the same regex.
+
+One `collapseSpace` in `text.ts` now, used by both capture paths. It is kept
+apart from `cleanPassage` beside it, which also strips quotation marks and a
+trailing ellipsis: that is right for a passage arriving from a phone's share
+sheet and wrong for one somebody selected here, because if they drew the
+selection around the quotation marks then the quotation marks are part of what
+they kept.
+
+**What is deliberately untouched is `quote`.** That is what the matcher
+anchors on, and it stays verbatim. Checked in a browser rather than inferred:
+after the change the stored snapshot has no newline in it, `quote.exact` still
+does, and the highlight still paints and still comes back after a reload.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 598 |
+| Tests | 602 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |

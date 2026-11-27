@@ -20,6 +20,25 @@ const TRAILING_QUOTES = /["'‘’“”«»]+$/;
 const TRAILING_ELLIPSIS = /\s*(?:\.\.\.|…)$/;
 
 /**
+ * The whitespace a page happened to have in it, made into single spaces.
+ *
+ * What a person selects spans the source's own line breaks and indentation,
+ * and the browser hands those over verbatim. On screen it does not show,
+ * because HTML collapses it; everywhere the text is treated as text it does.
+ * A Markdown export is the one that bites: the lines after the first keep the
+ * page's indentation, and four spaces inside a block quote is an indented
+ * code block, so a passage comes out set in a monospace box.
+ *
+ * Kept apart from `cleanPassage` below, which also strips quotation marks and
+ * a trailing ellipsis. That is right for a passage arriving from a share
+ * sheet and wrong for one somebody selected here: if they drew the selection
+ * around the quotation marks, the quotation marks are part of what they kept.
+ */
+export function collapseSpace(text: string): string {
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+/**
  * Tidies a passage that arrived from somewhere else, a phone's share sheet,
  * most of all, where the text is rarely byte-identical to the page it came
  * from. It carries invisible characters, non-breaking spaces, the quotation
@@ -34,14 +53,16 @@ const TRAILING_ELLIPSIS = /\s*(?:\.\.\.|…)$/;
  * Every rule only ever shortens the text, never adds to it.
  */
 export function cleanPassage(text: string): string {
-  return text
-    .replace(INVISIBLE, '')
-    // A non-breaking space is not the space a fragment is compared against.
-    .replace(NO_BREAK_SPACE, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(LEADING_QUOTES, '')
-    .replace(TRAILING_QUOTES, '')
-    .replace(TRAILING_ELLIPSIS, '')
-    .trim();
+  return (
+    text
+      .replace(INVISIBLE, '')
+      // A non-breaking space is not the space a fragment is compared against.
+      .replace(NO_BREAK_SPACE, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(LEADING_QUOTES, '')
+      .replace(TRAILING_QUOTES, '')
+      .replace(TRAILING_ELLIPSIS, '')
+      .trim()
+  );
 }

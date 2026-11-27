@@ -9,7 +9,7 @@ not special.
 ### Installing
 
 The attached files carry the version in their names, so this release's are
-`kona-1.4.3-chrome.zip` and so on; a later release attaches its own.
+`kona-1.4.4-chrome.zip` and so on; a later release attaches its own.
 
 Chrome, Edge and Brave: download the `-chrome` zip, unzip it, then
 `chrome://extensions`, turn on developer mode, and **Load unpacked** on the
@@ -22,6 +22,18 @@ extension's resources and still needs the Xcode wrap, which is described in
 Your library lives on the web at
 <https://aniketpandey05.github.io/kona/app/>, and on a free account nothing
 leaves the device it was marked on.
+
+### Fixed in 1.4.4
+
+**The panel opens from the mark.** It was anchored to the top of the window
+while the mark that opens it sits at the bottom, so one click threw it to the
+opposite corner. It grows upward from where you clicked now, on the same inset.
+
+**A passage that ran across a line break** is kept as one line. It used to be
+stored with the page's own indentation inside it, which looked fine on screen,
+because HTML collapses it, and came out of a Markdown export as a code block.
+
+**No row of tabs with one tab in it**, on a page where no space is set.
 
 ### Fixed in 1.4.3
 
