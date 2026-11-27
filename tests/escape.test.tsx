@@ -48,6 +48,17 @@ function draw(state: ViewState) {
   return host;
 }
 
+/**
+ * A generous wait, on purpose.
+ *
+ * These assert on a Preact effect: render, then the effect attaches a
+ * listener, then a key press re-renders. Under a loaded suite that chain took
+ * longer than vi.waitFor's one-second default, so the test passed alone and
+ * failed with the other forty-five files running. A flake is worse than a
+ * failure, because it fails in CI on somebody else's afternoon.
+ */
+const PATIENT = { timeout: 5000 };
+
 const escape = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 
 /**
@@ -63,10 +74,10 @@ describe('Escape, with the panel open', () => {
   it('closes it, which only the × could do before', async () => {
     const where = draw(base);
     openPanel(where);
-    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).not.toBeNull());
+    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).not.toBeNull(), PATIENT);
 
     escape();
-    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).toBeNull());
+    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).toBeNull(), PATIENT);
     // Back to the mark it rests as, rather than to nothing at all.
     expect(where.querySelector('.kona-rest')).not.toBeNull();
   });
@@ -76,7 +87,7 @@ describe('Escape, with the panel open', () => {
     // on the next one, so one press never takes away two things.
     const where = draw({ ...base, selection: { top: 10, bottom: 20, left: 5, streaming: false } });
     openPanel(where);
-    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).not.toBeNull());
+    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).not.toBeNull(), PATIENT);
 
     escape();
     await settle();
@@ -87,7 +98,7 @@ describe('Escape, with the panel open', () => {
     const card: NoteCardState = { markId: 'm1', position: { top: 20, left: 5 }, focusNote: false };
     const where = draw({ ...base, card });
     openPanel(where);
-    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).not.toBeNull());
+    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).not.toBeNull(), PATIENT);
 
     escape();
     await settle();
@@ -99,9 +110,9 @@ describe('Escape, with the panel open', () => {
     // thing that works until a second Escape does something surprising.
     const where = draw(base);
     openPanel(where);
-    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).not.toBeNull());
+    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).not.toBeNull(), PATIENT);
     escape();
-    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).toBeNull());
+    await vi.waitFor(() => expect(where.querySelector('.kona-panel')).toBeNull(), PATIENT);
 
     expect(() => escape()).not.toThrow();
     expect(where.querySelector('.kona-panel')).toBeNull();

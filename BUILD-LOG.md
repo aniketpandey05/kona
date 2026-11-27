@@ -1387,11 +1387,46 @@ checking before shipping it.
 
 ---
 
+## The panel opens from the mark now
+
+Reported from the real extension, on a GitHub page, with a screenshot of each
+state: the mark rests at the bottom right, and clicking it threw the panel to
+the **top** right. On a tall window that is most of the screen, and the eye has
+to go and find the thing it just asked for.
+
+`.kona-rest` was anchored `bottom: 24px` and `.kona-panel` `top: 24px`. Nothing
+decided that. 2h settles the horizontal inset and the height, and never names
+an end; what it does say is that *the resting mark takes the same inset both
+ways*, which is the sentence this keeps. The panel is on `bottom: 24px` now and
+grows up out of where the mark was.
+
+The max-height is untouched, so a long list still stops an inset short of the
+top and scrolls inside, which is 2h's "as tall as its content up to the
+viewport height less the inset at each end" measured from the other end.
+Checked at 760px, where the panel sits in the lower half, and at 420px, where
+it fills the window between the two insets and the list scrolls.
+
+Below 840px it was already a sheet at the foot of the screen, which is what
+made the top anchor look so odd: the phone had the right answer and the desktop
+did not. That rule's `top: auto` was there only to undo the base, and went with
+it.
+
+### A flake caught on the way
+
+`tests/escape.test.tsx` passed alone and failed with the other forty-five files
+running: those assertions wait on a Preact effect, render then attach then
+re-render, and that chain outran `vi.waitFor`'s one-second default under load.
+Fixed rather than re-run, because a flake is worse than a failure: it fails in
+CI on somebody else's afternoon, and teaches everybody to press the button
+again.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 596 |
+| Tests | 598 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |

@@ -85,8 +85,23 @@
  * at each end, the two heights the boards draw are this one rule with three
  * highlights and with twelve.
  */
+/**
+ * It opens from the mark, not across the screen from it.
+ *
+ * This was anchored to the top while the mark it opens from sits at the
+ * bottom, so clicking the one thing Kona shows at rest threw the panel to the
+ * other end of the window. On a tall screen that is most of the height, and
+ * the eye has to go and find what it just asked for.
+ *
+ * 2h never says which end. It says docked right at 24px, and that the resting
+ * mark takes the same inset both ways, which is the sentence this is keeping:
+ * the panel grows up out of where the mark was. The max-height is unchanged,
+ * so a long list still stops an inset short of the top and scrolls inside —
+ * which is 2h's "as tall as its content up to the viewport height less the
+ * inset at each end", measured from the other end.
+ */
 .kona-panel {
-  top: var(--kona-space-24);
+  bottom: var(--kona-space-24);
   display: flex;
   flex-direction: column;
   width: 324px;
@@ -108,7 +123,6 @@
   .kona-panel {
     right: 0;
     left: 0;
-    top: auto;
     bottom: 0;
     width: auto;
     height: 62vh;
