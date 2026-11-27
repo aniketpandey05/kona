@@ -1,8 +1,13 @@
 import { render } from 'preact';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Note } from '../src/ui/Note';
+import { DEFAULT_PENS } from '../src/core/pens';
+import type { PenId } from '../src/core/types';
 import type { KonaController, NoteCardState } from '../src/content/controller';
 import type { Mark } from '../src/core/types';
+
+/** The case the note card is handed, so the colour can be changed in it (12). */
+const PENS: PenId[] = DEFAULT_PENS;
 
 let host: HTMLElement | undefined;
 
@@ -52,14 +57,14 @@ describe('the note editor', () => {
   it('is your words and your tags, and nothing the bar already has', () => {
     // 10c puts the pens and Delete on the bar, and the editor opens from it.
     // Repeating them here is the same control in two places.
-    const el = draw(<Note card={card} mark={mark} controller={stub()} />);
+    const el = draw(<Note pens={PENS} card={card} mark={mark} controller={stub()} />);
     expect(el.querySelector('.kona-note-text')).not.toBeNull();
     expect(el.querySelector('.kona-bar-pen')).toBeNull();
     expect(el.textContent).not.toMatch(/delete/i);
   });
 
   it('opens on what was already written', () => {
-    const el = draw(<Note card={card} mark={{ ...mark, note: 'active or passive?' }} controller={stub()} />);
+    const el = draw(<Note pens={PENS} card={card} mark={{ ...mark, note: 'active or passive?' }} controller={stub()} />);
     expect(el.querySelector<HTMLTextAreaElement>('.kona-note-text')?.value).toBe(
       'active or passive?',
     );
@@ -67,7 +72,7 @@ describe('the note editor', () => {
 
   it('saves what is in the box, not what a stale render thought', () => {
     const controller = stub();
-    const el = draw(<Note card={card} mark={mark} controller={controller} />);
+    const el = draw(<Note pens={PENS} card={card} mark={mark} controller={controller} />);
     const area = el.querySelector<HTMLTextAreaElement>('.kona-note-text')!;
     area.value = 'typed after the render';
     el.querySelector<HTMLElement>('.kona-note-save')?.click();
@@ -78,7 +83,7 @@ describe('the note editor', () => {
     // Losing a sentence because you looked at the page it was about would be
     // the worst small failure this screen has available.
     const controller = stub();
-    const el = draw(<Note card={card} mark={mark} controller={controller} />);
+    const el = draw(<Note pens={PENS} card={card} mark={mark} controller={controller} />);
     // preact schedules effects on an animation frame, which happy-dom backs
     // with a timer, so the click-away listener is not attached on the tick
     // the component renders, nor on the next one. Measured: it needs a frame.
@@ -90,7 +95,7 @@ describe('the note editor', () => {
 
   it('shows the tags it has and takes one off when clicked', () => {
     const controller = stub();
-    const el = draw(<Note card={card} mark={mark} controller={controller} />);
+    const el = draw(<Note pens={PENS} card={card} mark={mark} controller={controller} />);
     const tag = el.querySelector<HTMLElement>('.kona-note-tag');
     expect(tag?.textContent).toContain('osmosis');
     tag?.click();
@@ -98,7 +103,7 @@ describe('the note editor', () => {
   });
 
   it('says what the note is about when there is no highlight to sit beside', () => {
-    const el = draw(<Note card={{ ...card, position: null }} mark={mark} controller={stub()} />);
+    const el = draw(<Note pens={PENS} card={{ ...card, position: null }} mark={mark} controller={stub()} />);
     expect(el.querySelector('.kona-note-quote')?.textContent).toBe(
       'The outer layer stiffens into a gel',
     );
@@ -106,13 +111,13 @@ describe('the note editor', () => {
   });
 
   it('does not repeat the passage when it is sitting on it', () => {
-    const el = draw(<Note card={card} mark={mark} controller={stub()} />);
+    const el = draw(<Note pens={PENS} card={card} mark={mark} controller={stub()} />);
     expect(el.querySelector('.kona-note-quote')).toBeNull();
   });
 
   it('closes on Escape without saving over what is there', () => {
     const controller = stub();
-    const el = draw(<Note card={card} mark={mark} controller={controller} />);
+    const el = draw(<Note pens={PENS} card={card} mark={mark} controller={controller} />);
     el.querySelector('.kona-note')?.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
     );

@@ -34,7 +34,12 @@ export function App({ controller }: Props) {
     // shadow root (where :host matches) or not.
     <div class="kona-tokens">
       {state.selection && (
-        <SelectionBar selection={state.selection} controller={controller} pens={state.pens} />
+        <SelectionBar
+          selection={state.selection}
+          controller={controller}
+          pens={state.pens}
+          lastPen={state.lastPen}
+        />
       )}
 
       {/* 18: a picture cannot be painted by the Custom Highlight API, which
@@ -65,7 +70,7 @@ export function App({ controller }: Props) {
       {state.card &&
         marked &&
         (state.card.focusNote ? (
-          <Note key={marked.id} card={state.card} mark={marked} controller={controller} />
+          <Note key={marked.id} card={state.card} mark={marked} controller={controller} pens={state.pens} />
         ) : (
           <MarkBar
             card={state.card}

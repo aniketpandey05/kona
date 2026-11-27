@@ -32,7 +32,7 @@ import { loadTheme, watchTheme, type Theme } from '../core/theme';
 import { buildTextIndex, spanFromRange, type TextIndex, type TextSpan } from '../core/textIndex';
 import { DEFAULT_PENS, type PenId } from '../core/pens';
 import { KEPT_AS, KEPT_QUALITY, imageKey, scaleTo, UNDESCRIBED, wordsFor } from '../core/image';
-import { loadPalette, watchPalette } from '../core/palette';
+import { loadLastPen, loadPalette, rememberLastPen, watchLastPen, watchPalette } from '../core/palette';
 import type { Mark } from '../core/types';
 
 /** Tag name of the shadow-root host that holds all of our UI. */
@@ -114,6 +114,11 @@ export interface ViewState {
   selection: { top: number; bottom: number; left: number; streaming: boolean } | null;
   card: NoteCardState | null;
   health: 'ok' | 'no-messages';
+  /**
+   * The pen marked with last, which is what the bar's Note button uses. Null
+   * until something has been marked on this device.
+   */
+  lastPen: PenId | null;
   /** The pens in the case, which you can add to (12). */
   pens: PenId[];
   /** Where highlights are going, and what is already there. Null when none is set. */
@@ -160,6 +165,7 @@ interface PendingSelection {
 export class KonaController {
   private state: ViewState = {
     enabled: true,
+    lastPen: null,
     pageId: null,
     elsewhere: 0,
     noun: 'chat',
@@ -183,6 +189,7 @@ export class KonaController {
   private unwatchSpaces: (() => void) | undefined;
   private unwatchPens: (() => void) | undefined;
   private unwatchPaused: (() => void) | undefined;
+  private unwatchLastPen: (() => void) | undefined;
   /** Kept for a few seconds after a delete, so it can be undone. */
   private deleted: Mark | null = null;
   /**
@@ -239,6 +246,7 @@ export class KonaController {
       this.unwatchSpaces?.();
       this.unwatchPens?.();
       this.unwatchPaused?.();
+      this.unwatchLastPen?.();
       this.painter.dispose();
     });
 
@@ -247,6 +255,12 @@ export class KonaController {
     // change whenever anything is filed into it anywhere.
     void loadPalette().then((pens) => this.setState({ pens }));
     this.unwatchPens = watchPalette((pens) => this.setState({ pens }));
+
+    // Which pen was last used, so Note offers that one rather than whichever
+    // happens to sit first in the case. Watched as well as read: the bar in
+    // another tab of the same site should not go on offering a stale colour.
+    void loadLastPen().then((lastPen) => this.setState({ lastPen }));
+    this.unwatchLastPen = watchLastPen((lastPen) => this.setState({ lastPen }));
 
     // Off, if it was left off. Read once at start and then watched, because
     // the switch is in the popup, which is a different page: the tab you are
@@ -347,6 +361,8 @@ export class KonaController {
     this.clearSelectionDraft();
     this.marks = [...this.marks, mark];
     this.refresh();
+    // So the next Note comes out in the colour you have been using.
+    void rememberLastPen(color);
     if (withNote) this.openCard(mark.id, true);
     await upsertMark(mark);
 

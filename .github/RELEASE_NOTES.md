@@ -9,7 +9,7 @@ not special.
 ### Installing
 
 The attached files carry the version in their names, so this release's are
-`kona-1.4.4-chrome.zip` and so on; a later release attaches its own.
+`kona-1.4.5-chrome.zip` and so on; a later release attaches its own.
 
 Chrome, Edge and Brave: download the `-chrome` zip, unzip it, then
 `chrome://extensions`, turn on developer mode, and **Load unpacked** on the
@@ -22,6 +22,16 @@ extension's resources and still needs the Xcode wrap, which is described in
 Your library lives on the web at
 <https://aniketpandey05.github.io/kona/app/>, and on a free account nothing
 leaves the device it was marked on.
+
+### Fixed in 1.4.5
+
+**Note keeps the colour you have been using.** Note has to make the highlight
+before it can open a note on it, so it picks a pen for you, and it picked
+whichever sat first in your case. Nine highlights in blue were followed by a
+yellow one the moment you had something to say about one.
+
+**And the colour is in the note card**, so you can change it while you write
+rather than closing the note, tapping the highlight and starting again.
 
 ### Fixed in 1.4.4
 

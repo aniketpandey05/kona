@@ -59,7 +59,7 @@ function stub(overrides: Partial<KonaController> = {}): KonaController {
 
 describe('the bar, marking something', () => {
   it('offers every pen and nothing to delete yet', () => {
-    const el = draw(<SelectionBar pens={PENS} selection={selection} controller={stub()} />);
+    const el = draw(<SelectionBar pens={PENS} lastPen={null} selection={selection} controller={stub()} />);
     expect(el.querySelectorAll('.kona-bar-pen')).toHaveLength(4);
     // Nothing is marked yet, so no pen is in use.
     expect(el.querySelector('.kona-bar-pen--in-use')).toBeNull();
@@ -69,14 +69,14 @@ describe('the bar, marking something', () => {
   it('shows the pens at full strength, not the value painted on the page', () => {
     // The bar is one of Kona's own rooms. The transparent mark washes out to
     // almost nothing on the slab, which is what the two values are for.
-    const el = draw(<SelectionBar pens={PENS} selection={selection} controller={stub()} />);
+    const el = draw(<SelectionBar pens={PENS} lastPen={null} selection={selection} controller={stub()} />);
     const first = el.querySelector<HTMLElement>('.kona-bar-pen');
     expect(first?.style.background).toBe(PEN_COLORS.yellow);
   });
 
   it('marks the passage in the pen that was picked', () => {
     const controller = stub();
-    const el = draw(<SelectionBar pens={PENS} selection={selection} controller={controller} />);
+    const el = draw(<SelectionBar pens={PENS} lastPen={null} selection={selection} controller={controller} />);
     el.querySelectorAll<HTMLElement>('.kona-bar-pen')[2]?.click();
     expect(controller.highlight).toHaveBeenCalledWith('blue');
   });
@@ -88,6 +88,7 @@ describe('the bar, marking something', () => {
     const controller = stub();
     const el = draw(
       <SelectionBar
+        lastPen={null}
         pens={[...PENS, '#14b8a6@45']}
         selection={selection}
         controller={controller}
@@ -105,7 +106,7 @@ describe('the bar, marking something', () => {
 
   it('says to wait rather than marking half a reply', () => {
     const el = draw(
-      <SelectionBar pens={PENS} selection={{ ...selection, streaming: true }} controller={stub()} />,
+      <SelectionBar pens={PENS} lastPen={null} selection={{ ...selection, streaming: true }} controller={stub()} />,
     );
     expect(el.querySelector('.kona-bar-wait')).not.toBeNull();
     expect(el.querySelector('.kona-bar-pen')).toBeNull();
@@ -188,7 +189,7 @@ describe("the bar's escape hatch", () => {
 
   it('never offers an escape hatch before anything has been marked', () => {
     // Nothing has gone anywhere yet, so there is nothing to take back out.
-    const el = draw(<SelectionBar pens={PENS} selection={selection} controller={stub()} />);
+    const el = draw(<SelectionBar pens={PENS} lastPen={null} selection={selection} controller={stub()} />);
     expect(el.querySelector('.kona-bar-space')).toBeNull();
   });
 });

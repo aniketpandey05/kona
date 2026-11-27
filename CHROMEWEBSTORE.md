@@ -1,6 +1,6 @@
 # Chrome Web Store listing for Kona
 
-> Last updated: 2026-11-27 · Version 1.4.4
+> Last updated: 2026-11-27 · Version 1.4.5
 
 Everything needed to fill in the Developer Dashboard, so nothing has to be invented at
 submission time. Exclude this file from the uploaded ZIP.
@@ -19,7 +19,7 @@ other way round. All four are fixed here.
 
 | Send | Where it is | What it is for |
 | --- | --- | --- |
-| `kona-1.4.4-chrome.zip` | the [v1.4.4 release](https://github.com/aniketpandey05/kona/releases/tag/v1.4.4), or `.output/` after `npm run zip` | The package itself. Prefer the release copy: CI built it from the tagged commit, so it is the one the source can be checked against |
+| `kona-1.4.5-chrome.zip` | the [v1.4.5 release](https://github.com/aniketpandey05/kona/releases/tag/v1.4.5), or `.output/` after `npm run zip` | The package itself. Prefer the release copy: CI built it from the tagged commit, so it is the one the source can be checked against |
 | This file | `CHROMEWEBSTORE.md` | Every box on the submission form, already written |
 | Five screenshots | `docs/screenshots/*.png` | `web-page`, `chat-panel`, `library`, `spaces`, `space`. All 1280×800, which is one of the two sizes the store takes |
 | Two tiles | `docs/screenshots/` | `promo-tile.png` at 440×280, and `marquee.png` at 1400×560 for the carousel |
@@ -320,9 +320,9 @@ is that the extension does not work.
 - [x] No remote code, no analytics, no network requests
 - [x] Builds clean, 553 tests pass
 - [x] Screenshots re-captured against the rebuilt interface, all five 1280×800
-- [x] Listing copy re-read against the build, line by line, at 1.4.4
+- [x] Listing copy re-read against the build, line by line, at 1.4.5
 - [x] The manifest carries the real web-app origin, not a placeholder
-- [x] ZIP built by CI from the tagged commit, `kona-1.4.4-chrome.zip`
+- [x] ZIP built by CI from the tagged commit, `kona-1.4.5-chrome.zip`
 - [ ] Privacy policy URL confirmed live, which needs the Pages deploy to have run
 - [ ] $5 one-off developer registration paid
 
@@ -347,6 +347,7 @@ The ZIP produced by `npm run zip` contains only the built extension, no `.git`, 
 
 | Version | Date | Summary |
 |---|---|---|
+| 1.4.5 | 2026-11-27 | Note keeps the colour you have been using rather than whichever pen sits first in the case, and the colour can be changed from inside the note card. |
 | 1.4.4 | 2026-11-27 | The panel opens upward from the mark rather than jumping to the opposite corner. A passage that ran across a line break is kept as one line, which a Markdown export had been turning into a code block. No row of tabs with one tab in it. |
 | 1.4.3 | 2026-11-21 | Escape closes what you are in, nearest first: the note, then the bar, then the panel, one press at a time. Every button Kona draws shows where the keyboard is, the colours in the bar included. |
 | 1.4.2 | 2026-11-19 | A highlight you delete stays deleted when your library is kept in a folder you sync; it used to come back from the other machine, because an absence looked exactly like something that machine had not been told about yet. |

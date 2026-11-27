@@ -1,5 +1,6 @@
 import type { JSX } from 'preact';
 import type { KonaController, NoteCardState, ViewState } from '../content/controller';
+import { penToUse } from '../core/palette';
 import { penOf } from '../core/pens';
 import type { Mark, PenId } from '../core/types';
 
@@ -114,10 +115,13 @@ export function SelectionBar({
   selection,
   controller,
   pens,
+  lastPen,
 }: {
   selection: NonNullable<ViewState['selection']>;
   controller: KonaController;
   pens: PenId[];
+  /** The pen marked with last, which is the one Note will use. */
+  lastPen: PenId | null;
 }): JSX.Element {
   const fitsBelow = innerHeight - selection.bottom > BAR_HEIGHT + BAR_GAP * 2;
   const top = fitsBelow
@@ -142,8 +146,12 @@ export function SelectionBar({
       top={top}
       left={selection.left}
       pens={pens}
+      // Deliberately no `inUse` here. On the bar for a highlight you already
+      // made, a ringed pen means *this is the colour it is*. Ringing one here
+      // to mean *this is the colour Note would use* gives the same mark two
+      // meanings, and a test said so before anybody had to look at it.
       onPick={(color) => void controller.highlight(color)}
-      onNote={() => void controller.highlight(pens[0] ?? 'yellow', { withNote: true })}
+      onNote={() => void controller.highlight(penToUse(pens, lastPen), { withNote: true })}
     />
   );
 }

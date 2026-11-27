@@ -1462,11 +1462,55 @@ does, and the highlight still paints and still comes back after a reload.
 
 ---
 
+## Picking a colour and writing a note, together
+
+> when i write a note it defaults to yellow highlight and not able to choose
+> color similarly if i highlight with clicking color it wont be able to letme
+> add note withhout selecting again
+
+Two halves of one thing: on the bar over a selection, the colour and the note
+were alternatives rather than steps.
+
+**Checked the second half before changing anything.** Marking with a pen
+closes the bar, and the route back is tapping the highlight, which 10c
+settled and which turns out to work: it reopens the bar, with Note on it. So
+that half is discoverability rather than a defect, and the quiet-after-marking
+behaviour stays as 2e left it.
+
+**The first half is a real one.** Note has to make the highlight before it can
+open a note on it, so it has to choose a pen, and it chose `pens[0]` — the
+first in the case, which is yellow until somebody rearranges them. Mark nine
+things in blue and the tenth, the one you had something to say about, still
+came out yellow.
+
+So: **the pen you marked with last**, kept per device beside the case, because
+Free does not sync and which colour you happen to be using is the most local
+thing in the product. `penToUse` falls back to the first pen when there is no
+memory yet, and also when the remembered one has been retired — 12 rule 4 says
+retiring a pen repaints nothing, so a colour can outlive the case, and handing
+it back here would put a pen in your hand you deliberately put down.
+
+**And the case is in the note card now**, so the colour can be changed while
+you write. It saves at once: the mark already exists, and nothing in that card
+is a draft except the words.
+
+### A test that stopped a bad idea
+
+The first version also ringed that pen in the selection bar, so you could see
+which colour Note would use. `tests/bar.test.tsx` failed: it asserts that no
+pen is ringed before anything is marked. It was right. On the bar for a
+highlight you already made, a ringed pen means *this is the colour it is*;
+ringing one over a selection to mean *this is the colour Note would use* gives
+one mark two meanings. Dropped, and the comment where it would have gone says
+why.
+
+---
+
 ## Where it stands
 
 | | |
 | --- | --- |
-| Tests | 602 |
+| Tests | 608 |
 | What the product claims it can do | only what it does |
 | Needs a server, so cannot be built | an account (5), sync and what privacy means then (6), two devices disagreeing (21), everything above Free (11) |
 | Sync that does exist | through a folder you already keep in step, desktop Chrome, Edge and Brave only, and it merges by never deleting where 21 settled on the latest change winning |

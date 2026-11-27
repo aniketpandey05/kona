@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { KonaController, NoteCardState } from '../content/controller';
+import { penOf } from '../core/pens';
 import { addTags, removeTag } from '../core/tags';
-import type { Mark } from '../core/types';
+import type { Mark, PenId } from '../core/types';
 
 /**
  * Your note on one highlight, and its tags.
@@ -22,10 +23,13 @@ export function Note({
   card,
   mark,
   controller,
+  pens,
 }: {
   card: NoteCardState;
   mark: Mark;
   controller: KonaController;
+  /** The pens in the case, so the colour can be changed while writing (12). */
+  pens: PenId[];
 }) {
   const [note, setNote] = useState(mark.note ?? '');
   const box = useRef<HTMLDivElement>(null);
@@ -126,6 +130,33 @@ export function Note({
             addTag();
           }}
         />
+      </div>
+
+      {/*
+        The colour, here, because this is where somebody notices it.
+
+        Note has to make the highlight before it can open a note on it, so it
+        picks a pen for you. It picks the one you used last, which is usually
+        right and is sometimes not, and before this there was no way to say so
+        without closing the note, tapping the highlight and starting again.
+        Changing it saves at once: the mark already exists, and nothing here
+        is a draft except the words.
+      */}
+      <div class="kona-note-pens" role="group" aria-label="Colour">
+        {pens.map((id) => {
+          const pen = penOf(id);
+          return (
+            <button
+              key={id}
+              type="button"
+              class={id === mark.color ? 'kona-note-pen kona-note-pen--on' : 'kona-note-pen'}
+              style={{ background: pen.ink }}
+              aria-label={id === mark.color ? `${pen.name}, in use` : pen.name}
+              aria-pressed={id === mark.color}
+              onClick={() => void controller.updateMark(mark.id, { color: id })}
+            />
+          );
+        })}
       </div>
 
       <div class="kona-note-foot">

@@ -20,6 +20,13 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.4.5',
+    notes: [
+      'Note keeps the colour you have been using. It always made the highlight in whichever pen sat first in your case, so nine blue highlights were followed by a yellow one the moment you had something to say.',
+      'And the colour is in the note card, so you can change it while you write rather than closing the note and starting again.',
+    ],
+  },
+  {
     version: '1.4.4',
     notes: [
       'The panel opens upward from the mark you clicked, instead of jumping to the opposite corner of the window.',

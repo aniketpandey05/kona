@@ -186,3 +186,42 @@
   border-radius: var(--kona-radius-sm);
   cursor: pointer;
 }
+
+/*
+ * The colour, in the note card.
+ *
+ * Note makes the highlight before it can open a note on it, so it picks a pen
+ * for you; this is where you say otherwise without closing the note and
+ * starting again. Small, and above the foot rather than beside the words,
+ * because it is about the highlight and not about what you are writing.
+ */
+.kona-note-pens {
+  display: flex;
+  align-items: center;
+  gap: var(--kona-space-6);
+  padding: var(--kona-space-8) 0 var(--kona-space-2);
+}
+
+.kona-note-pen {
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 120ms ease;
+}
+
+.kona-note-pen:hover {
+  opacity: 1;
+}
+
+/* The one it is marked in, ringed in the slab rather than coloured brighter:
+   a ring reads at this size and a shade does not. */
+.kona-note-pen--on {
+  opacity: 1;
+  box-shadow:
+    0 0 0 2px var(--kona-slab-card),
+    0 0 0 3px currentColor;
+}
